@@ -1,84 +1,66 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
+<<<<<<< HEAD
 <!-- Mirrored from themes.pixelstrap.com/fastkart/back-end/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 06 Nov 2024 14:35:16 GMT -->
+=======
+>>>>>>> 327c54a144eb67652fc1cc6ed4f366e4cf2c0b73
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
-        content="Fastkart admin is super flexible, powerful, clean &amp; modern responsive bootstrap 5 admin template with unlimited possibilities.">
+          content="Fastkart admin is super flexible, powerful, clean &amp; modern responsive bootstrap 5 admin template with unlimited possibilities.">
     <meta name="keywords"
-        content="admin template, Fastkart admin template, dashboard template, flat admin template, responsive admin template, web app">
+          content="admin template, Fastkart admin template, dashboard template, flat admin template, responsive admin template, web app">
     <meta name="author" content="pixelstrap">
-    <link rel="icon" href="backend/assets/images/favicon.png" type="image/x-icon">
-    <link rel="shortcut icon" href="backend/assets/images/favicon.png" type="image/x-icon">
-    <title>@yield('title')</title>
+    <link rel="icon" href="{{ asset('backend/assets/images/favicon.png') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('backend/assets/images/favicon.png') }}" type="image/x-icon">
+    <title>@yield('title', 'Admin Panel')</title>
 
-    <!-- Google font-->
-    <link
-        href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
-        rel="stylesheet">
+    <!-- Google font -->
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@100;400;700;900&display=swap" rel="stylesheet">
 
-    <!-- Linear Icon css -->
-    <link rel="stylesheet" href="backend/assets/css/linearicon.css">
+    <!-- Vendor CSS -->
+    <link rel="stylesheet" href="{{ asset('backend/assets/css/linearicon.css') }}">
+    <link rel="stylesheet" href="{{ asset('backend/assets/css/vendors/font-awesome.css') }}">
+    <link rel="stylesheet" href="{{ asset('backend/assets/css/vendors/themify.css') }}">
+    <link rel="stylesheet" href="{{ asset('backend/assets/css/ratio.css') }}">
+    <link rel="stylesheet" href="{{ asset('backend/assets/css/remixicon.css') }}">
+    <link rel="stylesheet" href="{{ asset('backend/assets/css/vendors/feather-icon.css') }}">
+    <link rel="stylesheet" href="{{ asset('backend/assets/css/vendors/scrollbar.css') }}">
+    <link rel="stylesheet" href="{{ asset('backend/assets/css/vendors/animate.css') }}">
+    <link rel="stylesheet" href="{{ asset('backend/assets/css/vendors/bootstrap.css') }}">
+    <link rel="stylesheet" href="{{ asset('backend/assets/css/vector-map.css') }}">
+    <link rel="stylesheet" href="{{ asset('backend/assets/css/vendors/slick.css') }}">
+    <link rel="stylesheet" href="{{ asset('backend/assets/css/style.css') }}">
 
-    <!-- fontawesome css -->
-    <link rel="stylesheet" type="text/css" href="backend/assets/css/vendors/font-awesome.css">
-
-    <!-- Themify icon css-->
-    <link rel="stylesheet" type="text/css" href="backend/assets/css/vendors/themify.css">
-
-    <!-- ratio css -->
-    <link rel="stylesheet" type="text/css" href="backend/assets/css/ratio.css">
-
-    <!-- remixicon css -->
-    <link rel="stylesheet" type="text/css" href="backend/assets/css/remixicon.css">
-
-    <!-- Feather icon css-->
-    <link rel="stylesheet" type="text/css" href="backend/assets/css/vendors/feather-icon.css">
-
-    <!-- Plugins css -->
-    <link rel="stylesheet" type="text/css" href="backend/assets/css/vendors/scrollbar.css">
-    <link rel="stylesheet" type="text/css" href="backend/assets/css/vendors/animate.css">
-
-    <!-- Bootstrap css-->
-    <link rel="stylesheet" type="text/css" href="backend/assets/css/vendors/bootstrap.css">
-
-    <!-- vector map css -->
-    <link rel="stylesheet" type="text/css" href="backend/assets/css/vector-map.css">
-
-    <!-- Slick Slider Css -->
-    <link rel="stylesheet" href="backend/assets/css/vendors/slick.css">
-
-    <!-- App css -->
-    <link rel="stylesheet" type="text/css" href="backend/assets/css/style.css">
+    @stack('styles')
 </head>
 <body>
-    <!-- tap on top start -->
-    <div class="tap-top">
-        <span class="lnr lnr-chevron-up"></span>
-    </div>
-    <!-- tap on tap end -->
-    <!-- page-wrapper Start-->
-    <div class="page-wrapper compact-wrapper" id="pageWrapper">
-        <!-- Page Header Start-->
-        <div class="page-header">
-            <div class="header-wrapper m-0">
-                <div class="header-logo-wrapper p-0">
-                    <div class="logo-wrapper">
-                        <a href="index.html">
-                            <img class="img-fluid main-logo" src="backend/assets/images/logo/1.png" alt="logo">
-                            <img class="img-fluid white-logo" src="backend/assets/images/logo/1-white.png" alt="logo">
-                        </a>
-                    </div>
-                    <div class="toggle-sidebar">
-                        <i class="status_toggle middle sidebar-toggle" data-feather="align-center"></i>
-                        <a href="index.html">
-                            <img src="backend/assets/images/logo/1.png" class="img-fluid" alt="">
-                        </a>
-                    </div>
-                </div>
+<!-- Tap to Top -->
+<div class="tap-top">
+    <span class="lnr lnr-chevron-up"></span>
+</div>
 
+<!-- Page Wrapper -->
+<div class="page-wrapper compact-wrapper" id="pageWrapper">
+
+    <!-- Header -->
+    @includeIf('backend.header')
+
+    <!-- Page Body -->
+    <div class="page-body-wrapper">
+
+        <!-- Sidebar -->
+        @includeIf('backend.sidebar')
+
+        <!-- Main Content -->
+        @yield('content')
+
+    </div>
+</div>
+
+<<<<<<< HEAD
                 <form class="form-inline search-full" action="javascript:void(0)" method="get">
                     <div class="form-group w-100">
                         <div class="Typeahead Typeahead--twitterUsers">
@@ -461,62 +443,50 @@
                         <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
                         <button type="button" class="btn  btn--yes btn-primary">Yes</button>
                     </div>
+=======
+<!-- Logout Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <h5 class="modal-title" id="staticBackdropLabel">Logging Out</h5>
+                <p>Are you sure you want to log out?</p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="button-box">
+                    <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
+                    <button type="button" class="btn btn--yes btn-primary">Yes</button>
+>>>>>>> 327c54a144eb67652fc1cc6ed4f366e4cf2c0b73
                 </div>
             </div>
         </div>
     </div>
-    <!-- Modal End -->
+</div>
+        @yield('script')
+<!-- Scripts -->
+<script src="{{ asset('backend/assets/js/jquery-3.6.0.min.js') }}"></script>
+<script src="{{ asset('backend/assets/js/bootstrap/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ asset('backend/assets/js/icons/feather-icon/feather.min.js') }}"></script>
+<script src="{{ asset('backend/assets/js/icons/feather-icon/feather-icon.js') }}"></script>
+<script src="{{ asset('backend/assets/js/scrollbar/simplebar.js') }}"></script>
+<script src="{{ asset('backend/assets/js/scrollbar/custom.js') }}"></script>
+<script src="{{ asset('backend/assets/js/config.js') }}"></script>
+<script src="{{ asset('backend/assets/js/tooltip-init.js') }}"></script>
+<script src="{{ asset('backend/assets/js/sidebar-menu.js') }}"></script>
+<script src="{{ asset('backend/assets/js/notify/bootstrap-notify.min.js') }}"></script>
+<script src="{{ asset('backend/assets/js/notify/index.js') }}"></script>
+<script src="{{ asset('backend/assets/js/chart/apex-chart/apex-chart1.js') }}"></script>
+<script src="{{ asset('backend/assets/js/chart/apex-chart/moment.min.js') }}"></script>
+<script src="{{ asset('backend/assets/js/chart/apex-chart/apex-chart.js') }}"></script>
+<script src="{{ asset('backend/assets/js/chart/apex-chart/stock-prices.js') }}"></script>
+<script src="{{ asset('backend/assets/js/chart/apex-chart/chart-custom1.js') }}"></script>
+<script src="{{ asset('backend/assets/js/slick.min.js') }}"></script>
+<script src="{{ asset('backend/assets/js/custom-slick.js') }}"></script>
+<script src="{{ asset('backend/assets/js/customizer.js') }}"></script>
+<script src="{{ asset('backend/assets/js/ratio.js') }}"></script>
+<script src="{{ asset('backend/assets/js/sidebareffect.js') }}"></script>
+<script src="{{ asset('backend/assets/js/script.js') }}"></script>
 
-    <!-- latest js -->
-    <script src="backend/assets/js/jquery-3.6.0.min.js"></script>
-
-    <!-- Bootstrap js -->
-    <script src="backend/assets/js/bootstrap/bootstrap.bundle.min.js"></script>
-
-    <!-- feather icon js -->
-    <script src="backend/assets/js/icons/feather-icon/feather.min.js"></script>
-    <script src="backend/assets/js/icons/feather-icon/feather-icon.js"></script>
-
-    <!-- scrollbar simplebar js -->
-    <script src="backend/assets/js/scrollbar/simplebar.js"></script>
-    <script src="backend/assets/js/scrollbar/custom.js"></script>
-
-    <!-- Sidebar jquery -->
-    <script src="backend/assets/js/config.js"></script>
-
-    <!-- tooltip init js -->
-    <script src="backend/assets/js/tooltip-init.js"></script>
-
-    <!-- Plugins JS -->
-    <script src="backend/assets/js/sidebar-menu.js"></script>
-    <script src="backend/assets/js/notify/bootstrap-notify.min.js"></script>
-    <script src="backend/assets/js/notify/index.js"></script>
-
-    <!-- Apexchar js -->
-    <script src="backend/assets/js/chart/apex-chart/apex-chart1.js"></script>
-    <script src="backend/assets/js/chart/apex-chart/moment.min.js"></script>
-    <script src="backend/assets/js/chart/apex-chart/apex-chart.js"></script>
-    <script src="backend/assets/js/chart/apex-chart/stock-prices.js"></script>
-    <script src="backend/assets/js/chart/apex-chart/chart-custom1.js"></script>
-
-
-    <!-- slick slider js -->
-    <script src="backend/assets/js/slick.min.js"></script>
-    <script src="backend/assets/js/custom-slick.js"></script>
-
-    <!-- customizer js -->
-    <script src="backend/assets/js/customizer.js"></script>
-
-    <!-- ratio js -->
-    <script src="backend/assets/js/ratio.js"></script>
-
-    <!-- sidebar effect -->
-    <script src="backend/assets/js/sidebareffect.js"></script>
-
-    <!-- Theme js -->
-    <script src="backend/assets/js/script.js"></script>
+@stack('scripts')
 </body>
-
-
-<!-- Mirrored from themes.pixelstrap.com/fastkart/back-end/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 06 Nov 2024 14:35:33 GMT -->
 </html>
