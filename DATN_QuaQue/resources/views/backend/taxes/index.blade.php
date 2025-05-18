@@ -1,6 +1,6 @@
 @extends('layouts.backend')
 
-@section('title', '')
+@section('title', 'Thuế')
 
 @section('content')
 <!-- Texes Table Section Start -->

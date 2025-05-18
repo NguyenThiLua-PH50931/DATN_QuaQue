@@ -1,6 +1,6 @@
 @extends('layouts.backend')
 
-@section('title', '')
+@section('title', 'Trang cá nhân')
 
 @section('content')
             <!-- Settings Section Start -->

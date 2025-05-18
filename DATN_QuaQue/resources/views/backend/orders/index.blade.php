@@ -1,6 +1,6 @@
 @extends('layouts.backend')
 
-@section('title', '')
+@section('title', 'Đơn hàng')
 
 @section('content')
 <div class="page-body">

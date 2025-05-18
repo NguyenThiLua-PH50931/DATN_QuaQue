@@ -1,6 +1,6 @@
 @extends('layouts.backend')
 
-@section('title', '')
+@section('title', 'Báo cáo')
 
 @section('content')
 <!-- Reports Section Start -->

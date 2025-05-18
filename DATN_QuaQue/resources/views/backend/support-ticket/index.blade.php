@@ -1,6 +1,6 @@
 @extends('layouts.backend')
 
-@section('title', '')
+@section('title', 'Đơn hỗ trợ')
 
 @section('content')
 <!-- Ticket Section Start -->

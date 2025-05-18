@@ -1,6 +1,6 @@
 @extends('layouts.backend')
 
-@section('title', '')
+@section('title', 'Đánh giá sản phẩm')
 
 @section('content')
             <!-- product review section start -->
