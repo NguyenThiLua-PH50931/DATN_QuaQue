@@ -1,7 +1,5 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-
-
 <!-- Mirrored from themes.pixelstrap.com/fastkart/back-end/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 06 Nov 2024 14:35:16 GMT -->
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -431,16 +429,16 @@
         @yield('contents')
 
 
-                <!-- footer start-->
-                <div class="container-fluid">
-                    <footer class="footer">
-                        <div class="row">
-                            <div class="col-md-12 footer-copyright text-center">
-                                <p class="mb-0">Copyright 2022 © Fastkart theme by pixelstrap</p>
-                            </div>
-                        </div>
-                    </footer>
+    <!-- footer start-->
+    <div class="container-fluid">
+        <footer class="footer">
+            <div class="row">
+                <div class="col-md-12 footer-copyright text-center">
+                    <p class="mb-0">Copyright 2022 © Fastkart theme by pixelstrap</p>
                 </div>
+            </div>
+        </footer>
+    </div>
                 <!-- footer End-->
             </div>
             <!-- index body end -->
