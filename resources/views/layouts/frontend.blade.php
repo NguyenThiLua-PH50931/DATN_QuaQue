@@ -10,6 +10,7 @@
     <meta name="author" content="Fastkart">
     <link rel="icon" href="../frontend/assets/images/favicon/1.png" type="image/x-icon">
     <title>@yield('title')</title>
+   <link href="../frontend/assets/css/style.css" rel="stylesheet">
 
     <!-- Google font -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -22,8 +23,10 @@
         href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
         rel="stylesheet">
 
+
     <!-- bootstrap css -->
     <link id="rtl-link" rel="stylesheet" type="text/css" href="../frontend/assets/css/vendors/bootstrap.css">
+
 
     <!-- wow css -->
     <link rel="stylesheet" href="../frontend/assets/css/animate.min.css" />
@@ -316,7 +319,8 @@
                                                     </li>
 
                                                     <li class="product-box-contain">
-                                                        <a href="sign-up.html">Register</a>
+                                                        <a href="{{ route('register') }}">Register</a>
+
                                                     </li>
 
                                                     <li class="product-box-contain">
