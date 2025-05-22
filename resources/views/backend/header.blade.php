@@ -16,6 +16,7 @@
             </div>
         </div>
 
+
         <form class="form-inline search-full" action="javascript:void(0)" method="get" id="search-form">
             <div class="form-group w-100">
                 <div class="Typeahead Typeahead--twitterUsers">
@@ -48,6 +49,7 @@
                     <ul class="notification-dropdown onhover-show-div">
                         <li>
                             <i class="ri-notification-line"></i>
+<<<<<<< HEAD
                             <h6 class="f-18 mb-0">Thông báo</h6>
                         </li>
                         <li>
@@ -68,7 +70,7 @@
                         </li>
                         <li>
                             <a class="btn btn-primary" href="javascript:void(0)">Xem tất cả thông báo</a>
-                        </li>
+
                     </ul>
                 </li>
 
@@ -80,6 +82,7 @@
 
                 <li class="profile-nav onhover-dropdown pe-0 me-0">
                     <div class="media profile-media">
+
                         <img class="user-profile rounded-circle" src="{{ asset('backend/assets/images/users/4.jpg') }}"
                             alt="">
                         <div class="user-name-hide media-body">
@@ -91,6 +94,7 @@
                         <li>
                             <a href="{{ url('/admin/users') }}">
                                 <i data-feather="users"></i>
+
                                 <span>Người dùng</span>
                             </a>
                         </li>
@@ -103,13 +107,16 @@
                         <li>
                             <a href="{{ url('/admin/support-ticket') }}">
                                 <i data-feather="phone"></i>
+
                                 <span>Vé hỗ trợ</span>
                             </a>
                         </li>
                         <li>
                             <a href="{{ url('/admin/profile') }}">
                                 <i data-feather="settings"></i>
+
                                 <span>Cài đặt</span>
+
                             </a>
                         </li>
                         <li>
@@ -125,6 +132,7 @@
     </div>
 </div>
 <!-- Page Header Ends -->
+<<<<<<< HEAD
 
 <!-- Thêm các file CSS và JS mới -->
 <link rel="stylesheet" href="{{ asset('backend/assets/css/search.css') }}">

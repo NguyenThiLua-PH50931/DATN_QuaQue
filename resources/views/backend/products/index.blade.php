@@ -3,7 +3,10 @@
 @section('title', 'Quản lý sản phẩm') {{-- Tiêu đề trang --}}
 
 @section('content')
+<<<<<<< HEAD
 
+=======
+>>>>>>> 7f67187922664837afff60d17cb9a05ed19f5fc8
 <div class="page-body">
                 <div class="container-fluid">
                     <div class="row">
@@ -19,6 +22,7 @@
                                                 </li>
                                                 <li>
                                                     <a href="javascript:void(0)" style="color: black">Export</a>
+
                                                 </li>
                                                 <li>
                                                     <a class="btn btn-solid" href="{{ url('/admin/products/create') }}">Add Product</a>
@@ -31,6 +35,7 @@
                                             <table class="table all-package theme-table table-product" id="table_id">
                                                 <thead>
                                                     <tr>
+
                                                         <th style="color: black; background-color: #f8f9fa;">Product Image</th>
                                                         <th style="color: black; background-color: #f8f9fa;">Product Name</th>
                                                         <th style="color: black; background-color: #f8f9fa;">Category</th>
@@ -534,6 +539,7 @@
                 <!-- Container-fluid Ends-->
 
 @includeIf('backend.footer')
+
 @endsection
 @push('scripts')
 <script>
@@ -555,3 +561,6 @@
     });
 </script>
 @endpush
+
+@endsection
+

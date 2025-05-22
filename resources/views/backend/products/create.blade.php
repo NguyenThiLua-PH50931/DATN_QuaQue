@@ -466,7 +466,10 @@
             </div>
         </div>
     </div>
+
 @includeIf('backend.footer')
 </div>
 <!-- New Product Add End -->
 @endsection
+
+

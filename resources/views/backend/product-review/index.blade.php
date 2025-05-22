@@ -27,6 +27,7 @@
                                                         <th style="color: black; background-color: #f8f9fa;">Rating</th>
                                                         <th style="color: black; background-color: #f8f9fa;">Comment</th>
                                                         <th style="color: black; background-color: #f8f9fa;">Published</th>
+
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -363,6 +364,7 @@
 @includeIf('backend.footer')
 </div>
 @endsection
+
 @push('scripts')
 <script>
     $(document).ready(function () {

@@ -51,7 +51,9 @@
                             <span>Category</span>
                         </a>
                         <ul class="sidebar-submenu">
+
                             <li><a href="{{ url('/admin/categories') }}" >Category List</a></li>
+
                             <li><a href="{{ url('/admin/categories/create') }}">Add New Category</a></li>
                         </ul>
                     </li>
@@ -107,17 +109,6 @@
                             <li><a href="{{ url('/admin/orders/tracking') }}">Order Tracking</a></li>
                         </ul>
                     </li>
-{{--
-                    <li class="sidebar-list">
-                        <a class="sidebar-link sidebar-title" href="javascript:void(0)">
-                            <i class="ri-focus-3-line"></i>
-                            <span>Localization Bỏ</span>
-                        </a>
-                        <ul class="sidebar-submenu">
-                            <li><a href="{{ url('/admin/translation') }}">Translation</a></li>
-                            <li><a href="{{ url('/admin/currency-rates') }}">Currency Rates</a></li>
-                        </ul>
-                    </li> --}}
 
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
