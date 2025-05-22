@@ -541,6 +541,7 @@
     <!-- All User Table Ends-->
 </div>
 @includeIf('backend.footer')
+<<<<<<< HEAD
 @endsection
 @push('scripts')
 <script>
@@ -562,3 +563,5 @@
     });
 </script>
 @endpush
+
+@endsection

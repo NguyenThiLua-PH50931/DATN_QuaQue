@@ -23,9 +23,11 @@
                             <table class="table all-package theme-table" id="table_id">
                                 <thead>
                                     <tr>
+<<<<<<< HEAD
                                         <th style="color: black; background-color: #f8f9fa;">Name</th>
                                         <th style="color: black; background-color: #f8f9fa;">Value</th>
                                         <th style="color: black; background-color: #f8f9fa;">Option</th>
+
                                     </tr>
                                 </thead>
 
@@ -155,6 +157,7 @@
     <!-- All User Table Ends-->
     @includeIf('backend.footer')
 </div>
+
 @endsection
 @push('scripts')
 <script>
@@ -176,3 +179,6 @@
     });
 </script>
 @endpush
+
+@endsection
+
