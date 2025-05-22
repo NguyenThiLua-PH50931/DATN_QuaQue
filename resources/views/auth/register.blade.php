@@ -68,20 +68,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Terms and Privacy -->
-                                <div class="col-12">
-                                    <div class="forgot-box">
-                                        <div class="form-check ps-0 m-0 remember-box">
-                                            <input class="checkbox_animated check-box" type="checkbox" id="terms"
-                                                name="terms" value="1" required>
-                                            <label class="form-check-label" for="terms">I agree with <span>Terms</span>
-                                                and <span>Privacy</span></label>
-                                            @error('terms')
-                                                <div class="text-danger">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                </div>
+                               
 
                                 <!-- Sign Up Button -->
                                 <div class="col-12">
@@ -146,5 +133,5 @@
     <!-- Bg overlay End -->
 
     <!-- latest jquery-->
-    
+
 @endsection

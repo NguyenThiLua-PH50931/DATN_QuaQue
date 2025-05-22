@@ -22,14 +22,14 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'terms' => ['accepted'],
+
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-           'terms' => $request->has('terms') ? 1 : 0, // Chuyển đổi 'on' thành 1
+           
         ]);
 
         return redirect('/')->with('success', 'Đăng ký thành công!');
