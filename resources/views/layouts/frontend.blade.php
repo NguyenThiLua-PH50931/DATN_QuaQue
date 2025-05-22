@@ -1150,7 +1150,7 @@
     <!-- mobile fix menu end -->
 
     {{-- Contents --}}
-    @yield('contents')
+    @yield('content')
 
     <!-- Footer Section Start -->
     <footer class="section-t-space">

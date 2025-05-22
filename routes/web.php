@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Client\ProductController;
 use Illuminate\Support\Facades\Route;
 
 // client
@@ -12,6 +13,8 @@ Route::get('/', function () {
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
 
+// chi tiết sản phẩm
+Route::get('san-pham/{slug}', [ProductController::class, 'detail'])->name('products.detail');
 
 
 // Sản phẩm yêu thích
