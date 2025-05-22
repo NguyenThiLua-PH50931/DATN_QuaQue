@@ -2,12 +2,14 @@
     padding: 10px;
     cursor: pointer;
     transition: background-color 0.2s ease;
+    color: #e6c90e !important; /* Màu vàng cho chữ */
+    background-color: #ffffff !important; /* Nền trắng */
 }
 .suggestion-item:hover {
-    background-color: #f1f1f1;
+    background-color: #f8f9fa !important; /* Màu xám nhạt khi hover */
 }
 .tt-menu {
-    background-color: #fff;
+    background-color: #ffffff !important; /* Nền trắng */
     border: 1px solid #ddd;
     border-radius: 4px;
     max-height: 200px;
@@ -20,31 +22,33 @@
     left: 0;
 }
 .tt-suggestion {
-    color: #333;
+    color: #e6c90e !important; /* Màu vàng cho chữ */
+    background-color: #ffffff !important; /* Nền trắng */
 }
 .tt-suggestion.tt-cursor {
-    background-color: #e9ecef;
-    color: #000;
+    background-color: #f8f9fa !important; /* Màu xám nhạt khi hover */
+    color: #e6c90e !important; /* Màu vàng cho chữ khi hover */
 }
 /* Tương thích dark mode */
 .dark .tt-menu {
-    background-color: #2d2d2d;
+    background-color: #ffffff !important; /* Nền trắng trong dark mode */
     border-color: #444;
-    color: #e0e0e0;
+    color: #e6c90e !important; /* Màu vàng cho chữ trong dark mode */
 }
 .dark .suggestion-item {
-    color: #e0e0e0;
+    color: #e6c90e !important; /* Màu vàng cho chữ trong dark mode */
+    background-color: #ffffff !important; /* Nền trắng trong dark mode */
 }
 .dark .suggestion-item:hover {
-    background-color: #3a3a3a;
+    background-color: #f8f9fa !important; /* Màu xám nhạt khi hover trong dark mode */
 }
 .dark .tt-suggestion.tt-cursor {
-    background-color: #4a4a4a;
-    color: #fff;
+    background-color: #f8f9fa !important; /* Màu xám nhạt khi hover trong dark mode */
+    color: #e6c90e !important; /* Màu vàng cho chữ khi hover trong dark mode */
 }
 /* Ngăn mờ nội dung phía sau */
 .search-full .Typeahead-menu {
-    background: none;
+    background: #ffffff !important; /* Nền trắng */
     border: none;
     box-shadow: none;
 }
@@ -75,15 +79,15 @@ body.offcanvas {
 .sidebar-links .sidebar-title span.active, .sidebar-links .sidebar-submenu a.active {
     background-color: transparent !important;
     font-weight: bold !important;
-    color: #28a745 !important; /* Màu xanh lá */
-    border-left: 3px solid #28a745 !important; /* Viền xanh lá */
+    color: #e6c90e !important; /* Màu vàng */
+    border-left: 3px solid #e6c90e !important; /* Viền vàng */
     padding-left: 10px !important;
     transition: all 0.3s ease !important;
 }
 .dark .sidebar-links .sidebar-title span.active, .dark .sidebar-links .sidebar-submenu a.active {
     background-color: transparent !important;
-    color: #28a745 !important; /* Giữ màu xanh lá trong dark mode */
-    border-left: 3px solid #28a745 !important;
+    color: #e6c90e !important; /* Màu vàng trong dark mode */
+    border-left: 3px solid #e6c90e !important;
 }
 /* Đảm bảo menu con hiển thị */
 .sidebar-submenu {

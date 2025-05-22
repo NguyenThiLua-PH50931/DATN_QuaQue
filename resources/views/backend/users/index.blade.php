@@ -3,7 +3,6 @@
 @section('title', 'Tài khoản')
 
 @section('content')
-<<<<<<< HEAD
     <div class="page-body">
         <!-- All User Table Start -->
         <div class="container-fluid">
@@ -502,8 +501,12 @@
                                     </tbody>
                                 </table>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- All User Table Ends-->
         @includeIf('backend.footer')
     </div>
 @endsection
-

@@ -480,6 +480,3 @@
     });
 </script>
 @endpush
-
-@endsection
-
