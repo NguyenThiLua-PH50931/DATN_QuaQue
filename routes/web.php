@@ -139,5 +139,12 @@ Route::get('/admin/reports', function () {
 Route::get('/admin/list-page', function () {
     return view('backend.list-page.index');
 });
+Route::get('/admin/blogs', function () {
+    return view('backend.blogs.index');
+});
+Route::get('/admin/blogs/create', function () {
+    return view('backend.blogs.create');
+});
+
 
     // Admin
