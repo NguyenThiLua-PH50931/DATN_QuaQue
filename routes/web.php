@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use Illuminate\Support\Facades\Route;
 
@@ -11,7 +12,9 @@ Route::get('/', function () {
 // dang ky
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
-
+// dang nhap
+Route::get('/login', [LoginController::class, 'login'])->name('Login');
+Route::post('/login', [LoginController::class, 'checklogin'])->name('checklogin');
 
 
 // Sản phẩm yêu thích
