@@ -32,7 +32,6 @@
                                                                     type="checkbox" value="">
                                                             </span>
                                                         </th>
-<<<<<<< HEAD
                                                         <th style="color: black; background-color: #f8f9fa;">Title</th>
                                                         <th style="color: black; background-color: #f8f9fa;">Code</th>
                                                         <th style="color: black; background-color: #f8f9fa;">Discount</th>
@@ -302,7 +301,6 @@
                 <!-- Container-fluid Ends-->
 @includeIf('backend.footer')
 </div>
-<<<<<<< HEAD
 @endsection
 @push('scripts')
 <script>
@@ -324,6 +322,3 @@
     });
 </script>
 @endpush
-
-@endsection
-

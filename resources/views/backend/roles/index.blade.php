@@ -27,7 +27,6 @@
                                             <th style="color: black; background-color: #f8f9fa;">Name</th>
                                             <th style="color: black; background-color: #f8f9fa;">Create At</th>
                                             <th style="color: black; background-color: #f8f9fa;">Options</th>
-
                                         </tr>
                                     </thead>
 
@@ -132,7 +131,4 @@
     <!-- Container-fluid Ends-->
     @includeIf('backend.footer')
 </div>
-
 @endsection
-
-
