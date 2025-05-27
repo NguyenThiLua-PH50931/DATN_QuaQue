@@ -138,7 +138,7 @@
                     </li>
 
                     <li class="sidebar-list">
-                        <a class="sidebar-link sidebar-title link-nav" href="{{ url('/admin/product-review') }}">
+                        <a class="sidebar-link sidebar-title link-nav" href="{{ route('reviews.index') }}">
                             <i class="ri-star-line"></i>
                             <span>Product Review</span>
                         </a>
