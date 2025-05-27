@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Client\ProductController;
+
+
 use Illuminate\Support\Facades\Route;
 
 // client
@@ -124,9 +127,9 @@ Route::get('/admin/taxes', function () {
     return view('backend.taxes.index');
 });
 // product-review
-Route::get('/admin/product-review', function () {
-    return view('backend.product-review.index');
-});
+// Route::get('/admin/product-review', function () {
+//     return view('backend.product-review.index');
+// });
 // support-ticket
 Route::get('/admin/support-ticket', function () {
     return view('backend.support-ticket.index');
@@ -144,4 +147,9 @@ Route::get('/admin/list-page', function () {
     return view('backend.list-page.index');
 });
 
-    // Admin
+// Admin
+// quan li san pham 
+Route::prefix('admin')->group(function () {
+    // Quản lý đánh giá
+    Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');
+});
