@@ -56104,5 +56104,76 @@ body.dark .ck-editor__main .ck-content {
 body.dark .ck-editor__editable::placeholder {
     color: #cccccc !important; /* Màu xám nhạt cho placeholder */
 }
+/* Ensure text and background are visible in Product Inventory table in dark mode */
+body.dark .variation-table th {
+    color: #ffffff !important; /* Màu chữ trắng cho header */
+    background-color: #343a40 !important; /* Màu nền tối cho header (hoặc màu phù hợp) */
+}
+
+body.dark .variation-table td {
+    color: #ffffff !important; /* Màu chữ trắng cho ô dữ liệu */
+    background-color: #212529 !important; /* Màu nền tối cho ô dữ liệu (hoặc màu phù hợp) */
+}
+
+
+body.dark .variation-table tbody tr td input.form-control[type="number"],
+body.dark .variation-table tbody tr td input.form-control[type="text"] {
+    color: #ffffff !important; /* Đặt màu chữ trắng cho input */
+    background-color: #3a3a3a !important; /* Đặt màu nền tối cho input */
+    border-color: #555 !important; /* Đặt màu viền tối cho input */
+}
+
+/* Đảm bảo placeholder cũng hiển thị rõ */
+body.dark .variation-table tbody tr td input.form-control::placeholder {
+    color: #cccccc !important;
+}
+
+/* CSS cho input SKU và select Stock Status bên ngoài bảng */
+body.dark .card-body .theme-form .row input[type="text"],
+body.dark .card-body .theme-form .row select {
+    color: #ffffff !important;
+    background-color: #3a3a3a !important;
+    border-color: #555 !important;
+}
+
+body.dark .card-body .theme-form .row select option {
+     background-color: #3a3a3a !important; /* Màu nền cho option trong select */
+     color: #ffffff !important; /* Màu chữ cho option trong select */
+}
+
+/* Nếu dùng Select2 cho Stock Status dropdown */
+body.dark .select2-container--default .select2-selection--single {
+    background-color: #3a3a3a !important;
+    border-color: #555 !important;
+}
+
+body.dark .select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: #ffffff !important;
+}
+
+body.dark .select2-container--default .select2-selection--single .select2-selection__arrow b {
+    border-color: #ffffff transparent transparent transparent !important;
+}
+
+body.dark .select2-dropdown {
+    background-color: #3a3a3a !important;
+    border-color: #555 !important;
+}
+
+body.dark .select2-results__option {
+    color: #ffffff !important;
+}
+
+body.dark .select2-results__option--highlighted[aria-selected] {
+    background-color: #007bff !important;
+    color: #ffffff !important;
+}
+
+body.dark .select2-search__field {
+    background-color: #212529 !important;
+    color: #ffffff !important;
+    border-color: #555 !important;
+}
+
 
 /*# sourceMappingURL=style.css.map */
