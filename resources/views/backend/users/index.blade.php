@@ -510,3 +510,23 @@
         @includeIf('backend.footer')
     </div>
 @endsection
+@push('scripts')
+<script>
+    $(document).ready(function () {
+        $('#table_id').DataTable({
+            language: {
+                search: "Tìm kiếm:",
+                lengthMenu: "Hiển thị _MENU_ người dùng",
+                info: "Hiển thị _START_ đến _END_ trong tổng _TOTAL_ người dùng",
+                paginate: {
+                    first: "Đầu",
+                    last: "Cuối",
+                    next: "Sau",
+                    previous: "Trước"
+                },
+                zeroRecords: "Không tìm thấy người dùng nào.",
+            }
+        });
+    });
+</script>
+@endpush
