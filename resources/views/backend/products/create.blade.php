@@ -141,7 +141,7 @@
                                                 <label class="form-label-title col-sm-3 mb-0">Product
                                                     Description</label>
                                                 <div class="col-sm-9">
-                                                    <div id="editor"></div>
+                                                    <div id="editor" style="background-color: var(--bs-body-bg); color: var(--bs-body-color);"></div>
                                                 </div>
                                             </div>
                                         </div>
