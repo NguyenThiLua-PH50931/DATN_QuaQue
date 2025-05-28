@@ -92,15 +92,11 @@
                                             <a href="shop-left-sidebar.html" class="text-white">Buy Now
                                                 !</a>
                                         </h6>
-=======
-
                                     </div>
                                 </div>
                             </div>
                         </div>
-<<<<<<< HEAD
                     </div>
-
                     <div class="col-lg-3">
                         <ul class="about-list right-nav-about">
                             <li class="right-nav-list">

@@ -11,11 +11,11 @@
                     <!-- Table Start -->
                     <div class="card-body">
                         <div class="title-header option-title">
-                            <h5>Menu List</h5>
+                            <h5>Danh sách đơn hàng</h5>
                         </div>
                         <div>
                             <div class="table-responsive">
-                                <table class="user-table menu-list-table table">
+                                <table id="table_id" class="user-table menu-list-table table">
                                     <thead>
                                         <tr>
                                             <th>
@@ -24,12 +24,11 @@
                                                         type="checkbox" value="">
                                                 </span>
                                             </th>
-                                            <th style="color: black; background-color: #f8f9fa;">Name</th>
-                                            <th style="color: black; background-color: #f8f9fa;">Status</th>
-                                            <th style="color: black; background-color: #f8f9fa;">Created On</th>
+                                            <th style="color: black; background-color: #f8f9fa;">Tên</th>
+                                            <th style="color: black; background-color: #f8f9fa;">Trạng thái</th>
+                                            <th style="color: black; background-color: #f8f9fa;">Ngày tạo</th>
                                         </tr>
                                     </thead>
-
                                     <tbody>
                                         <tr>
                                             <td>
@@ -127,6 +126,7 @@
     @includeIf('backend.footer')
 </div>
 @endsection
+
 @push('scripts')
 <script>
     $(document).ready(function () {
@@ -147,5 +147,3 @@
     });
 </script>
 @endpush
-@endsection
-
