@@ -4,7 +4,7 @@ use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Client\ProductController;
-
+use App\Http\Controllers\Admin\BlogController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -148,16 +148,16 @@ Route::get('/admin/list-page', function () {
 });
 
 // Admin
-// quan li san pham 
 Route::prefix('admin')->group(function () {
     // Quản lý đánh giá
     Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');
-});
-
-// quan li blog
-Route::get('/admin/blogs', function () {
-    return view('backend.blogs.index');
-});
-Route::get('/admin/blogs/create', function () {
-    return view('backend.blogs.create');
+    
+    // Quản lý blog
+    Route::get('/blogs', [BlogController::class, 'index'])->name('admin.blogs.index');
+    Route::get('/blogs/create', [BlogController::class, 'create'])->name('admin.blogs.create');
+    Route::post('/blogs', [BlogController::class, 'store'])->name('admin.blogs.store');
+    Route::get('/blogs/{blog}', [BlogController::class, 'show'])->name('admin.blogs.show');
+    Route::get('/blogs/{blog}/edit', [BlogController::class, 'edit'])->name('admin.blogs.edit');
+    Route::put('/blogs/{blog}', [BlogController::class, 'update'])->name('admin.blogs.update');
+    Route::delete('/blogs/{blog}', [BlogController::class, 'destroy'])->name('admin.blogs.destroy');
 });

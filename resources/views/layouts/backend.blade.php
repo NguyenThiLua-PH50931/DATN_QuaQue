@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-
+<!-- Mirrored from themes.pixelstrap.com/fastkart/back-end/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 06 Nov 2024 14:35:16 GMT -->
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -56,6 +56,7 @@
 
     </div>
 </div>
+
                 <form class="form-inline search-full" action="javascript:void(0)" method="get">
                     <div class="form-group w-100">
                         <div class="Typeahead Typeahead--twitterUsers">
@@ -438,7 +439,6 @@
                         <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
                         <button type="button" class="btn  btn--yes btn-primary">Yes</button>
                     </div>
-
 <!-- Logout Modal -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
      aria-labelledby="staticBackdropLabel" aria-hidden="true">
