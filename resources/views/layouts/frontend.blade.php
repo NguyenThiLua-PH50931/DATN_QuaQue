@@ -315,7 +315,7 @@
                                                 <ul class="user-box-name">
                                                     <li class="product-box-contain">
                                                         <i></i>
-                                                        <a href="login.html">Log In</a>
+                                                        <a href="{{ route('Login') }}">Log In</a>
                                                     </li>
 
                                                     <li class="product-box-contain">
@@ -1150,7 +1150,7 @@
     <!-- mobile fix menu end -->
 
     {{-- Contents --}}
-    @yield('contents')
+    @yield('content')
 
     <!-- Footer Section Start -->
     <footer class="section-t-space">

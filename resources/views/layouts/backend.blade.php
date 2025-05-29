@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-<<<<<<< HEAD
-<!-- Mirrored from themes.pixelstrap.com/fastkart/back-end/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 06 Nov 2024 14:35:16 GMT -->
-=======
->>>>>>> 327c54a144eb67652fc1cc6ed4f366e4cf2c0b73
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -59,8 +56,6 @@
 
     </div>
 </div>
-
-<<<<<<< HEAD
                 <form class="form-inline search-full" action="javascript:void(0)" method="get">
                     <div class="form-group w-100">
                         <div class="Typeahead Typeahead--twitterUsers">
@@ -358,7 +353,7 @@
                                 </li>
 
                                 <li class="sidebar-list">
-                                    <a class="sidebar-link sidebar-title link-nav" href="product-review.html">
+                                    <a class="sidebar-link sidebar-title link-nav" href="{{ route('reviews.index') }}">
                                         <i class="ri-star-line"></i>
                                         <span>Product Review</span>
                                     </a>
@@ -443,7 +438,7 @@
                         <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
                         <button type="button" class="btn  btn--yes btn-primary">Yes</button>
                     </div>
-=======
+
 <!-- Logout Modal -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
      aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -456,7 +451,6 @@
                 <div class="button-box">
                     <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
                     <button type="button" class="btn btn--yes btn-primary">Yes</button>
->>>>>>> 327c54a144eb67652fc1cc6ed4f366e4cf2c0b73
                 </div>
             </div>
         </div>

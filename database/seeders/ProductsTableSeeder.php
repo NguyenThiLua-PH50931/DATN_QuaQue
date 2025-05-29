@@ -17,7 +17,7 @@ class ProductsTableSeeder extends Seeder
 
         $products = [
             [
-                'seller_id' => 1,
+                'seller_id' => 2,
                 'category_id' => 2,
                 'region_id' => 1,
                 'name' => 'Đặc sản mắm tôm Hạ Long',
@@ -35,7 +35,7 @@ class ProductsTableSeeder extends Seeder
                 'updated_at' => $now,
             ],
             [
-                'seller_id' => 2,
+                'seller_id' => 4,
                 'category_id' => 3,
                 'region_id' => 3,
                 'name' => 'Trà Shan Tuyết cổ thụ Tuyên Quang',
