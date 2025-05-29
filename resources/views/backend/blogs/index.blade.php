@@ -14,13 +14,7 @@
                                         <div class="right-options">
                                             <ul>
                                                 <li>
-                                                    <a href="javascript:void(0)">import</a>
-                                                </li>
-                                                <li>
-                                                    <a href="javascript:void(0)">Export</a>
-                                                </li>
-                                                <li>
-                                                    <a class="btn btn-solid" href="{{ url('/admin/blogs/create') }}">Add Product</a>
+                                                    <a class="btn btn-solid" href="{{ url('/admin/blogs/create') }}">Add Blog</a>
                                                 </li>
                                             </ul>
                                         </div>
