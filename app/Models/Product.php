@@ -37,6 +37,10 @@ class Product extends Model
     }
     public function reviews()
     {
-        return $this->hasMany(\App\Models\Review::class);
+        return $this->hasMany(\App\Models\Review::class)->latest();
+    }
+    public function variants()
+    {
+        return $this->hasMany(\App\Models\Variant::class);
     }
 }

@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Client\ProductController;
+use App\Http\Controllers\Admin\ProductController as AdminProductController;
 
 
 use Illuminate\Support\Facades\Route;
@@ -63,13 +64,13 @@ Route::get('/admin', function () {
     return view('backend.dashboard');
 });
 // product
-Route::get('/admin/products', function () {
-    return view('backend.products.index');
-});
+// Route::get('/admin/products', function () {
+//     return view('backend.products.index');
+// });
 
-Route::get('/admin/products/create', function () {
-    return view('backend.products.create');
-});
+// Route::get('/admin/products/create', function () {
+//     return view('backend.products.create');
+// });
 
 
 // cate
@@ -152,4 +153,12 @@ Route::get('/admin/list-page', function () {
 Route::prefix('admin')->group(function () {
     // Quản lý đánh giá
     Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');
+    // product
+    Route::get('/products', [AdminProductController::class, 'index'])->name('products.index');
+    Route::get('/products/create', [AdminProductController::class, 'create'])->name('products.create');
+    Route::get('/products/{slug}', [AdminProductController::class, 'show'])->name('products.show');
+    Route::post('/admin/products/{id}/toggle', [AdminProductController::class, 'toggleStatus'])->name('admin.products.toggle');
+    Route::post('/admin/variants/{id}/toggle', [AdminProductController::class, 'toggleVariantStatus'])->name('admin.variants.toggle');
+    Route::post('/admin/products/bulk-delete', [AdminProductController::class, 'bulkDelete'])->name('admin.products.bulkDelete');
+    Route::delete('/admin/products/{id}', [AdminProductController::class, 'destroy'])->name('admin.products.destroy');
 });
