@@ -9,8 +9,9 @@
     <meta name="description" content="Fastkart">
     <meta name="keywords" content="Fastkart">
     <meta name="author" content="Fastkart">
-    <link rel="icon" href="../frontend/assets/images/favicon/1.png" type="image/x-icon">
+    <link rel="icon" href="{{ asset('frontend/assets/images/favicon/1.png') }}" type="image/x-icon">
     <title>@yield('title')</title>
+    <link href="{{ asset('frontend/assets/css/style.css') }}" rel="stylesheet">
 
     <!-- Google font -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -23,28 +24,30 @@
         href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
         rel="stylesheet">
 
+
     <!-- bootstrap css -->
-    <link id="rtl-link" rel="stylesheet" type="text/css" href="../frontend/assets/css/vendors/bootstrap.css">
+    <link id="rtl-link" rel="stylesheet" type="text/css" href="{{ asset('frontend/assets/css/vendors/bootstrap.css') }}">
+
 
     <!-- wow css -->
-    <link rel="stylesheet" href="../frontend/assets/css/animate.min.css" />
+    <link rel="stylesheet" href="{{ asset('frontend/assets/css/animate.min.css') }}" />
 
     <!-- font-awesome css -->
-    <link rel="stylesheet" type="text/css" href="../frontend/assets/css/vendors/font-awesome.css">
+    <link rel="stylesheet" type="text/css" href="{{ asset('frontend/assets/css/vendors/font-awesome.css') }}">
 
     <!-- feather icon css -->
-    <link rel="stylesheet" type="text/css" href="../frontend/assets/css/vendors/feather-icon.css">
+    <link rel="stylesheet" type="text/css" href="{{ asset('frontend/assets/css/vendors/feather-icon.css') }}">
 
     <!-- slick css -->
-    <link rel="stylesheet" type="text/css" href="../frontend/assets/css/vendors/slick/slick.css">
-    <link rel="stylesheet" type="text/css" href="../frontend/assets/css/vendors/slick/slick-theme.css">
+    <link rel="stylesheet" type="text/css" href="{{ asset('frontend/assets/css/vendors/slick/slick.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('frontend/assets/css/vendors/slick/slick-theme.css') }}">
 
     <!-- Iconly css -->
-    <link rel="stylesheet" type="text/css" href="../frontend/assets/css/bulk-style.css">
-    <link rel="stylesheet" type="text/css" href="../frontend/assets/css/vendors/animate.css">
+    <link rel="stylesheet" type="text/css" href="{{ asset('frontend/assets/css/bulk-style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('frontend/assets/css/vendors/animate.css') }}">
 
     <!-- Template css -->
-    <link id="color-link" rel="stylesheet" type="text/css" href="../frontend/assets/css/style.css">
+    <link id="color-link" rel="stylesheet" type="text/css" href="{{ asset('frontend/assets/css/style.css') }}">
 </head>
 
 <body class="bg-effect">
@@ -103,28 +106,28 @@
                                 <div class="dropdown theme-form-select">
                                     <button class="btn dropdown-toggle" type="button" id="select-language"
                                         data-bs-toggle="dropdown" aria-expanded="false">
-                                        <img src="../frontend/assets/images/country/united-states.png"
+                                        <img src="{{ asset('frontend/assets/images/country/united-states.png') }}"
                                             class="img-fluid blur-up lazyload" alt="">
                                         <span>English</span>
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="select-language">
                                         <li>
                                             <a class="dropdown-item" href="javascript:void(0)" id="english">
-                                                <img src="../frontend/assets/images/country/united-kingdom.png"
+                                                <img src="{{ asset('frontend/assets/images/country/united-kingdom.png') }}"
                                                     class="img-fluid blur-up lazyload" alt="">
                                                 <span>English</span>
                                             </a>
                                         </li>
                                         <li>
                                             <a class="dropdown-item" href="javascript:void(0)" id="france">
-                                                <img src="../frontend/assets/images/country/germany.png"
+                                                <img src="{{ asset('frontend/assets/images/country/germany.png') }}"
                                                     class="img-fluid blur-up lazyload" alt="">
                                                 <span>Germany</span>
                                             </a>
                                         </li>
                                         <li>
                                             <a class="dropdown-item" href="javascript:void(0)" id="chinese">
-                                                <img src="../frontend/assets/images/country/turkish.png"
+                                                <img src="{{ asset('frontend/assets/images/country/turkish.png') }}"
                                                     class="img-fluid blur-up lazyload" alt="">
                                                 <span>Turki</span>
                                             </a>
@@ -170,7 +173,7 @@
                                 </span>
                             </button>
                             <a href="{{ url('/') }}" class="web-logo nav-logo">
-                                <img src="../frontend/assets/images/logo/1.png" class="img-fluid blur-up lazyload"
+                                <img src="{{ asset('frontend/assets/images/logo/1.png') }}" class="img-fluid blur-up lazyload"
                                     alt="">
                             </a>
 
@@ -252,7 +255,7 @@
                                                     <li class="product-box-contain">
                                                         <div class="drop-cart">
                                                             <a href="product-left-thumbnail.html" class="drop-image">
-                                                                <img src="../frontend/assets/images/vegetable/product/1.png"
+                                                                <img src="{{ asset('frontend/assets/images/vegetable/product/1.png') }}"
                                                                     class="blur-up lazyload" alt="">
                                                             </a>
 
@@ -271,7 +274,7 @@
                                                     <li class="product-box-contain">
                                                         <div class="drop-cart">
                                                             <a href="product-left-thumbnail.html" class="drop-image">
-                                                                <img src="../frontend/assets/images/vegetable/product/2.png"
+                                                                <img src="{{ asset('frontend/assets/images/vegetable/product/2.png') }}"
                                                                     class="blur-up lazyload" alt="">
                                                             </a>
 
@@ -315,16 +318,16 @@
                                             </div>
                                         </div>
 
-                                        <div class="onhover-div onhover-div-login">
-                                            <ul class="user-box-name">
-                                                <li class="product-box-contain">
-                                                    <i></i>
-                                                    <a href="login.html">Log In</a>
-                                                </li>
+                                            <div class="onhover-div onhover-div-login">
+                                                <ul class="user-box-name">
+                                                    <li class="product-box-contain">
+                                                        <i></i>
+                                                        <a href="login.html">Log In</a>
+                                                    </li>
 
-                                                <li class="product-box-contain">
-                                                    <a href="sign-up.html">Register</a>
-                                                </li>
+                                                    <li class="product-box-contain">
+                                                        <a href="sign-up.html">Register</a>
+                                                    </li>
 
                                                 <li class="product-box-contain">
                                                     <a href="forgot.html">Forgot Password</a>
@@ -361,7 +364,7 @@
                                 <ul class="category-list">
                                     <li class="onhover-category-list">
                                         <a href="javascript:void(0)" class="category-name">
-                                            <img src="../frontend/assets/svg/1/vegetable.svg" alt="">
+                                            <img src="{{ asset('frontend/assets/svg/1/vegetable.svg') }}" alt="">
                                             <h6>Vegetables & Fruit</h6>
                                             <i class="fa-solid fa-angle-right"></i>
                                         </a>
@@ -429,7 +432,7 @@
 
                                     <li class="onhover-category-list">
                                         <a href="javascript:void(0)" class="category-name">
-                                            <img src="../frontend/assets/svg/1/cup.svg" alt="">
+                                            <img src="{{ asset('frontend/assets/svg/1/cup.svg') }}" alt="">
                                             <h6>Beverages</h6>
                                             <i class="fa-solid fa-angle-right"></i>
                                         </a>
@@ -468,7 +471,7 @@
 
                                     <li class="onhover-category-list">
                                         <a href="javascript:void(0)" class="category-name">
-                                            <img src="../frontend/assets/svg/1/meats.svg" alt="">
+                                            <img src="{{ asset('frontend/assets/svg/1/meats.svg') }}" alt="">
                                             <h6>Meats & Seafood</h6>
                                             <i class="fa-solid fa-angle-right"></i>
                                         </a>
@@ -527,7 +530,7 @@
 
                                     <li class="onhover-category-list">
                                         <a href="javascript:void(0)" class="category-name">
-                                            <img src="../frontend/assets/svg/1/breakfast.svg" alt="">
+                                            <img src="{{ asset('frontend/assets/svg/1/breakfast.svg') }}" alt="">
                                             <h6>Breakfast & Dairy</h6>
                                             <i class="fa-solid fa-angle-right"></i>
                                         </a>
@@ -601,7 +604,7 @@
 
                                     <li class="onhover-category-list">
                                         <a href="javascript:void(0)" class="category-name">
-                                            <img src="../frontend/assets/svg/1/frozen.svg" alt="">
+                                            <img src="{{ asset('frontend/assets/svg/1/frozen.svg') }}" alt="">
                                             <h6>Frozen Foods</h6>
                                             <i class="fa-solid fa-angle-right"></i>
                                         </a>
@@ -634,7 +637,7 @@
 
                                     <li class="onhover-category-list">
                                         <a href="javascript:void(0)" class="category-name">
-                                            <img src="../frontend/assets/svg/1/biscuit.svg" alt="">
+                                            <img src="{{ asset('frontend/assets/svg/1/biscuit.svg') }}" alt="">
                                             <h6>Biscuits & Snacks</h6>
                                             <i class="fa-solid fa-angle-right"></i>
                                         </a>
@@ -687,7 +690,7 @@
 
                                     <li class="onhover-category-list">
                                         <a href="javascript:void(0)" class="category-name">
-                                            <img src="../frontend/assets/svg/1/grocery.svg" alt="">
+                                            <img src="{{ asset('frontend/assets/svg/1/grocery.svg') }}" alt="">
                                             <h6>Grocery & Staples</h6>
                                             <i class="fa-solid fa-angle-right"></i>
                                         </a>
@@ -1174,7 +1177,7 @@
     <!-- mobile fix menu end -->
 
     {{-- Contents --}}
-    @yield('contents')
+    @yield('content')
 
     <!-- Footer Section Start -->
     <footer class="section-t-space">
@@ -1185,12 +1188,9 @@
                         <div class="service-contain">
                             <div class="service-box">
                                 <div class="service-image">
-<<<<<<< HEAD
                                     <img src="https://themes.pixelstrap.com/fastkart/assets/svg/product.svg"
                                         class="blur-up lazyload" alt="">
-=======
-                                    <img src="https://themes.pixelstrap.com/fastkart/assets/svg/product.svg" class="blur-up lazyload" alt="">
->>>>>>> 7f67187922664837afff60d17cb9a05ed19f5fc8
+
                                 </div>
 
                                 <div class="service-detail">
@@ -1200,12 +1200,8 @@
 
                             <div class="service-box">
                                 <div class="service-image">
-<<<<<<< HEAD
                                     <img src="https://themes.pixelstrap.com/fastkart/assets/svg/delivery.svg"
                                         class="blur-up lazyload" alt="">
-=======
-                                    <img src="https://themes.pixelstrap.com/fastkart/assets/svg/delivery.svg" class="blur-up lazyload" alt="">
->>>>>>> 7f67187922664837afff60d17cb9a05ed19f5fc8
                                 </div>
 
                                 <div class="service-detail">
@@ -1248,7 +1244,7 @@
                             <div class="theme-logo">
                                 <a href="index.html">
 
-                                    <img src="../frontend/assets/images/logo/1.png" class="blur-up lazyload"
+                                    <img src="{{ asset('frontend/assets/images/logo/1.png') }}" class="blur-up lazyload"
                                         alt="">
 
                                 </a>
@@ -1416,7 +1412,7 @@
                 </div>
 
                 <div class="payment">
-                    <img src="../frontend/assets/images/payment/1.png" class="blur-up lazyload" alt="">
+                    <img src="{{ asset('frontend/assets/images/payment/1.png') }}" class="blur-up lazyload" alt="">
                 </div>
 
                 <div class="social-link">
@@ -1463,7 +1459,7 @@
                         <div class="col-lg-6">
                             <div class="slider-image">
 
-                                <img src="../frontend/assets/images/product/category/1.jpg"
+                                <img src="{{ asset('frontend/assets/images/product/category/1.jpg') }}"
                                     class="img-fluid blur-up lazyload" alt="">
                             </div>
                         </div>
@@ -1658,7 +1654,7 @@
     <div class="cookie-bar-box">
         <div class="cookie-box">
             <div class="cookie-image">
-                <img src="../frontend/assets/images/cookie-bar.png" class="blur-up lazyload" alt="">
+                <img src="{{ asset('frontend/assets/images/cookie-bar.png') }}" class="blur-up lazyload" alt="">
                 <h2>Cookies!</h2>
             </div>
 
@@ -1693,7 +1689,7 @@
                             <li class="list-1">
                                 <div class="deal-offer-contain">
                                     <a href="shop-left-sidebar.html" class="deal-image">
-                                        <img src="../frontend/assets/images/vegetable/product/10.png"
+                                        <img src="{{ asset('frontend/assets/images/vegetable/product/10.png') }}"
                                             class="blur-up lazyload" alt="">
 
                                     </a>
@@ -1709,7 +1705,7 @@
                                 <div class="deal-offer-contain">
                                     <a href="shop-left-sidebar.html" class="deal-image">
 
-                                        <img src="../frontend/assets/images/vegetable/product/11.png"
+                                        <img src="{{ asset('frontend/assets/images/vegetable/product/11.png') }}"
                                             class="blur-up lazyload" alt="">
 
                                     </a>
@@ -1725,7 +1721,7 @@
                                 <div class="deal-offer-contain">
                                     <a href="shop-left-sidebar.html" class="deal-image">
 
-                                        <img src="../frontend/assets/images/vegetable/product/12.png"
+                                        <img src="{{ asset('frontend/assets/images/vegetable/product/12.png') }}"
 
                                     </a>
 
@@ -1740,7 +1736,7 @@
                                 <div class="deal-offer-contain">
                                     <a href="shop-left-sidebar.html" class="deal-image">
 
-                                        <img src="../frontend/assets/images/vegetable/product/13.png"
+                                        <img src="{{ asset('frontend/assets/images/vegetable/product/13.png') }}"
                                             class="blur-up lazyload" alt="">
 
                                     </a>
@@ -1819,51 +1815,50 @@
     <!-- Bg overlay End -->
 
     <!-- latest jquery-->
-    <script src="../frontend/assets/js/jquery-3.6.0.min.js"></script>
+    <script src="{{ asset('frontend/assets/js/jquery-3.6.0.min.js') }}"></script>
 
     <!-- jquery ui-->
-    <script src="../frontend/assets/js/jquery-ui.min.js"></script>
+    <script src="{{ asset('frontend/assets/js/jquery-ui.min.js') }}"></script>
 
     <!-- Bootstrap js-->
-    <script src="../frontend/assets/js/bootstrap/bootstrap.bundle.min.js"></script>
-    <script src="../frontend/assets/js/bootstrap/bootstrap-notify.min.js"></script>
-    <script src="../frontend/assets/js/bootstrap/popper.min.js"></script>
+    <script src="{{ asset('frontend/assets/js/bootstrap/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('frontend/assets/js/bootstrap/bootstrap-notify.min.js') }}"></script>
+    <script src="{{ asset('frontend/assets/js/bootstrap/popper.min.js') }}"></script>
 
     <!-- feather icon js-->
-    <script src="../frontend/assets/js/feather/feather.min.js"></script>
-    <script src="../frontend/assets/js/feather/feather-icon.js"></script>
+    <script src="{{ asset('frontend/assets/js/feather/feather.min.js') }}"></script>
+    <script src="{{ asset('frontend/assets/js/feather/feather-icon.js') }}"></script>
 
     <!-- Lazyload Js -->
-    <script src="../frontend/assets/js/lazysizes.min.js"></script>
+    <script src="{{ asset('frontend/assets/js/lazysizes.min.js') }}"></script>
 
     <!-- Slick js-->
-    <script src="../frontend/assets/js/slick/slick.js"></script>
-    <script src="../frontend/assets/js/slick/slick-animation.min.js"></script>
-    <script src="../frontend/assets/js/slick/custom_slick.js"></script>
+    <script src="{{ asset('frontend/assets/js/slick/slick.js') }}"></script>
+    <script src="{{ asset('frontend/assets/js/slick/slick-animation.min.js') }}"></script>
+    <script src="{{ asset('frontend/assets/js/slick/custom_slick.js') }}"></script>
 
     <!-- Auto Height Js -->
-    <script src="../frontend/assets/js/auto-height.js"></script>
+    <script src="{{ asset('frontend/assets/js/auto-height.js') }}"></script>
 
     <!-- Timer Js -->
-    <script src="../frontend/assets/js/timer1.js"></script>
+    <script src="{{ asset('frontend/assets/js/timer1.js') }}"></script>
 
     <!-- Fly Cart Js -->
-    <script src="../frontend/assets/js/fly-cart.js"></script>
+    <script src="{{ asset('frontend/assets/js/fly-cart.js') }}"></script>
 
     <!-- Quantity js -->
-    <script src="../frontend/assets/js/quantity-2.js"></script>
+    <script src="{{ asset('frontend/assets/js/quantity-2.js') }}"></script>
 
     <!-- WOW js -->
-    <script src="../frontend/assets/js/wow.min.js"></script>
-    <script src="../frontend/assets/js/custom-wow.js"></script>
+    <script src="{{ asset('frontend/assets/js/wow.min.js') }}"></script>
+    <script src="{{ asset('frontend/assets/js/custom-wow.js') }}"></script>
 
     <!-- script js -->
-    <script src="../frontend/assets/js/script.js"></script>
+    <script src="{{ asset('frontend/assets/js/script.js') }}"></script>
 
     <!-- theme setting js -->
-    <script src="../frontend/assets/js/theme-setting.js"></script>
+    <script src="{{ asset('frontend/assets/js/theme-setting.js') }}"></script>
 </body>
 
 
 </html>
-
