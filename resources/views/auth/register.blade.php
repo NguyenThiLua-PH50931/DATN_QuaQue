@@ -1,10 +1,6 @@
 @extends('layouts.frontend')
 @section('title', 'Đăng ký')
-<<<<<<< HEAD
-@section('contents')
-=======
 @section('content')
->>>>>>> main
     <!-- log in section start -->
     <section class="log-in-section section-b-space">
         <div class="container-fluid-lg w-100">
