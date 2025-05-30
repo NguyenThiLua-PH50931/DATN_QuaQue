@@ -1,8 +1,16 @@
 <?php
 
+
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\User\UserController;
+
+use App\Http\Controllers\Admin\CommentController;
+
+use App\Http\Controllers\Admin\HomeController;
+use App\Http\Controllers\Admin\User\UserController;
+
+
 use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Client\ClientHomeController;
 
@@ -11,6 +19,8 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Client\ProductController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
+
+
 use Illuminate\Support\Facades\Route;
 
 // CLIENT
@@ -71,6 +81,7 @@ Route::post('/login', [LoginController::class, 'checklogin'])->name('checklogin'
 //-----------------------------------------------------------------
 
 // ADMIN:
+
 Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
 
     Route::get('home', [HomeController::class, 'home'])->name('home');
@@ -84,6 +95,22 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
 // Route::post('bulk-delete', [AdminProductController::class, 'bulkDelete'])->name('admin.products.bulkDelete');
 //         Route::delete('{id}', [AdminProductController::class, 'destroy'])->name('admin.products.destroy');
 //     });
+
+Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin'], function () {
+
+    Route::get('home', [HomeController::class, 'home'])->name('home');
+    // Product
+    Route::group(['prefix' => 'product', 'as' => 'product.'], function () {
+        // // product
+        // Route::get('/admin/products', function () {
+        //     return view('backend.products.index');
+        // });
+
+        // Route::get('/admin/products/create', function () {
+        //     return view('backend.products.create');
+        // });
+    });
+
 
     // Category
     Route::group(['prefix' => 'category', 'as' => 'category.'], function () {
@@ -104,6 +131,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
 
     // Order
     Route::group(['prefix' => 'order', 'as' => 'order.'], function () {});
+
 
 
     // User
@@ -137,6 +165,37 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::delete('destroy/{blog}', [BlogController::class, 'destroy'])->name('destroy');
     });
 
+
+    // User
+    Route::group(['prefix' => 'user', 'as' => 'user.'], function () {
+        Route::get('index', [UserController::class, 'index'])->name('index');
+        // Thêm mới
+        Route::get('create', [UserController::class, 'create'])->name('create');
+        Route::post('store', [UserController::class, 'store'])->name('store');
+        // Ẩn hiện tài khoản:
+        Route::get('toggle-status/{id}', [UserController::class, 'toggleStatus'])->name('toggleStatus');
+        Route::get('hidden', [UserController::class, 'hidden'])->name('hidden');
+        // Xóa tài khoản:
+        Route::delete('delete/{id}', [UserController::class, 'delete'])->name('delete');
+        // // roles
+        // Route::get('/admin/roles', function () {
+        //     return view('backend.roles.index');
+        // });
+        // Route::get('/admin/roles/create', function () {
+        //     return view('backend.roles.create');
+        // });
+    });
+
+    // comments
+    
+Route::get('/comments', [CommentController::class, 'index'])->name('comments.index');
+Route::get('/comments/{id}/edit', [CommentController::class, 'edit'])->name('comments.edit');
+Route::put('/comments/{id}', [CommentController::class, 'update'])->name('comments.update');
+Route::delete('/comments/{id}', [CommentController::class, 'destroy'])->name('comments.destroy');
+Route::post('/comments/{id}/approve', [CommentController::class, 'approve'])->name('comments.approve');
+Route::post('/comments/{id}/reject', [CommentController::class, 'reject'])->name('comments.reject');
+Route::post('/comments/{id}/reply', [CommentController::class, 'reply'])->name('comments.reply');
+
 });
 
 
@@ -144,6 +203,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
 // // media
 // Route::get('/admin/media', function () {
 //     return view('backend.media.index');
+
 // });
 // // order
 // Route::get('/admin/orders', function () {
@@ -154,9 +214,68 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
 // });
 // Route::get('/admin/orders/tracking', function () {
 // quan li san pham 
+
+// });
+// // order
+// Route::get('/admin/orders', function () {
+//     return view('backend.orders.index');
+// });
+// Route::get('/admin/orders/detail', function () {
+//     return view('backend.orders.show');
+// });
+// Route::get('/admin/orders/tracking', function () {
+//     return view('backend.orders.tracking');
+// });
+// // coupons
+// Route::get('/admin/coupons', function () {
+//     return view('backend.coupons.index');
+// });
+// Route::get('/admin/coupons/create', function () {
+//     return view('backend.coupons.create');
+// });
+// // tax
+// Route::get('/admin/taxes', function () {
+//     return view('backend.taxes.index');
+// });
+// // product-review
+// // Route::get('/admin/product-review', function () {
+// //     return view('backend.product-review.index');
+// // });
+// // support-ticket
+// Route::get('/admin/support-ticket', function () {
+//     return view('backend.support-ticket.index');
+// });
+// // profile-setting
+// Route::get('/admin/profile-setting', function () {
+//     return view('backend.profile-setting.index');
+// });
+// // reports
+// Route::get('/admin/reports', function () {
+//     return view('backend.reports.index');
+// });
+// // list-page
+// Route::get('/admin/list-page', function () {
+//     return view('backend.list-page.index');
+// });
+
+// Admin
+// quan li san pham
+
 Route::prefix('admin')->group(function () {
     // Quản lý đánh giá
     Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');
     // product
 
+
 });
+
+    Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+    Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
+    Route::get('/products/{slug}', [ProductController::class, 'show'])->name('products.show');
+    Route::post('/admin/products/{id}/toggle', [ProductController::class, 'toggleStatus'])->name('admin.products.toggle');
+    Route::post('/admin/variants/{id}/toggle', [ProductController::class, 'toggleVariantStatus'])->name('admin.variants.toggle');
+    Route::post('/admin/products/bulk-delete', [ProductController::class, 'bulkDelete'])->name('admin.products.bulkDelete');
+    Route::delete('/admin/products/{id}', [ProductController::class, 'destroy'])->name('admin.products.destroy');
+});
+
+
