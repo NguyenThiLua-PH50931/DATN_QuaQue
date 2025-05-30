@@ -70,11 +70,12 @@
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                             <i class="ri-user-3-line"></i>
-                            <span>Users</span>
+                            <span>Người dùng</span>
                         </a>
                         <ul class="sidebar-submenu">
-                            <li><a href="{{ url('/admin/users') }}">All Users</a></li>
-                            <li><a href="{{ url('/admin/users/create') }}">Add New User</a></li>
+                            <li><a href="{{ route('admin.user.index') }}">Tài khoản</a></li>
+                            <li><a href="{{ route('admin.user.create') }}">Thêm tài khoản</a></li>
+                            <li><a href="{{ route('admin.user.hidden') }}">Tài khoản đã ẩn</a></li>
                         </ul>
                     </li>
 
