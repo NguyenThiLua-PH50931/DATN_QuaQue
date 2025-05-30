@@ -7,13 +7,13 @@ use App\Models\Comment;
 use App\Models\CommentReply;
 use Illuminate\Http\Request;
 
-class AdminCommentController extends Controller
+class CommentController extends Controller
 {
-    // public function __construct()
-    // {
-    //     $this->middleware('auth');
-    //     $this->middleware('checkAdmin');
-    // }
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('checkAdmin');
+    }
 
    public function index(Request $request)
 {
