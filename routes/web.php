@@ -127,6 +127,17 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         //     return view('backend.roles.create');
         // });
     });
+
+    // comments
+    
+Route::get('/comments', [CommentController::class, 'index'])->name('comments.index');
+Route::get('/comments/{id}/edit', [CommentController::class, 'edit'])->name('comments.edit');
+Route::put('/comments/{id}', [CommentController::class, 'update'])->name('comments.update');
+Route::delete('/comments/{id}', [CommentController::class, 'destroy'])->name('comments.destroy');
+Route::post('/comments/{id}/approve', [CommentController::class, 'approve'])->name('comments.approve');
+Route::post('/comments/{id}/reject', [CommentController::class, 'reject'])->name('comments.reject');
+Route::post('/comments/{id}/reply', [CommentController::class, 'reply'])->name('comments.reply');
+
 });
 
 
@@ -191,14 +202,4 @@ Route::prefix('admin')->group(function () {
     Route::post('/admin/products/bulk-delete', [ProductController::class, 'bulkDelete'])->name('admin.products.bulkDelete');
     Route::delete('/admin/products/{id}', [ProductController::class, 'destroy'])->name('admin.products.destroy');
 });
-// comments
 
-Route::prefix('admin')->middleware(['auth', 'checkAdmin'])->group(function () {
-    Route::get('/comments', [CommentController::class, 'index'])->name('admin.comments.index');
-    Route::get('/comments/{id}/edit', [CommentController::class, 'edit'])->name('admin.comments.edit');
-    Route::put('/comments/{id}', [CommentController::class, 'update'])->name('admin.comments.update');
-    Route::delete('/comments/{id}', [CommentController::class, 'destroy'])->name('admin.comments.destroy');
-    Route::post('/comments/{id}/approve', [CommentController::class, 'approve'])->name('admin.comments.approve');
-    Route::post('/comments/{id}/reject', [CommentController::class, 'reject'])->name('admin.comments.reject');
-    Route::post('/comments/{id}/reply', [CommentController::class, 'reply'])->name('admin.comments.reply');
-});

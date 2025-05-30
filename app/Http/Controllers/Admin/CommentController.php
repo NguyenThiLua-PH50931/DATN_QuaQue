@@ -9,11 +9,7 @@ use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-        $this->middleware('checkAdmin');
-    }
+   
 
    public function index(Request $request)
 {
@@ -98,6 +94,8 @@ class CommentController extends Controller
         CommentReply::create([
             'comment_id' => $id,
             'admin_id' => auth()->id(),
+
+
             'reply' => $request->reply,
         ]);
 
