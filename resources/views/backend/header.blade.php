@@ -5,7 +5,8 @@
             <div class="logo-wrapper">
                 <a href="{{ url('/admin') }}">
                     <img class="img-fluid main-logo" src="{{ asset('backend/assets/images/logo/1.png') }}" alt="logo">
-                    <img class="img-fluid white-logo" src="{{ asset('backend/assets/images/logo/1-white.png') }}" alt="logo">
+                    <img class="img-fluid white-logo" src="{{ asset('backend/assets/images/logo/1-white.png') }}"
+                        alt="logo">
                 </a>
             </div>
             <div class="toggle-sidebar">
@@ -51,16 +52,20 @@
                             <h6 class="f-18 mb-0">Notifications</h6>
                         </li>
                         <li>
-                            <p><i class="fa fa-circle me-2 font-primary"></i>Delivery processing <span class="pull-right">10 min.</span></p>
+                            <p><i class="fa fa-circle me-2 font-primary"></i>Delivery processing <span
+                                    class="pull-right">10 min.</span></p>
                         </li>
                         <li>
-                            <p><i class="fa fa-circle me-2 font-success"></i>Order Complete <span class="pull-right">1 hr</span></p>
+                            <p><i class="fa fa-circle me-2 font-success"></i>Order Complete <span class="pull-right">1
+                                    hr</span></p>
                         </li>
                         <li>
-                            <p><i class="fa fa-circle me-2 font-info"></i>Tickets Generated <span class="pull-right">3 hr</span></p>
+                            <p><i class="fa fa-circle me-2 font-info"></i>Tickets Generated <span class="pull-right">3
+                                    hr</span></p>
                         </li>
                         <li>
-                            <p><i class="fa fa-circle me-2 font-danger"></i>Delivery Complete <span class="pull-right">6 hr</span></p>
+                            <p><i class="fa fa-circle me-2 font-danger"></i>Delivery Complete <span class="pull-right">6
+                                    hr</span></p>
                         </li>
                         <li>
                             <a class="btn btn-primary" href="javascript:void(0)">Check all notifications</a>
@@ -76,12 +81,19 @@
 
                 <li class="profile-nav onhover-dropdown pe-0 me-0">
                     <div class="media profile-media">
-                        <img class="user-profile rounded-circle" src="{{ asset('backend/assets/images/users/4.jpg') }}" alt="">
+                        <img class="user-profile rounded-circle"
+                            src="{{ Auth::user()->avatar ? asset('storage/avatars/' . Auth::user()->avatar) : asset('backend/assets/images/users/default.jpg') }}"
+                            alt="Avatar người dùng">
+
                         <div class="user-name-hide media-body">
-                            <span>Emay Walter</span>
-                            <p class="mb-0 font-roboto">Admin<i class="middle ri-arrow-down-s-line"></i></p>
+                            <span>{{ Auth::user()->name }}</span>
+                            <p class="mb-0 font-roboto">
+                                {{ ucfirst(Auth::user()->role) }}
+                                <i class="middle ri-arrow-down-s-line"></i>
+                            </p>
                         </div>
                     </div>
+
                     <ul class="profile-dropdown onhover-show-div">
                         <li>
                             <a href="{{ url('/admin/users') }}">
