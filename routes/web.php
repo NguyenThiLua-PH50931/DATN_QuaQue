@@ -5,6 +5,9 @@ use App\Http\Controllers\Admin\CommentController;
 
 use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\User\UserController;
+use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+use App\Http\Controllers\Admin\RegionController as AdminRegionController;
 
 use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Client\ClientHomeController;
@@ -129,15 +132,14 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
     });
 
     // comments
-    
-Route::get('/comments', [CommentController::class, 'index'])->name('comments.index');
-Route::get('/comments/{id}/edit', [CommentController::class, 'edit'])->name('comments.edit');
-Route::put('/comments/{id}', [CommentController::class, 'update'])->name('comments.update');
-Route::delete('/comments/{id}', [CommentController::class, 'destroy'])->name('comments.destroy');
-Route::post('/comments/{id}/approve', [CommentController::class, 'approve'])->name('comments.approve');
-Route::post('/comments/{id}/reject', [CommentController::class, 'reject'])->name('comments.reject');
-Route::post('/comments/{id}/reply', [CommentController::class, 'reply'])->name('comments.reply');
 
+    Route::get('/comments', [CommentController::class, 'index'])->name('comments.index');
+    Route::get('/comments/{id}/edit', [CommentController::class, 'edit'])->name('comments.edit');
+    Route::put('/comments/{id}', [CommentController::class, 'update'])->name('comments.update');
+    Route::delete('/comments/{id}', [CommentController::class, 'destroy'])->name('comments.destroy');
+    Route::post('/comments/{id}/approve', [CommentController::class, 'approve'])->name('comments.approve');
+    Route::post('/comments/{id}/reject', [CommentController::class, 'reject'])->name('comments.reject');
+    Route::post('/comments/{id}/reply', [CommentController::class, 'reply'])->name('comments.reply');
 });
 
 
@@ -193,13 +195,22 @@ Route::post('/comments/{id}/reply', [CommentController::class, 'reply'])->name('
 Route::prefix('admin')->group(function () {
     // Quản lý đánh giá
     Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');
-    // product
-    Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-    Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
-    Route::get('/products/{slug}', [ProductController::class, 'show'])->name('products.show');
-    Route::post('/admin/products/{id}/toggle', [ProductController::class, 'toggleStatus'])->name('admin.products.toggle');
-    Route::post('/admin/variants/{id}/toggle', [ProductController::class, 'toggleVariantStatus'])->name('admin.variants.toggle');
-    Route::post('/admin/products/bulk-delete', [ProductController::class, 'bulkDelete'])->name('admin.products.bulkDelete');
-    Route::delete('/admin/products/{id}', [ProductController::class, 'destroy'])->name('admin.products.destroy');
-});
 
+    // Quản lý sản phẩm
+
+    Route::post('/admin/categories/store-quick', [AdminCategoryController::class, 'storeQuick'])->name('admin.categories.storeQuick');
+    Route::post('/admin/regions/store-quick', [AdminRegionController::class, 'storeQuick'])->name('admin.regions.storeQuick');
+
+    Route::prefix('products')->name('admin.products.')->group(function () {
+        Route::get('/', [AdminProductController::class, 'index'])->name('index');
+        Route::get('/create', [AdminProductController::class, 'create'])->name('create');
+        Route::post('/store', [AdminProductController::class, 'store'])->name('store');
+        Route::get('/{slug}', [AdminProductController::class, 'show'])->name('show');
+        Route::post('/{id}/toggle', [AdminProductController::class, 'toggleStatus'])->name('toggle');
+        Route::post('/variant/{id}/toggle', [AdminProductController::class, 'toggleVariantStatus'])->name('variant.toggle');
+        Route::post('/bulk-delete', [AdminProductController::class, 'bulkDelete'])->name('bulkDelete');
+        Route::delete('/{id}', [AdminProductController::class, 'destroy'])->name('destroy');
+        Route::get('/{slug}/edit', [AdminProductController::class, 'edit'])->name('edit');
+        Route::post('/{slug}/update', [AdminProductController::class, 'update'])->name('update');
+    });
+});
