@@ -1,6 +1,13 @@
 @extends('layouts.backend')
 @section('title', 'Quản lý sản phẩm')
 @section('content')
+@push('styles')
+<link rel="stylesheet" href="//cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+@endpush
+
+@push('styles')
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+@endpush
 <style>
     .product-table-wrapper {
         background: #f8fafd;
@@ -35,6 +42,119 @@
         background: #a78bfa;
         color: #fff;
     }
+
+    .bulk-delete-btn[disabled] {
+        background: #e1e8f3 !important;
+        color: #66708a !important;
+        border: none !important;
+        cursor: not-allowed !important;
+        opacity: 1 !important;
+    }
+
+    .bulk-delete-btn[disabled] .delete-bulk-icon {
+        color: #66708a !important;
+    }
+
+    .bulk-delete-btn:not([disabled]) {
+        background: #becde4 !important;
+        color: #495057 !important;
+        border: none !important;
+        cursor: pointer !important;
+        box-shadow: 0 2px 8px #becde480;
+        transition: background .5s, color .5s;
+    }
+
+    .bulk-delete-btn:not([disabled]) .delete-bulk-icon {
+        color: #495057 !important;
+    }
+
+    .bulk-delete-btn:not([disabled]):hover {
+        background: #aac4e7 !important;
+    }
+
+    /* Base style */
+    .dataTables_paginate .pagination .page-item .page-link {
+        min-width: 36px;
+        height: 36px;
+        font-size: 16px;
+        border-radius: 8px;
+        margin: 0 1.5px;
+        color: #495057;
+        background: none;
+        border: none !important;
+        font-weight: 500;
+        box-shadow: none;
+        transition: background 0.15s, color 0.15s;
+        cursor: pointer;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .dataTables_paginate .pagination .page-item.active .page-link,
+    .dataTables_paginate .pagination .page-item.active .page-link:hover,
+    .dataTables_paginate .pagination .page-item.active .page-link:focus,
+    .dataTables_wrapper .dataTables_paginate .paginate_button.active,
+    .dataTables_wrapper .dataTables_paginate .paginate_button.active:hover,
+    .dataTables_wrapper .dataTables_paginate .paginate_button.active:focus {
+        background: #0da487 !important;
+        border-radius: 7px;
+        color: #fff !important;
+        background-image: none !important;
+        box-shadow: 0 2px 8px #0da48725 !important;
+        border: none !important;
+        outline: none !important;
+    }
+
+
+    .dataTables_paginate .pagination .page-item .page-link {
+        min-width: 28px;
+        /* hoặc 24px nếu muốn nhỏ nữa */
+        height: 28px;
+        font-size: 14px;
+        /* chữ nhỏ hơn */
+        border-radius: 6px;
+        margin: 0 1px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Hover các nút KHÔNG phải active hoặc disabled */
+    .dataTables_paginate .pagination .page-item:not(.active):not(.disabled) .page-link:hover {
+        background: #fff !important;
+        color: #0da487 !important;
+        box-shadow: 0 2px 8px #0da48725;
+        border: none !important;
+    }
+
+    /* Nút disabled */
+    .dataTables_paginate .pagination .page-item.disabled .page-link {
+        color: #e5e7eb !important;
+        background: none !important;
+        pointer-events: none;
+    }
+
+    /* Nút ellipsis (dấu ...) */
+    .dataTables_paginate .pagination .page-item .ellipsis {
+        pointer-events: none;
+        color: #b1bacf !important;
+        background: none !important;
+        font-size: 16px;
+        border: none !important;
+    }
+
+    .dataTables_paginate .pagination .page-item.active .page-link:hover,
+    .dataTables_paginate .pagination .page-item.active .page-link:focus {
+        background: #0da487 !important;
+        color: #fff !important;
+        box-shadow: 0 2px 8px #0da48725 !important;
+        border: none !important;
+        outline: none !important;
+        pointer-events: none;
+    }
 </style>
 <div class="page-body">
     <div class="container-fluid">
@@ -59,7 +179,7 @@
                                 <div class="product-table-wrapper">
                                     <form id="bulk-delete-form" method="POST" action="{{ route('admin.products.bulkDelete') }}">
                                         @csrf
-                                        <table class="table product-table align-middle">
+                                        <table class="table product-table align-middle" id="productTable">
                                             <thead>
                                                 <tr>
                                                     <th><input type="checkbox" id="select-all"></th>
@@ -110,17 +230,22 @@
                                                             data-bs-target="#deleteOneModal"
                                                             data-id="{{ $product->id }}"
                                                             data-name="{{ $product->name }}">
-                                                            <i class="ri-delete-bin-line"></i> 
+                                                            <i class="ri-delete-bin-line"></i>
                                                         </a>
                                                     </td>
                                                 </tr>
                                                 @endforeach
                                             </tbody>
                                         </table>
-
-                                        <button type="button" id="delete-selected" class="btn btn-danger btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#deleteBulkModal" disabled>
-                                            Xóa đã chọn
+                                        <button type="button"
+                                            id="delete-selected"
+                                            class="btn bulk-delete-btn btn-sm mt-2 d-inline-flex align-items-center gap-2"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteBulkModal"
+                                            disabled>
+                                            <i class="ri-delete-bin-line delete-bulk-icon"></i> Xóa
                                         </button>
+
                                     </form>
                                     <div class="mt-2">
                                         {!! $products->links('pagination::bootstrap-5') !!}
@@ -138,6 +263,7 @@
     </div>
     @includeIf('backend.footer')
 </div>
+
 <!-- Modal đổi trạng thái sản phẩm -->
 <div class="modal fade" id="statusModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="statusModalLabel" aria-hidden="true">
@@ -193,41 +319,60 @@
     </div>
 </div>
 
+
+
 @push('styles')
-<link rel="stylesheet" href="//cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
 @endpush
 
 @push('scripts')
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-<script src="//cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 <script>
-    $(document).ready(function() {
-        $('#productTable').DataTable({
-            "lengthMenu": [5, 10, 25, 50, 100, -1],
-            "language": {
-                "lengthMenu": "Hiển thị _MENU_ dòng/trang",
-                "zeroRecords": "Không tìm thấy dữ liệu",
-                "info": "Hiển thị _START_ đến _END_ của _TOTAL_ dòng",
-                "infoEmpty": "Không có dữ liệu",
-                "infoFiltered": "(lọc từ _MAX_ dòng)",
-                "search": "Tìm kiếm:",
-                "paginate": {
-                    "first": "Đầu",
-                    "last": "Cuối",
-                    "next": "Tiếp",
-                    "previous": "Trước"
-                },
-            },
-            "columnDefs": [{
-                    "orderable": false,
-                    "targets": [0, 6]
-                } // Disable sort ảnh và tùy chọn
-            ]
-        });
+    $('#productTable').DataTable({
+        "pagingType": "full_numbers",
+        "lengthMenu": [10, 25, 50, 100],
+        "language": {
+            "lengthMenu": "Hiển thị _MENU_ dòng/trang",
+            "zeroRecords": "Không tìm thấy dữ liệu",
+            "info": "Hiển thị _START_ đến _END_ của _TOTAL_ dòng",
+            "infoEmpty": "Không có dữ liệu",
+            "infoFiltered": "(lọc từ _MAX_ dòng)",
+            "search": "Tìm kiếm:",
+            "paginate": {
+                "first": "1",
+                "last": "", // Không để _MAX_ nữa
+                "next": ">",
+                "previous": "<"
+            }
+        },
+        "columnDefs": [{
+            "orderable": false,
+            "targets": [0, 7]
+        }]
+    });
+
+    // Fix nhãn "last" thành số cuối, ẩn khi chỉ 1 trang
+    $('#productTable').on('draw.dt', function() {
+        var table = $('#productTable').DataTable();
+        var totalPages = table.page.info().pages;
+
+        if (totalPages === 1) {
+            // Chỉ hiện nút active và trái/phải (nếu muốn), ẩn hết số khác và "last"
+            $('.paginate_button').not('.previous,.active,.next').hide();
+            $('.paginate_button.last').hide();
+        } else {
+            $('.paginate_button').show();
+            $('.paginate_button.last a').text(totalPages);
+            $('.paginate_button.first a').text(1);
+        }
     });
 </script>
-@push('scripts')
+@endpush
+
+
 @push('scripts')
 <script>
     $('.status-badge').click(function() {
@@ -250,7 +395,6 @@
         modal.show();
     });
 </script>
-@endpush
 
 <script>
     $(function() {
@@ -284,6 +428,5 @@
 </script>
 @endpush
 
-@endpush
 
 @endsection
