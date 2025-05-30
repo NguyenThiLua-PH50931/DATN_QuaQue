@@ -116,7 +116,6 @@
 <script src="{{ asset('backend/assets/js/sidebareffect.js') }}"></script>
 <script src="{{ asset('backend/assets/js/sidebar-menu.js') }}"></script>
 <script src="{{ asset('backend/assets/js/script.js') }}"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="{{ asset('backend/assets/js/ckeditor.js') }}"></script>
 <script src="{{ asset('backend/assets/js/ckeditor-custom.js') }}"></script>
@@ -179,4 +178,3 @@
 </body>
 
 </html>
-z

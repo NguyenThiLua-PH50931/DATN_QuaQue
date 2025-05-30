@@ -44,8 +44,11 @@
     function restorePageContent() {
         $('body').removeClass('offcanvas');
         $('.search-full').removeClass('open');
-        pageWrapper.css({ 'display': 'block', 'visibility': 'visible', 'opacity': '1' });
-        pageBodyWrapper.css({ 'display': 'block', 'visibility': 'visible', 'opacity': '1' });
+        // Chỉ đặt lại CSS nếu không có modal đang hiển thị
+        if (!$('.modal.show').length) {
+            pageWrapper.css({ 'display': 'block', 'visibility': 'visible', 'opacity': '1' });
+            pageBodyWrapper.css({ 'display': 'block', 'visibility': 'visible', 'opacity': '1' });
+        }
         console.log('Restored page content visibility');
     }
 
@@ -55,9 +58,9 @@
         console.log('Form submit prevented');
     });
 
-    // Vô hiệu hóa sự kiện gốc của theme
+    // Vô hiệu hóa sự kiện gốc của theme (trừ click để không ảnh hưởng đến modal)
     $(document).ready(function() {
-        $('.header-search, .form-inline.search-full, .Typeahead-input').off('click submit keypress keydown keyup input');
+        $('.header-search, .form-inline.search-full, .Typeahead-input').off('submit keypress keydown keyup input');
         $('.search-full input').off('keyup input');
         $('.search-full input').on('keyup input', function(e) {
             e.stopImmediatePropagation();
@@ -185,7 +188,8 @@
     });
 
     // Đảm bảo nội dung trang không bị ẩn khi tương tác
-    $(document).on('click keypress', '.search-full, .Typeahead-input', function() {
+    $(document).on('click keypress', '.search-full, .Typeahead-input', function(e) {
+        e.stopPropagation(); // Ngăn sự kiện lan truyền
         restorePageContent(); // Khôi phục nội dung
     });
 })();

@@ -2,11 +2,20 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Region extends Model
 {
-    protected $fillable = ['name', 'slug'];
+    use HasFactory, SoftDeletes;
+
+    protected $fillable = [
+        'name',
+        'slug'
+    ];
+
+    protected $dates = ['deleted_at'];
 
     public function products() {
         return $this->hasMany(Product::class);

@@ -58,6 +58,17 @@
 
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
+                            <i class="ri-list-check-2"></i>
+                            <span>Regions</span>
+                        </a>
+                        <ul class="sidebar-submenu">
+                            <li><a href="{{ url('/admin/regions') }}">Regions List</a></li>
+                            <li><a href="{{ url('/admin/regions/create') }}">Add New Regions</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="sidebar-list">
+                        <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                             <i class="ri-list-settings-line"></i>
                             <span>Attributes</span>
                         </a>
