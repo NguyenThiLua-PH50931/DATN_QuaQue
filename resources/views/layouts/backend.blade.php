@@ -1,21 +1,23 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <!-- Mirrored from themes.pixelstrap.com/fastkart/back-end/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 06 Nov 2024 14:35:16 GMT -->
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
-          content="Fastkart admin is super flexible, powerful, clean &amp; modern responsive bootstrap 5 admin template with unlimited possibilities.">
+        content="Fastkart admin is super flexible, powerful, clean &amp; modern responsive bootstrap 5 admin template with unlimited possibilities.">
     <meta name="keywords"
-          content="admin template, Fastkart admin template, dashboard template, flat admin template, responsive admin template, web app">
+        content="admin template, Fastkart admin template, dashboard template, flat admin template, responsive admin template, web app">
     <meta name="author" content="pixelstrap">
     <link rel="icon" href="{{ asset('backend/assets/images/favicon.png') }}" type="image/x-icon">
     <link rel="shortcut icon" href="{{ asset('backend/assets/images/favicon.png') }}" type="image/x-icon">
     <title>@yield('title', 'Admin Panel')</title>
 
     <!-- Google font -->
-    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@100;400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@100;400;700;900&display=swap"
+        rel="stylesheet">
 
     <!-- Vendor CSS -->
     <link rel="stylesheet" href="{{ asset('backend/assets/css/linearicon.css') }}">
@@ -33,17 +35,18 @@
 
     @stack('styles')
 </head>
+
 <body>
-<!-- Tap to Top -->
-<div class="tap-top">
-    <span class="lnr lnr-chevron-up"></span>
-</div>
+    <!-- Tap to Top -->
+    <div class="tap-top">
+        <span class="lnr lnr-chevron-up"></span>
+    </div>
 
-<!-- Page Wrapper -->
-<div class="page-wrapper compact-wrapper" id="pageWrapper">
+    <!-- Page Wrapper -->
+    <div class="page-wrapper compact-wrapper" id="pageWrapper">
 
-    <!-- Header -->
-    @includeIf('backend.header')
+        <!-- Header -->
+        @includeIf('backend.header')
 
     <!-- Page Body -->
     <div class="page-body-wrapper">
@@ -402,7 +405,7 @@
                 </div>
             </div>
             <!-- Page Sidebar Ends-->
-  
+
 
         @yield('contents')
 
@@ -424,6 +427,7 @@
         </div>
         <!-- Page Body End -->
     </div>
+
     <!-- page-wrapper End-->
 
     <!-- Modal Start -->
@@ -481,6 +485,8 @@
 <script src="{{ asset('backend/assets/js/sidebareffect.js') }}"></script>
 <script src="{{ asset('backend/assets/js/script.js') }}"></script>
 
-@stack('scripts')
+                    @stack('scripts')
 </body>
+
 </html>
+
