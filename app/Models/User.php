@@ -18,6 +18,7 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
+
   protected $fillable = [
     'name',
     'email',
@@ -26,6 +27,7 @@ class User extends Authenticatable
     'role',
     'avatar'
 ];
+
 
     /**
      * The attributes that should be hidden for serialization.
@@ -36,6 +38,11 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
 
     /**
      * Get the attributes that should be cast.
