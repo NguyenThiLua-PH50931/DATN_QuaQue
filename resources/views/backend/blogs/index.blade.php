@@ -10,11 +10,11 @@
                 <div class="card card-table">
                     <div class="card-body">
                         <div class="title-header option-title d-sm-flex d-block">
-                            <h5>Blog</h5>
+                            <h5>Tin tức</h5>
                             <div class="right-options">
                                 <ul>
                                     <li>
-                                        <a class="btn btn-solid" href="{{ url('/admin/blogs/create') }}">Add Blog</a>
+                                        <a class="btn btn-solid" href="{{ route('admin.blog.create') }}">Thêm mới</a>
                                     </li>
                                 </ul>
                             </div>
@@ -24,11 +24,11 @@
                                 <table class="table all-package theme-table table-product" id="table_id">
                                     <thead>
                                         <tr>
-                                            <th>Thumbnail</th>
-                                            <th>Title</th>
-                                            <th>Slug</th>
-                                            <th>Created At</th>
-                                            <th>Action</th>
+                                            <th>Ảnh</th>
+                                            <th>Tiêu đề</th>
+                                            <th>Đường Link</th>
+                                            <th>Ngày tạo</th>
+                                            <th>Hàng động</th>
                                         </tr>
                                     </thead>
 
@@ -50,13 +50,13 @@
                                             <td>
                                                 <ul>
                                                     <li>
-                                                        <a href="{{ route('admin.blogs.show', $item->id) }}">
+                                                        <a href="{{ route('admin.blog.show', $item->id) }}">
                                                             <i class="ri-eye-line"></i>
                                                         </a>
                                                     </li>
 
                                                     <li>
-                                                        <a href="{{ route('admin.blogs.edit', $item->id) }}">
+                                                        <a href="{{ route('admin.blog.edit', $item->id) }}">
                                                             <i class="ri-pencil-line"></i>
                                                         </a>
                                                     </li>                                                    
@@ -85,11 +85,11 @@
                                                     Are you sure you want to delete the post <strong>{{ $item->title }}</strong>?
                                                 </div>
                                                 <div class="modal-footer">
-                                                    <form action="{{ route('admin.blogs.destroy', $item->id) }}" method="POST" class="d-flex justify-content-end">
+                                                    <form action="{{ route('admin.blog.destroy', $item->id) }}" method="POST" class="d-flex justify-content-end">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancel</button>
-                                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Hủy</button>
+                                                        <button type="submit" class="btn btn-danger">Xóa</button>
                                                     </form>
                                                 </div>
                                             </div>

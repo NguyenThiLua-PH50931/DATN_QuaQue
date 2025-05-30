@@ -9,7 +9,7 @@
             <div class="col-12 col-md-8 offset-md-2">
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="card-title">Edit blog</h4>
+                        <h4 class="card-title">Sửa tin tức</h4>
                     </div>
                     <div class="card-body">
                         {{-- Hiển thị lỗi validate --}}
@@ -23,12 +23,12 @@
                             </div>
                         @endif
 
-                        <form action="{{ route('admin.blogs.update', $blog->id) }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('admin.blog.update', $blog->id) }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
 
                             <div class="mb-4 row align-items-center">
-                                <label class="form-label-title col-sm-3 mb-0">Blog Title</label>
+                                <label class="form-label-title col-sm-3 mb-0">Tiêu đề</label>
                                 <div class="col-sm-9">
                                     <input class="form-control" type="text" name="title" 
                                         value="{{ old('title', $blog->title) }}" placeholder="Blog Name" required>
@@ -36,7 +36,7 @@
                             </div>
 
                             <div class="mb-4 row align-items-center">
-                                <label class="form-label-title col-sm-3 mb-0">Slug</label>
+                                <label class="form-label-title col-sm-3 mb-0">Đường link</label>
                                 <div class="col-sm-9">
                                     <input class="form-control" type="text" name="slug" 
                                         value="{{ old('slug', $blog->slug) }}" placeholder="Slug (tự động tạo nếu để trống)">
@@ -52,7 +52,7 @@
                             </div>
 
                             <div class="mb-4 row align-items-center">
-                                <label class="form-label-title col-sm-3 mb-0">Ảnh đại diện</label>
+                                <label class="form-label-title col-sm-3 mb-0">Ảnh</label>
                                 <div class="col-sm-9">
                                     @if($blog->thumbnail)
                                         <div class="mb-2">
@@ -67,8 +67,8 @@
 
                             <div class="row">
                                 <div class="col-sm-9 offset-sm-3 d-flex justify-content-end">
-                                    <a href="{{ route('admin.blogs.index') }}" class="col-sm-2 btn btn-secondary me-2">Cancel</a>
-                                    <button type="submit" class="btn btn-primary">Save</button>
+                                    <a href="{{ route('admin.blog.index') }}" class="col-sm-2 btn btn-secondary me-2">Hủy</a>
+                                    <button type="submit" class="btn btn-primary">Lưu</button>
                                 </div>
                             </div>
                         </form>

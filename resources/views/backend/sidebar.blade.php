@@ -40,8 +40,8 @@
                             <span>Blog</span>
                         </a>
                         <ul class="sidebar-submenu">
-                            <li><a href="{{ url('/admin/blogs') }}">Blogs</a></li>
-                            <li><a href="{{ url('/admin/blogs/create') }}">Add New Blog</a></li>
+                            <li><a href="{{ url('/admin/blog/index') }}">Blog</a></li>
+                            <li><a href="{{ url('/admin/blog/create') }}">Add New Blog</a></li>
                         </ul>
                     </li>
 

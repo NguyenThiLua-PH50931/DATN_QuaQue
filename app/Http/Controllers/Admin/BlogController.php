@@ -52,7 +52,7 @@ class BlogController extends Controller
             'thumbnail' => $thumbnail
         ]);
 
-        return redirect()->route('admin.blogs.index')
+        return redirect()->route('admin.blog.index')
             ->with('success', 'Bài viết đã được tạo thành công!');
     }
 
@@ -105,7 +105,7 @@ class BlogController extends Controller
         $blog->content = $request->content;
         $blog->save();
 
-        return redirect()->route('admin.blogs.index')
+        return redirect()->route('admin.blog.index')
             ->with('success', 'Bài viết đã được cập nhật thành công!');
     }
 
@@ -123,7 +123,7 @@ class BlogController extends Controller
 
         $blog->delete();
 
-        return redirect()->route('admin.blogs.index')
+        return redirect()->route('admin.blog.index')
             ->with('success', 'Bài viết đã được xóa thành công!');
     }
 }
