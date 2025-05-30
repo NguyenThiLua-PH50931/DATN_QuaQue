@@ -35,6 +35,7 @@
     <link rel="stylesheet" href="{{ asset('backend/assets/css/style.css') }}">
 
     @stack('styles')
+    <link rel="stylesheet" href="{{ asset('backend/assets/css/aa.css') }}">
 </head>
 <body>
 <!-- Tap to Top -->

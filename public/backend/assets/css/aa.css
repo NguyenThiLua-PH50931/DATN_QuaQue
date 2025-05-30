@@ -1,0 +1,58 @@
+.status-select {
+    appearance: none;
+    outline: none;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 8px;
+    background-color: #f3f4f6;
+    color: #374151;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.status-select:hover {
+    background-color: #e5e7eb;
+}
+
+.status-select:focus {
+    background-color: #e5e7eb;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+.status-pending { background-color: #fef3c7; color: #92400e; }
+.status-confirmed { background-color: #dbeafe; color: #1e40af; }
+.status-shipping { background-color: #cffafe; color: #0e7490; }
+.status-completed { background-color: #dcfce7; color: #166534; }
+.status-cancelled { background-color: #fee2e2; color: #991b1b; }
+
+.btn-primary.btn-sm {
+    padding: 6px 12px; /* Giảm bớt padding */
+    font-size: 12px;    /* Chữ nhỏ hơn */
+    border-radius: 6px; /* Bo góc nhẹ */
+    width: auto;        /* Đảm bảo chiều rộng tự động, không bị kéo dài */
+    text-align: center; /* Căn chỉnh văn bản vào giữa */
+    min-width: 100px;   /* Đặt độ dài tối thiểu */
+    transition: all 0.3s ease;
+}
+
+.btn-primary.btn-sm:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+}
+.order-date h6 {
+    font-size: 14px;
+    color: #333;
+    font-weight: 500;
+    margin: 0;
+    padding: 0;
+}
+
+.order-date h6 span {
+    font-weight: 400;
+    color: #888;
+    margin-left: 10px;
+    font-size: 13px;
+}

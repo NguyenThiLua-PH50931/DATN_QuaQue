@@ -29,7 +29,8 @@ class UsersTableSeeder extends Seeder
             'email' => 'seller1@example.com',
             'phone' => '0987654321',
             'password' => Hash::make('password123'),
-            'role' => 'seller',
+            'role' => 'user', // hoặc 'admin' nếu bạn muốn
+
             'avatar' => null,
         ]);
 

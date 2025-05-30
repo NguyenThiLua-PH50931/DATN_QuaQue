@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\BE;
+namespace App\Models\admin;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -28,4 +28,9 @@ class Product extends Model
         'created_at',
         'updated_at'
     ];
+    public function category()
+{
+    return $this->belongsTo(Category::class, 'category_id');
+}
+
 }

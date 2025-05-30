@@ -1,154 +1,93 @@
 <?php
 
-use App\Http\Controllers\Auth\RegisterController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Admin\OrderController;
 
-
-
-
-Route::get('/', [ProductController::class, 'home']);
+// ==================
+// CLIENT ROUTES
+// ==================
+Route::get('/', [ProductController::class, 'home'])->name('home');
 Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product.detail');
 
-
-// client
-
-
-// dang ky
+// Đăng ký người dùng
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
 
+// Các trang client tĩnh
+Route::view('/wishlist', 'frontend.wishlist.wishlist')->name('wishlist');
+Route::view('/compare', 'frontend.pages.compare')->name('compare');
+Route::view('/contact', 'frontend.pages.contact');
+Route::view('/cart', 'frontend.cart.cart');
+Route::view('/checkout', 'frontend.checkout.checkout');
+Route::view('/products/category', 'frontend.products.category');
+Route::view('/seller/become-seller', 'frontend.seller.become-seller');
+Route::view('/seller/seller-dashboard', 'frontend.seller.seller-dashboard');
 
+// ==================
+// ADMIN ROUTES
+// ==================
+Route::prefix('admin')->name('admin.')->group(function () {
 
-// Sản phẩm yêu thích
-Route::get('/wishlist', function () {
-    return view('frontend.wishlist.wishlist');
-})->name('wishlist');
-// Sản phẩm yêu thích
-Route::get('/compare', function () {
-    return view('frontend.pages.compare');
-})->name('compare');
+    // Dashboard
+    Route::view('/', 'backend.dashboard')->name('dashboard');
 
+    // Sản phẩm
+    Route::get('/products', [AdminProductController::class, 'index'])->name('products.index');
+    Route::get('/products/create', [AdminProductController::class, 'create'])->name('products.create');
+    Route::post('/products', [AdminProductController::class, 'store'])->name('products.store');
 
-// Liên hệ
-Route::get('/contact', function () {
-    return view('frontend.pages.contact');
-});
+    // Danh mục
+    Route::view('/categories', 'backend.categories.index')->name('categories.index');
+    Route::view('/categories/create', 'backend.categories.create')->name('categories.create');
 
-// giỏ hàng
-Route::get('/cart', function () {
-    return view('frontend.cart.cart');
-});
+    // Thuộc tính sản phẩm
+    Route::view('/attributes', 'backend.attributes.index')->name('attributes.index');
+    Route::view('/attributes/create', 'backend.attributes.create')->name('attributes.create');
 
-//  Thanh toán
-Route::get('/checkout', function () {
-    return view('frontend.checkout.checkout');
-});
+    // Người dùng
+    Route::view('/users', 'backend.users.index')->name('users.index');
+    Route::view('/users/create', 'backend.users.create')->name('users.create');
 
-// SELLER
-// Sản phẩm theeo danh mục
-Route::get('/products/category', function () {
-    return view('frontend.products.category');
-});
+    // Vai trò
+    Route::view('/roles', 'backend.roles.index')->name('roles.index');
+    Route::view('/roles/create', 'backend.roles.create')->name('roles.create');
 
-// Trở thành người bán
-Route::get('/seller/become-seller', function () {
-    return view('frontend.seller.become-seller');
-});
+    // Media
+    Route::view('/media', 'backend.media.index')->name('media.index');
 
-// Quản lý cửa hàng (Người bán)
-Route::get('/seller/seller-dashboard', function () {
-    return view('frontend.seller.seller-dashboard');
-});
-// client
+    // 🚀 **Quản lý đơn hàng**
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::get('/orders/{order}/tracking', [OrderController::class, 'tracking'])->name('orders.tracking');
+    
+    // ✅ **Sửa lỗi tuyến đường xóa đơn hàng**
+    Route::delete('/orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
 
-// Admin
-Route::get('/admin', function () {
-    return view('backend.dashboard');
-});
-// product
-Route::get('/admin/products', function () {
-    return view('backend.products.index');
-});
+    // Cập nhật trạng thái đơn hàng
+    Route::put('/orders/{order}/update-status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
 
-Route::get('/admin/products/create', function () {
-    return view('backend.products.create');
-});
+    // Phiếu giảm giá
+    Route::view('/coupons', 'backend.coupons.index')->name('coupons.index');
+    Route::view('/coupons/create', 'backend.coupons.create')->name('coupons.create');
 
+    // Thuế
+    Route::view('/taxes', 'backend.taxes.index')->name('taxes.index');
 
-// cate
-Route::get('/admin/categories', function () {
-    return view('backend.categories.index');
-});
-Route::get('/admin/categories/create', function () {
-    return view('backend.categories.create');
-});
-// Attributes
-Route::get('/admin/attributes', function () {
-    return view('backend.attributes.index');
-});
-Route::get('/admin/attributes/create', function () {
-    return view('backend.attributes.create');
-});
-// user
-Route::get('/admin/users', function () {
-    return view('backend.users.index');
-});
-Route::get('/admin/users/create', function () {
-    return view('backend.users.create');
-});
-// roles
-Route::get('/admin/roles', function () {
-    return view('backend.roles.index');
-});
-Route::get('/admin/roles/create', function () {
-    return view('backend.roles.create');
-});
+    // Đánh giá sản phẩm
+    Route::view('/product-review', 'backend.product-review.index')->name('product-review.index');
 
-// media
-Route::get('/admin/media', function () {
-    return view('backend.media.index');
-});
-// order
-Route::get('/admin/orders', function () {
-    return view('backend.orders.index');
-});
-Route::get('/admin/orders/detail', function () {
-    return view('backend.orders.show');
-});
-Route::get('/admin/orders/tracking', function () {
-    return view('backend.orders.tracking');
-});
-// coupons
-Route::get('/admin/coupons', function () {
-    return view('backend.coupons.index');
-});
-Route::get('/admin/coupons/create', function () {
-    return view('backend.coupons.create');
-});
-// tax
-Route::get('/admin/taxes', function () {
-    return view('backend.taxes.index');
-});
-// product-review
-Route::get('/admin/product-review', function () {
-    return view('backend.product-review.index');
-});
-// support-ticket
-Route::get('/admin/support-ticket', function () {
-    return view('backend.support-ticket.index');
-});
-// profile-setting
-Route::get('/admin/profile-setting', function () {
-    return view('backend.profile-setting.index');
-});
-// reports
-Route::get('/admin/reports', function () {
-    return view('backend.reports.index');
-});
-// list-page
-Route::get('/admin/list-page', function () {
-    return view('backend.list-page.index');
-});
+    // Yêu cầu hỗ trợ
+    Route::view('/support-ticket', 'backend.support-ticket.index')->name('support-ticket.index');
 
-    // Admin
+    // Cài đặt hồ sơ
+    Route::view('/profile-setting', 'backend.profile-setting.index')->name('profile-setting.index');
+
+    // Báo cáo
+    Route::view('/reports', 'backend.reports.index')->name('reports.index');
+
+    // Trang danh sách
+    Route::view('/list-page', 'backend.list-page.index')->name('list-page.index');
+});
