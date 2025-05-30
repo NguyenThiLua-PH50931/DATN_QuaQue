@@ -31,7 +31,7 @@ class LoginController extends Controller
                 return redirect()->route('admin.dashboard');
             }
 
-         return redirect('/')->with('success', 'Đăng nhập thành công!');
+            return redirect('/')->with('success', 'Đăng nhập thành công!');
         }
 
         return back()->withErrors([

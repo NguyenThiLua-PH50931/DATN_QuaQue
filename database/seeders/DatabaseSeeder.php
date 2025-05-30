@@ -25,6 +25,9 @@ class DatabaseSeeder extends Seeder
             CategoriesTableSeeder::class,
             RegionsTableSeeder::class,
             ProductsTableSeeder::class,
+
+            CommentSeeder::class,
+
         ]);
     }
 }

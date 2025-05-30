@@ -17,14 +17,12 @@ class ProductsTableSeeder extends Seeder
 
         $products = [
             [
-                'seller_id' => 2,
+
                 'category_id' => 2,
                 'region_id' => 1,
                 'name' => 'Đặc sản mắm tôm Hạ Long',
                 'slug' => Str::slug('Đặc sản mắm tôm Hạ Long'),
                 'description' => 'Mắm tôm truyền thống ngon tuyệt hảo của vùng biển Hạ Long.',
-                'price' => 120000,
-                'stock' => 50,
                 'image' => 'products/mam-tom-ha-long.jpg',
                 'origin' => 'Quảng Ninh',
                 'view_total' => 200,
@@ -35,14 +33,13 @@ class ProductsTableSeeder extends Seeder
                 'updated_at' => $now,
             ],
             [
-                'seller_id' => 4,
+
+
                 'category_id' => 3,
                 'region_id' => 3,
                 'name' => 'Trà Shan Tuyết cổ thụ Tuyên Quang',
                 'slug' => Str::slug('Trà Shan Tuyết cổ thụ Tuyên Quang'),
                 'description' => 'Trà Shan Tuyết được hái từ những cây trà cổ thụ hàng trăm tuổi.',
-                'price' => 350000,
-                'stock' => 30,
                 'image' => 'products/tra-shan-tuyet.jpg',
                 'origin' => 'Tuyên Quang',
                 'view_total' => 200,
@@ -53,14 +50,12 @@ class ProductsTableSeeder extends Seeder
                 'updated_at' => $now,
             ],
             [
-                'seller_id' => 3,
+
                 'category_id' => 1,
                 'region_id' => 2,
                 'name' => 'Bánh đậu xanh Hải Dương',
                 'slug' => Str::slug('Bánh đậu xanh Hải Dương'),
                 'description' => 'Bánh đậu xanh mềm mịn, thơm ngon đặc trưng Hải Dương.',
-                'price' => 90000,
-                'stock' => 100,
                 'image' => 'products/banh-dau-xanh-hai-duong.jpg',
                 'origin' => 'Hải Dương',
                 'view_total' => 200,

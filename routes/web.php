@@ -6,7 +6,9 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Client\ProductController;
 use App\Http\Controllers\Admin\RegionController;
 use App\Http\Controllers\Admin\CategoryController;
-
+use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Admin\CommentController;
+use App\Http\Controllers\Admin\User\UserController;
 use Illuminate\Support\Facades\Route;
 
 // Client Routes
@@ -63,13 +65,19 @@ Route::prefix('admin')->name('admin.')->group(function () {
         return view('backend.dashboard');
     })->name('dashboard');
 
-    // Products
-    Route::get('/products', function () {
-        return view('backend.products.index');
-    })->name('products.index');
-    Route::get('/products/create', function () {
-        return view('backend.products.create');
-    })->name('products.create');
+    // Products Management (Admin)
+    Route::group(['prefix' => 'products', 'as' => 'products.'], function () {
+        Route::get('/', [AdminProductController::class, 'index'])->name('index');
+        Route::get('/create', [AdminProductController::class, 'create'])->name('create');
+        Route::post('/', [AdminProductController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [AdminProductController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [AdminProductController::class, 'update'])->name('update');
+        Route::delete('/{id}', [AdminProductController::class, 'destroy'])->name('destroy');
+        Route::get('/{slug}', [AdminProductController::class, 'show'])->name('show'); // Assuming show uses slug
+        Route::post('/{id}/toggle-status', [AdminProductController::class, 'toggleStatus'])->name('toggle-status');
+        Route::post('/variants/{id}/toggle-status', [AdminProductController::class, 'toggleVariantStatus'])->name('variants.toggle-status'); // Assuming variant toggle exists
+        Route::post('/bulk-delete', [AdminProductController::class, 'bulkDelete'])->name('bulkDelete'); // Corrected name
+    });
 
     // Categories
     Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
@@ -96,6 +104,17 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Reviews
     Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');
 
+    // Comments
+    Route::group(['prefix' => 'comments', 'as' => 'comments.'], function () {
+        Route::get('/', [CommentController::class, 'index'])->name('index');
+        Route::post('/{id}/approve', [CommentController::class, 'approve'])->name('approve');
+        Route::post('/{id}/reject', [CommentController::class, 'reject'])->name('reject');
+        Route::delete('/{id}', [CommentController::class, 'destroy'])->name('destroy');
+        Route::get('/{id}/edit', [CommentController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [CommentController::class, 'update'])->name('update');
+        Route::post('/{id}/reply', [CommentController::class, 'reply'])->name('reply');
+    });
+
     // Attributes
     Route::get('/attributes', function () {
         return view('backend.attributes.index');
@@ -105,12 +124,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
     })->name('attributes.create');
 
     // Users
-    Route::get('/users', function () {
-        return view('backend.users.index');
-    })->name('users.index');
-    Route::get('/users/create', function () {
-        return view('backend.users.create');
-    })->name('users.create');
+    Route::group(['prefix' => 'users', 'as' => 'users.'], function () {
+        Route::get('/', [UserController::class, 'index'])->name('index');
+        Route::post('/', [UserController::class, 'store'])->name('store');
+        Route::get('/hidden', [UserController::class, 'hidden'])->name('hidden');
+        Route::get('/create', [UserController::class, 'create'])->name('create');
+        Route::post('/{id}/toggle-status', [UserController::class, 'toggleStatus'])->name('toggleStatus');
+        Route::delete('/{id}', [UserController::class, 'delete'])->name('delete');
+    });
 
     // Roles
     Route::get('/roles', function () {

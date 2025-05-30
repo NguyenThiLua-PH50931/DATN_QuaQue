@@ -3,22 +3,24 @@
 @section('title', 'Đánh giá sản phẩm')
 
 @section('content')
-    <!-- product review section start -->
-    <div class="page-body">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="card card-table">
-                        <!-- Table Start -->
-                        <div class="card-body">
-                            <div class="title-header option-title">
-                                <h5>Product Reviews</h5>
-                            </div>
-                            <div>
-                                <div class="table-responsive">
-                                    <table class="user-table ticket-table review-table theme-table table" id="table_id">
-                                        <thead>
-                                            <tr>
+
+<!-- product review section start -->
+<div class="page-body">
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card card-table">
+                    <!-- Table Start -->
+                    <div class="card-body">
+                        <div class="title-header option-title">
+                            <h5>Product Reviews</h5>
+                        </div>
+                        <div>
+                            <div class="table-responsive">
+                                <table class="user-table ticket-table review-table theme-table table" id="table_id">
+                                    <thead>
+                                         <tr>
                                                 <th style="color: black; background-color: #f8f9fa;">No.</th>
                                                 <th style="color: black; background-color: #f8f9fa;">Customer Name</th>
                                                 <th style="color: black; background-color: #f8f9fa;">Product Name</th>
@@ -26,65 +28,33 @@
                                                 <th style="color: black; background-color: #f8f9fa;">Comment</th>
                                                 <th style="color: black; background-color: #f8f9fa;">Published</th>
                                             </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>01</td>
-                                                <td>Maureen Biologist</td>
-                                                <td>Outwear & Coats</td>
-                                                <td>
-                                                    <ul class="rating">
-                                                        <li><i class="fas fa-star theme-color"></i></li>
-                                                        <li><i class="fas fa-star theme-color"></i></li>
-                                                        <li><i class="fas fa-star"></i></li>
-                                                        <li><i class="fas fa-star"></i></li>
-                                                        <li><i class="fas fa-star"></i></li>
-                                                    </ul>
-                                                </td>
-                                                <td>The Product is No Longer Needed</td>
-                                                <td class="td-check"><i class="ri-checkbox-circle-line"></i></td>
-                                            </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($reviews as $key => $review)
+                                        <tr>
+                                            <td>{{ $key + 1 }}</td>
+                                            <td>{{ $review->user->name }}</td>
+                                            <td>{{ $review->product->name }}</td>
+                                            <td>
+                                                <ul class="rating">
+                                                    @for ($i = 1; $i <= 5; $i++)
+                                                        <li>
+                                                        <i class="fas fa-star {{ $i <= $review->rating ? 'theme-color' : '' }}"></i>
+                                                        </li>
+                                                        @endfor
+                                                </ul>
+                                            </td>
+                                            <td>{{ $review->comment }}</td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
 
-                                            <tr>
-                                                <td>02</td>
-                                                <td>Caroline Harris</td>
-                                                <td>Slim Fit Plastic Coat</td>
-                                                <td>
-                                                    <ul class="rating">
-                                                        <li><i class="fas fa-star theme-color"></i></li>
-                                                        <li><i class="fas fa-star theme-color"></i></li>
-                                                        <li><i class="fas fa-star theme-color"></i></li>
-                                                        <li><i class="fas fa-star theme-color"></i></li>
-                                                        <li><i class="fas fa-star theme-color"></i></li>
-                                                    </ul>
-                                                </td>
-                                                <td>The Product is No Longer Needed</td>
-                                                <td class="td-check"><i class="ri-checkbox-circle-line"></i></td>
-                                            </tr>
-
-                                            <tr>
-                                                <td>03</td>
-                                                <td>Lucy Morile</td>
-                                                <td>Men's Sweatshirt</td>
-                                                <td>
-                                                    <ul class="rating">
-                                                        <li><i class="fas fa-star theme-color"></i></li>
-                                                        <li><i class="fas fa-star"></i></li>
-                                                        <li><i class="fas fa-star"></i></li>
-                                                        <li><i class="fas fa-star"></i></li>
-                                                        <li><i class="fas fa-star"></i></li>
-                                                    </ul>
-                                                </td>
-                                                <td>The Product is No Longer Needed</td>
-                                                <td class="td-check"><i class="ri-checkbox-circle-line"></i></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
                             </div>
                         </div>
                         <!-- Table End -->
                     </div>
+                    <!-- Table End -->
                 </div>
             </div>
         </div>
@@ -113,3 +83,4 @@
         });
     </script>
 @endpush
+

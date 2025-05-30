@@ -4,7 +4,8 @@
     <div>
         <div class="logo-wrapper logo-wrapper-center">
             <a href="{{ url('/admin') }}" title="">
-                <img class="img-fluid for-white" src="{{ asset('backend/assets/images/logo/full-white.png') }}" alt="logo">
+                <img class="img-fluid for-white" src="{{ asset('backend/assets/images/logo/full-white.png') }}"
+                    alt="logo">
             </a>
             <div class="back-btn">
                 <i class="fa fa-angle-left"></i>
@@ -16,8 +17,10 @@
 
         <div class="logo-icon-wrapper">
             <a href="{{ url('/admin') }}">
-                <img class="img-fluid main-logo main-white" src="{{ asset('backend/assets/images/logo/logo.png') }}" alt="logo">
-                <img class="img-fluid main-logo main-dark" src="{{ asset('backend/assets/images/logo/logo-white.png') }}" alt="logo">
+                <img class="img-fluid main-logo main-white" src="{{ asset('backend/assets/images/logo/logo.png') }}"
+                    alt="logo">
+                <img class="img-fluid main-logo main-dark"
+                    src="{{ asset('backend/assets/images/logo/logo-white.png') }}" alt="logo">
             </a>
         </div>
 
@@ -81,11 +84,24 @@
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                             <i class="ri-user-3-line"></i>
-                            <span>Users</span>
+                            <span>Người dùng</span>
                         </a>
                         <ul class="sidebar-submenu">
-                            <li><a href="{{ url('/admin/users') }}">All Users</a></li>
-                            <li><a href="{{ url('/admin/users/create') }}">Add New User</a></li>
+                            <li><a href="{{ route('admin.users.index') }}">Tài khoản</a></li>
+                            <li><a href="{{ route('admin.users.create') }}">Thêm tài khoản</a></li>
+                            <li><a href="{{ route('admin.users.hidden') }}">Tài khoản đã ẩn</a></li>
+                        </ul>
+                    </li>
+                    <li class="sidebar-list">
+                        <a class="sidebar-link sidebar-title" href="javascript:void(0)">
+                            <i class="ri-user-3-line"></i>
+                            <span>Quản lý bình luận</span>
+                        </a>
+                        <ul class="sidebar-submenu">
+                            <li>
+                                <a href="{{ route('admin.comments.index') }}">Danh sách bình luận </a>
+                            </li>
+
                         </ul>
                     </li>
 
@@ -118,17 +134,6 @@
                             <li><a href="{{ url('/admin/orders/tracking') }}">Order Tracking</a></li>
                         </ul>
                     </li>
-{{--
-                    <li class="sidebar-list">
-                        <a class="sidebar-link sidebar-title" href="javascript:void(0)">
-                            <i class="ri-focus-3-line"></i>
-                            <span>Localization Bỏ</span>
-                        </a>
-                        <ul class="sidebar-submenu">
-                            <li><a href="{{ url('/admin/translation') }}">Translation</a></li>
-                            <li><a href="{{ url('/admin/currency-rates') }}">Currency Rates</a></li>
-                        </ul>
-                    </li> --}}
 
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
@@ -150,6 +155,7 @@
 
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title link-nav" href="{{ route('admin.reviews.index') }}">
+
                             <i class="ri-star-line"></i>
                             <span>Product Review</span>
                         </a>
