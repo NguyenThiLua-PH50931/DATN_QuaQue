@@ -13,6 +13,7 @@
     <title>@yield('title')</title>
     <link href="{{ asset('frontend/assets/css/style.css') }}" rel="stylesheet">
 
+
     <!-- Google font -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
@@ -27,6 +28,7 @@
 
     <!-- bootstrap css -->
     <link id="rtl-link" rel="stylesheet" type="text/css" href="{{ asset('frontend/assets/css/vendors/bootstrap.css') }}">
+
 
 
     <!-- wow css -->
@@ -322,11 +324,12 @@
                                                 <ul class="user-box-name">
                                                     <li class="product-box-contain">
                                                         <i></i>
-                                                        <a href="login.html">Log In</a>
+                                                        <a href="{{ route('login') }}">Log In</a>
                                                     </li>
 
                                                     <li class="product-box-contain">
-                                                        <a href="sign-up.html">Register</a>
+                                                        <a href="{{ route('register') }}">Register</a>
+
                                                     </li>
 
                                                 <li class="product-box-contain">
@@ -1859,6 +1862,4 @@
     <!-- theme setting js -->
     <script src="{{ asset('frontend/assets/js/theme-setting.js') }}"></script>
 </body>
-
-
 </html>

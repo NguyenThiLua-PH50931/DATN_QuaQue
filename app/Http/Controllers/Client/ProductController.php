@@ -7,6 +7,7 @@ use App\Models\Product;
 
 class ProductController extends Controller
 {
+
     public function detail($slug)
     {
         // Lấy sản phẩm theo slug, kèm category, region, seller (user), images, reviews

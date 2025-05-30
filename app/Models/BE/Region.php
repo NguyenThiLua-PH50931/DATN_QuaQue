@@ -3,6 +3,7 @@
 namespace App\Models\BE;
 
 use Illuminate\Database\Eloquent\Model;
+
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Region extends Model
@@ -12,4 +13,5 @@ class Region extends Model
     protected $table = 'regions';
     protected $fillable = ['name', 'slug'];
     protected $dates = ['deleted_at'];
+
 }

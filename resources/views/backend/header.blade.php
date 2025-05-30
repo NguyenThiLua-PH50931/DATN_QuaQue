@@ -5,7 +5,8 @@
             <div class="logo-wrapper">
                 <a href="{{ url('/admin') }}">
                     <img class="img-fluid main-logo" src="{{ asset('backend/assets/images/logo/1.png') }}" alt="logo">
-                    <img class="img-fluid white-logo" src="{{ asset('backend/assets/images/logo/1-white.png') }}" alt="logo">
+                    <img class="img-fluid white-logo" src="{{ asset('backend/assets/images/logo/1-white.png') }}"
+                        alt="logo">
                 </a>
             </div>
             <div class="toggle-sidebar">
@@ -79,14 +80,20 @@
                 </li>
 
                 <li class="profile-nav onhover-dropdown pe-0 me-0">
+                    @auth
                     <div class="media profile-media">
-                        <img class="user-profile rounded-circle" src="{{ asset('backend/assets/images/users/4.jpg') }}"
-                            alt="">
+                        <img class="user-profile rounded-circle"
+                            src="{{ Auth::user()->avatar ? asset('storage/avatars/' . Auth::user()->avatar) : asset('backend/assets/images/users/default.jpg') }}"
+                            alt="Avatar người dùng">
                         <div class="user-name-hide media-body">
-                            <span>Emay Walter</span>
-                            <p class="mb-0 font-roboto">Admin<i class="middle ri-arrow-down-s-line"></i></p>
+                            <span>{{ Auth::user()->name }}</span>
+                            <p class="mb-0 font-roboto">
+                                {{ ucfirst(Auth::user()->role) }}
+                                <i class="middle ri-arrow-down-s-line"></i>
+                            </p>
                         </div>
                     </div>
+
                     <ul class="profile-dropdown onhover-show-div">
                         <li>
                             <a href="{{ url('/admin/users') }}">
@@ -119,6 +126,10 @@
                             </a>
                         </li>
                     </ul>
+                    @else
+                    {{-- Tùy chọn: Hiển thị liên kết đăng nhập hoặc nội dung khác khi chưa đăng nhập --}}
+                    {{-- <li><a href="{{ route('login') }}">Đăng nhập</a></li> --}}
+                    @endauth
                 </li>
             </ul>
         </div>
