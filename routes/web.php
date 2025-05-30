@@ -179,18 +179,18 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
 
 // Admin
 // quan li san pham
-// Route::prefix('admin')->group(function () {
-//     // Quản lý đánh giá
-//     Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');
-//     // product
-//     Route::get('/products', [AdminProductController::class, 'index'])->name('products.index');
-//     Route::get('/products/create', [AdminProductController::class, 'create'])->name('products.create');
-//     Route::get('/products/{slug}', [AdminProductController::class, 'show'])->name('products.show');
-//     Route::post('/admin/products/{id}/toggle', [AdminProductController::class, 'toggleStatus'])->name('admin.products.toggle');
-//     Route::post('/admin/variants/{id}/toggle', [AdminProductController::class, 'toggleVariantStatus'])->name('admin.variants.toggle');
-//     Route::post('/admin/products/bulk-delete', [AdminProductController::class, 'bulkDelete'])->name('admin.products.bulkDelete');
-//     Route::delete('/admin/products/{id}', [AdminProductController::class, 'destroy'])->name('admin.products.destroy');
-// });
+Route::prefix('admin')->group(function () {
+    // Quản lý đánh giá
+    Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');
+    // product
+    Route::get('/products', [AdminProductController::class, 'index'])->name('products.index');
+    Route::get('/products/create', [AdminProductController::class, 'create'])->name('products.create');
+    Route::get('/products/{slug}', [AdminProductController::class, 'show'])->name('products.show');
+    Route::post('/admin/products/{id}/toggle', [AdminProductController::class, 'toggleStatus'])->name('admin.products.toggle');
+    Route::post('/admin/variants/{id}/toggle', [AdminProductController::class, 'toggleVariantStatus'])->name('admin.variants.toggle');
+    Route::post('/admin/products/bulk-delete', [AdminProductController::class, 'bulkDelete'])->name('admin.products.bulkDelete');
+    Route::delete('/admin/products/{id}', [AdminProductController::class, 'destroy'])->name('admin.products.destroy');
+});
 // comments
 
 Route::prefix('admin')->middleware(['auth', 'checkAdmin'])->group(function () {
