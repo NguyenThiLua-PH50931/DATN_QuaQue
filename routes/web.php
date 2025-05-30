@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminCommentController;
 use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -148,8 +149,21 @@ Route::get('/admin/list-page', function () {
 });
 
 // Admin
-// quan li san pham 
+// quan li san pham
 Route::prefix('admin')->group(function () {
     // Quản lý đánh giá
     Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');
+});
+// comments
+
+Route::prefix('admin')->group(function () {
+    // Quản lý binh luan
+   Route::get('/comments', [AdminCommentController::class, 'index'])->name('admin.comments.index');
+    Route::get('/comments/{id}/edit', [AdminCommentController::class, 'edit'])->name('admin.comments.edit');
+    Route::put('/comments/{id}', [AdminCommentController::class, 'update'])->name('admin.comments.update');
+    Route::delete('/comments/{id}', [AdminCommentController::class, 'destroy'])->name('admin.comments.destroy');
+    Route::post('/comments/{id}/approve', [AdminCommentController::class, 'approve'])->name('admin.comments.approve');
+    Route::post('/comments/{id}/reject', [AdminCommentController::class, 'reject'])->name('admin.comments.reject');
+    Route::post('/comments/{id}/reply', [AdminCommentController::class, 'reply'])->name('admin.comments.reply');
+
 });
