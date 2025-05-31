@@ -4,7 +4,8 @@
     <div>
         <div class="logo-wrapper logo-wrapper-center">
             <a href="{{ url('/admin') }}" title="">
-                <img class="img-fluid for-white" src="{{ asset('backend/assets/images/logo/full-white.png') }}" alt="logo">
+                <img class="img-fluid for-white" src="{{ asset('backend/assets/images/logo/full-white.png') }}"
+                    alt="logo">
             </a>
             <div class="back-btn">
                 <i class="fa fa-angle-left"></i>
@@ -16,8 +17,10 @@
 
         <div class="logo-icon-wrapper">
             <a href="{{ url('/admin') }}">
-                <img class="img-fluid main-logo main-white" src="{{ asset('backend/assets/images/logo/logo.png') }}" alt="logo">
-                <img class="img-fluid main-logo main-dark" src="{{ asset('backend/assets/images/logo/logo-white.png') }}" alt="logo">
+                <img class="img-fluid main-logo main-white" src="{{ asset('backend/assets/images/logo/logo.png') }}"
+                    alt="logo">
+                <img class="img-fluid main-logo main-dark"
+                    src="{{ asset('backend/assets/images/logo/logo-white.png') }}" alt="logo">
             </a>
         </div>
 
@@ -32,17 +35,6 @@
                             <i class="ri-home-line"></i>
                             <span>Dashboard</span>
                         </a>
-                    </li>
-
-                    <li class="sidebar-list">
-                        <a class="sidebar-link sidebar-title" href="javascript:void(0)">
-                            <i class="ri-store-3-line"></i>
-                            <span>Blog</span>
-                        </a>
-                        <ul class="sidebar-submenu">
-                            <li><a href="{{ url('/admin/blog/index') }}">Blog</a></li>
-                            <li><a href="{{ url('/admin/blog/create') }}">Add New Blog</a></li>
-                        </ul>
                     </li>
 
                     <li class="sidebar-list">
@@ -81,11 +73,33 @@
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                             <i class="ri-user-3-line"></i>
-                            <span>Users</span>
+                            <span>Người dùng</span>
                         </a>
                         <ul class="sidebar-submenu">
-                            <li><a href="{{ url('/admin/users') }}">All Users</a></li>
-                            <li><a href="{{ url('/admin/users/create') }}">Add New User</a></li>
+                            <li><a href="{{ route('admin.user.index') }}">Tài khoản</a></li>
+                            <li><a href="{{ route('admin.user.create') }}">Thêm tài khoản</a></li>
+                            <li><a href="{{ route('admin.user.hidden') }}">Tài khoản đã ẩn</a></li>
+                        </ul>
+                    </li>
+                    <li class="sidebar-list">
+                        <a class="sidebar-link sidebar-title" href="javascript:void(0)">
+                            <i class="ri-user-3-line"></i>
+                            <span>Quản lý bình luận</span>
+                        </a>
+                        <ul class="sidebar-submenu">
+                            <li>
+                                <a href="{{ route('admin.comments.index') }}">Danh sách bình luận </a>
+                            </li>
+
+                        </ul>
+                    </li>
+                       <li class="sidebar-list">
+                        <a class="sidebar-link sidebar-title" href="javascript:void(0)">
+                            <i class="ri-store-3-line"></i>
+                            <span>Tin tức</span>
+                        </a>
+                        <ul class="sidebar-submenu">
+                            <li><a href="{{ url('/admin/blog/index') }}">Tin tức</a></li>
                         </ul>
                     </li>
 

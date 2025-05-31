@@ -1,6 +1,6 @@
 @extends('layouts.backend')
 
-@section('title', 'Thêm sản phẩm')
+@section('title', 'Sửa sản phẩm')
 
 @section('content')
 <div class="page-body">
@@ -9,32 +9,21 @@
             <div class="col-12">
                 <div class="row">
                     <div class="col-sm-8 m-auto">
+
                         @if(session('success'))
                             <div class="alert alert-success">{{ session('success') }}</div>
-                        @endif
-                        @if(session('error'))
-                            <div class="alert alert-danger">{{ session('error') }}</div>
-                        @endif
-                        @if ($errors->any())
-                            <div class="alert alert-danger">
-                                <ul class="mb-0">
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
                         @endif
 
                         <div class="card">
                             <div class="card-body">
-                                <div class="card-header-2"><h5>Thông tin sản phẩm</h5></div>
-                                <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data" class="theme-form theme-form-2 mega-form">
+                                <div class="card-header-2"><h5>Sửa thông tin sản phẩm</h5></div>
+                                <form action="{{ route('admin.products.update', $product->slug) }}" method="POST" enctype="multipart/form-data" class="theme-form theme-form-2 mega-form">
                                     @csrf
 
                                     <div class="mb-4 row align-items-center">
                                         <label class="form-label-title col-sm-3 mb-0">Tên sản phẩm</label>
                                         <div class="col-sm-9">
-                                            <input name="name" class="form-control" type="text" required value="{{ old('name') }}">
+                                            <input name="name" class="form-control" type="text" required value="{{ old('name', $product->name) }}">
                                         </div>
                                     </div>
 
@@ -44,12 +33,9 @@
                                             <select name="category_id" class="form-select" required>
                                                 <option value="">--Chọn danh mục--</option>
                                                 @foreach($categories as $cat)
-                                                    <option value="{{ $cat->id }}" {{ old('category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                                                    <option value="{{ $cat->id }}" {{ (old('category_id', $product->category_id)==$cat->id)?'selected':'' }}>{{ $cat->name }}</option>
                                                 @endforeach
                                             </select>
-                                        </div>
-                                        <div class="col-sm-2">
-                                            <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#addCategoryModal">+ Thêm</button>
                                         </div>
                                     </div>
 
@@ -59,42 +45,47 @@
                                             <select name="region_id" class="form-select" required>
                                                 <option value="">--Chọn vùng--</option>
                                                 @foreach($regions as $region)
-                                                    <option value="{{ $region->id }}" {{ old('region_id') == $region->id ? 'selected' : '' }}>{{ $region->name }}</option>
+                                                    <option value="{{ $region->id }}" {{ (old('region_id', $product->region_id)==$region->id)?'selected':'' }}>{{ $region->name }}</option>
                                                 @endforeach
                                             </select>
-                                        </div>
-                                        <div class="col-sm-2">
-                                            <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#addRegionModal">+ Thêm</button>
                                         </div>
                                     </div>
 
                                     <div class="mb-4 row align-items-center">
                                         <label class="form-label-title col-sm-3 mb-0">Mô tả</label>
                                         <div class="col-sm-9">
-                                            <textarea name="description" class="form-control" rows="3">{{ old('description') }}</textarea>
+                                            <textarea name="description" class="form-control" rows="3">{{ old('description', $product->description) }}</textarea>
                                         </div>
                                     </div>
 
                                     <div class="mb-4 row align-items-center">
                                         <label class="form-label-title col-sm-3 mb-0">Ảnh đại diện</label>
                                         <div class="col-sm-9">
-                                            <input name="image" class="form-control" type="file" accept="image/*" required>
-                                            <small>Ảnh sẽ lưu tại: <b>products/tên_ảnh</b></small>
+                                            @if($product->image)
+                                                <img src="{{ asset('storage/' . $product->image) }}" style="max-width:120px; margin-bottom:10px;">
+                                            @endif
+                                            <input name="image" class="form-control" type="file" accept="image/*">
+                                            <small>Bỏ trống nếu không muốn đổi ảnh</small>
                                         </div>
                                     </div>
 
                                     <div class="mb-4 row align-items-center">
                                         <label class="form-label-title col-sm-3 mb-0">Ảnh mô tả</label>
                                         <div class="col-sm-9">
+                                            @if($images)
+                                                @foreach($images as $img)
+                                                    <img src="{{ asset('storage/' . $img->image_url) }}" style="max-width:80px; margin-right:5px;">
+                                                @endforeach
+                                            @endif
                                             <input name="images[]" class="form-control" type="file" accept="image/*" multiple>
-                                            <small>Có thể chọn nhiều ảnh</small>
+                                            <small>Bỏ trống nếu không muốn đổi ảnh mô tả</small>
                                         </div>
                                     </div>
 
                                     <div class="mb-4 row align-items-center">
                                         <label class="form-label-title col-sm-3 mb-0">Xuất xứ</label>
                                         <div class="col-sm-9">
-                                            <input name="origin" class="form-control" type="text" value="{{ old('origin') }}">
+                                            <input name="origin" class="form-control" type="text" value="{{ old('origin', $product->origin) }}">
                                         </div>
                                     </div>
 
@@ -110,28 +101,25 @@
                                                 <div class="col-sm-1">SKU</div>
                                                 <div class="col-sm-1"></div>
                                             </div>
-                                            @php
-                                                $oldVariants = old('variants', [['name'=>'','price'=>'','stock'=>'','description'=>'','sku'=>'']]);
-                                            @endphp
-                                            @foreach($oldVariants as $i => $variant)
+                                            @foreach($variants as $i => $variant)
                                             <div class="row mb-2 variant-row">
                                                 <div class="col-sm-3">
-                                                    <input name="variants[{{$i}}][name]" class="form-control" type="text" placeholder="Tên biến thể" required value="{{ $variant['name'] ?? '' }}">
+                                                    <input name="variants[{{$i}}][name]" class="form-control" type="text" placeholder="Tên biến thể" required value="{{ $variant->name }}">
                                                 </div>
                                                 <div class="col-sm-2">
-                                                    <input name="variants[{{$i}}][price]" class="form-control" type="number" step="0.01" placeholder="Giá bán" required value="{{ $variant['price'] ?? '' }}">
+                                                    <input name="variants[{{$i}}][price]" class="form-control" type="number" step="0.01" placeholder="Giá bán" required value="{{ $variant->price }}">
                                                 </div>
                                                 <div class="col-sm-2">
-                                                    <input name="variants[{{$i}}][stock]" class="form-control" type="number" placeholder="Tồn kho" min="0" required value="{{ $variant['stock'] ?? '' }}">
+                                                    <input name="variants[{{$i}}][stock]" class="form-control" type="number" placeholder="Tồn kho" min="0" required value="{{ $variant->stock }}">
                                                 </div>
                                                 <div class="col-sm-3">
-                                                    <input name="variants[{{$i}}][description]" class="form-control" type="text" placeholder="Ghi chú (tùy chọn)" value="{{ $variant['description'] ?? '' }}">
+                                                    <input name="variants[{{$i}}][description]" class="form-control" type="text" placeholder="Ghi chú (tùy chọn)" value="{{ $variant->description }}">
                                                 </div>
                                                 <div class="col-sm-1">
-                                                    <input name="variants[{{$i}}][sku]" class="form-control sku-auto" type="text" placeholder="SKU" readonly value="{{ $variant['sku'] ?? '' }}">
+                                                    <input name="variants[{{$i}}][sku]" class="form-control sku-auto" type="text" placeholder="SKU" readonly value="{{ $variant->sku }}">
                                                 </div>
                                                 <div class="col-sm-1 d-flex align-items-center justify-content-center">
-                                                    <button type="button" class="btn btn-outline-danger btn-sm btn-remove-variant" style="{{ count($oldVariants)==1?'display:none;':'' }}">&times;</button>
+                                                    <button type="button" class="btn btn-outline-danger btn-sm btn-remove-variant" style="{{ $variants->count()==1?'display:none;':'' }}">&times;</button>
                                                 </div>
                                             </div>
                                             @endforeach
@@ -144,22 +132,20 @@
                                         <label class="col-sm-3 col-form-label form-label-title">Kích hoạt</label>
                                         <div class="col-sm-9">
                                             <select name="active" class="form-select">
-                                                <option value="1" {{ old('active', 1)==1 ? 'selected' : '' }}>Có</option>
-                                                <option value="0" {{ old('active', 1)==0 ? 'selected' : '' }}>Không</option>
+                                                <option value="1" {{ $product->active == 1 ? 'selected' : '' }}>Có</option>
+                                                <option value="0" {{ $product->active == 0 ? 'selected' : '' }}>Không</option>
                                             </select>
                                         </div>
                                     </div>
                                     
                                     <div class="row">
                                         <div class="col-sm-9 offset-sm-3">
-                                            <button type="submit" class="btn btn-success">Thêm sản phẩm</button>
+                                            <button type="submit" class="btn btn-success">Cập nhật sản phẩm</button>
                                         </div>
                                     </div>
                                 </form>
                             </div>
                         </div>
-                        {{-- Modal thêm danh mục và vùng miền --}}
-                        {{-- Thêm phần modal nếu muốn, như các trả lời trước --}}
                         @includeIf('backend.footer')
                     </div>
                 </div>
@@ -168,37 +154,8 @@
     </div>
 </div>
 
-<style>
-    #variants-list .row {
-        align-items: center;
-    }
-    #variants-list input[readonly] {
-        background: #f3f3f3;
-        font-weight: bold;
-        text-align: center;
-    }
-    .btn-remove-variant {
-        width: 28px;
-        height: 28px;
-        padding: 0;
-        font-size: 16px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    #variants-list .fw-bold {
-        color: #333;
-        font-size: 15px;
-        background: #f8f9fa;
-        border-radius: 4px;
-        margin-bottom: 6px;
-    }
-</style>
-
 <script>
-    // Tăng variantIndex đúng với số dòng đã có
-    let variantIndex = {{ count(old('variants', [['name'=>'']])) }};
+    let variantIndex = {{ count($variants) }};
     function generateSKU(name = '') {
         const base = 'PRD-' + (new Date()).getTime();
         const val = name ? '-' + name.replace(/\s/g, '').toUpperCase().substring(0,6) : '';

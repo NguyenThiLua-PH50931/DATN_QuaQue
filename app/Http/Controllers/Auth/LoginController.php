@@ -28,10 +28,10 @@ class LoginController extends Controller
             $request->session()->regenerate();
 
             if (Auth::user()->role == "admin") {
-                return redirect()->route('admin.dashboard');
+                return redirect()->route('admin.home');
             }
 
-         return redirect('/')->with('success', 'Đăng nhập thành công!');
+         return redirect('client.home')->with('success', 'Đăng nhập thành công!');
         }
 
         return back()->withErrors([
