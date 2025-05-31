@@ -52,7 +52,7 @@ class ReviewController extends Controller
             'comment' => $request->comment,
         ]);
 
-        return redirect()->route('reviews.index')->with('success', 'Đánh giá đã được thêm!');
+        return redirect()->route('admin.reviews.index')->with('success', 'Đánh giá đã được thêm!');
     }
 
     /**
@@ -73,6 +73,8 @@ class ReviewController extends Controller
         $review = Review::findOrFail($id);
         $review->delete();
 
-        return redirect()->route('reviews.index')->with('success', 'Đánh giá đã được xoá.');
+        return redirect()->route('admin.reviews.index')->with('success', 'Đánh giá đã được xoá.');
     }
 }
+
+

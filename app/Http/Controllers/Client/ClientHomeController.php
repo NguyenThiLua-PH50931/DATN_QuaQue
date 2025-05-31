@@ -1,10 +1,13 @@
 <?php
-namespace App\Http\Controllers;
 
-use App\Models\admin\Product;
-use App\Models\admin\Category; // thêm use Category
+namespace App\Http\Controllers\Client;
 
-class ProductController extends Controller
+use App\Http\Controllers\Controller;
+use App\Models\admin\Category;
+use App\Models\admin\Product; // nếu bạn có model Category
+use Illuminate\Http\Request;
+
+class ClientHomeController extends Controller
 {
     public function home()
     {
@@ -25,6 +28,7 @@ class ProductController extends Controller
         $product->increment('view_week');
         $product->increment('view_month');
 
-        return view('frontend.products.details', compact('product'));
+        return view('frontend.products.detail', compact('product'));
     }
 }
+

@@ -2,7 +2,15 @@
 
 @section('title', 'Bảng điều khiển')
 
+
+
 @section('content')
+
+ @if(session('msg'))
+    <div class="alert alert-success" role="alert">
+        {{ session('msg') }}
+    </div>
+    @endif
             <div class="page-body">
                 <div class="container-fluid">
                     <div class="row">
