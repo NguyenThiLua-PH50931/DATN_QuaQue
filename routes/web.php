@@ -85,7 +85,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         Route::get('/', [AdminProductController::class, 'index'])->name('products.index');
         Route::get('create', [AdminProductController::class, 'create'])->name('products.create');
         Route::get('{slug}', [AdminProductController::class, 'show'])->name('products.show');
-        Route::post('{id}/toggle', [AdminProductController::class, 'toggleStatus'])->name('admin.products.toggle');
+Route::post('{id}/toggle', [AdminProductController::class, 'toggleStatus'])->name('admin.products.toggle');
 Route::post('variants/{id}/toggle', [AdminProductController::class, 'toggleVariantStatus'])->name('admin.variants.toggle');
         Route::post('bulk-delete', [AdminProductController::class, 'bulkDelete'])->name('admin.products.bulkDelete');
         Route::delete('{id}', [AdminProductController::class, 'destroy'])->name('admin.products.destroy');
@@ -137,7 +137,7 @@ Route::post('variants/{id}/toggle', [AdminProductController::class, 'toggleVaria
 
     
 
-    // BlogBlog
+// BlogBlog
     Route::group(['prefix' => 'blog', 'as' => 'blog.'], function () {
          Route::get('index', [BlogController::class, 'index'])->name('index');
         Route::get('create', [BlogController::class, 'create'])->name('create');
@@ -214,7 +214,7 @@ Route::prefix('admin')->group(function () {
         Route::get('/create', [AdminProductController::class, 'create'])->name('create');
         Route::post('/store', [AdminProductController::class, 'store'])->name('store');
 Route::get('/{slug}', [AdminProductController::class, 'show'])->name('show');
-        Route::post('/{id}/toggle', [AdminProductController::class, 'toggleStatus'])->name('toggle');
+Route::post('/{id}/toggle', [AdminProductController::class, 'toggleStatus'])->name('toggle');
         Route::post('/variant/{id}/toggle', [AdminProductController::class, 'toggleVariantStatus'])->name('variant.toggle');
         Route::post('/bulk-delete', [AdminProductController::class, 'bulkDelete'])->name('bulkDelete');
         Route::delete('/{id}', [AdminProductController::class, 'destroy'])->name('destroy');
@@ -222,4 +222,3 @@ Route::get('/{slug}', [AdminProductController::class, 'show'])->name('show');
         Route::post('/{slug}/update', [AdminProductController::class, 'update'])->name('update');
     });
 });
-        
