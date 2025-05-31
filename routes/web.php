@@ -25,6 +25,10 @@ use App\Http\Controllers\ProductController as GlobalProductController; // Nếu 
 // Đăng ký người dùng
 
 // CLIENT
+Route::get('/', function () {
+    return redirect()->route('client.home');
+});
+
 
 Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
     Route::get('home', [ClientHomeController::class, 'home'])->name('home');
