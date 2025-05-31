@@ -23,10 +23,10 @@
                                 <table id="table_id" class="table role-table all-package theme-table">
                                     <thead>
                                         <tr>
-                                            <th>No</th>
-                                            <th>Name</th>
-                                            <th>Create At</th>
-                                            <th>Options</th>
+                                            <th style="color: black; background-color: #f8f9fa;">No</th>
+                                            <th style="color: black; background-color: #f8f9fa;">Name</th>
+                                            <th style="color: black; background-color: #f8f9fa;">Create At</th>
+                                            <th style="color: black; background-color: #f8f9fa;">Options</th>
                                         </tr>
                                     </thead>
 

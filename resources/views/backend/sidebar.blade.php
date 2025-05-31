@@ -16,7 +16,7 @@
         </div>
 
         <div class="logo-icon-wrapper">
-            <a href="{{ url('/admin') }}">
+            <a href="{{ url('/admin/home') }}">
                 <img class="img-fluid main-logo main-white" src="{{ asset('backend/assets/images/logo/logo.png') }}"
                     alt="logo">
                 <img class="img-fluid main-logo main-dark"
@@ -31,6 +31,7 @@
                     <li class="back-btn"></li>
 
                     <li class="sidebar-list">
+
                         <a class="sidebar-link sidebar-title link-nav" href="{{ route('admin.home') }}">
                             <i class="ri-home-line"></i>
                             <span>Trang chủ</span>
@@ -40,26 +41,52 @@
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                             <i class="ri-store-3-line"></i>
-                            <span>Sản phẩm</span>
+                            <span>Sản Phẩm</span>
                         </a>
                         <ul class="sidebar-submenu">
                             <li><a href="{{ url('/admin/products') }}">Danh sách sản phẩm</a></li>
-                            <li><a href="{{ url('/admin/products/create') }}">Thêm mới</a></li>
+                            <li><a href="{{ url('/admin/products/create') }}">Thêm sản phẩm</a></li>
+
                         </ul>
                     </li>
 
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                             <i class="ri-list-check-2"></i>
+
                             <span>Danh mục</span>
                         </a>
                         <ul class="sidebar-submenu">
-                            <li><a href="{{ url('/admin/categories') }}">Category List</a></li>
-                            <li><a href="{{ url('/admin/categories/create') }}">Add New Category</a></li>
+                            <li><a href="{{ url('/admin/categories') }}">Danh sách danh mục</a></li>
+                            <li><a href="{{ url('/admin/categories/create') }}">Thêm danh mục</a></li>
                         </ul>
                     </li>
 
+                    <li class="sidebar-list">
+                        <a class="sidebar-link sidebar-title" href="javascript:void(0)">
+                            <i class="ri-list-check-2"></i>
+                            <span>Regions</span>
+                        </a>
+                        <ul class="sidebar-submenu">
+                            <li><a href="{{ url('/admin/regions') }}">Regions List</a></li>
+                            <li><a href="{{ url('/admin/regions/create') }}">Add New Regions</a></li>
+                        </ul>
+                    </li>
+
+
                    
+
+                    <li class="sidebar-list">
+                        <a class="sidebar-link sidebar-title" href="javascript:void(0)">
+                            <i class="ri-list-settings-line"></i>
+                            <span>Thuộc tính</span>
+                        </a>
+                        <ul class="sidebar-submenu">
+                            <li><a href="{{ url('/admin/attributes') }}">Danh sách thuộc tính</a></li>
+                            <li><a href="{{ url('/admin/attributes/create') }}">Thêm thuộc tính</a></li>
+                        </ul>
+                    </li>
+
 
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
@@ -80,7 +107,6 @@
                             <li>
                                 <a href="{{ route('admin.comments.index') }}">Danh sách bình luận </a>
                             </li>
-
                         </ul>
                     </li>
                        <li class="sidebar-list">
@@ -94,6 +120,7 @@
                     </li>
 
 
+
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title link-nav" href="{{ url('/admin/media') }}">
                             <i class="ri-price-tag-3-line"></i>
@@ -104,6 +131,7 @@
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                             <i class="ri-archive-line"></i>
+
                             <span>Orders</span>
                         </a>
                         <ul class="sidebar-submenu">
@@ -128,10 +156,12 @@
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                             <i class="ri-focus-3-line"></i>
                             <span>Localization Bỏ</span>
+
+                            <span>Đơn hàng</span>
+
                         </a>
                         <ul class="sidebar-submenu">
-                            <li><a href="{{ url('/admin/translation') }}">Translation</a></li>
-                            <li><a href="{{ url('/admin/currency-rates') }}">Currency Rates</a></li>
+                            <li><a href="{{ url('/admin/orders') }}">Danh sách đơn hàng</a></li>
                         </ul>
                     </li>
 
@@ -154,7 +184,7 @@
                     </li>
 
                     <li class="sidebar-list">
-                        <a class="sidebar-link sidebar-title link-nav" href="{{ route('reviews.index') }}">
+                        <a class="sidebar-link sidebar-title link-nav" href="{{ route('admin.reviews.index') }}">
                             <i class="ri-star-line"></i>
                             <span>Product Review</span>
                         </a>
