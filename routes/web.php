@@ -1,10 +1,11 @@
 <?php
 
 
+use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\CommentController;
 
 use App\Http\Controllers\Admin\HomeController;
-use App\Http\Controllers\Admin\User\UserController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\RegionController as AdminRegionController;
@@ -121,6 +122,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         Route::get('hidden', [UserController::class, 'hidden'])->name('hidden');
         // Xóa tài khoản:
         Route::delete('delete/{id}', [UserController::class, 'delete'])->name('delete');
+        // Chỉnh sửa
+        Route::get('edit/{id}', [UserController::class, 'edit'])->name('edit');
+        Route::put('update/{id}', [UserController::class, 'update'])->name('update');
     });
 
     // comments
@@ -135,15 +139,15 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
 
     
     // BlogBlog
-    // Route::group(['prefix' => 'blog', 'as' => 'blog.'], function () {
-    //      Route::get('indexindex', [BlogController::class, 'index'])->name('index');
-    //     Route::get('create', [BlogController::class, 'create'])->name('create');
-    //     Route::post('store', [BlogController::class, 'store'])->name('store');
-    //     Route::get('show/{blog}', [BlogController::class, 'show'])->name('show');
-    //     Route::get('edit/{blog}', [BlogController::class, 'edit'])->name('edit');
-    //     Route::put('update/{blog}', [BlogController::class, 'update'])->name('update');
-    //     Route::delete('destroy/{blog}', [BlogController::class, 'destroy'])->name('destroy');
-    // });
+    Route::group(['prefix' => 'blog', 'as' => 'blog.'], function () {
+         Route::get('index', [BlogController::class, 'index'])->name('index');
+        Route::get('create', [BlogController::class, 'create'])->name('create');
+        Route::post('store', [BlogController::class, 'store'])->name('store');
+        Route::get('show/{blog}', [BlogController::class, 'show'])->name('show');
+        Route::get('edit/{blog}', [BlogController::class, 'edit'])->name('edit');
+        Route::put('update/{blog}', [BlogController::class, 'update'])->name('update');
+        Route::delete('destroy/{blog}', [BlogController::class, 'destroy'])->name('destroy');
+    });
 
 });
 
