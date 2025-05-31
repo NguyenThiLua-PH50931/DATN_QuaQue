@@ -3,16 +3,22 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class UsersTableSeeder extends Seeder
 {
     public function run()
     {
-        // Xóa hết dữ liệu cũ
-       User::query()->delete();
+        // Tạm thời tắt ràng buộc khóa ngoại để tránh lỗi khi truncate
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
+        // Xóa sạch bảng users và reset ID về 1
+        User::truncate();
+
+        // Bật lại kiểm tra khóa ngoại
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         // Tạo 3 user mẫu
         User::create([
@@ -29,8 +35,7 @@ class UsersTableSeeder extends Seeder
             'email' => 'seller1@example.com',
             'phone' => '0987654321',
             'password' => Hash::make('password123'),
-            'role' => 'user', // hoặc 'admin' nếu bạn muốn
-
+            'role' => 'member',
             'avatar' => null,
         ]);
 

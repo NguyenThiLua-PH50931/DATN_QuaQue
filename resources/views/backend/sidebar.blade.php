@@ -30,58 +30,58 @@
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title link-nav" href="{{ url('/admin') }}">
                             <i class="ri-home-line"></i>
-                            <span>Dashboard</span>
+                            <span>Trang quản trị</span>
                         </a>
                     </li>
 
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                             <i class="ri-store-3-line"></i>
-                            <span>Product</span>
+                            <span>Sản Phẩm</span>
                         </a>
                         <ul class="sidebar-submenu">
-                            <li><a href="{{ url('/admin/products') }}">Products</a></li>
-                            <li><a href="{{ url('/admin/products/create') }}">Add New Product</a></li>
+                            <li><a href="{{ url('/admin/products') }}">Danh sách sản phẩm</a></li>
+                            <li><a href="{{ url('/admin/products/create') }}">Thêm sản phẩm</a></li>
                         </ul>
                     </li>
 
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                             <i class="ri-list-check-2"></i>
-                            <span>Category</span>
+                            <span>Danh Mục</span>
                         </a>
                         <ul class="sidebar-submenu">
-                            <li><a href="{{ url('/admin/categories') }}">Category List</a></li>
-                            <li><a href="{{ url('/admin/categories/create') }}">Add New Category</a></li>
+                            <li><a href="{{ url('/admin/categories') }}">Danh sách danh mục</a></li>
+                            <li><a href="{{ url('/admin/categories/create') }}">Thêm danh mục</a></li>
                         </ul>
                     </li>
 
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                             <i class="ri-list-settings-line"></i>
-                            <span>Attributes</span>
+                            <span>Thuộc tính</span>
                         </a>
                         <ul class="sidebar-submenu">
-                            <li><a href="{{ url('/admin/attributes') }}">Attributes</a></li>
-                            <li><a href="{{ url('/admin/attributes/create') }}">Add Attributes</a></li>
+                            <li><a href="{{ url('/admin/attributes') }}">Danh sách thuộc tính</a></li>
+                            <li><a href="{{ url('/admin/attributes/create') }}">Thêm thuộc tính</a></li>
                         </ul>
                     </li>
 
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                             <i class="ri-user-3-line"></i>
-                            <span>Users</span>
+                            <span>Người Dùng</span>
                         </a>
                         <ul class="sidebar-submenu">
-                            <li><a href="{{ url('/admin/users') }}">All Users</a></li>
-                            <li><a href="{{ url('/admin/users/create') }}">Add New User</a></li>
+                            <li><a href="{{ url('/admin/users') }}">Danh sách người dùng</a></li>
+                            <li><a href="{{ url('/admin/users/create') }}">Thêm người dùng</a></li>
                         </ul>
                     </li>
 
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                             <i class="ri-user-3-line"></i>
-                            <span>Roles</span>
+                            <span>Vai Trò</span>
                         </a>
                         <ul class="sidebar-submenu">
                             <li><a href="{{ url('/admin/roles') }}">All Roles</a></li>
@@ -99,12 +99,10 @@
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                             <i class="ri-archive-line"></i>
-                            <span>Orders</span>
+                            <span>Đơn hàng</span>
                         </a>
                         <ul class="sidebar-submenu">
-                            <li><a href="{{ url('/admin/orders') }}">Order List</a></li>
-                            <li><a href="{{ url('/admin/orders/detail') }}">Order Detail</a></li>
-                            <li><a href="{{ url('/admin/orders/tracking') }}">Order Tracking</a></li>
+                            <li><a href="{{ url('/admin/orders') }}">Danh sách đơn hàng</a></li>
                         </ul>
                     </li>
 
@@ -138,7 +136,9 @@
                     </li>
 
                     <li class="sidebar-list">
-                        <a class="sidebar-link sidebar-title link-nav" href="{{ url('/admin/product-review') }}">
+
+                        <a class="sidebar-link sidebar-title link-nav" href="{{ route('admin.reviews.index') }}"
+">
                             <i class="ri-star-line"></i>
                             <span>Product Review</span>
                         </a>

@@ -2,19 +2,26 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\ReviewController; // Đảm bảo đã import ReviewController
+
 
 // ==================
 // CLIENT ROUTES
 // ==================
-Route::get('/', [ProductController::class, 'home'])->name('home');
+Route::get('/', [ProductController::class, 'home'])->name('frontend.home');
 Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product.detail');
 
 // Đăng ký người dùng
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
+
+// Đăng nhập
+Route::get('/login', [LoginController::class, 'login'])->name('Login');
+Route::post('/login', [LoginController::class, 'checklogin'])->name('checklogin');
 
 // Các trang client tĩnh
 Route::view('/wishlist', 'frontend.wishlist.wishlist')->name('wishlist');
@@ -58,15 +65,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Media
     Route::view('/media', 'backend.media.index')->name('media.index');
 
-    // 🚀 **Quản lý đơn hàng**
+    // Quản lý đơn hàng
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::get('/orders/{order}/tracking', [OrderController::class, 'tracking'])->name('orders.tracking');
-    
-    // ✅ **Sửa lỗi tuyến đường xóa đơn hàng**
     Route::delete('/orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
-
-    // Cập nhật trạng thái đơn hàng
     Route::put('/orders/{order}/update-status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
 
     // Phiếu giảm giá
@@ -77,7 +80,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::view('/taxes', 'backend.taxes.index')->name('taxes.index');
 
     // Đánh giá sản phẩm
-    Route::view('/product-review', 'backend.product-review.index')->name('product-review.index');
+    Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');  // Thêm route cho reviews
 
     // Yêu cầu hỗ trợ
     Route::view('/support-ticket', 'backend.support-ticket.index')->name('support-ticket.index');
