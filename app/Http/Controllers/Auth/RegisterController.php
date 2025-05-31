@@ -32,6 +32,6 @@ class RegisterController extends Controller
            
         ]);
 
-        return redirect('/')->with('success', 'Đăng ký thành công!');
+        return redirect('client.home')->with('success', 'Đăng ký thành công!');
     }
 }
