@@ -11,3 +11,4 @@ class ClientHomeController extends Controller
         return view('frontend.home');
     }
 }
+
