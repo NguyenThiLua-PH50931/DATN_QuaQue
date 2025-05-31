@@ -32,11 +32,11 @@
                                                                     type="checkbox" value="">
                                                             </span>
                                                         </th>
-                                                        <th>Title</th>
-                                                        <th>Code</th>
-                                                        <th>Discount</th>
-                                                        <th>Status</th>
-                                                        <th>Option</th>
+                                                        <th style="color: black; background-color: #f8f9fa;">Title</th>
+                                                        <th style="color: black; background-color: #f8f9fa;">Code</th>
+                                                        <th style="color: black; background-color: #f8f9fa;">Discount</th>
+                                                        <th style="color: black; background-color: #f8f9fa;">Status</th>
+                                                        <th style="color: black; background-color: #f8f9fa;">Option</th>
                                                     </tr>
                                                 </thead>
 
@@ -302,3 +302,23 @@
 @includeIf('backend.footer')
 </div>
 @endsection
+@push('scripts')
+<script>
+    $(document).ready(function () {
+        $('#table_id').DataTable({
+            language: {
+                search: "Tìm kiếm:",
+                lengthMenu: "Hiển thị _MENU_ phiếu giảm giá",
+                info: "Hiển thị _START_ đến _END_ trong tổng _TOTAL_ phiếu giảm giá",
+                paginate: {
+                    first: "Đầu",
+                    last: "Cuối",
+                    next: "Sau",
+                    previous: "Trước"
+                },
+                zeroRecords: "Không tìm thấy phiếu giảm giá nào.",
+            }
+        });
+    });
+</script>
+@endpush

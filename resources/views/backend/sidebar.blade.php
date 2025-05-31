@@ -16,7 +16,7 @@
         </div>
 
         <div class="logo-icon-wrapper">
-            <a href="{{ url('/admin') }}">
+            <a href="{{ url('/admin/home') }}">
                 <img class="img-fluid main-logo main-white" src="{{ asset('backend/assets/images/logo/logo.png') }}"
                     alt="logo">
                 <img class="img-fluid main-logo main-dark"
@@ -56,6 +56,17 @@
                         <ul class="sidebar-submenu">
                             <li><a href="{{ url('/admin/categories') }}">Danh sách danh mục</a></li>
                             <li><a href="{{ url('/admin/categories/create') }}">Thêm danh mục</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="sidebar-list">
+                        <a class="sidebar-link sidebar-title" href="javascript:void(0)">
+                            <i class="ri-list-check-2"></i>
+                            <span>Regions</span>
+                        </a>
+                        <ul class="sidebar-submenu">
+                            <li><a href="{{ url('/admin/regions') }}">Regions List</a></li>
+                            <li><a href="{{ url('/admin/regions/create') }}">Add New Regions</a></li>
                         </ul>
                     </li>
 
@@ -132,17 +143,6 @@
 
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
-                            <i class="ri-focus-3-line"></i>
-                            <span>Localization Bỏ</span>
-                        </a>
-                        <ul class="sidebar-submenu">
-                            <li><a href="{{ url('/admin/translation') }}">Translation</a></li>
-                            <li><a href="{{ url('/admin/currency-rates') }}">Currency Rates</a></li>
-                        </ul>
-                    </li>
-
-                    <li class="sidebar-list">
-                        <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                             <i class="ri-price-tag-3-line"></i>
                             <span>Coupons</span>
                         </a>
@@ -160,7 +160,6 @@
                     </li>
 
                     <li class="sidebar-list">
-
                         <a class="sidebar-link sidebar-title link-nav" href="{{ route('admin.reviews.index') }}">
                             <i class="ri-star-line"></i>
                             <span>Product Review</span>

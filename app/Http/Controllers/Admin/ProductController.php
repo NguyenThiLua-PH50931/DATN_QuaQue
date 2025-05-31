@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\admin\Product;
-use App\Models\admin\Variant;
-use App\Models\admin\Category;
-use App\Models\admin\Region;
+use App\Models\Product;
+use App\Models\Variant;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -36,12 +34,10 @@ class ProductController extends Controller
         return view('backend.products.show', compact('product'));
     }
     public function create()
-        {
-            $categories = Category::all();
-            $regions = Region::all(); // Nếu form có chọn vùng miền
-
-            return view('backend.products.create', compact('categories', 'regions'));
-        }
+    {
+        // Giả sử chỉ trả về view trống
+        return view('backend.products.create');
+    }
     public function toggleVariantStatus($id)
     {
         $variant = Variant::findOrFail($id);

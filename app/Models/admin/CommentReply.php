@@ -1,7 +1,10 @@
 <?php
-namespace App\Models;
+
+namespace App\Models\admin;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\admin\Comment;
+use App\Models\User;  // nếu User nằm trong App\Models
 
 class CommentReply extends Model
 {

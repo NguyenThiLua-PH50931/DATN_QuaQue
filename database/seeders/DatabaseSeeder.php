@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call([
+<<<<<<< HEAD
             UsersTableSeeder::class,         // Tạo user trước
             AddressSeeder::class,            // Tạo địa chỉ, cần user_id
             ShippingMethodsTableSeeder::class, // Tạo phương thức giao hàng, cần trước orders
@@ -31,6 +32,14 @@ class DatabaseSeeder extends Seeder
             ProductsTableSeeder::class,      // Tạo sản phẩm, cần categories, regions
             OrdersTableSeeder::class,        // Tạo đơn hàng, cần user, address, shipping_method
             OrderItemsTableSeeder::class,    // Tạo chi tiết đơn hàng, cần orders, products
+=======
+            UsersTableSeeder::class,
+            CategoriesTableSeeder::class,
+            RegionsTableSeeder::class,
+            ProductsTableSeeder::class,
+
+            CommentSeeder::class,
+>>>>>>> 4462985ab5e2de3f6f036916a5fd1082cbb78391
 
         ]);
     }

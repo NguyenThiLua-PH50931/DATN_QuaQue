@@ -50,6 +50,7 @@
 
                             </div>
                         </div>
+                        <!-- Table End -->
                     </div>
                     <!-- Table End -->
                 </div>
@@ -61,3 +62,25 @@
     @includeIf('backend.footer')
 </div>
 @endsection
+
+@push('scripts')
+    <script>
+        $(document).ready(function() {
+            $('#table_id').DataTable({
+                language: {
+                    search: "Tìm kiếm:",
+                    lengthMenu: "Hiển thị _MENU_ đánh giá sản phẩm",
+                    info: "Hiển thị _START_ đến _END_ trong tổng _TOTAL_ đánh giá sản phẩm",
+                    paginate: {
+                        first: "Đầu",
+                        last: "Cuối",
+                        next: "Sau",
+                        previous: "Trước"
+                    },
+                    zeroRecords: "Không tìm thấy đánh giá nào.",
+                }
+            });
+        });
+    </script>
+@endpush
+
