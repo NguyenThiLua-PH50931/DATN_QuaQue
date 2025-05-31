@@ -24,12 +24,11 @@
                                                 <input class="checkbox_animated checkall" type="checkbox"
                                                     value="">
                                             </span>
-                                        </th>
-                                        <th>Tax Detail</th>
-                                        <th>Tax Schedule</th>
-                                        <th>Tax Rate</th>
-                                        <th>Total Tax Amount</th>
-                                        <th>Options</th>
+                                        </th>                                        <th style="color: black; background-color: #f8f9fa;">Tax Detail</th>
+                                        <th style="color: black; background-color: #f8f9fa;">Tax Schedule</th>
+                                        <th style="color: black; background-color: #f8f9fa;">Tax Rate</th>
+                                        <th style="color: black; background-color: #f8f9fa;">Total Tax Amount</th>
+                                        <th style="color: black; background-color: #f8f9fa;">Options</th>
                                     </tr>
                                 </thead>
 
@@ -210,31 +209,6 @@
                             </table>
                         </div>
                     </div>
-                    <!-- Table End -->
-
-                    <!-- Pagination Start -->
-                    <!-- <div class="pagination-box">
-                                    <nav class="ms-auto me-auto" aria-label="...">
-                                        <ul class="pagination pagination-primary">
-                                            <li class="page-item disabled">
-                                                <a class="page-link" href="javascript:void(0)">Previous</a>
-                                            </li>
-                                            <li class="page-item active">
-                                                <a class="page-link" href="javascript:void(0)">1</a>
-                                            </li>
-                                            <li class="page-item">
-                                                <a class="page-link" href="javascript:void(0)">2</a>
-                                            </li>
-                                            <li class="page-item">
-                                                <a class="page-link" href="javascript:void(0)">3</a>
-                                            </li>
-                                            <li class="page-item">
-                                                <a class="page-link" href="javascript:void(0)">Next</a>
-                                            </li>
-                                        </ul>
-                                    </nav>
-                                </div> -->
-                    <!-- Pagination End -->
                 </div>
             </div>
         </div>

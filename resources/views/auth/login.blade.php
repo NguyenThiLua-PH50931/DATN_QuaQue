@@ -1,6 +1,6 @@
 @extends('layouts.frontend')
 @section('title', 'Đăng nhập')
-@section('content')
+@section('contents')
 <!-- log in section start -->
 <section class="log-in-section background-image-2 section-b-space">
     <div class="container-fluid-lg w-100">

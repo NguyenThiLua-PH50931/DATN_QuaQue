@@ -1,27 +1,36 @@
 <?php
 
-
-use App\Http\Controllers\Admin\BlogController;
+use App\Http\Controllers\Admin\ReviewController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Client\ProductController;
+use App\Http\Controllers\Admin\RegionController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\CommentController;
+
 
 use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
+
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\RegionController as AdminRegionController;
+use App\Http\Controllers\Admin\OrderController;
 
-use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Client\ClientHomeController;
-
-
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\RegisterController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProductController as GlobalProductController; // Nếu cần dùng controller gốc ngoài admin/client
 
 // CLIENT
+Route::get('/', function () {
+    return redirect()->route('client.home');
+});
+
 
 Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
     Route::get('home', [ClientHomeController::class, 'home'])->name('home');
+    Route::get('product/{slug}', [ClientHomeController::class, 'show'])->name('product.detail');
 
     // Sản phẩm:
     Route::group(['prefix' => 'product', 'as' => 'product.'], function () {});
@@ -66,9 +75,82 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
 // dang ky
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
-// dang nhap
-Route::get('/login', [LoginController::class, 'login'])->name('Login');
+
+// Đăng nhập
+Route::get('/login', [LoginController::class, 'login'])->name('login');
 Route::post('/login', [LoginController::class, 'checklogin'])->name('checklogin');
+
+// Các trang client tĩnh
+Route::view('/wishlist', 'frontend.wishlist.wishlist')->name('wishlist');
+Route::view('/compare', 'frontend.pages.compare')->name('compare');
+Route::view('/contact', 'frontend.pages.contact');
+Route::view('/cart', 'frontend.cart.cart');
+Route::view('/checkout', 'frontend.checkout.checkout');
+Route::view('/products/category', 'frontend.products.category');
+Route::view('/seller/become-seller', 'frontend.seller.become-seller');
+Route::view('/seller/seller-dashboard', 'frontend.seller.seller-dashboard');
+
+// // ==================
+// // ADMIN ROUTES
+// // ==================
+// Route::prefix('admin')->name('admin.')->group(function () {
+
+//     // Dashboard
+//     Route::view('/', 'backend.dashboard')->name('dashboard');
+
+//     // Sản phẩm
+//     Route::get('/products', [AdminProductController::class, 'index'])->name('products.index');
+//     Route::get('/products/create', [AdminProductController::class, 'create'])->name('products.create');
+//     Route::post('/products', [AdminProductController::class, 'store'])->name('products.store');
+
+//     // Danh mục
+//     Route::view('/categories', 'backend.categories.index')->name('categories.index');
+//     Route::view('/categories/create', 'backend.categories.create')->name('categories.create');
+
+//     // Thuộc tính sản phẩm
+//     Route::view('/attributes', 'backend.attributes.index')->name('attributes.index');
+//     Route::view('/attributes/create', 'backend.attributes.create')->name('attributes.create');
+
+//     // Người dùng
+//     Route::view('/users', 'backend.users.index')->name('users.index');
+//     Route::view('/users/create', 'backend.users.create')->name('users.create');
+
+//     // Vai trò
+//     Route::view('/roles', 'backend.roles.index')->name('roles.index');
+//     Route::view('/roles/create', 'backend.roles.create')->name('roles.create');
+
+//     // Media
+//     Route::view('/media', 'backend.media.index')->name('media.index');
+
+//     // Quản lý đơn hàng
+//     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+//     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+//     Route::get('/orders/{order}/tracking', [OrderController::class, 'tracking'])->name('orders.tracking');
+//     Route::delete('/orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
+//     Route::put('/orders/{order}/update-status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
+
+//     // Phiếu giảm giá
+//     Route::view('/coupons', 'backend.coupons.index')->name('coupons.index');
+//     Route::view('/coupons/create', 'backend.coupons.create')->name('coupons.create');
+
+//     // Thuế
+//     Route::view('/taxes', 'backend.taxes.index')->name('taxes.index');
+
+//     // Đánh giá sản phẩm
+//     Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');  // Thêm route cho reviews
+
+//     // Yêu cầu hỗ trợ
+//     Route::view('/support-ticket', 'backend.support-ticket.index')->name('support-ticket.index');
+
+//     // Cài đặt hồ sơ
+//     Route::view('/profile-setting', 'backend.profile-setting.index')->name('profile-setting.index');
+
+//     // Báo cáo
+//     Route::view('/reports', 'backend.reports.index')->name('reports.index');
+
+//     // Trang danh sách
+//     Route::view('/list-page', 'backend.list-page.index')->name('list-page.index');
+
 
 
 
@@ -79,6 +161,7 @@ Route::post('/login', [LoginController::class, 'checklogin'])->name('checklogin'
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin'], function () {
 
     Route::get('home', [HomeController::class, 'home'])->name('home');
+
     // Product
     Route::group(['prefix' => 'products', 'as' => 'products.'], function () {
         Route::get('/', [AdminProductController::class, 'index'])->name('products.index');
@@ -90,45 +173,55 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         Route::delete('{id}', [AdminProductController::class, 'destroy'])->name('admin.products.destroy');
     });
 
-    // Category
-    Route::group(['prefix' => 'category', 'as' => 'category.'], function () {
-        // Route::get('/admin/categories', function () {
-        //     return view('backend.categories.index');
-        // });
-        // Route::get('/admin/categories/create', function () {
-        //     return view('backend.categories.create');
-        // });
-        // // Attributes
-        // Route::get('/admin/attributes', function () {
-        //     return view('backend.attributes.index');
-        // });
-        // Route::get('/admin/attributes/create', function () {
-        //     return view('backend.attributes.create');
-        // });
+    // Categories
+    Route::group(['prefix' => 'categories', 'as' => 'categories.'], function () {
+        Route::get('/', [AdminCategoryController::class, 'index'])->name('index');                  // danh sách categories (trang admin)
+        Route::post('/', [AdminCategoryController::class, 'store'])->name('store');                 // thêm mới
+        Route::put('{id}', [AdminCategoryController::class, 'update'])->name('update');             // cập nhật
+        Route::get('create', [AdminCategoryController::class, 'create'])->name('create');           // form tạo
+        Route::get('{id}/edit', [AdminCategoryController::class, 'edit'])->name('edit');            // form sửa
+        Route::delete('{id}/trashed', [AdminCategoryController::class, 'softDelete'])->name('softDelete');  // xóa mềm
+        Route::delete('{id}/force', [AdminCategoryController::class, 'forceDelete'])->name('forceDelete');  // xóa cứng
+        Route::post('{id}/restore', [AdminCategoryController::class, 'restore'])->name('restore');  // khôi phục
+        Route::get('trashed', [AdminCategoryController::class, 'trashed'])->name('trashed');        // danh sách đã xóa mềm
+    });
+
+    // Regions
+    Route::group(['prefix' => 'regions', 'as' => 'regions.'], function () {
+        Route::get('/', [AdminRegionController::class, 'index'])->name('index');
+        Route::post('/', [AdminRegionController::class, 'store'])->name('store');
+        Route::put('{id}', [AdminRegionController::class, 'update'])->name('update');
+        Route::get('create', [AdminRegionController::class, 'create'])->name('create');
+        Route::get('{id}/edit', [AdminRegionController::class, 'edit'])->name('edit');
+        Route::delete('{id}/soft', [AdminRegionController::class, 'softDelete'])->name('softDelete');
+        Route::delete('{id}/force', [AdminRegionController::class, 'forceDelete'])->name('forceDelete');
+        Route::post('{id}/restore', [AdminRegionController::class, 'restore'])->name('restore');
+        Route::get('trashed', [AdminRegionController::class, 'trashed'])->name('trashed');
     });
 
     // Order
-    Route::group(['prefix' => 'order', 'as' => 'order.'], function () {});
-
+    Route::group(['prefix' => 'orders', 'as' => 'orders.'], function () {
+        Route::get('/', [OrderController::class, 'index'])->name('index');
+        Route::get('/{order}', [OrderController::class, 'show'])->name('show');
+        Route::get('/{order}/tracking', [OrderController::class, 'tracking'])->name('tracking');
+        Route::delete('/{order}', [OrderController::class, 'destroy'])->name('destroy');
+        Route::put('/{order}/update-status', [OrderController::class, 'updateStatus'])->name('updateStatus');
+    });
 
     // User
     Route::group(['prefix' => 'user', 'as' => 'user.'], function () {
         Route::get('index', [UserController::class, 'index'])->name('index');
-        // Thêm mới
         Route::get('create', [UserController::class, 'create'])->name('create');
         Route::post('store', [UserController::class, 'store'])->name('store');
-        // Ẩn hiện tài khoản:
         Route::get('toggle-status/{id}', [UserController::class, 'toggleStatus'])->name('toggleStatus');
         Route::get('hidden', [UserController::class, 'hidden'])->name('hidden');
-        // Xóa tài khoản:
         Route::delete('delete/{id}', [UserController::class, 'delete'])->name('delete');
         // Chỉnh sửa
         Route::get('edit/{id}', [UserController::class, 'edit'])->name('edit');
         Route::put('update/{id}', [UserController::class, 'update'])->name('update');
     });
 
-    // comments
-
+    // Comments
     Route::get('/comments', [CommentController::class, 'index'])->name('comments.index');
     Route::get('/comments/{id}/edit', [CommentController::class, 'edit'])->name('comments.edit');
     Route::put('/comments/{id}', [CommentController::class, 'update'])->name('comments.update');
@@ -137,10 +230,10 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
     Route::post('/comments/{id}/reject', [CommentController::class, 'reject'])->name('comments.reject');
     Route::post('/comments/{id}/reply', [CommentController::class, 'reply'])->name('comments.reply');
 
-    
-    // BlogBlog
+
+    // Blog
     Route::group(['prefix' => 'blog', 'as' => 'blog.'], function () {
-         Route::get('index', [BlogController::class, 'index'])->name('index');
+        Route::get('index', [BlogController::class, 'index'])->name('index');
         Route::get('create', [BlogController::class, 'create'])->name('create');
         Route::post('store', [BlogController::class, 'store'])->name('store');
         Route::get('show/{blog}', [BlogController::class, 'show'])->name('show');
@@ -150,6 +243,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
     });
 
 });
+
 
 
 
@@ -201,16 +295,16 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
 
 // Admin
 // quan li san pham
-Route::prefix('admin')->group(function () {
+Route::prefix('admin')->name('admin.')->group(function () {
+
     // Quản lý đánh giá
     Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');
 
     // Quản lý sản phẩm
+    Route::post('/categories/store-quick', [AdminCategoryController::class, 'storeQuick'])->name('categories.storeQuick');
+    Route::post('/regions/store-quick', [AdminRegionController::class, 'storeQuick'])->name('regions.storeQuick');
 
-    Route::post('/admin/categories/store-quick', [AdminCategoryController::class, 'storeQuick'])->name('admin.categories.storeQuick');
-    Route::post('/admin/regions/store-quick', [AdminRegionController::class, 'storeQuick'])->name('admin.regions.storeQuick');
-
-    Route::prefix('products')->name('admin.products.')->group(function () {
+    Route::prefix('products')->name('products.')->group(function () {
         Route::get('/', [AdminProductController::class, 'index'])->name('index');
         Route::get('/create', [AdminProductController::class, 'create'])->name('create');
         Route::post('/store', [AdminProductController::class, 'store'])->name('store');

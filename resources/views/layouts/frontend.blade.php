@@ -26,6 +26,7 @@
 
     <!-- bootstrap css -->
     <link id="rtl-link" rel="stylesheet" type="text/css" href="../frontend/assets/css/vendors/bootstrap.css">
+    <link rel="stylesheet" href="../frontend/assets/css/aa.css">
 
 
     <!-- wow css -->
@@ -47,6 +48,7 @@
 
     <!-- Template css -->
     <link id="color-link" rel="stylesheet" type="text/css" href="../frontend/assets/css/style.css">
+
 </head>
 
 <body class="bg-effect">
@@ -70,7 +72,7 @@
                         <div class="col-xxl-3 d-xxl-block d-none">
                             <div class="top-left-header">
                                 <i class="iconly-Location icli text-white"></i>
-                                <span class="text-white">1418 Riverwood Drive, CA 96052, US</span>
+                                <span class="text-white">Trịnh Văn Bô, Nam Từ Liêm, Hà Nội</span>
                             </div>
                         </div>
 
@@ -79,20 +81,20 @@
                                 <div class="notification-slider">
                                     <div>
                                         <div class="timer-notification">
-                                            <h6><strong class="me-1">Welcome to Fastkart!</strong>Wrap new offers/gift
-                                                every signle day on Weekends.<strong class="ms-1">New Coupon Code: Fast024
-                                                </strong>
-
-                                            </h6>
+                                            <h6>
+                                                <strong class="me-1">Chào mừng đến với Quà Quê!</strong>
+                                                Ưu đãi mới mỗi ngày cuối tuần – đừng bỏ lỡ!
+                                                <strong class="ms-1">Mã giảm giá: QUAQUE2024</strong>
+                                            <h6>
                                         </div>
                                     </div>
 
                                     <div>
                                         <div class="timer-notification">
-                                            <h6>Something you love is now on sale!
-                                                <a href="shop-left-sidebar.html" class="text-white">Buy Now
-                                                    !</a>
-                                            </h6>
+                                            <h6>
+                                                Món quà bạn yêu thích đang được giảm giá!
+                                                <a href="shop-left-sidebar.html" class="text-white">Mua ngay!</a>
+                                            <h6>
                                         </div>
                                     </div>
                                 </div>
@@ -107,28 +109,32 @@
                                             data-bs-toggle="dropdown" aria-expanded="false">
                                             <img src="../frontend/assets/images/country/united-states.png"
                                                 class="img-fluid blur-up lazyload" alt="">
-                                            <span>English</span>
+                                            <span>Tiếng Anh</span>
+                                
                                         </button>
                                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="select-language">
                                             <li>
                                                 <a class="dropdown-item" href="javascript:void(0)" id="english">
                                                     <img src="../frontend/assets/images/country/united-kingdom.png"
                                                         class="img-fluid blur-up lazyload" alt="">
-                                                    <span>English</span>
+                                                    <span>Tiếng Anh</span>
+                                                
                                                 </a>
                                             </li>
                                             <li>
                                                 <a class="dropdown-item" href="javascript:void(0)" id="france">
                                                     <img src="../frontend/assets/images/country/germany.png"
                                                         class="img-fluid blur-up lazyload" alt="">
-                                                    <span>Germany</span>
+                                                    <span>Tiếng Đức</span>
+                                              
                                                 </a>
                                             </li>
                                             <li>
                                                 <a class="dropdown-item" href="javascript:void(0)" id="chinese">
                                                     <img src="../frontend/assets/images/country/turkish.png"
                                                         class="img-fluid blur-up lazyload" alt="">
-                                                    <span>Turki</span>
+                                                    <span>Tiếng Thổ Nhĩ Kì</span>
+                                              
                                                 </a>
                                             </li>
                                         </ul>
@@ -138,7 +144,8 @@
                                     <div class="dropdown theme-form-select">
                                         <button class="btn dropdown-toggle" type="button" id="select-dollar"
                                             data-bs-toggle="dropdown" aria-expanded="false">
-                                            <span>USD</span>
+                                            <span>VNĐ</span>
+                             
                                         </button>
                                         <ul class="dropdown-menu dropdown-menu-end sm-dropdown-menu"
                                             aria-labelledby="select-dollar">
@@ -149,7 +156,7 @@
                                                 <a class="dropdown-item" id="eur" href="javascript:void(0)">EUR</a>
                                             </li>
                                             <li>
-                                                <a class="dropdown-item" id="cny" href="javascript:void(0)">CNY</a>
+                                                <a class="dropdown-item" id="cny" href="javascript:void(0)">USD</a>
                                             </li>
                                         </ul>
                                     </div>
@@ -182,14 +189,14 @@
                                             <span class="location-arrow">
                                                 <i data-feather="map-pin"></i>
                                             </span>
-                                            <span class="locat-name">Your Location</span>
+                                            <span class="locat-name">Vị trí</span>
                                             <i class="fa-solid fa-angle-down"></i>
                                         </button>
                                     </div>
 
                                     <div class="search-box">
                                         <div class="input-group">
-                                            <input type="search" class="form-control" placeholder="I'm searching for..."
+                                            <input type="search" class="form-control" placeholder="Tìm kiếm..."
                                                 aria-label="Recipient's username" aria-describedby="button-addon2">
                                             <button class="btn" type="button" id="button-addon2">
                                                 <i data-feather="search"></i>
@@ -226,8 +233,8 @@
                                                     <i data-feather="phone-call"></i>
                                                 </div>
                                                 <div class="delivery-detail">
-                                                    <h6>24/7 Delivery</h6>
-                                                    <h5>+91 888 104 2340</h5>
+                                                    <h6>Vận chuyển 24/7</h6>
+                                                    <h5>+84 987612345</h5>
                                                 </div>
                                             </a>
                                         </li>
@@ -241,7 +248,7 @@
                                                 <button type="button" class="btn p-0 position-relative header-wishlist">
                                                     <i data-feather="shopping-cart"></i>
                                                     <span class="position-absolute top-0 start-100 translate-middle badge">2
-                                                        <span class="visually-hidden">unread messages</span>
+                                                        <span class="visually-hidden">Tin nhắn chưa đọc</span>
                                                     </span>
                                                 </button>
 
@@ -315,7 +322,7 @@
                                                 <ul class="user-box-name">
                                                     <li class="product-box-contain">
                                                         <i></i>
-                                                        <a href="{{ route('Login') }}">Log In</a>
+                                                        <a href="{{ route('login') }}">Log In</a>
                                                     </li>
 
                                                     <li class="product-box-contain">
@@ -344,7 +351,7 @@
                             <div class="header-nav-left">
                                 <button class="dropdown-category">
                                     <i data-feather="align-left"></i>
-                                    <span>All Categories</span>
+                                    <span>Chọn Quà</span>
                                 </button>
 
                                 <div class="category-dropdown">
@@ -759,7 +766,8 @@
                                             <ul class="navbar-nav">
                                                 <li class="nav-item dropdown">
                                                     <a class="nav-link dropdown-toggle" href="javascript:void(0)"
-                                                        data-bs-toggle="dropdown">Home</a>
+
+                                                        data-bs-toggle="dropdown">Trang chủ</a>
 
                                                     <ul class="dropdown-menu">
                                                         <li>
@@ -794,8 +802,7 @@
 
                                                 <li class="nav-item dropdown">
                                                     <a class="nav-link dropdown-toggle" href="javascript:void(0)"
-                                                        data-bs-toggle="dropdown">Shop</a>
-
+                                                        data-bs-toggle="dropdown">Cửa hàng</a>
                                                     <ul class="dropdown-menu">
                                                         <li>
                                                             <a class="dropdown-item" href="shop-category-slider.html">Shop
@@ -828,8 +835,7 @@
 
                                                 <li class="nav-item dropdown">
                                                     <a class="nav-link dropdown-toggle" href="javascript:void(0)"
-                                                        data-bs-toggle="dropdown">Product</a>
-
+                                                        data-bs-toggle="dropdown">Sản phẩm</a>
                                                     <ul class="dropdown-menu">
                                                         <li>
                                                             <a class="dropdown-item" href="product-4-image.html">Product
@@ -871,7 +877,7 @@
 
                                                 <li class="nav-item dropdown dropdown-mega">
                                                     <a class="nav-link dropdown-toggle ps-xl-2 ps-0"
-                                                        href="javascript:void(0)" data-bs-toggle="dropdown">Mega Menu</a>
+                                                        href="javascript:void(0)" data-bs-toggle="dropdown">Menu mở rộng</a>
 
                                                     <div class="dropdown-menu dropdown-menu-2">
                                                         <div class="row">
@@ -963,9 +969,9 @@
                                                 </li>
 
                                                 <li class="nav-item dropdown new-nav-item">
-                                                    <label class="new-dropdown">New</label>
+                                                    <label class="new-dropdown">Mới</label>
                                                     <a class="nav-link dropdown-toggle" href="javascript:void(0)"
-                                                        data-bs-toggle="dropdown">Pages</a>
+                                                        data-bs-toggle="dropdown">Trang</a>
                                                     <ul class="dropdown-menu">
                                                         <li class="sub-dropdown-hover">
                                                             <a class="dropdown-item" href="javascript:void(0)">Email
@@ -1062,15 +1068,13 @@
 
                                                 <li class="nav-item dropdown">
                                                     <a class="nav-link dropdown-toggle" href="javascript:void(0)"
-                                                        data-bs-toggle="dropdown">Seller</a>
+                                                        data-bs-toggle="dropdown">Người bán</a>
                                                     <ul class="dropdown-menu">
                                                         <li>
-                                                            <a class="dropdown-item" href="{{ url('/seller/become-seller') }}">Become a
-                                                                Seller</a>
+                                                            <a class="dropdown-item" href="{{ url('/seller/become-seller') }}">Trở thành người bán</a>
                                                         </li>
                                                         <li>
-                                                            <a class="dropdown-item" href="{{ url('/seller/seller-dashboard') }}">Seller
-                                                                Dashboard</a>
+                                                            <a class="dropdown-item" href="{{ url('/seller/seller-dashboard') }}">Trang người bán</a>
                                                         </li>
                                                         <li>
                                                             <a class="dropdown-item" href="seller-detail.html">Seller
@@ -1098,7 +1102,7 @@
                             <div class="header-nav-right">
                                 <button class="btn deal-button" data-bs-toggle="modal" data-bs-target="#deal-box">
                                     <i data-feather="zap"></i>
-                                    <span>Deal Today</span>
+                                    <span>Ưu đãi hôm nay</span>
                                 </button>
                             </div>
                         </div>
@@ -1114,35 +1118,35 @@
             <li class="active">
                 <a href="index.html">
                     <i class="iconly-Home icli"></i>
-                    <span>Home</span>
+                    <span>Trang chủ</span>
                 </a>
             </li>
 
             <li class="mobile-category">
                 <a href="javascript:void(0)">
                     <i class="iconly-Category icli js-link"></i>
-                    <span>Category</span>
+                    <span>Danh mục</span>
                 </a>
             </li>
 
             <li>
                 <a href="search.html" class="search-box">
                     <i class="iconly-Search icli"></i>
-                    <span>Search</span>
+                    <span>Tìm kiếm</span>
                 </a>
             </li>
 
             <li>
                 <a href="wishlist.html" class="notifi-wishlist">
                     <i class="iconly-Heart icli"></i>
-                    <span>My Wish</span>
+                    <span>Sản phẩm yêu thích</span>
                 </a>
             </li>
 
             <li>
                 <a href="cart.html">
                     <i class="iconly-Bag-2 icli fly-cate"></i>
-                    <span>Cart</span>
+                    <span>Giỏ hàng</span>
                 </a>
             </li>
         </ul>
@@ -1150,7 +1154,7 @@
     <!-- mobile fix menu end -->
 
     {{-- Contents --}}
-    @yield('content')
+    @yield('contents')
 
     <!-- Footer Section Start -->
     <footer class="section-t-space">
@@ -1159,72 +1163,70 @@
                 <div class="row g-3">
                     <div class="col-12">
                         <div class="service-contain">
+                            <!-- Sản phẩm tươi mới mỗi ngày -->
                             <div class="service-box">
                                 <div class="service-image">
                                     <img src="https://themes.pixelstrap.com/fastkart/assets/svg/product.svg" class="blur-up lazyload" alt="">
                                 </div>
-
                                 <div class="service-detail">
-                                    <h5>Every Fresh Products</h5>
+                                    <h5>Sản phẩm tươi ngon mỗi ngày</h5>
                                 </div>
                             </div>
 
+                            <!-- Giao hàng miễn phí -->
                             <div class="service-box">
                                 <div class="service-image">
                                     <img src="https://themes.pixelstrap.com/fastkart/assets/svg/delivery.svg" class="blur-up lazyload" alt="">
                                 </div>
-
                                 <div class="service-detail">
-                                    <h5>Free Delivery For Order Over $50</h5>
+                                    <h5>Miễn phí giao hàng cho đơn hàng đầu tiên</h5>
                                 </div>
                             </div>
 
+                            <!-- Giảm giá mỗi ngày -->
                             <div class="service-box">
                                 <div class="service-image">
                                     <img src="https://themes.pixelstrap.com/fastkart/assets/svg/discount.svg" class="blur-up lazyload" alt="">
                                 </div>
-
                                 <div class="service-detail">
-                                    <h5>Daily Mega Discounts</h5>
+                                    <h5>Giảm giá hấp dẫn mỗi ngày</h5>
                                 </div>
                             </div>
 
+                            <!-- Giá tốt nhất -->
                             <div class="service-box">
                                 <div class="service-image">
                                     <img src="https://themes.pixelstrap.com/fastkart/assets/svg/market.svg" class="blur-up lazyload" alt="">
                                 </div>
-
                                 <div class="service-detail">
-                                    <h5>Best Price On The Market</h5>
+                                    <h5>Giá tốt nhất thị trường</h5>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
             <div class="main-footer section-b-space section-t-space">
                 <div class="row g-md-4 g-3">
                     <div class="col-xl-3 col-lg-4 col-sm-6">
                         <div class="footer-logo">
                             <div class="theme-logo">
                                 <a href="index.html">
-                                    <img src="../frontend/assets/images/logo/1.png" class="blur-up lazyload" alt="">
+                                    <img src="../frontend/assets/images/logo/1.png" class="blur-up lazyload" alt="Logo Quà Quê">
                                 </a>
                             </div>
 
                             <div class="footer-logo-contain">
-                                <p>We are a friendly bar serving a variety of cocktails, wines and beers. Our bar is a
-                                    perfect place for a couple.</p>
+                                <p>Quà Quê là nơi bạn tìm thấy những món đặc sản đậm đà hương vị truyền thống từ mọi miền đất nước – dành tặng người thân hoặc thưởng thức cùng gia đình.</p>
 
                                 <ul class="address">
                                     <li>
                                         <i data-feather="home"></i>
-                                        <a href="javascript:void(0)">1418 Riverwood Drive, CA 96052, US</a>
+                                        <a href="javascript:void(0)">1418 Riverwood Drive, CA 96052, US</a> <!-- Có thể thay bằng địa chỉ thật -->
                                     </li>
                                     <li>
                                         <i data-feather="mail"></i>
-                                        <a href="javascript:void(0)">support@fastkart.com</a>
+                                        <a href="javascript:void(0)">support@quaque.vn</a> <!-- Gợi ý email thương hiệu -->
                                     </li>
                                 </ul>
                             </div>

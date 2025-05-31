@@ -4,187 +4,103 @@
 
 @section('content')
 <div class="page-body">
-            <!-- Order Tracking Seation starts-->
-
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <div class="title-header option-title">
-                                                <h5>Order Tracking</h5>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-12 overflow-hidden">
-                                                    <div class="order-left-image">
-                                                        <div class="tracking-product-image">
-                                                            <img src="assets/images/profile/1.jpg"
-                                                                class="img-fluid w-100 blur-up lazyload" alt="">
-                                                        </div>
-
-                                                        <div class="order-image-contain">
-                                                            <h4>Van Heusen Men's Solid Regular Fit Polo</h4>
-                                                            <div class="tracker-number">
-                                                                <p>Order Number : <span>W765EWR8568871</span></p>
-                                                                <p>Brand : <span>Van Heusen</span></p>
-                                                                <p>Order Placed : <span>June 25, 2021</span></p>
+    <!-- Order Tracking Section starts-->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="title-header option-title">
+                                    <h5>Theo dõi đơn hàng</h5>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12 overflow-hidden">
+                                        <div class="order-left-image d-flex">
+                                            <div class="order-image-contain">
+                                                <div class="order-products-list">
+                                                    @foreach ($order->items as $item)
+                                                        <div class="product-item d-flex mb-3">
+                                                            <div class="product-image me-3" style="width: 100px;">
+                                                                <img src="{{ $item->product_image ?? asset('assets/images/default-product.png') }}" alt="{{ $item->product_name }}" class="img-fluid">
                                                             </div>
-                                                            <h5>Your items is on the way. Tracking information will be
-                                                                available within 24 hours.</h5>
+                                                            <div class="product-info">
+                                                                <h5>{{ $item->product_name }}</h5>
+                                                                <p>Số lượng: {{ $item->quantity }}</p>
+                                                                <p>Tổng: {{ number_format($item->total, 0, ',', '.') }} VNĐ</p>
+                                                            </div>
                                                         </div>
-                                                    </div>
+                                                    @endforeach
                                                 </div>
-
-                                                <ol class="progtrckr">
-                                                    <li class="progtrckr-done">
-                                                        <h5>Order Processing</h5>
-                                                        <h6>05:43 AM</h6>
-                                                    </li>
-                                                    <li class="progtrckr-done">
-                                                        <h5>Pre-Production</h5>
-                                                        <h6>01:21 PM</h6>
-                                                    </li>
-                                                    <li class="progtrckr-done">
-                                                        <h5>In Production</h5>
-                                                        <h6>Processing</h6>
-                                                    </li>
-                                                    <li class="progtrckr-todo">
-                                                        <h5>Shipped</h5>
-                                                        <h6>Pending</h6>
-                                                    </li>
-                                                    <li class="progtrckr-todo">
-                                                        <h5>Delivered</h5>
-                                                        <h6>Pending</h6>
-                                                    </li>
-                                                </ol>
-
-                                                <div class="col-12 overflow-visible">
-                                                    <div class="tracker-table">
-                                                        <div class="table-responsive">
-                                                            <table class="table">
-                                                                <thead>
-                                                                    <tr class="table-head">
-                                                                        <th scope="col">Date</th>
-                                                                        <th scope="col">Time</th>
-                                                                        <th scope="col">Discription</th>
-                                                                        <th scope="col">Location</th>
-                                                                    </tr>
-                                                                </thead>
-
-                                                                <tbody>
-                                                                    <tr>
-                                                                        <td>
-                                                                            <h6>21/05/2021</h6>
-                                                                        </td>
-                                                                        <td>
-                                                                            <h6>12:21 AM</h6>
-                                                                        </td>
-                                                                        <td>
-                                                                            <p class="fw-bold">Shipped Info</p>
-                                                                        </td>
-                                                                        <td>
-                                                                            <h6>3 SW. Summit St. Lithonia, GA 30038</h6>
-                                                                        </td>
-                                                                    </tr>
-
-                                                                    <tr>
-                                                                        <td>
-                                                                            <h6>15/04/2021</h6>
-                                                                        </td>
-                                                                        <td>
-                                                                            <h6>01:00 PM</h6>
-                                                                        </td>
-                                                                        <td>
-                                                                            <p class="fw-bold">Shipped</p>
-                                                                        </td>
-                                                                        <td>
-                                                                            <h6>70 Rockwell Lane Falls Church, VA 22041
-                                                                            </h6>
-                                                                        </td>
-                                                                    </tr>
-
-                                                                    <tr>
-                                                                        <td>
-                                                                            <h6>04/05/2021</h6>
-                                                                        </td>
-                                                                        <td>
-                                                                            <h6>03:58 AM</h6>
-                                                                        </td>
-                                                                        <td>
-                                                                            <p class="fw-bold">Shipped Info Received</p>
-                                                                        </td>
-                                                                        <td>
-                                                                            <h6>13 Durham St. The Villages, FL 32162
-                                                                            </h6>
-                                                                        </td>
-                                                                    </tr>
-
-                                                                    <tr>
-                                                                        <td>
-                                                                            <h6>30/04/2021</h6>
-                                                                        </td>
-                                                                        <td>
-                                                                            <h6>06:26 PM</h6>
-                                                                        </td>
-                                                                        <td>
-                                                                            <p class="fw-bold">Origin Scan</p>
-                                                                        </td>
-                                                                        <td>
-                                                                            <h6>38 Saxon Lane Mobile, AL 36605</h6>
-                                                                        </td>
-                                                                    </tr>
-
-                                                                    <tr>
-                                                                        <td>
-                                                                            <h6>02/02/2021</h6>
-                                                                        </td>
-                                                                        <td>
-                                                                            <h6>03:45 PM</h6>
-                                                                        </td>
-                                                                        <td>
-                                                                            <p class="fw-bold">Shipped Info Received</p>
-                                                                        </td>
-                                                                        <td>
-                                                                            <h6>3 Willow Street Chillicothe, OH 45601
-                                                                            </h6>
-                                                                        </td>
-                                                                    </tr>
-
-                                                                    <tr>
-                                                                        <td>
-                                                                            <h6>14/01/2021</h6>
-                                                                        </td>
-                                                                        <td>
-                                                                            <h6>12:21 AM</h6>
-                                                                        </td>
-                                                                        <td>
-                                                                            <p class="fw-bold">Shipped</p>
-                                                                        </td>
-                                                                        <td>
-                                                                            <h6>35 Brickyard Rd. Marshalltown, IA 50158
-                                                                            </h6>
-                                                                        </td>
-                                                                    </tr>
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                <h5>
+                                                    @if ($order->status === 'completed')
+                                                        Đơn hàng đã được giao thành công.
+                                                    @elseif ($order->status === 'cancelled')
+                                                        Đơn hàng đã bị hủy.
+                                                    @else
+                                                        Đơn hàng đang được xử lý. Thông tin tracking sẽ cập nhật trong 24 giờ tới.
+                                                    @endif
+                                                </h5>
                                             </div>
                                         </div>
-                                        <div class="card-footer text-end border-0 pb-0 d-flex justify-content-end">
-                                            <button class="btn btn-primary me-3">Submit</button>
-                                            <button class="btn btn-outline">Cancel</button>
+                                    </div>
+
+                                    <ol class="progtrckr">
+                                        @foreach ($steps as $step)
+                                            <li class="{{ $step['done'] ? 'progtrckr-done' : 'progtrckr-todo' }}">
+                                                <h5>{{ $step['name'] }}</h5>
+                                                <h6>{{ $step['done'] ? 'Hoàn thành' : 'Đang chờ' }}</h6>
+                                            </li>
+                                        @endforeach
+                                    </ol>
+
+                                    <div class="col-12 overflow-visible">
+                                        <div class="tracker-table">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr class="table-head">
+                                                            <th scope="col">Ngày</th>
+                                                            <th scope="col">Giờ</th>
+                                                            <th scope="col">Mô tả</th>
+                                                            <th scope="col">Địa điểm</th>
+                                                        </tr>
+                                                    </thead>
+
+                                                    <tbody>
+                                                        @foreach ($order->trackingUpdates ?? [] as $update)
+                                                        <tr>
+                                                            <td><h6>{{ \Carbon\Carbon::parse($update->date)->format('d/m/Y') }}</h6></td>
+                                                            <td><h6>{{ \Carbon\Carbon::parse($update->date)->format('H:i A') }}</h6></td>
+                                                            <td><p class="fw-bold">{{ $update->description }}</p></td>
+                                                            <td><h6>{{ $update->location }}</h6></td>
+                                                        </tr>
+                                                        @endforeach
+
+                                                        @if(empty($order->trackingUpdates) || count($order->trackingUpdates) === 0)
+                                                        <tr>
+                                                            <td colspan="4" class="text-center">Chưa có thông tin tracking.</td>
+                                                        </tr>
+                                                        @endif
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            <div class="card-footer text-end border-0 pb-0 d-flex justify-content-end">
+                                <a href="{{ route('admin.orders.index') }}" class="btn btn-outline me-3">Quay lại</a>
+                                <button class="btn btn-primary">Cập nhật</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <!-- Container-fluid Ends-->
+            </div>
+        </div>
+     </div>
+    <!-- Container-fluid Ends-->
     @includeIf('backend.footer')
-
+</div>
 @endsection
