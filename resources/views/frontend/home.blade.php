@@ -417,7 +417,7 @@
                                                             </ul>
                                                         </div>
                                                         <div class="product-detail">
-                                                            <a href="{{ route('product.detail', ['slug' => $product->slug]) }}">
+                                                            <a href="{{ route('client.product.detail', ['slug' => $product->slug]) }}">
                                                                 <h6 class="name">{{ $product->name }}</h6>
                                                             </a>
 
@@ -536,7 +536,7 @@
                                             <div class="product-box">
                                                 <div class="label-tag"><span>NEW</span></div>
                                                 <div class="product-image">
-                                                    <a href="{{ route('product.detail', ['slug' => $product->slug]) }}">
+                                                    <a href="{{ route('client.product.detail', ['slug' => $product->slug]) }}">
                                                         <img src="{{ asset('frontend/assets/images/vegetable/product/' . $product->image) }}" class="img-fluid blur-up lazyload" alt="{{ $product->name }}">
                                                     </a>
                                                     <ul class="product-option">
@@ -558,9 +558,10 @@
                                                     </ul>
                                                 </div>
                                                 <div class="product-detail">
-                                                    <a href="{{ route('product.detail', ['slug' => $product->slug]) }}">
+                                                    <a href="{{ route('client.product.detail', ['slug' => $product->slug]) }}">
                                                         <h6 class="name h-100">{{ $product->name }}</h6>
                                                     </a>
+
                                                     <h5 class="sold text-content">
                                                         <span class="theme-color price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
                                                         @if($product->old_price)

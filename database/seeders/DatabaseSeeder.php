@@ -31,6 +31,7 @@ class DatabaseSeeder extends Seeder
             ProductsTableSeeder::class,      // Tạo sản phẩm, cần categories, regions
             OrdersTableSeeder::class,        // Tạo đơn hàng, cần user, address, shipping_method
             OrderItemsTableSeeder::class,    // Tạo chi tiết đơn hàng, cần orders, products
+
         ]);
     }
 }
