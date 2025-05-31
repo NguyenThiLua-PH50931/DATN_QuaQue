@@ -25,7 +25,6 @@
                                     </button>
                                 </div>
                             </div>
-
                         </div>
                     </div>
 
@@ -60,7 +59,6 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </section>
@@ -75,6 +73,7 @@
                             <img src="../frontend/assets/images/vegetable/banner/4.jpg" class="bg-img blur-up lazyload" alt="">
                             <div class="banner-details">
                                 <div class="banner-box">
+
                                     <h6 class="text-danger">Giảm 5%</h6>
                                     <h5>Ưu Đãi Hot Cho Sản Phẩm Mới</h5>
                                     <h6 class="text-content">Thực Phẩm Hằng Ngày: Trứng & Sữa</h6>
@@ -90,11 +89,13 @@
                             <img src="../frontend/assets/images/vegetable/banner/5.jpg" class="bg-img blur-up lazyload" alt="">
                             <div class="banner-details">
                                 <div class="banner-box">
+
                                     <h6 class="text-danger">Giảm 5%</h6>
                                     <h5>Mua Nhiều Hơn, Tiết Kiệm Hơn</h5>
                                     <h6 class="text-content">Rau Củ Tươi Ngon</h6>
                                 </div>
                                 <a href="shop-left-sidebar.html" class="banner-button text-white">Mua Ngay <i
+
                                         class="fa-solid fa-right-long ms-2"></i></a>
                             </div>
                         </div>
@@ -110,6 +111,7 @@
                                     <h6 class="text-content">Giao Tận Nhà Bạn</h6>
                                 </div>
                                 <a href="shop-left-sidebar.html" class="banner-button text-white">Mua Ngay <i
+
                                         class="fa-solid fa-right-long ms-2"></i></a>
                             </div>
                         </div>
@@ -130,7 +132,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </section>
     {{-- BANNER SECTION END --}}
@@ -187,7 +188,6 @@
                                         </div>
                                     </li>
                                 </ul>
-
                             </div>
 
                             <div class="ratio_156 section-t-space">
@@ -205,7 +205,6 @@
                                     </div>
                                 </div>
                             </div>
-
 
                             <div class="ratio_medium section-t-space">
                                 <div class="home-contain hover-effect">
@@ -519,7 +518,6 @@
                             </div>
                         </div>
 
-
                         <div class="title d-block" id="latest-products">
                             <h2>Sản phẩm mới</h2>
                             <span class="title-leaf">
@@ -605,8 +603,6 @@
                             </div>
                         </div>
 
-
-
                         <div class="section-t-space">
                             <div class="banner-contain">
                                 <img src="../frontend/assets/images/vegetable/banner/15.jpg" class="bg-img blur-up lazyload" alt="">
@@ -618,7 +614,6 @@
                                 </div>
                             </div>
                         </div>
-
 
                         <div class="section-t-space section-b-space">
                             <div class="row g-md-4 g-3">

@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\admin\Address;
+use Illuminate\Support\Facades\DB;
 
 class AddressSeeder extends Seeder
 {
@@ -12,6 +13,8 @@ class AddressSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::statement('ALTER TABLE addresses AUTO_INCREMENT = 1');
+
         Address::create([
             'user_id'        => 1,
             'recipient_name' => 'Nguyễn Văn A',

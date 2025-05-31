@@ -23,7 +23,7 @@ class Order extends Model
     // Phương thức giao hàng
     public function shippingMethod()
     {
-        return $this->belongsTo(\App\Models\ShippingMethod::class, 'shipping_method_id');
+        return $this->belongsTo(\App\Models\admin\ShippingMethod::class, 'shipping_method_id');
     }
 
     // Mã giảm giá (nếu có)

@@ -28,8 +28,6 @@
                                 </li> --}}
                             </ul>
                         </div>
-
-
                         </div>
                         <div class="bg-inner cart-section order-details-table">
                             <div class="row g-4">
@@ -161,12 +159,12 @@
 
 
                                             <div class="delivery-sec">
-    <h3>
-        Ngày giao dự kiến: 
-        <span>{{ $order->created_at->addDays(3)->format('d/m/Y') }}</span>
-    </h3>
-    <a href="{{ route('admin.orders.tracking', $order->id) }}">Theo dõi đơn hàng</a>
-</div>
+                                                <h3>
+                                                    Ngày giao dự kiến: 
+                                                    <span>{{ $order->created_at->addDays(3)->format('d/m/Y') }}</span>
+                                                </h3>
+                                                <a href="{{ route('admin.orders.tracking', $order->id) }}">Theo dõi đơn hàng</a>
+                                            </div>
 
                                         </div>
                                     </div>

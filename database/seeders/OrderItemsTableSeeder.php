@@ -11,6 +11,8 @@ class OrderItemsTableSeeder extends Seeder
 {
     public function run()
     {
+        DB::statement('ALTER TABLE order_items AUTO_INCREMENT = 1');
+
         $orders = Order::inRandomOrder()->take(5)->get();
         $products = Product::inRandomOrder()->take(10)->get();
 

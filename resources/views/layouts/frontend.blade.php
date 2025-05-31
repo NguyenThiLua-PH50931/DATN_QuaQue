@@ -85,7 +85,7 @@
                                                 <strong class="me-1">Chào mừng đến với Quà Quê!</strong>
                                                 Ưu đãi mới mỗi ngày cuối tuần – đừng bỏ lỡ!
                                                 <strong class="ms-1">Mã giảm giá: QUAQUE2024</strong>
-                                            </h6>
+                                            <h6>
                                         </div>
                                     </div>
 
@@ -94,7 +94,7 @@
                                             <h6>
                                                 Món quà bạn yêu thích đang được giảm giá!
                                                 <a href="shop-left-sidebar.html" class="text-white">Mua ngay!</a>
-                                            </h6>
+                                            <h6>
                                         </div>
                                     </div>
                                 </div>
@@ -110,6 +110,7 @@
                                             <img src="../frontend/assets/images/country/united-states.png"
                                                 class="img-fluid blur-up lazyload" alt="">
                                             <span>Tiếng Anh</span>
+                                
                                         </button>
                                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="select-language">
                                             <li>
@@ -117,6 +118,7 @@
                                                     <img src="../frontend/assets/images/country/united-kingdom.png"
                                                         class="img-fluid blur-up lazyload" alt="">
                                                     <span>Tiếng Anh</span>
+                                                
                                                 </a>
                                             </li>
                                             <li>
@@ -124,6 +126,7 @@
                                                     <img src="../frontend/assets/images/country/germany.png"
                                                         class="img-fluid blur-up lazyload" alt="">
                                                     <span>Tiếng Đức</span>
+                                              
                                                 </a>
                                             </li>
                                             <li>
@@ -131,6 +134,7 @@
                                                     <img src="../frontend/assets/images/country/turkish.png"
                                                         class="img-fluid blur-up lazyload" alt="">
                                                     <span>Tiếng Thổ Nhĩ Kì</span>
+                                              
                                                 </a>
                                             </li>
                                         </ul>
@@ -141,6 +145,7 @@
                                         <button class="btn dropdown-toggle" type="button" id="select-dollar"
                                             data-bs-toggle="dropdown" aria-expanded="false">
                                             <span>VNĐ</span>
+                             
                                         </button>
                                         <ul class="dropdown-menu dropdown-menu-end sm-dropdown-menu"
                                             aria-labelledby="select-dollar">
@@ -151,7 +156,7 @@
                                                 <a class="dropdown-item" id="eur" href="javascript:void(0)">EUR</a>
                                             </li>
                                             <li>
-                                                <a class="dropdown-item" id="cny" href="javascript:void(0)">CNY</a>
+                                                <a class="dropdown-item" id="cny" href="javascript:void(0)">USD</a>
                                             </li>
                                         </ul>
                                     </div>
@@ -317,7 +322,7 @@
                                                 <ul class="user-box-name">
                                                     <li class="product-box-contain">
                                                         <i></i>
-                                                        <a href="login.html">Log In</a>
+                                                        <a href="{{ route('Login') }}">Log In</a>
                                                     </li>
 
                                                     <li class="product-box-contain">
@@ -761,6 +766,7 @@
                                             <ul class="navbar-nav">
                                                 <li class="nav-item dropdown">
                                                     <a class="nav-link dropdown-toggle" href="javascript:void(0)"
+
                                                         data-bs-toggle="dropdown">Trang chủ</a>
 
                                                     <ul class="dropdown-menu">
@@ -797,7 +803,6 @@
                                                 <li class="nav-item dropdown">
                                                     <a class="nav-link dropdown-toggle" href="javascript:void(0)"
                                                         data-bs-toggle="dropdown">Cửa hàng</a>
-
                                                     <ul class="dropdown-menu">
                                                         <li>
                                                             <a class="dropdown-item" href="shop-category-slider.html">Shop
@@ -831,7 +836,6 @@
                                                 <li class="nav-item dropdown">
                                                     <a class="nav-link dropdown-toggle" href="javascript:void(0)"
                                                         data-bs-toggle="dropdown">Sản phẩm</a>
-
                                                     <ul class="dropdown-menu">
                                                         <li>
                                                             <a class="dropdown-item" href="product-4-image.html">Product
@@ -1202,8 +1206,6 @@
                     </div>
                 </div>
             </div>
-
-
             <div class="main-footer section-b-space section-t-space">
                 <div class="row g-md-4 g-3">
                     <div class="col-xl-3 col-lg-4 col-sm-6">
@@ -1230,7 +1232,6 @@
                             </div>
                         </div>
                     </div>
-
 
                     <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
                         <div class="footer-title">
@@ -1811,6 +1812,5 @@
 
     <!-- theme setting js -->
     <script src="../frontend/assets/js/theme-setting.js"></script>
-    
 </body>
 </html>

@@ -1,32 +1,90 @@
 .status-select {
-    appearance: none;
-    outline: none;
-    padding: 6px 12px;
-    border: none;
-    border-radius: 8px;
-    background-color: #f3f4f6;
-    color: #374151;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding: 8px 16px;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgb(0 0 0 / 0.05);
+  background-clip: padding-box;
+  background-color: #f9fafb;
+  color: #64748b; /* chữ nhạt hơn */
+  position: relative;
+  min-width: 200px;
+  background-image:
+    linear-gradient(45deg, transparent 50%, #94a3b8 50%),
+    linear-gradient(135deg, #94a3b8 50%, transparent 50%),
+    linear-gradient(to right, #f9fafb, #f9fafb);
+  background-position:
+    calc(100% - 20px) calc(1em + 2px),
+    calc(100% - 15px) calc(1em + 2px),
+    100% 0;
+  background-size: 5px 5px, 5px 5px, 2.5em 2.5em;
+  background-repeat: no-repeat;
 }
 
 .status-select:hover {
-    background-color: #e5e7eb;
+  box-shadow: 0 6px 12px rgb(0 0 0 / 0.1);
+  border-color: #93c5fd;
+  background-color: #e0e7ff;
+  color: #3b82f6;
 }
 
 .status-select:focus {
-    background-color: #e5e7eb;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+  outline: none;
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.5);
+  background-color: #dbeafe;
+  color: #2563eb;
 }
 
-.status-pending { background-color: #fef3c7; color: #92400e; }
-.status-confirmed { background-color: #dbeafe; color: #1e40af; }
-.status-shipping { background-color: #cffafe; color: #0e7490; }
-.status-completed { background-color: #dcfce7; color: #166534; }
-.status-cancelled { background-color: #fee2e2; color: #991b1b; }
+/* Màu nhạt, border mờ, chữ nhẹ hơn */
+.status-pending {
+  background: linear-gradient(135deg, #fef9c3, #fef3c7);
+  color: #a16207;
+  border-color: #fde68a80; /* 50% opacity */
+}
+.status-confirmed {
+  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+  color: #2563eb99; /* 60% opacity */
+  border-color: #3b82f680;
+}
+.status-processing {
+  background: linear-gradient(135deg, #e0f2fe, #bae6fd);
+  color: #0284c799;
+  border-color: #0ea5e980;
+}
+.status-shipped {
+  background: linear-gradient(135deg, #cffafe, #a5f3fc);
+  color: #0e749099;
+  border-color: #22d3ee80;
+}
+.status-in_transit {
+  background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
+  color: #0288d199;
+  border-color: #03a9f480;
+}
+.status-delivered {
+  background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+  color: #166534cc;
+  border-color: #4ade8080;
+}
+.status-cancelled {
+  background: linear-gradient(135deg, #fee2e2, #fecaca);
+  color: #991b1b99;
+  border-color: #ef444480;
+}
+.status-failed_delivery {
+  background: linear-gradient(135deg, #fecaca, #fca5a5);
+  color: #b91c1c99;
+  border-color: #dc262680;
+}
+
+
 
 .btn-primary.btn-sm {
     padding: 6px 12px; /* Giảm bớt padding */
@@ -55,4 +113,23 @@
     color: #888;
     margin-left: 10px;
     font-size: 13px;
+}
+.order-products-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.product-item {
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #fff;
+}
+
+.product-image img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin-bottom: 10px;
 }

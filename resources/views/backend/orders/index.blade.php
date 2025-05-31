@@ -51,11 +51,15 @@
                                                     <select name="status" class="form-select status-select status-{{ $order->status }}" onchange="this.form.submit()">
                                                         <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>Chờ xác nhận</option>
                                                         <option value="confirmed" {{ $order->status == 'confirmed' ? 'selected' : '' }}>Đã xác nhận</option>
-                                                        <option value="shipping" {{ $order->status == 'shipping' ? 'selected' : '' }}>Đang giao</option>
-                                                        <option value="completed" {{ $order->status == 'completed' ? 'selected' : '' }}>Đã giao</option>
+                                                        <option value="processing" {{ $order->status == 'processing' ? 'selected' : '' }}>Đang chuẩn bị</option>
+                                                        <option value="shipped" {{ $order->status == 'shipped' ? 'selected' : '' }}>Đã gửi hàng</option>
+                                                        <option value="in_transit" {{ $order->status == 'in_transit' ? 'selected' : '' }}>Đang vận chuyển</option>
+                                                        <option value="delivered" {{ $order->status == 'delivered' ? 'selected' : '' }}>Đã giao hàng</option>
                                                         <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>Đã hủy</option>
+                                                        <option value="failed_delivery" {{ $order->status == 'failed_delivery' ? 'selected' : '' }}>Giao thất bại</option>
                                                     </select>
                                                 </form>
+
                                             </td>
 
                                             @php
@@ -81,7 +85,7 @@
                                                         </a>
                                                     </li>
                                                    
-                                                    @if ($order->status == 'completed' || $order->status == 'cancelled')
+                                                    @if ($order->status == 'delivered' || $order->status == 'cancelled' || $order->status == 'failed_delivery')
                                                         <li>
                                                             <form action="{{ route('admin.orders.destroy', ['order' => $order->id]) }}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn xóa đơn hàng này không?');">
                                                                 @csrf
@@ -94,7 +98,6 @@
                                                     @endif
 
 
-               
                                                 </ul>
                                             </td>
                                         </tr>
@@ -111,27 +114,33 @@
                     <!-- Table End -->
 
                     <!-- Pagination Box Start -->
-                    <!-- <div class="pagination-box">
-                                    <nav class="ms-auto me-auto" aria-label="...">
-                                        <ul class="pagination pagination-primary">
-                                            <li class="page-item disabled">
-                                                <a class="page-link" href="javascript:void(0)">Previous</a>
-                                            </li>
-                                            <li class="page-item active">
-                                                <a class="page-link" href="javascript:void(0)">1</a>
-                                            </li>
-                                            <li class="page-item">
-                                                <a class="page-link" href="javascript:void(0)">2</a>
-                                            </li>
-                                            <li class="page-item">
-                                                <a class="page-link" href="javascript:void(0)">3</a>
-                                            </li>
-                                            <li class="page-item">
-                                                <a class="page-link" href="javascript:void(0)">Next</a>
-                                            </li>
-                                        </ul>
-                                    </nav>
-                                </div> -->
+                   <div class="pagination-box">
+    <nav class="ms-auto me-auto" aria-label="...">
+        <ul class="pagination pagination-primary">
+            {{-- Previous Page Link --}}
+            @if ($orders->onFirstPage())
+                <li class="page-item disabled"><a class="page-link" href="javascript:void(0)">Previous</a></li>
+            @else
+                <li class="page-item"><a class="page-link" href="{{ $orders->previousPageUrl() }}">Previous</a></li>
+            @endif
+
+            {{-- Pagination Elements --}}
+            @foreach ($orders->getUrlRange(1, $orders->lastPage()) as $page => $url)
+                <li class="page-item {{ $orders->currentPage() == $page ? 'active' : '' }}">
+                    <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                </li>
+            @endforeach
+
+            {{-- Next Page Link --}}
+            @if ($orders->hasMorePages())
+                <li class="page-item"><a class="page-link" href="{{ $orders->nextPageUrl() }}">Next</a></li>
+            @else
+                <li class="page-item disabled"><a class="page-link" href="javascript:void(0)">Next</a></li>
+            @endif
+        </ul>
+    </nav>
+</div>
+
                     <!-- Pagination Box End -->
                 </div>
             </div>
