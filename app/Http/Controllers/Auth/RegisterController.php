@@ -29,9 +29,9 @@ class RegisterController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-           
+
         ]);
 
-        return redirect('client.home')->with('success', 'Đăng ký thành công!');
+        return redirect()->route('client.home')->with('success', 'Đăng nhập thành công!');
     }
 }

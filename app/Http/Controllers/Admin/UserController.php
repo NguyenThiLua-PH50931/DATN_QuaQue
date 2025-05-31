@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin\User;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUserRequest;
@@ -81,5 +81,48 @@ class UserController extends Controller
         $user->delete();
 
         return redirect()->route('admin.user.index')->with('success', 'Xóa tài khoản thành công.');
+    }
+
+    // Hiển thị form sửa
+    public function edit($id)
+    {
+        $user = User::findOrFail($id);
+        return view('backend.users.edit', compact('user'));
+    }
+
+    // Xử lý cập nhật
+    // Xử lý cập nhật
+    public function update(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        $validated = $request->validate([
+            'name'  => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'phone' => 'nullable|string',
+            'role'  => 'required|in:admin,member',
+            'password' => 'nullable|string|min:6|confirmed',
+            'avatar'   => 'nullable|image|max:2048',
+        ]);
+
+        // Upload avatar nếu có
+        if ($request->hasFile('avatar')) {
+            $avatarPath = $request->file('avatar')->store('avatars', 'public');
+            $user->avatar = $avatarPath;
+        }
+
+        // Cập nhật các trường
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
+        $user->phone = $validated['phone'];
+        $user->role = $validated['role'];
+
+        if (!empty($validated['password'])) {
+            $user->password = bcrypt($validated['password']);
+        }
+
+        $user->save();
+
+        return redirect()->route('admin.user.index')->with('success', 'Cập nhật tài khoản thành công!');
     }
 }

@@ -12,15 +12,14 @@
     </style>
 @endpush
 
-@section('title', 'Danh sach binh luon')
+@section('title', 'Danh sách bình luận')
 
 @section('content')
 <div class="page-body">
     <div class="main-content">
         <div class="page-content">
             <div class="container-fluid">
-                <h1 class="mb-4">Quản lý bình luận</h1>
-
+                <h3 class="mb-4"><strong>Quản lý bình luận</strong></h3>
                 @if (session('success'))
                     <div class="alert alert-success">
                         {{ session('success') }}
@@ -50,7 +49,7 @@
                 </form>
 
                 <div class="table-responsive">
-                    <table class="table table-striped">
+                     <table class="table all-package theme-table" id="table_id">
                         <thead>
                             <tr>
                                 <th>ID</th>

@@ -30,8 +30,7 @@ class LoginController extends Controller
             if (Auth::user()->role == "admin") {
                 return redirect()->route('admin.home');
             }
-
-         return redirect('client.home')->with('success', 'Đăng nhập thành công!');
+        return redirect()->route('client.home')->with('success', 'Đăng nhập thành công!');
         }
 
         return back()->withErrors([
