@@ -460,3 +460,23 @@
     @includeIf('backend.footer')
 </div>
 @endsection
+@push('scripts')
+<script>
+    $(document).ready(function () {
+        $('#table_id').DataTable({
+            language: {
+                search: "Tìm kiếm:",
+                lengthMenu: "Hiển thị _MENU_ hình ảnh",
+                info: "Hiển thị _START_ đến _END_ trong tổng _TOTAL_ hình ảnh",
+                paginate: {
+                    first: "Đầu",
+                    last: "Cuối",
+                    next: "Sau",
+                    previous: "Trước"
+                },
+                zeroRecords: "Không tìm thấy ảnh nào nào.",
+            }
+        });
+    });
+</script>
+@endpush

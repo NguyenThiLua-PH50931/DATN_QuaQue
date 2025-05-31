@@ -1,0 +1,98 @@
+.suggestion-item {
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    color: #f50606 !important; /* Màu đỏ cho chữ */
+    background-color: #ffffff !important; /* Nền trắng */
+}
+.suggestion-item:hover {
+    background-color: #f8f9fa !important; /* Màu xám nhạt khi hover */
+}
+.tt-menu {
+    background-color: #ffffff !important; /* Nền trắng */
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    width: 100%;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    position: absolute;
+    top: 100%;
+    left: 0;
+}
+.tt-suggestion {
+    color: #f50606 !important; /* Màu đỏ cho chữ */
+    background-color: #ffffff !important; /* Nền trắng */
+}
+.tt-suggestion.tt-cursor {
+    background-color: #f8f9fa !important; /* Màu xám nhạt khi hover */
+    color: #f50606 !important; /* Màu đỏ cho chữ khi hover */
+}
+/* Tương thích dark mode */
+.dark .tt-menu {
+    background-color: #ffffff !important; /* Nền trắng trong dark mode */
+    border-color: #444;
+    color: #f50606 !important; /* Màu đỏ cho chữ trong dark mode */
+}
+.dark .suggestion-item {
+    color: #f50606 !important; /* Màu đỏ cho chữ trong dark mode */
+    background-color: #ffffff !important; /* Nền trắng trong dark mode */
+}
+.dark .suggestion-item:hover {
+    background-color: #f8f9fa !important; /* Màu xám nhạt khi hover trong dark mode */
+}
+.dark .tt-suggestion.tt-cursor {
+    background-color: #f8f9fa !important; /* Màu xám nhạt khi hover trong dark mode */
+    color: #f50606 !important; /* Màu đỏ cho chữ khi hover trong dark mode */
+}
+/* Ngăn mờ nội dung phía sau */
+.search-full .Typeahead-menu {
+    background: #ffffff !important; /* Nền trắng */
+    border: none;
+    box-shadow: none;
+}
+.search-full .Typeahead-menu + .u-posRelative {
+    z-index: 1;
+}
+.page-wrapper, .page-body-wrapper {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative !important;
+    z-index: 0 !important;
+}
+body.offcanvas .page-wrapper, body.offcanvas .page-body-wrapper {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+body.offcanvas {
+    overflow: visible !important;
+}
+.search-full.open .page-wrapper, .search-full.open .page-body-wrapper {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+/* Style cho mục nổi bật trong sidebar */
+.sidebar-links .sidebar-title span.active, .sidebar-links .sidebar-submenu a.active {
+    background-color: transparent !important;
+    font-weight: bold !important;
+    color: #f50606 !important; /* Màu đỏ */
+    border-left: 3px solid #f50606 !important; /* Viền đỏ */
+    padding-left: 10px !important;
+    transition: all 0.3s ease !important;
+}
+.dark .sidebar-links .sidebar-title span.active, .dark .sidebar-links .sidebar-submenu a.active {
+    background-color: transparent !important;
+    color: #f50606 !important; /* Màu đỏ trong dark mode */
+    border-left: 3px solid #f50606 !important;
+}
+/* Đảm bảo menu con hiển thị */
+.sidebar-submenu {
+    display: none;
+}
+.sidebar-submenu.active {
+    display: block !important;
+}

@@ -1,29 +1,24 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-
-use App\Http\Controllers\Admin\BlogController;
-use App\Http\Controllers\Admin\CommentController;
-use App\Http\Controllers\Admin\HomeController;
-use App\Http\Controllers\Admin\User\UserController;
+use App\Http\Controllers\Admin\ReviewController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Client\ProductController;
+use App\Http\Controllers\Admin\RegionController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Admin\CommentController;
+use App\Http\Controllers\Admin\User\UserController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\BlogController;
+use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\RegionController as AdminRegionController;
 use App\Http\Controllers\Admin\OrderController;
-use App\Http\Controllers\Admin\ReviewController;
 
 use App\Http\Controllers\Client\ClientHomeController;
-use App\Http\Controllers\Client\ProductController;
 
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ProductController as GlobalProductController; // Nếu cần dùng controller gốc ngoài admin/client
-
-
-// Route::get('/', [ProductController::class, 'home'])->name('frontend.home');
-// Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product.detail');
-
-// Đăng ký người dùng
 
 // CLIENT
 Route::get('/', function () {
@@ -164,60 +159,64 @@ Route::view('/seller/seller-dashboard', 'frontend.seller.seller-dashboard');
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin'], function () {
 
     Route::get('home', [HomeController::class, 'home'])->name('home');
+
     // Product
     Route::group(['prefix' => 'products', 'as' => 'products.'], function () {
         Route::get('/', [AdminProductController::class, 'index'])->name('products.index');
         Route::get('create', [AdminProductController::class, 'create'])->name('products.create');
         Route::get('{slug}', [AdminProductController::class, 'show'])->name('products.show');
-Route::post('{id}/toggle', [AdminProductController::class, 'toggleStatus'])->name('admin.products.toggle');
-Route::post('variants/{id}/toggle', [AdminProductController::class, 'toggleVariantStatus'])->name('admin.variants.toggle');
+        Route::post('{id}/toggle', [AdminProductController::class, 'toggleStatus'])->name('admin.products.toggle');
+        Route::post('variants/{id}/toggle', [AdminProductController::class, 'toggleVariantStatus'])->name('admin.variants.toggle');
         Route::post('bulk-delete', [AdminProductController::class, 'bulkDelete'])->name('admin.products.bulkDelete');
         Route::delete('{id}', [AdminProductController::class, 'destroy'])->name('admin.products.destroy');
     });
 
-    // Category
-    Route::group(['prefix' => 'category', 'as' => 'category.'], function () {
-        // Route::get('/admin/categories', function () {
-        //     return view('backend.categories.index');
-        // });
-        // Route::get('/admin/categories/create', function () {
-        //     return view('backend.categories.create');
-        // });
-        // // Attributes
-        // Route::get('/admin/attributes', function () {
-        //     return view('backend.attributes.index');
-        // });
-        // Route::get('/admin/attributes/create', function () {
-        //     return view('backend.attributes.create');
-        // });
+    // Categories
+    Route::group(['prefix' => 'categories', 'as' => 'categories.'], function () {
+        Route::get('/', [AdminCategoryController::class, 'index'])->name('index');                  // danh sách categories (trang admin)
+        Route::post('/', [AdminCategoryController::class, 'store'])->name('store');                 // thêm mới
+        Route::put('{id}', [AdminCategoryController::class, 'update'])->name('update');             // cập nhật
+        Route::get('create', [AdminCategoryController::class, 'create'])->name('create');           // form tạo
+        Route::get('{id}/edit', [AdminCategoryController::class, 'edit'])->name('edit');            // form sửa
+        Route::delete('{id}/trashed', [AdminCategoryController::class, 'softDelete'])->name('softDelete');  // xóa mềm
+        Route::delete('{id}/force', [AdminCategoryController::class, 'forceDelete'])->name('forceDelete');  // xóa cứng
+        Route::post('{id}/restore', [AdminCategoryController::class, 'restore'])->name('restore');  // khôi phục
+        Route::get('trashed', [AdminCategoryController::class, 'trashed'])->name('trashed');        // danh sách đã xóa mềm
+    });
+
+    // Regions
+    Route::group(['prefix' => 'regions', 'as' => 'regions.'], function () {
+        Route::get('/', [AdminRegionController::class, 'index'])->name('index');
+        Route::post('/', [AdminRegionController::class, 'store'])->name('store');
+        Route::put('{id}', [AdminRegionController::class, 'update'])->name('update');
+        Route::get('create', [AdminRegionController::class, 'create'])->name('create');
+        Route::get('{id}/edit', [AdminRegionController::class, 'edit'])->name('edit');
+        Route::delete('{id}/soft', [AdminRegionController::class, 'softDelete'])->name('softDelete');
+        Route::delete('{id}/force', [AdminRegionController::class, 'forceDelete'])->name('forceDelete');
+        Route::post('{id}/restore', [AdminRegionController::class, 'restore'])->name('restore');
+        Route::get('trashed', [AdminRegionController::class, 'trashed'])->name('trashed');
     });
 
     // Order
     Route::group(['prefix' => 'orders', 'as' => 'orders.'], function () {
-    Route::get('/', [OrderController::class, 'index'])->name('index');
-    Route::get('/{order}', [OrderController::class, 'show'])->name('show');
-    Route::get('/{order}/tracking', [OrderController::class, 'tracking'])->name('tracking');
-    Route::delete('/{order}', [OrderController::class, 'destroy'])->name('destroy');
-    Route::put('/{order}/update-status', [OrderController::class, 'updateStatus'])->name('updateStatus');
-});
-
-
+        Route::get('/', [OrderController::class, 'index'])->name('index');
+        Route::get('/{order}', [OrderController::class, 'show'])->name('show');
+        Route::get('/{order}/tracking', [OrderController::class, 'tracking'])->name('tracking');
+        Route::delete('/{order}', [OrderController::class, 'destroy'])->name('destroy');
+        Route::put('/{order}/update-status', [OrderController::class, 'updateStatus'])->name('updateStatus');
+    });
 
     // User
     Route::group(['prefix' => 'user', 'as' => 'user.'], function () {
         Route::get('index', [UserController::class, 'index'])->name('index');
-        // Thêm mới
         Route::get('create', [UserController::class, 'create'])->name('create');
         Route::post('store', [UserController::class, 'store'])->name('store');
-        // Ẩn hiện tài khoản:
         Route::get('toggle-status/{id}', [UserController::class, 'toggleStatus'])->name('toggleStatus');
         Route::get('hidden', [UserController::class, 'hidden'])->name('hidden');
-        // Xóa tài khoản:
         Route::delete('delete/{id}', [UserController::class, 'delete'])->name('delete');
     });
 
-    // comments
-
+    // Comments
     Route::get('/comments', [CommentController::class, 'index'])->name('comments.index');
     Route::get('/comments/{id}/edit', [CommentController::class, 'edit'])->name('comments.edit');
     Route::put('/comments/{id}', [CommentController::class, 'update'])->name('comments.update');
@@ -226,11 +225,9 @@ Route::post('variants/{id}/toggle', [AdminProductController::class, 'toggleVaria
     Route::post('/comments/{id}/reject', [CommentController::class, 'reject'])->name('comments.reject');
     Route::post('/comments/{id}/reply', [CommentController::class, 'reply'])->name('comments.reply');
 
-    
-
-// BlogBlog
+    // Blog
     Route::group(['prefix' => 'blog', 'as' => 'blog.'], function () {
-         Route::get('index', [BlogController::class, 'index'])->name('index');
+        Route::get('index', [BlogController::class, 'index'])->name('index');
         Route::get('create', [BlogController::class, 'create'])->name('create');
         Route::post('store', [BlogController::class, 'store'])->name('store');
         Route::get('show/{blog}', [BlogController::class, 'show'])->name('show');
@@ -240,6 +237,7 @@ Route::post('variants/{id}/toggle', [AdminProductController::class, 'toggleVaria
     });
 
 });
+
 
 
 

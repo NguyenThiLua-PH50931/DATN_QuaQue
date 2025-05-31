@@ -129,9 +129,7 @@
                             <h4>Biến thể</h4>
                             <div class="table-responsive">
                                 <!-- table biến thể ở đây -->
-
                                 <table class="table table-bordered align-middle product-table" id="variantTable">
-
                                     <thead>
                                         <tr>
                                             <th>STT</th>

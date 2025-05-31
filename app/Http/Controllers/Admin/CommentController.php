@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\admin\Comment;
-use App\Models\admin\CommentReply;
+use App\Models\Comment;
+use App\Models\CommentReply;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller

@@ -10,107 +10,107 @@
                 <div class="card">
                     <!-- Table Start -->
                   <div class="container-fluid">
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="card card-table">
-                <div class="card-body">
-                    <div class="title-header option-title">
-                        <h5>Danh sách đơn hàng</h5>
-                    
-                    </div>
-                    <div>
-                        <div class="table-responsive">
-                            <table class="table all-package order-table theme-table" id="table_id">
-                                <thead>
-                                    <tr>
-                                        <th>STT</th>
-                                        <th>Người đặt</th>
-                                        <th>Ngày đặt</th>
-                                        <th>Mã đơn hàng</th>
-                                        <th>Phương thức TT</th>
-                                        <th>Trạng thái</th>
-                                        <th>Số tiền</th>
-                                        <th>Tuỳ chọn</th>
-                                    </tr>
-                                </thead>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="card card-table">
+                                    <div class="card-body">
+                                        <div class="title-header option-title">
+                                            <h5>Danh sách đơn hàng</h5>
+                                        
+                                        </div>
+                                        <div>
+                                            <div class="table-responsive">
+                                                <table class="table all-package order-table theme-table" id="table_id">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>STT</th>
+                                                            <th>Người đặt</th>
+                                                            <th>Ngày đặt</th>
+                                                            <th>Mã đơn hàng</th>
+                                                            <th>Phương thức TT</th>
+                                                            <th>Trạng thái</th>
+                                                            <th>Số tiền</th>
+                                                            <th>Tuỳ chọn</th>
+                                                        </tr>
+                                                    </thead>
 
-                                <tbody>
-                                    @foreach ($orders as $index => $order)
-                                        <tr data-bs-toggle="offcanvas" href="#order-details">
-                                            <td>{{ $index + 1 }}</td>
-                                            <td>{{ $order->user->name ?? 'N/A' }}</td>
+                                                    <tbody>
+                                                        @foreach ($orders as $index => $order)
+                                                            <tr data-bs-toggle="offcanvas" href="#order-details">
+                                                                <td>{{ $index + 1 }}</td>
+                                                                <td>{{ $order->user->name ?? 'N/A' }}</td>
 
-                                            <td>{{ $order->created_at->format('d/m/Y') }}</td>
-                                            <td>{{ $order->order_code }}</td>
-                                            <td>{{ $order->payment_method ?? 'N/A' }}</td>
+                                                                <td>{{ $order->created_at->format('d/m/Y') }}</td>
+                                                                <td>{{ $order->order_code }}</td>
+                                                                <td>{{ $order->payment_method ?? 'N/A' }}</td>
 
-                                           <td>
-                                                <form action="{{ route('admin.orders.updateStatus', $order->id) }}" method="POST" class="status-form">
-                                                    @csrf
-                                                    @method('PUT')
-                                                    <select name="status" class="form-select status-select status-{{ $order->status }}" onchange="this.form.submit()">
-                                                        <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>Chờ xác nhận</option>
-                                                        <option value="confirmed" {{ $order->status == 'confirmed' ? 'selected' : '' }}>Đã xác nhận</option>
-                                                        <option value="processing" {{ $order->status == 'processing' ? 'selected' : '' }}>Đang chuẩn bị</option>
-                                                        <option value="shipped" {{ $order->status == 'shipped' ? 'selected' : '' }}>Đã gửi hàng</option>
-                                                        <option value="in_transit" {{ $order->status == 'in_transit' ? 'selected' : '' }}>Đang vận chuyển</option>
-                                                        <option value="delivered" {{ $order->status == 'delivered' ? 'selected' : '' }}>Đã giao hàng</option>
-                                                        <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>Đã hủy</option>
-                                                        <option value="failed_delivery" {{ $order->status == 'failed_delivery' ? 'selected' : '' }}>Giao thất bại</option>
-                                                    </select>
-                                                </form>
+                                                            <td>
+                                                                    <form action="{{ route('admin.orders.updateStatus', $order->id) }}" method="POST" class="status-form">
+                                                                        @csrf
+                                                                        @method('PUT')
+                                                                        <select name="status" class="form-select status-select status-{{ $order->status }}" onchange="this.form.submit()">
+                                                                            <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>Chờ xác nhận</option>
+                                                                            <option value="confirmed" {{ $order->status == 'confirmed' ? 'selected' : '' }}>Đã xác nhận</option>
+                                                                            <option value="processing" {{ $order->status == 'processing' ? 'selected' : '' }}>Đang chuẩn bị</option>
+                                                                            <option value="shipped" {{ $order->status == 'shipped' ? 'selected' : '' }}>Đã gửi hàng</option>
+                                                                            <option value="in_transit" {{ $order->status == 'in_transit' ? 'selected' : '' }}>Đang vận chuyển</option>
+                                                                            <option value="delivered" {{ $order->status == 'delivered' ? 'selected' : '' }}>Đã giao hàng</option>
+                                                                            <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>Đã hủy</option>
+                                                                            <option value="failed_delivery" {{ $order->status == 'failed_delivery' ? 'selected' : '' }}>Giao thất bại</option>
+                                                                        </select>
+                                                                    </form>
 
-                                            </td>
+                                                                </td>
 
-                                            @php
-                                                $computedTotal = $order->items->sum(function ($item) {
-                                                    return ($item->price - $item->discount) * $item->quantity;
-                                                }) + ($order->shipping_cost ?? 0);
-                                            @endphp
-                                            <td>
-                                                {{ number_format($computedTotal, 0, ',', '.') }} VNĐ
-                                            </td>
+                                                                @php
+                                                                    $computedTotal = $order->items->sum(function ($item) {
+                                                                        return ($item->price - $item->discount) * $item->quantity;
+                                                                    }) + ($order->shipping_cost ?? 0);
+                                                                @endphp
+                                                                <td>
+                                                                    {{ number_format($computedTotal, 0, ',', '.') }} VNĐ
+                                                                </td>
 
-                                            <td>
-                                                <ul>
-                                                    <li>
-                                                        <a href="{{ route('admin.orders.show', $order->id) }}">
-                                                            <i class="ri-eye-line"></i>
-                                                        </a>
-                                                    </li>
+                                                                <td>
+                                                                    <ul>
+                                                                        <li>
+                                                                            <a href="{{ route('admin.orders.show', $order->id) }}">
+                                                                                <i class="ri-eye-line"></i>
+                                                                            </a>
+                                                                        </li>
 
-                                                     <li>
-                                                        <a href="{{ route('admin.orders.tracking', $order->id) }}">
-                                                            <i class="ri-map-pin-line"></i> <!-- Icon tracking (bản đồ hoặc chỉ đường) -->
-                                                        </a>
-                                                    </li>
-                                                   
-                                                    @if ($order->status == 'delivered' || $order->status == 'cancelled' || $order->status == 'failed_delivery')
-                                                        <li>
-                                                            <form action="{{ route('admin.orders.destroy', ['order' => $order->id]) }}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn xóa đơn hàng này không?');">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button type="submit" class="border-0 bg-transparent">
-                                                                    <i class="ri-delete-bin-line text-danger"></i>
-                                                                </button>
-                                                            </form>
-                                                        </li>
-                                                    @endif
+                                                                        <li>
+                                                                            <a href="{{ route('admin.orders.tracking', $order->id) }}">
+                                                                                <i class="ri-map-pin-line"></i> <!-- Icon tracking (bản đồ hoặc chỉ đường) -->
+                                                                            </a>
+                                                                        </li>
+                                                                    
+                                                                        @if ($order->status == 'delivered' || $order->status == 'cancelled' || $order->status == 'failed_delivery')
+                                                                            <li>
+                                                                                <form action="{{ route('admin.orders.destroy', ['order' => $order->id]) }}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn xóa đơn hàng này không?');">
+                                                                                    @csrf
+                                                                                    @method('DELETE')
+                                                                                    <button type="submit" class="border-0 bg-transparent">
+                                                                                        <i class="ri-delete-bin-line text-danger"></i>
+                                                                                    </button>
+                                                                                </form>
+                                                                            </li>
+                                                                        @endif
 
 
-                                                </ul>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                                                                    </ul>
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
                     <!-- Table End -->
 
                     <!-- Pagination Box Start -->

@@ -25,20 +25,20 @@
                                                         <input class="checkbox_animated" type="checkbox"
                                                             value="">
                                                     </span>
-                                                    <span>Ticket Number</span>
+                                                    <span style="color: black; background-color: #f8f9fa;">Ticket Number</span>
                                                 </div>
                                             </th>
                                             <th>
-                                                <span>Date</span>
+                                                <span style="color: black; background-color: #f8f9fa;">Date</span>
                                             </th>
                                             <th>
-                                                <span>Subject</span>
+                                                <span style="color: black; background-color: #f8f9fa;">Subject</span>
                                             </th>
                                             <th>
-                                                <span>Status</span>
+                                                <span style="color: black; background-color: #f8f9fa;">Status</span>
                                             </th>
                                             <th>
-                                                <span>Options</span>
+                                                <span style="color: black; background-color: #f8f9fa;">Options</span>
                                             </th>
                                         </tr>
                                     </thead>

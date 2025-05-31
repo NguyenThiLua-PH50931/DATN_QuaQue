@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
-use App\Models\Product;
+use App\Models\admin\Product;
 
 class ProductController extends Controller
 {

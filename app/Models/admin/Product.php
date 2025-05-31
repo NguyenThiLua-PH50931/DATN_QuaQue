@@ -3,13 +3,18 @@
 namespace App\Models\admin;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
+use App\Models\admin\Category;
+use App\Models\admin\Region;
+use App\Models\admin\Variant;
+use App\Models\admin\Review;
+use App\Models\admin\Comment;
+use App\Models\ProductImage;
 
 class Product extends Model
 {
-    // Nếu bạn dùng timestamps (created_at, updated_at) thì giữ nguyên
     public $timestamps = true;
 
-    // Cho phép ghi dữ liệu bằng create() hoặc fill()
     protected $fillable = [
         'seller_id',
         'category_id',
@@ -28,12 +33,39 @@ class Product extends Model
         'created_at',
         'updated_at'
     ];
+
     public function category()
-{
-    return $this->belongsTo(Category::class, 'category_id');
-}
- public function variants()
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
+
+    public function region()
+    {
+        return $this->belongsTo(Region::class, 'region_id');
+    }
+
+    public function seller()
+    {
+        return $this->belongsTo(User::class, 'seller_id');
+    }
+
+    public function variants()
     {
         return $this->hasMany(Variant::class, 'product_id');
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class)->latest();
+    }
+
+    public function images()
+    {
+        return $this->hasMany(ProductImage::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
     }
 }

@@ -23,9 +23,9 @@
                             <table class="table all-package theme-table" id="table_id">
                                 <thead>
                                     <tr>
-                                        <th>Name</th>
-                                        <th>Value</th>
-                                        <th>Option</th>
+                                        <th style="color: black; background-color: #f8f9fa;">Name</th>
+                                        <th style="color: black; background-color: #f8f9fa;">Value</th>
+                                        <th style="color: black; background-color: #f8f9fa;">Option</th>
                                     </tr>
                                 </thead>
 
@@ -156,3 +156,23 @@
     @includeIf('backend.footer')
 </div>
 @endsection
+@push('scripts')
+<script>
+    $(document).ready(function () {
+        $('#table_id').DataTable({
+            language: {
+                search: "Tìm kiếm:",
+                lengthMenu: "Hiển thị _MENU_ biến thể",
+                info: "Hiển thị _START_ đến _END_ trong tổng _TOTAL_ biến thể",
+                paginate: {
+                    first: "Đầu",
+                    last: "Cuối",
+                    next: "Sau",
+                    previous: "Trước"
+                },
+                zeroRecords: "Không tìm thấy biến thể nào.",
+            }
+        });
+    });
+</script>
+@endpush

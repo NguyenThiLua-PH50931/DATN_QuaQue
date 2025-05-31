@@ -2,16 +2,22 @@
 
 namespace App\Models\admin;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\admin\Product; // ✅ Thêm dòng này
 
 class Region extends Model
 {
+    use HasFactory, SoftDeletes;
+
     protected $fillable = [
         'name',
-        'slug',
+        'slug'
     ];
 
-    // Quan hệ với bảng products nếu có
+    protected $dates = ['deleted_at'];
+
     public function products()
     {
         return $this->hasMany(Product::class);
