@@ -31,6 +31,7 @@ class LoginController extends Controller
                 return redirect()->route('admin.home');
             }
          return redirect()->route('client.home')->with('success', 'Đăng nhập thành công!');
+
         }
 
         return back()->withErrors([
