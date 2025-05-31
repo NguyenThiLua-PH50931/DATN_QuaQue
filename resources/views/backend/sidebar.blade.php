@@ -31,7 +31,7 @@
                     <li class="back-btn"></li>
 
                     <li class="sidebar-list">
-                        <a class="sidebar-link sidebar-title link-nav" href="{{ url('/admin') }}">
+                        <a class="sidebar-link sidebar-title link-nav" href="{{ url('/admin/home') }}">
                             <i class="ri-home-line"></i>
                             <span>Trang quản trị</span>
                         </a>
@@ -90,6 +90,15 @@
                             <li>
                                 <a href="{{ route('admin.comments.index') }}">Danh sách bình luận </a>
                             </li>
+                        </ul>
+                    </li>
+                       <li class="sidebar-list">
+                        <a class="sidebar-link sidebar-title" href="javascript:void(0)">
+                            <i class="ri-store-3-line"></i>
+                            <span>Tin tức</span>
+                        </a>
+                        <ul class="sidebar-submenu">
+                            <li><a href="{{ url('/admin/blog/index') }}">Tin tức</a></li>
                         </ul>
                     </li>
 
@@ -152,8 +161,7 @@
 
                     <li class="sidebar-list">
 
-                        <a class="sidebar-link sidebar-title link-nav" href="{{ route('admin.reviews.index') }}"
-">
+                        <a class="sidebar-link sidebar-title link-nav" href="{{ route('admin.reviews.index') }}">
                             <i class="ri-star-line"></i>
                             <span>Product Review</span>
                         </a>
