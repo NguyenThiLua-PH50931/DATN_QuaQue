@@ -8,16 +8,18 @@ use App\Http\Controllers\Admin\RegionController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\CommentController;
-use App\Http\Controllers\Admin\User\UserController;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\BlogController;
+
+
 use App\Http\Controllers\Admin\HomeController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\ProductController as AdminProductController;
+
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\RegionController as AdminRegionController;
 use App\Http\Controllers\Admin\OrderController;
 
 use App\Http\Controllers\Client\ClientHomeController;
-
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController as GlobalProductController; // Nếu cần dùng controller gốc ngoài admin/client
 
 // CLIENT
@@ -214,6 +216,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         Route::get('toggle-status/{id}', [UserController::class, 'toggleStatus'])->name('toggleStatus');
         Route::get('hidden', [UserController::class, 'hidden'])->name('hidden');
         Route::delete('delete/{id}', [UserController::class, 'delete'])->name('delete');
+        // Chỉnh sửa
+        Route::get('edit/{id}', [UserController::class, 'edit'])->name('edit');
+        Route::put('update/{id}', [UserController::class, 'update'])->name('update');
     });
 
     // Comments
@@ -224,6 +229,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
     Route::post('/comments/{id}/approve', [CommentController::class, 'approve'])->name('comments.approve');
     Route::post('/comments/{id}/reject', [CommentController::class, 'reject'])->name('comments.reject');
     Route::post('/comments/{id}/reply', [CommentController::class, 'reply'])->name('comments.reply');
+
 
     // Blog
     Route::group(['prefix' => 'blog', 'as' => 'blog.'], function () {
@@ -302,8 +308,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/', [AdminProductController::class, 'index'])->name('index');
         Route::get('/create', [AdminProductController::class, 'create'])->name('create');
         Route::post('/store', [AdminProductController::class, 'store'])->name('store');
-Route::get('/{slug}', [AdminProductController::class, 'show'])->name('show');
-Route::post('/{id}/toggle', [AdminProductController::class, 'toggleStatus'])->name('toggle');
+        Route::get('/{slug}', [AdminProductController::class, 'show'])->name('show');
+        Route::post('/{id}/toggle', [AdminProductController::class, 'toggleStatus'])->name('toggle');
         Route::post('/variant/{id}/toggle', [AdminProductController::class, 'toggleVariantStatus'])->name('variant.toggle');
         Route::post('/bulk-delete', [AdminProductController::class, 'bulkDelete'])->name('bulkDelete');
         Route::delete('/{id}', [AdminProductController::class, 'destroy'])->name('destroy');
@@ -311,3 +317,4 @@ Route::post('/{id}/toggle', [AdminProductController::class, 'toggleStatus'])->na
         Route::post('/{slug}/update', [AdminProductController::class, 'update'])->name('update');
     });
 });
+

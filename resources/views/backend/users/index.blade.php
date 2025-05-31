@@ -11,9 +11,9 @@
                     <div class="card card-table">
                         <div class="card-body">
                             <div class="title-header option-title">
-                                <h5>All Users</h5>
+                                <h5>Tài khoản</h5>
                                 <form class="d-inline-flex">
-                                    <a href="{{ url('/admin/users/create') }}"
+                                    <a href="{{ route('admin.user.create') }}"
                                         class="align-items-center btn btn-theme d-flex">
                                         <i data-feather="plus"></i>Thêm mới
                                     </a>
@@ -29,7 +29,7 @@
                                             <th>Số điện thoại</th>
                                             <th>Email</th>
                                             <th>Vai trò</th>
-                                            <th>Option</th>
+                                            <th>Hành động</th>
                                         </tr>
                                     </thead>
 
@@ -72,10 +72,11 @@
                                                         </li>
 
                                                         <li>
-                                                            <a href="javascript:void(0)">
+                                                            <a href="{{ route('admin.user.edit', $value->id) }}">
                                                                 <i class="ri-pencil-line"></i>
                                                             </a>
                                                         </li>
+
                                                         <li>
                                                             <a href="javascript:void(0)" data-bs-toggle="modal"
                                                                 data-bs-target="#exampleModalToggle">
