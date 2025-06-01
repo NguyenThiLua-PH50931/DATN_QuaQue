@@ -2,17 +2,10 @@
 
 namespace Database\Seeders;
 
-<<<<<<< HEAD
-use App\Models\admin\Review;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\admin\Review; // Hoặc App\Models\Review nếu bạn không dùng thư mục con "admin"
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-=======
-use App\Models\Review;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 
->>>>>>> 4462985ab5e2de3f6f036916a5fd1082cbb78391
 class ReviewSeeder extends Seeder
 {
     /**
@@ -20,10 +13,9 @@ class ReviewSeeder extends Seeder
      */
     public function run(): void
     {
-<<<<<<< HEAD
+        // Reset AUTO_INCREMENT nếu cần
         DB::statement('ALTER TABLE reviews AUTO_INCREMENT = 1');
-=======
->>>>>>> 4462985ab5e2de3f6f036916a5fd1082cbb78391
+
         $reviews = [
             [
                 'user_id'    => 2,
@@ -38,12 +30,13 @@ class ReviewSeeder extends Seeder
                 'comment'    => 'Did not meet my expectations.',
             ],
             [
-                'user_id'    => 4,
+                'user_id'    => 1,
                 'product_id' => 3,
                 'rating'     => 5,
                 'comment'    => 'Absolutely love it! Highly recommend.',
             ],
         ];
+
         foreach ($reviews as $data) {
             Review::create($data);
         }
