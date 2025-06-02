@@ -24,11 +24,11 @@
                                 <table class="table all-package theme-table table-product" id="table_id">
                                     <thead>
                                         <tr>
-                                            <th>Ảnh</th>
-                                            <th>Tiêu đề</th>
-                                            <th>Đường Link</th>
-                                            <th>Ngày tạo</th>
-                                            <th>Hàng động</th>
+                                            <th  style="color: black; background-color: #f8f9fa;">Ảnh</th>
+                                            <th  style="color: black; background-color: #f8f9fa;">Tiêu đề</th>
+                                            <th  style="color: black; background-color: #f8f9fa;">Đường Link</th>
+                                            <th  style="color: black; background-color: #f8f9fa;">Ngày tạo</th>
+                                            <th  style="color: black; background-color: #f8f9fa;">Hàng động</th>
                                         </tr>
                                     </thead>
 
@@ -59,7 +59,7 @@
                                                         <a href="{{ route('admin.blog.edit', $item->id) }}">
                                                             <i class="ri-pencil-line"></i>
                                                         </a>
-                                                    </li>                                                    
+                                                    </li>
 
                                                     <li>
                                                         <a href="javascript:void(0)" data-bs-toggle="modal"
@@ -107,3 +107,24 @@
 
 @includeIf('backend.footer')
 @endsection
+@push('scripts')
+<script>
+    $(document).ready(function () {
+        $('#table_id').DataTable({
+            language: {
+                search: "Tìm kiếm:",
+                lengthMenu: "Hiển thị _MENU_ tin tức",
+                info: "Hiển thị _START_ đến _END_ trong tổng _TOTAL_ tin tức",
+                paginate: {
+                    first: "Đầu",
+                    last: "Cuối",
+                    next: "Sau",
+                    previous: "Trước"
+                },
+                zeroRecords: "Không tìm thấy tin tức nào.",
+            }
+        });
+    });
+</script>
+@endpush
+
