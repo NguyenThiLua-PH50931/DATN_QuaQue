@@ -33,7 +33,7 @@
     <link rel="stylesheet" href="{{ asset('backend/assets/css/style.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('backend/assets/css/select2.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('backend/assets/css/vendors/bootstrap-tagsinput.css') }}">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css">
     @stack('styles')
     <link rel="stylesheet" href="{{ asset('backend/assets/css/aa.css') }}">
 </head>
