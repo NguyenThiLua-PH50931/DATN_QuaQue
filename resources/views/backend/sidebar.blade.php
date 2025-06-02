@@ -150,18 +150,6 @@
                         </ul>
                     </li>
 
-                    <li class="sidebar-list">
-                        <a class="sidebar-link sidebar-title" href="javascript:void(0)">
-                            <i class="ri-focus-3-line"></i>
-                            <span>Localization Bỏ</span>
-
-                            <span>Đơn hàng</span>
-
-                        </a>
-                        <ul class="sidebar-submenu">
-                            <li><a href="{{ url('/admin/orders') }}">Danh sách đơn hàng</a></li>
-                        </ul>
-                    </li>
 
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
