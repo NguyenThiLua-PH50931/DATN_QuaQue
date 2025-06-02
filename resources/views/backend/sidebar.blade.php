@@ -64,17 +64,17 @@
 
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
-                            <i class="ri-list-check-2"></i>
-                            <span>Regions</span>
+                            <i class="ri-landscape-line"></i>
+                            <span>Vùng miền</span>
                         </a>
                         <ul class="sidebar-submenu">
-                            <li><a href="{{ url('/admin/regions') }}">Regions List</a></li>
-                            <li><a href="{{ url('/admin/regions/create') }}">Add New Regions</a></li>
+                            <li><a href="{{ url('/admin/regions') }}">Danh sách các vùng miền</a></li>
+                            <li><a href="{{ url('/admin/regions/create') }}">Thêm mới vùng miền</a></li>
                         </ul>
                     </li>
 
 
-                   
+
 
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
@@ -100,7 +100,7 @@
                     </li>
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
-                            <i class="ri-user-3-line"></i>
+                            <i class="ri-feedback-line"></i>
                             <span>Bình luận</span>
                         </a>
                         <ul class="sidebar-submenu">
@@ -111,15 +111,13 @@
                     </li>
                        <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
-                            <i class="ri-store-3-line"></i>
+                            <i class="ri-megaphone-line"></i>
                             <span>Tin tức</span>
                         </a>
                         <ul class="sidebar-submenu">
                             <li><a href="{{ url('/admin/blog/index') }}">Tin tức</a></li>
                         </ul>
                     </li>
-
-
 
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title link-nav" href="{{ url('/admin/media') }}">
