@@ -85,7 +85,38 @@
         outline: none !important;
         pointer-events: none;
     }
+
+    .img-thumb {
+        transition: .25s;
+    }
+
+    .thumb-swiper .swiper-slide img {
+        cursor: pointer;
+    }
+
+    .thumb-swiper .swiper-slide {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .review-item,
+    .comment-item {
+        background: #f9f9fc;
+        border: 1px solid #e0e7ef;
+        border-radius: 8px;
+    }
+
+    .reply-box {
+        background: #f0f5ff;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 14px;
+    }
 </style>
+<!-- SwiperJS CSS & JS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <div class="page-body">
     <div class="container my-4">
         <div class="card card-table">
@@ -94,7 +125,7 @@
                 <div class="right-options">
                     <ul>
                         <li>
-                            <a class="btn btn-solid" href="">Quay lại</a>
+                            <a class="btn btn-solid" href="{{ route('admin.products.index') }}">Quay lại</a>
                         </li>
                     </ul>
                 </div>
@@ -103,7 +134,31 @@
             <div class="row">
                 <!-- Thông tin sản phẩm chung -->
                 <div class="col-md-5">
-                    <img src="{{ asset('storage/' . $product->image) }}" class="img-fluid mb-2" alt="">
+                    @php
+                    $gallery = [];
+                    if ($product->image) $gallery[] = asset('storage/' . $product->image);
+                    foreach ($product->images as $img) $gallery[] = asset('storage/' . $img->image_url);
+                    @endphp
+
+                    <div style="width:465px;height:350px;display:flex;gap:12px;">
+                        {{-- Thumbnails vertical --}}
+                        <div class="swiper thumb-swiper" style="height:350px; width:85px;">
+                            <div class="swiper-wrapper">
+                                @foreach($gallery as $img)
+                                <div class="swiper-slide">
+                                    <img src="{{ $img }}" class="img-thumb" style="width:80px; height:60px; object-fit:cover; border-radius:7px; border:2px solid #ccc;">
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        {{-- Main image --}}
+                        <div style="flex:1; height:350px; display:flex; align-items:center; justify-content:center; background:#fafafa; border-radius:10px;">
+                            <img id="mainProductImg" src="{{ $gallery[0] ?? '' }}"
+                                class="img-fluid"
+                                style="max-width:350px; max-height:330px; object-fit:contain; border-radius:10px;">
+                        </div>
+                    </div>
+
                     <p><b>Danh mục:</b> {{ $product->category->name ?? 'N/A' }}</p>
                     <p><b>Vùng miền:</b> {{ $product->region->name ?? 'N/A' }}</p>
                     <p><b>Trạng thái:</b>
@@ -120,7 +175,6 @@
                     <p><b>Lượt xem tuần:</b> {{ $product->view_week }}</p>
                     <p><b>Lượt xem tháng:</b> {{ $product->view_month }}</p>
                     <p><b>Mô tả chung:</b> {!! nl2br(e($product->description)) !!}</p>
-                    <hr>
                 </div>
                 <!-- Biến thể -->
                 <div class="col-md-7">
@@ -182,18 +236,70 @@
 
             <!-- Đánh giá và bình luận -->
             <div class="row mt-4">
-                <div class="col-12">
-                    <h4>Đánh giá & Bình luận</h4>
+                {{-- Đánh giá --}}
+                <div class="col-md-6 mb-4">
+                    <h4 class="mb-3">Đánh giá sản phẩm</h4>
+                    @if($product->reviews->count())
                     @foreach($product->reviews as $review)
-                    <div>
-                        <b>{{ $review->user->name ?? 'Ẩn danh' }}</b>
-                        <span>Đánh giá: <b>{{ $review->rating }}/5</b></span>
-                        <span>{{ $review->created_at->format('d/m/Y H:i') }}</span>
+                    <div class="review-item border rounded p-2 mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <b>{{ $review->user->name ?? 'Ẩn danh' }}</b>
+                            <span class="text-warning">
+                                @for($i=1;$i<=5;$i++)
+                                    <i class="fa{{ $i <= $review->rating ? 's' : 'r' }} fa-star"></i>
+                                    @endfor
+                                    <span class="ms-1 text-dark">({{ $review->rating }}/5)</span>
+                            </span>
+                        </div>
+                        <div class="text-muted mb-1" style="font-size: 13px;">{{ $review->created_at->format('d/m/Y H:i') }}</div>
                         <div>{{ $review->comment }}</div>
                     </div>
                     @endforeach
+                    @else
+                    <div class="text-muted">Chưa có đánh giá nào.</div>
+                    @endif
+                </div>
+
+                {{-- Bình luận --}}
+                <div class="col-md-6 mb-4">
+                    <h4 class="mb-3">Bình luận sản phẩm</h4>
+                    @if($product->comments->count())
+                    @foreach($product->comments as $comment)
+                    <div class="comment-item border rounded p-2 mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <b>{{ $comment->user->name ?? 'Ẩn danh' }}</b>
+                            <span class="text-muted" style="font-size: 13px;">{{ $comment->created_at->format('d/m/Y H:i') }}</span>
+                        </div>
+                        <div>{{ $comment->content }}</div>
+
+                        {{-- Các trả lời (nếu có) --}}
+                        @if($comment->replies && count($comment->replies))
+                        <div class="reply-box ms-3 mt-2">
+                            @foreach($comment->replies as $reply)
+                            @php
+                            $isAdmin = $reply->user && $reply->user->is_admin;
+                            $userName = $reply->user->name ?? 'Ẩn danh';
+                            @endphp
+                            <div class="{{ $isAdmin ? 'text-primary' : '' }}">
+                                <b>
+                                    {{ $isAdmin ? 'Quản trị viên '.$userName.' trả lời:' : $userName.' trả lời:' }}
+                                </b>
+                                {{ $reply->reply }}
+                                <span class="text-muted" style="font-size:12px;">
+                                    ({{ $reply->created_at->format('d/m/Y H:i') }})
+                                </span>
+                            </div>
+                            @endforeach
+                        </div>
+                        @endif
+                    </div>
+                    @endforeach
+                    @else
+                    <div class="text-muted">Chưa có bình luận nào.</div>
+                    @endif
                 </div>
             </div>
+
             <a href="" class="btn btn-secondary mt-3">Quay lại danh sách</a>
         </div>
     </div>
@@ -299,7 +405,7 @@
         $('#modal-status-text').html('Bạn muốn chuyển trạng thái biến thể <b>' + name + '</b> sang <span class="text-primary">' + nextStatus + '</span>?');
 
         // Set action cho form: route đổi trạng thái biến thể!
-        let url = '{{ route("admin.products.variants.toggle", ":id") }}';
+        let url = '{{ route("admin.products.variant.toggle", ":id") }}';
         url = url.replace(':id', id);
         $('#status-toggle-form').attr('action', url);
 
@@ -330,5 +436,67 @@
         modal.show();
     });
 </script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var gallery = @json($gallery);
+        var currentIndex = 0;
+
+        var thumbSwiper = new Swiper('.thumb-swiper', {
+            direction: 'vertical',
+            slidesPerView: 4,
+            spaceBetween: 7,
+            mousewheel: true,
+            loop: true,
+            slideToClickedSlide: false,
+        });
+
+        function updateThumbActive(idx) {
+            // Reset tất cả thumbnail về mờ
+            document.querySelectorAll('.thumb-swiper .swiper-slide img').forEach(img => {
+                img.style.filter = 'grayscale(20%) blur(1px)';
+                img.style.opacity = '0.8';
+                img.style.borderColor = '#ccc';
+            });
+            // Chỉ ảnh ở ô đầu tiên được rõ nét
+            const slides = document.querySelectorAll('.thumb-swiper .swiper-slide');
+            if (slides.length > 0) {
+                const firstSlide = slides[thumbSwiper.activeIndex]; // ảnh ở ô đầu
+                if (firstSlide) {
+                    const img = firstSlide.querySelector('img');
+                    if (img) {
+                        img.style.filter = 'none';
+                        img.style.opacity = '1';
+                        img.style.borderColor = '#1976d2';
+                    }
+                }
+            }
+        }
+
+        function showMainImage(idx) {
+            document.getElementById('mainProductImg').src = gallery[idx];
+            thumbSwiper.slideToLoop(idx, 400, false);
+            setTimeout(() => updateThumbActive(idx), 410); // Đợi slide xong mới cập nhật active
+        }
+
+        // Sự kiện click vào thumbnail (luôn lấy realIndex gốc)
+        thumbSwiper.on('click', function(swiper, e) {
+            var clickedSlide = e.target.closest('.swiper-slide');
+            if (!clickedSlide) return;
+            var idx = parseInt(clickedSlide.getAttribute('data-swiper-slide-index')) || 0;
+            showMainImage(idx);
+        });
+
+        // Khi next/prev bằng chuột/drag
+        thumbSwiper.on('slideChange', function() {
+            var idx = thumbSwiper.realIndex;
+            showMainImage(idx);
+        });
+
+        // Init lần đầu
+        showMainImage(0);
+    });
+</script>
+
+
 @endpush
 @endsection
