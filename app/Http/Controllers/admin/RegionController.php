@@ -140,4 +140,18 @@ class RegionController extends Controller
         session()->flash('success', 'Khôi phục vùng miền thành công!');
         return redirect()->route('admin.regions.index'); // Redirect to index page after restore
     }
+
+    public function storeQuick(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|max:100|unique:regions,name',
+        ]);
+
+        Region::create([
+            'name' => $request->name,
+            'slug' => Str::slug($request->name)
+        ]);
+
+        return redirect()->back()->with('success', 'Đã thêm vùng miền mới!');
+    }
 }
