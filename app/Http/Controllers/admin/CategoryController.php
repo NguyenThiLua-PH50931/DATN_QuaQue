@@ -123,4 +123,18 @@ class CategoryController extends Controller
         $categories = Category::onlyTrashed()->get();
         return view('backend.categories.trashed', compact('categories'));
     }
+
+    public function storeQuick(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|max:100|unique:categories,name',
+        ]);
+
+        Category::create([
+            'name' => $request->name,
+            'slug' => Str::slug($request->name)
+        ]);
+
+        return redirect()->back()->with('success', 'Đã thêm danh mục mới!');
+    }
 }
