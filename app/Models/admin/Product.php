@@ -9,7 +9,7 @@ use App\Models\admin\Region;
 use App\Models\admin\Variant;
 use App\Models\admin\Review;
 use App\Models\admin\Comment;
-use App\Models\ProductImage;
+use App\Models\admin\ProductImage;
 
 class Product extends Model
 {
@@ -68,4 +68,5 @@ class Product extends Model
     {
         return $this->hasMany(Comment::class);
     }
+    
 }

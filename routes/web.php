@@ -8,6 +8,7 @@ use App\Http\Controllers\Client\ProductController;
 use App\Http\Controllers\Admin\RegionController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Admin\AttributeController as AdminAttributeController;
 use App\Http\Controllers\Admin\CommentController;
 
 
@@ -243,6 +244,27 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         Route::delete('destroy/{blog}', [BlogController::class, 'destroy'])->name('destroy');
     });
 
+    // Quản lý đánh giá
+    Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');
+
+    // Quản lý sản phẩm
+    Route::post('/categories/store-quick', [AdminCategoryController::class, 'storeQuick'])->name('categories.storeQuick');
+    Route::post('/regions/store-quick', [AdminRegionController::class, 'storeQuick'])->name('regions.storeQuick');
+    Route::post('/attributes/store-quick', [AdminAttributeController::class, 'storeQuick'])->name('attributes.storeQuick');
+
+    Route::prefix('products')->name('products.')->group(function () {
+        Route::get('/', [AdminProductController::class, 'index'])->name('index');
+        Route::get('/create', [AdminProductController::class, 'create'])->name('create');
+        Route::post('/store', [AdminProductController::class, 'store'])->name('store');
+        Route::get('/{slug}', [AdminProductController::class, 'show'])->name('show');
+        Route::post('/{id}/toggle', [AdminProductController::class, 'toggleStatus'])->name('toggle');
+        Route::post('/variant/{id}/toggle', [AdminProductController::class, 'toggleVariantStatus'])->name('variant.toggle');
+        Route::post('/bulk-delete', [AdminProductController::class, 'bulkDelete'])->name('bulkDelete');
+        Route::delete('/{id}', [AdminProductController::class, 'destroy'])->name('destroy');
+        Route::get('/{slug}/edit', [AdminProductController::class, 'edit'])->name('edit');
+        Route::post('/{slug}/update', [AdminProductController::class, 'update'])->name('update');
+        Route::post('/delete-image', [AdminProductController::class, 'deleteImage'])->name('deleteImage');
+    });
 });
 
 
@@ -318,4 +340,3 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/{slug}/update', [AdminProductController::class, 'update'])->name('update');
     });
 });
-

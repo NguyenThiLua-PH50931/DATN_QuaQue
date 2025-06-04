@@ -3,11 +3,7 @@
 @section('title', 'Quản lý sản phẩm')
 @section('content')
 @push('styles')
-<link rel="stylesheet" href="//cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-@endpush
-
-@push('styles')
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
 @endpush
 <style>
     .product-table-wrapper {
@@ -170,7 +166,7 @@
                                     <li><a href="#">Nhập file</a></li>
                                     <li><a href="#">Xuất file</a></li>
                                     <li>
-                                        <a class="btn btn-solid" href="">Thêm sản phẩm</a>
+                                        <a class="btn btn-solid" href="{{ route('admin.products.create') }}">Thêm sản phẩm</a>
                                     </li>
                                 </ul>
                             </div>
@@ -225,8 +221,12 @@
                                                         </span>
                                                     </td>
                                                     <td>
-                                                        <a href="" class="action-link text-decoration-none me-2"><i class="ri-eye-line"></i> </a>
-                                                        <a href="" class="action-link text-decoration-none me-2"><i class="ri-pencil-line"></i> </a>
+                                                        <a href="{{ route('admin.products.show', $product->slug) }}" class="action-link text-decoration-none me-2">
+                                                            <i class="ri-eye-line"></i>
+                                                        </a>
+                                                        <a href="{{ route('admin.products.edit', $product->slug) }}" class="action-link text-decoration-none me-2">
+                                                            <i class="ri-pencil-line"></i>
+                                                        </a>
                                                         <a href="#" class="action-link text-decoration-none text-danger" data-bs-toggle="modal"
                                                             data-bs-target="#deleteOneModal"
                                                             data-id="{{ $product->id }}"
@@ -251,9 +251,6 @@
                                     <div class="mt-2">
                                         {!! $products->links('pagination::bootstrap-5') !!}
                                     </div>
-                                </div>
-                                <div>
-                                    {!! $products->links() !!}
                                 </div>
                             </div>
                         </div>
@@ -301,7 +298,7 @@
     </div>
 </div>
 <!-- Modal Xác Nhận Xóa Một -->
-<div class="modal fade" id="deleteOneModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="deleteOneModalLabel" aria-hidden="true">
+<div class="modal fade" id="deleteOneModal" data-bs-toggle="modal" tabindex="-1" aria-labelledby="deleteOneModalLabel" aria-hidden="true" >
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <form id="delete-one-form" method="POST">
@@ -323,7 +320,6 @@
 
 
 @push('styles')
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
 @endpush
 
