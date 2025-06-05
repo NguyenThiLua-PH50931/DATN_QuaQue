@@ -9,7 +9,7 @@ class AddStatusToCommentsTable extends Migration
     public function up(): void
     {
         Schema::table('comments', function (Blueprint $table) {
-           // $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending')->after('content');
+            $table->enum('status', ['visible', 'hidden'])->default('visible')->after('content');
         });
     }
 

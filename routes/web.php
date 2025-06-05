@@ -224,13 +224,19 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
     });
 
     // Comments
-    Route::get('/comments', [CommentController::class, 'index'])->name('comments.index');
-    Route::get('/comments/{id}/edit', [CommentController::class, 'edit'])->name('comments.edit');
-    Route::put('/comments/{id}', [CommentController::class, 'update'])->name('comments.update');
-    Route::delete('/comments/{id}', [CommentController::class, 'destroy'])->name('comments.destroy');
-    Route::post('/comments/{id}/approve', [CommentController::class, 'approve'])->name('comments.approve');
-    Route::post('/comments/{id}/reject', [CommentController::class, 'reject'])->name('comments.reject');
-    Route::post('/comments/{id}/reply', [CommentController::class, 'reply'])->name('comments.reply');
+
+    
+    Route::prefix('comments')->name('comments.')->group(function () {
+        Route::get('/', [CommentController::class, 'index'])->name('index');
+        Route::get('/{id}/edit', [CommentController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [CommentController::class, 'update'])->name('update');
+        Route::delete('/{id}', [CommentController::class, 'destroy'])->name('destroy');
+        Route::get('/{id}/reply', [CommentController::class, 'reply'])->name('reply');
+        Route::post('/{id}/reply', [CommentController::class, 'storeReply'])->name('storeReply');
+        Route::get('/{commentId}/reply/{replyId}/edit', [CommentController::class, 'editReply'])->name('editReply');
+        Route::put('/{commentId}/reply/{replyId}', [CommentController::class, 'updateReply'])->name('updateReply');
+        Route::delete('/{commentId}/reply/{replyId}', [CommentController::class, 'destroyReply'])->name('destroyReply');
+    });
 
 
     // Blog
