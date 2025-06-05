@@ -61,7 +61,7 @@
     </style>
 @endpush
 
-@section('title', 'Sửa trạng thái bình luận')
+@section('title', 'Trả lời bình luận')
 
 @section('content')
 <div class="page-body">
@@ -70,7 +70,7 @@
             <div class="container-fluid">
                 <div class="card">
                     <div class="card-header">
-                        <h1 class="mb-0">Sửa trạng thái bình luận</h1>
+                        <h1 class="mb-0">Trả lời bình luận</h1>
                     </div>
                     <div class="card-body">
                         @if (session('success'))
@@ -92,7 +92,7 @@
                                 <p><strong>Người dùng:</strong> {{ $comment->user->name }}</p>
                                 <p><strong>Sản phẩm:</strong> {{ $comment->product->name }}</p>
                                 <p><strong>Nội dung:</strong> {{ $comment->content }}</p>
-                                <p><strong>Trạng thái hiện tại:</strong>
+                                <p><strong>Trạng thái:</strong>
                                     @if ($comment->status == 'visible')
                                         <span class="badge badge-success">Hiện</span>
                                     @else
@@ -102,33 +102,21 @@
                                 <p><strong>Thời gian:</strong> {{ $comment->created_at->format('d/m/Y H:i') }}</p>
                             </div>
 
-                            <form method="POST" action="{{ route('admin.comments.update', $comment->id) }}">
+                            <form method="POST" action="{{ route('admin.comments.storeReply', $comment->id) }}">
                                 @csrf
-                                @method('PUT')
                                 <div class="form-group mb-3">
-                                    <label for="content">Nội dung bình luận</label>
-                                    <textarea name="content" class="form-control" rows="5" readonly>{{ $comment->content }}</textarea>
-                                </div>
-                                <div class="form-group mb-3">
-                                    <label for="status">Cập nhật trạng thái</label>
-                                    <select name="status" class="form-control" required>
-                                        <option value="visible" {{ $comment->status == 'visible' ? 'selected' : '' }}>Hiện</option>
-                                        <option value="hidden" {{ $comment->status == 'hidden' ? 'selected' : '' }}>Ẩn</option>
-                                    </select>
-                                    @error('status')
+                                    <label for="reply">Phản hồi</label>
+                                    <textarea name="reply" class="form-control" rows="5" required>{{ old('reply') }}</textarea>
+                                    @error('reply')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                <button type="submit" class="btn btn-primary btn-sm">Cập nhật trạng thái</button>
+                                <button type="submit" class="btn btn-primary btn-sm">Gửi phản hồi</button>
                                 <a href="{{ route('admin.comments.index') }}" class="btn btn-secondary btn-sm">Quay lại</a>
                             </form>
 
-                            <!-- Nút riêng để trả lời -->
-                            <a href="{{ route('admin.comments.reply', $comment->id) }}" class="btn btn-info btn-sm mt-3">Trả lời bình luận</a>
-
-                            <!-- Hiển thị các phản hồi -->
                             @if ($comment->replies->count() > 0)
-                                <h4 class="mt-4">Phản hồi từ admin</h4>
+                                <h4 class="mt-4">Các phản hồi trước đó</h4>
                                 @foreach ($comment->replies as $reply)
                                     <div class="card mb-2">
                                         <div class="card-body">
