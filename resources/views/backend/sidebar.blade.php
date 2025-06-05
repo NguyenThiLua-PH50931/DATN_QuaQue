@@ -109,24 +109,33 @@
                         </ul>
                     </li>
 
-                    <li class="sidebar-list">
-                        <a class="sidebar-link sidebar-title link-nav" href="{{ url('/admin/media') }}">
-                            <i class="ri-price-tag-3-line"></i>
-                            <span>Media</span>
-                        </a>
-                    </li>
+                   
 
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                             <i class="ri-archive-line"></i>
 
-                            <span>Orders</span>
+                            <span>Đơn hàng</span>
                         </a>
                         <ul class="sidebar-submenu">
-                            <li><a href="{{ url('/admin/orders') }}">Order List</a></li>
-                            <li><a href="{{ url('/admin/orders/detail') }}">Order Detail</a></li>
-                            <li><a href="{{ url('/admin/orders/tracking') }}">Order Tracking</a></li>
+                            <li><a href="{{ url('/admin/orders') }}">Danh sách</a></li>
+                            <li><a href="{{ url('/admin/orders/detail') }}">Chi tiết</a></li>
+                            <li><a href="{{ url('/admin/orders/tracking') }}">Theo dõi đơn hàng</a></li>
                         </ul>
+                    </li>
+
+                     <li class="sidebar-list">
+                        <a class="sidebar-link sidebar-title link-nav" href="{{ route('admin.reviews.index') }}">
+                            <i class="ri-star-line"></i>
+                            <span>Đánh giá</span>
+                        </a>
+                    </li>
+
+                     <li class="sidebar-list">
+                        <a class="sidebar-link sidebar-title link-nav" href="{{ url('/admin/media') }}">
+                            <i class="ri-price-tag-3-line"></i>
+                            <span>Media</span>
+                        </a>
                     </li>
 
                      <li class="sidebar-list">
@@ -159,12 +168,7 @@
                         </a>
                     </li>
 
-                    <li class="sidebar-list">
-                        <a class="sidebar-link sidebar-title link-nav" href="{{ route('admin.reviews.index') }}">
-                            <i class="ri-star-line"></i>
-                            <span>Product Review</span>
-                        </a>
-                    </li>
+                   
 
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title link-nav" href="{{ url('/admin/support-ticket') }}">
