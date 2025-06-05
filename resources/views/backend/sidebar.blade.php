@@ -51,29 +51,19 @@
                     </li>
 
                     <li class="sidebar-list">
-                        <a class="sidebar-link sidebar-title" href="javascript:void(0)">
+                        <a class="sidebar-link"  href="{{ url('/admin/categories') }}" >
                             <i class="ri-list-check-2"></i>
-
                             <span>Danh mục</span>
                         </a>
-                        <ul class="sidebar-submenu">
-                            <li><a href="{{ url('/admin/categories') }}">Danh sách danh mục</a></li>
-                            <li><a href="{{ url('/admin/categories/create') }}">Thêm danh mục</a></li>
-                        </ul>
+
                     </li>
 
                     <li class="sidebar-list">
-                        <a class="sidebar-link sidebar-title" href="javascript:void(0)">
+                        <a class="sidebar-link"href="{{ url('/admin/regions') }}">
                             <i class="ri-landscape-line"></i>
                             <span>Vùng miền</span>
                         </a>
-                        <ul class="sidebar-submenu">
-                            <li><a href="{{ url('/admin/regions') }}">Danh sách các vùng miền</a></li>
-                            <li><a href="{{ url('/admin/regions/create') }}">Thêm mới vùng miền</a></li>
-                        </ul>
                     </li>
-
-
 
 
                     <li class="sidebar-list">
