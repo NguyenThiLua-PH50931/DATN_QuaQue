@@ -399,8 +399,71 @@
         </div>
     </div>
 </div>
+{{-- Modal thêm danh mục --}}
+<div class="modal fade" id="addCategoryModal" tabindex="-1">
+    <div class="modal-dialog">
+        <form id="quickCategoryForm" method="POST" action="{{ route('admin.categories.storeQuick') }}">
+            @csrf
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Thêm danh mục mới</h5>
+                </div>
+                <div class="modal-body">
+                    <input type="text" name="name" class="form-control" placeholder="Tên danh mục mới" required>
+                    <div class="invalid-feedback" id="cat-error"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary">Thêm</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 
-{{-- Các script và style giữ nguyên như view create --}}
+{{-- Modal thêm vùng miền --}}
+<div class="modal fade" id="addRegionModal" tabindex="-1">
+    <div class="modal-dialog">
+        <form id="quickRegionForm" method="POST" action="{{ route('admin.regions.storeQuick') }}">
+            @csrf
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Thêm vùng miền mới</h5>
+                </div>
+                <div class="modal-body">
+                    <input type="text" name="name" class="form-control" placeholder="Tên vùng miền mới" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary">Thêm</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{{-- Modal thêm thuộc tính --}}
+<div class="modal fade" id="addAttributeModal" tabindex="-1">
+    <div class="modal-dialog">
+        <form id="quickAttributeForm" method="POST" action="{{ route('admin.attributes.storeQuick') }}">
+            @csrf
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Thêm thuộc tính mới</h5>
+                </div>
+                <div class="modal-body">
+                    <input type="text" name="name" class="form-control mb-2" placeholder="Tên thuộc tính" required>
+                    <input type="text" name="values" class="form-control" placeholder="Giá trị (cách nhau dấu phẩy)" required>
+                    <small>VD: 1kg, 2kg, 3kg</small>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary">Thêm</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 <style>
     /* CKEditor chữ đen */
     .ck-editor__editable {
