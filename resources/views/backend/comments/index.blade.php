@@ -42,7 +42,6 @@
         }
         .badge-warning { background-color: #ffc107; color: #212529; }
         .badge-success { background-color: #28a745; }
-        .badge-danger { background-color: #dc3545; }
         .btn-sm {
             padding: 6px 12px;
             font-size: 0.875rem;
@@ -112,9 +111,8 @@
                                 <div class="col-md-3">
                                     <select name="status" class="form-control">
                                         <option value="">-- Chọn trạng thái --</option>
-                                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Chờ duyệt</option>
-                                        <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>Đã duyệt</option>
-                                        <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Bị từ chối</option>
+                                        <option value="visible" {{ request('status') == 'visible' ? 'selected' : '' }}>Hiện</option>
+                                        <option value="hidden" {{ request('status') == 'hidden' ? 'selected' : '' }}>Ẩn</option>
                                     </select>
                                 </div>
                                 <div class="col-md-3">
@@ -148,26 +146,14 @@
                                             <td>{{ Str::limit($comment->content, 50) }}</td>
                                             <td>{{ $comment->created_at->format('d/m/Y H:i') }}</td>
                                             <td>
-                                                @if ($comment->status == 'pending')
-                                                    <span class="badge badge-warning">Chờ duyệt</span>
-                                                @elseif ($comment->status == 'approved')
-                                                    <span class="badge badge-success">Đã duyệt</span>
+                                                @if ($comment->status == 'visible')
+                                                    <span class="badge badge-success">Hiện</span>
                                                 @else
-                                                    <span class="badge badge-danger">Bị từ chối</span>
+                                                    <span class="badge badge-warning">Ẩn</span>
                                                 @endif
                                             </td>
                                             <td>
                                                 <div class="action-buttons">
-                                                    {{-- @if ($comment->status == 'pending')
-                                                        <form method="POST" action="{{ route('admin.comments.approve', $comment->id) }}" style="display:inline;">
-                                                            @csrf
-                                                            <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Bạn có chắc muốn duyệt bình luận này?')">Duyệt</button>
-                                                        </form>
-                                                        <form method="POST" action="{{ route('admin.comments.reject', $comment->id) }}" style="display:inline;">
-                                                            @csrf
-                                                            <button type="submit" class="btn btn-warning btn-sm" onclick="return confirm('Bạn có chắc muốn từ chối bình luận này?')">Từ chối</button>
-                                                        </form>
-                                                    @endif --}}
                                                     <a href="{{ route('admin.comments.edit', $comment->id) }}" class="btn btn-primary btn-sm">Sửa trạng thái</a>
                                                     <form method="POST" action="{{ route('admin.comments.destroy', $comment->id) }}" style="display:inline;">
                                                         @csrf
