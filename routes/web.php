@@ -224,13 +224,14 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
     });
 
     // Comments
-    Route::get('/comments', [CommentController::class, 'index'])->name('comments.index');
+   Route::get('/comments', [CommentController::class, 'index'])->name('comments.index');
     Route::get('/comments/{id}/edit', [CommentController::class, 'edit'])->name('comments.edit');
     Route::put('/comments/{id}', [CommentController::class, 'update'])->name('comments.update');
     Route::delete('/comments/{id}', [CommentController::class, 'destroy'])->name('comments.destroy');
     Route::post('/comments/{id}/approve', [CommentController::class, 'approve'])->name('comments.approve');
     Route::post('/comments/{id}/reject', [CommentController::class, 'reject'])->name('comments.reject');
-    Route::post('/comments/{id}/reply', [CommentController::class, 'reply'])->name('comments.reply');
+    Route::get('/comments/{id}/reply', [CommentController::class, 'reply'])->name('comments.reply');
+    Route::post('/comments/{id}/reply', [CommentController::class, 'storeReply'])->name('comments.storeReply');
 
 
     // Blog

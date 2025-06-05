@@ -9,39 +9,36 @@ use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
-   
 
-   public function index(Request $request)
-{
-    $query = Comment::with(['user', 'product']);
 
-    // Tìm kiếm theo nội dung, người dùng hoặc sản phẩm
-    if ($request->filled('search')) {
-        $search = $request->input('search');
-        $query->where('content', 'like', "%{$search}%")
-              ->orWhereHas('user', function ($q) use ($search) {
-                  $q->where('name', 'like', "%{$search}%");
-              })
-              ->orWhereHas('product', function ($q) use ($search) {
-                  $q->where('name', 'like', "%{$search}%");
-              });
+    public function index(Request $request)
+    {
+        $query = Comment::with(['user', 'product', 'replies']);
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where('content', 'like', "%{$search}%")
+                  ->orWhereHas('user', function ($q) use ($search) {
+                      $q->where('name', 'like', "%{$search}%");
+                  })
+                  ->orWhereHas('product', function ($q) use ($search) {
+                      $q->where('name', 'like', "%{$search}%");
+                  });
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->input('status'));
+        }
+
+        if ($request->filled('date')) {
+            $query->whereDate('created_at', $request->input('date'));
+        }
+
+        $comments = $query->latest()->paginate(10);
+        $comments->appends($request->all());
+
+        return view('backend.comments.index', compact('comments'));
     }
-
-    // Lọc theo trạng thái
-    if ($request->filled('status')) {
-        $query->where('status', $request->input('status'));
-    }
-
-    // Lọc theo thời gian
-    if ($request->filled('date')) {
-        $query->whereDate('created_at', $request->input('date'));
-    }
-
-    $comments = $query->latest()->paginate(10);
-    $comments->appends($request->all()); // Giữ query string khi phân trang
-
-    return view('backend.comments.index', compact('comments'));
-}
 
     public function destroy($id)
     {
@@ -52,23 +49,22 @@ class CommentController extends Controller
 
     public function edit($id)
     {
-        $comment = Comment::findOrFail($id);
+        $comment = Comment::with('replies')->findOrFail($id);
         return view('backend.comments.edit', compact('comment'));
     }
 
     public function update(Request $request, $id)
     {
         $request->validate([
-            'content' => ['required', 'string', 'max:1000'],
+            'status' => ['required', 'in:pending,approved,rejected'],
         ]);
 
         $comment = Comment::findOrFail($id);
-        $comment->update(['content' => $request->content]);
+        $comment->update(['status' => $request->status]);
 
-        return redirect()->route('admin.comments.index')->with('success', 'Bình luận đã được cập nhật thành công!');
+        return redirect()->route('admin.comments.index')->with('success', 'Trạng thái bình luận đã được cập nhật thành công!');
     }
 
-    // Duyệt bình luận
     public function approve($id)
     {
         $comment = Comment::findOrFail($id);
@@ -76,15 +72,20 @@ class CommentController extends Controller
         return redirect()->route('admin.comments.index')->with('success', 'Bình luận đã được duyệt!');
     }
 
-    // Từ chối bình luận
     public function reject($id)
     {
         $comment = Comment::findOrFail($id);
         $comment->update(['status' => 'rejected']);
         return redirect()->route('admin.comments.index')->with('success', 'Bình luận đã bị từ chối!');
     }
-    // tra loi binh luan
-    public function reply(Request $request, $id)
+
+    public function reply($id)
+    {
+        $comment = Comment::with('replies')->findOrFail($id);
+        return view('backend.comments.reply', compact('comment'));
+    }
+
+    public function storeReply(Request $request, $id)
     {
         $request->validate([
             'reply' => ['required', 'string', 'max:1000'],
@@ -94,11 +95,9 @@ class CommentController extends Controller
         CommentReply::create([
             'comment_id' => $id,
             'admin_id' => auth()->id(),
-
-
             'reply' => $request->reply,
         ]);
 
-        return redirect()->route('admin.comments.edit', $id)->with('success', 'Phản hồi đã được gửi!');
+        return redirect()->route('admin.comments.reply', $id)->with('success', 'Phản hồi đã được gửi!');
     }
 }
