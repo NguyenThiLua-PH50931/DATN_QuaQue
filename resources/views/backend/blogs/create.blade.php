@@ -43,7 +43,7 @@
                             <div class="mb-4 row align-items-center">
                                 <label class="form-label-title col-sm-3 mb-0">Nội dung</label>
                                 <div class="col-sm-9">
-                                    <textarea class="form-control content-editor" name="content" style="height: 300px !important;">{{ old('content') }}</textarea>
+                                    <textarea class="form-control content-editor" name="content">{{ old('content') }}</textarea>
                                 </div>
                             </div>
 
