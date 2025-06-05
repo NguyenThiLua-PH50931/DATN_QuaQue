@@ -16,21 +16,21 @@
                                     <div class="card-body">
                                         <div class="title-header option-title">
                                             <h5>Danh sách đơn hàng</h5>
-                                        
+
                                         </div>
                                         <div>
                                             <div class="table-responsive">
                                                 <table class="table all-package order-table theme-table" id="table_id">
                                                     <thead>
                                                         <tr>
-                                                            <th>STT</th>
-                                                            <th>Người đặt</th>
-                                                            <th>Ngày đặt</th>
-                                                            <th>Mã đơn hàng</th>
-                                                            <th>Phương thức TT</th>
-                                                            <th>Trạng thái</th>
-                                                            <th>Số tiền</th>
-                                                            <th>Tuỳ chọn</th>
+                                                            <th style="color: black; background-color: #f8f9fa;">STT</th>
+                                                            <th style="color: black; background-color: #f8f9fa;">Người đặt</th>
+                                                            <th style="color: black; background-color: #f8f9fa;">Ngày đặt</th>
+                                                            <th style="color: black; background-color: #f8f9fa;">Mã đơn hàng</th>
+                                                            <th style="color: black; background-color: #f8f9fa;">Phương thức TT</th>
+                                                            <th style="color: black; background-color: #f8f9fa;">Trạng thái</th>
+                                                            <th style="color: black; background-color: #f8f9fa;">Số tiền</th>
+                                                            <th style="color: black; background-color: #f8f9fa;">Tuỳ chọn</th>
                                                         </tr>
                                                     </thead>
 
@@ -84,7 +84,7 @@
                                                                                 <i class="ri-map-pin-line"></i> <!-- Icon tracking (bản đồ hoặc chỉ đường) -->
                                                                             </a>
                                                                         </li>
-                                                                    
+
                                                                         @if ($order->status == 'delivered' || $order->status == 'cancelled' || $order->status == 'failed_delivery')
                                                                             <li>
                                                                                 <form action="{{ route('admin.orders.destroy', ['order' => $order->id]) }}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn xóa đơn hàng này không?');">
