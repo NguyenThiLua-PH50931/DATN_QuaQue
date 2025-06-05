@@ -25,14 +25,16 @@
     </style>
 @endpush
 
-@section('title', 'Sửa trạng thái bình luận')
+@section('title', 'sua binh luon')
 
 @section('content')
-<div class="page-body">
-    <div class="main-content">
+ <div class="page-body">
+
+
+ <div class="main-content">
         <div class="page-content">
             <div class="container-fluid">
-                <h1 class="mb-4">Sửa trạng thái bình luận</h1>
+                <h1 class="mb-4">Trả lời bình luận</h1>
 
                 @if (session('success'))
                     <div class="alert alert-success">
@@ -41,32 +43,29 @@
                 @endif
 
                 @if ($comment)
-                    <form method="POST" action="{{ route('admin.comments.update', $comment->id) }}">
+                    <form method="POST" action="{{ route('admin.comments.reply', $comment->id) }}">
                         @csrf
-                        @method('PUT')
                         <div class="form-group mb-3">
-                            <label for="content">Nội dung bình luận</label>
-                            <textarea name="content" class="form-control" rows="5" readonly>{{ $comment->content }}</textarea>
-                        </div>
-                        <div class="form-group mb-3">
-                            <label for="status">Trạng thái</label>
-                            <select name="status" class="form-control" required>
-                                <option value="pending" {{ $comment->status == 'pending' ? 'selected' : '' }}>Chờ duyệt</option>
-                                <option value="approved" {{ $comment->status == 'approved' ? 'selected' : '' }}>Đã duyệt</option>
-                                <option value="rejected" {{ $comment->status == 'rejected' ? 'selected' : '' }}>Bị từ chối</option>
-                            </select>
-                            @error('status')
+                            <label for="reply">Phản hồi</label>
+                            <textarea name="reply" class="form-control" rows="3" required></textarea>
+                            @error('reply')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
-                        <button type="submit" class="btn btn-primary">Cập nhật trạng thái</button>
+                        <button type="submit" class="btn btn-success">Gửi phản hồi</button>
                         <a href="{{ route('admin.comments.index') }}" class="btn btn-secondary">Quay lại</a>
                     </form>
 
-                    <!-- Nút riêng để trả lời -->
-                    <a href="{{ route('admin.comments.reply', $comment->id) }}" class="btn btn-info mt-3">Trả lời bình luận</a>
+                    <!-- Hiển thị nội dung bình luận gốc -->
+                    <h3 class="mt-4">Bình luận gốc</h3>
+                    <div class="card mb-2">
+                        <div class="card-body">
+                            <p>{{ $comment->content }}</p>
+                            <small class="text-muted">Bởi: {{ $comment->user->name }} - {{ $comment->created_at }}</small>
+                        </div>
+                    </div>
 
-                    <!-- Hiển thị các phản hồi -->
+                    <!-- Hiển thị các phản hồi (nếu có) -->
                     @if ($comment->replies->count() > 0)
                         <h3 class="mt-4">Phản hồi từ admin</h3>
                         @foreach ($comment->replies as $reply)
