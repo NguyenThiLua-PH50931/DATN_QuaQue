@@ -56,7 +56,7 @@ class CommentController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'status' => ['required', 'in:pending,approved,rejected'],
+            'status' => ['required', 'in:hidden,visible'],
         ]);
 
         $comment = Comment::findOrFail($id);
@@ -100,4 +100,32 @@ class CommentController extends Controller
 
         return redirect()->route('admin.comments.reply', $id)->with('success', 'Phản hồi đã được gửi!');
     }
+    public function editReply($id, $replyId)
+    {
+        $comment = Comment::with('replies')->findOrFail($id);
+        $reply = CommentReply::where('comment_id', $id)->findOrFail($replyId);
+        return view('backend.comments.edit_reply', compact('comment', 'reply'));
+    }
+
+    public function updateReply(Request $request, $id, $replyId)
+    {
+        $request->validate([
+            'reply' => ['required', 'string', 'max:1000'],
+        ]);
+
+        $reply = CommentReply::where('comment_id', $id)->findOrFail($replyId);
+        $reply->update([
+            'reply' => $request->reply,
+        ]);
+
+        return redirect()->route('admin.comments.reply', $id)->with('success', 'Phản hồi đã được cập nhật thành công!');
+    }
+
+    public function destroyReply($id, $replyId)
+    {
+        $reply = CommentReply::where('comment_id', $id)->findOrFail($replyId);
+        $reply->delete();
+        return redirect()->route('admin.comments.reply', $id)->with('success', 'Phản hồi đã được xóa thành công!');
+    }
+    
 }
