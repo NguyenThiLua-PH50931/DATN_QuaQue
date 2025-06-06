@@ -44,26 +44,16 @@
                                                 <td>
                                                     <ul>
                                                         <li>
-                                                            <form
-                                                                action="{{ route('admin.categories.restore', $category->id) }}"
-                                                                method="POST" style="display:inline;">
-                                                                @csrf
-                                                                <button type="submit" class="btn btn-success btn-sm"
-                                                                    onclick="return confirm('Bạn có chắc chắn muốn khôi phục?')">
-                                                                    <i class="ri-arrow-go-back-line"></i> Khôi phục
-                                                                </button>
-                                                            </form>
+                                                            <button type="button" class="btn btn-success btn-sm restore-btn"
+                                                                data-id="{{ $category->id }}" data-name="{{ $category->name }}">
+                                                                <i class="ri-arrow-go-back-line"></i> Khôi phục
+                                                            </button>
                                                         </li>
                                                         <li>
-                                                            <form
-                                                                action="{{ route('admin.categories.forceDelete', $category->id) }}"
-                                                                method="POST" style="display:inline;" class="force-delete-form">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button type="submit" class="btn btn-danger btn-sm"
-                                                                    onclick="return confirm('Bạn có chắc chắn xoá vĩnh viễn?')"><i data-feather="trash-2"></i>
-                                                                    Xoá vĩnh viễn</button>
-                                                            </form>
+                                                            <button type="button" class="btn btn-danger btn-sm force-delete-btn"
+                                                                data-id="{{ $category->id }}" data-name="{{ $category->name }}">
+                                                                <i data-feather="trash-2"></i> Xoá vĩnh viễn
+                                                            </button>
                                                         </li>
                                                     </ul>
                                                 </td>
@@ -78,7 +68,50 @@
             </div>
         </div>
 
-        <!-- Add any necessary modals here, e.g., confirmation modals -->
+        <!-- Modal xác nhận khôi phục -->
+        <div class="modal fade" id="restoreModal" tabindex="-1" aria-labelledby="restoreModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="restoreModalLabel">Xác nhận khôi phục</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Bạn có chắc chắn muốn khôi phục danh mục <span id="restoreCategoryName"></span>?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <form id="restoreForm" method="POST" style="display:inline;">
+                            @csrf
+                            <button type="submit" class="btn btn-success">Khôi phục</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal xác nhận xóa vĩnh viễn -->
+        <div class="modal fade" id="forceDeleteModal" tabindex="-1" aria-labelledby="forceDeleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="forceDeleteModalLabel">Xác nhận xóa vĩnh viễn</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Bạn có chắc chắn muốn xóa vĩnh viễn danh mục <span id="forceDeleteCategoryName"></span>?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <form id="forceDeleteForm" method="POST" style="display:inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger">Xóa vĩnh viễn</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </div>
     @includeIf('backend.footer')
@@ -150,6 +183,58 @@
             // Handle restore (if needed to be AJAX, otherwise current form submission is fine)
             // If you want restore to be AJAX, you'd add a similar script for a restore form.
 
+            // Modal xác nhận khôi phục
+            $('.restore-btn').click(function() {
+                var id = $(this).data('id');
+                var name = $(this).data('name');
+                $('#restoreCategoryName').text('"' + name + '"');
+                $('#restoreForm').attr('action', '/admin/categories/' + id + '/restore');
+                $('#restoreModal').modal('show');
+            });
+
+            // Modal xác nhận xóa vĩnh viễn
+            $('.force-delete-btn').click(function() {
+                var id = $(this).data('id');
+                var name = $(this).data('name');
+                $('#forceDeleteCategoryName').text('"' + name + '"');
+                $('#forceDeleteForm').attr('action', '/admin/categories/' + id + '/force');
+                // Lưu lại id để xóa dòng sau khi xóa thành công
+                $('#forceDeleteForm').data('row-id', id);
+                $('#forceDeleteModal').modal('show');
+            });
+
+            // Xử lý submit form xóa vĩnh viễn bằng AJAX
+            $('#forceDeleteForm').submit(function(e) {
+                e.preventDefault();
+                var form = $(this);
+                var url = form.attr('action');
+                var id = form.data('row-id');
+                var row = $('button.force-delete-btn[data-id="' + id + '"]').closest('tr');
+                $.ajax({
+                    url: url,
+                    method: 'DELETE',
+                    data: form.serialize(),
+                    success: function(response) {
+                        $('#forceDeleteModal').modal('hide');
+                        if (row.length) {
+                            row.remove();
+                        }
+                        toastr.success(response.message || 'Xóa vĩnh viễn danh mục thành công!');
+                    },
+                    error: function(xhr) {
+                        $('#forceDeleteModal').modal('hide');
+                        let errorMessage = 'Lỗi khi xóa vĩnh viễn danh mục';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMessage = xhr.responseJSON.message;
+                        } else if (xhr.responseText) {
+                            errorMessage = 'Lỗi server: ' + xhr.responseText.substring(0, 100) + '...';
+                        } else {
+                            errorMessage = 'Lỗi không xác định';
+                        }
+                        toastr.error(errorMessage);
+                    }
+                });
+            });
         });
     </script>
 @endpush
