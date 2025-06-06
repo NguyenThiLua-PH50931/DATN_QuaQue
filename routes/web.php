@@ -19,7 +19,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\RegionController as AdminRegionController;
 use App\Http\Controllers\Admin\OrderController;
-
+use App\Http\Controllers\Admin\SupportTicketController;
 use App\Http\Controllers\Client\ClientHomeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController as GlobalProductController; // Nếu cần dùng controller gốc ngoài admin/client
@@ -68,6 +68,11 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
     // Đơn hàng:
     Route::middleware('auth')->group(function () {
         Route::group(['prefix' => 'order', 'as' => 'order.'], function () {});
+    });
+    // Support ticket (yêu cầu đăng nhập)
+    Route::middleware('auth')->group(function () {
+        Route::get('support-ticket/create', [SupportTicketController::class, 'create'])->name('support-ticket.create');
+        Route::post('support-ticket', [SupportTicketController::class, 'store'])->name('support-ticket.store');
     });
 });
 
@@ -225,7 +230,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
 
     // Comments
 
-    
+
     Route::prefix('comments')->name('comments.')->group(function () {
         Route::get('/', [CommentController::class, 'index'])->name('index');
         Route::get('/{id}/edit', [CommentController::class, 'edit'])->name('edit');
@@ -236,6 +241,14 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         Route::get('/{commentId}/reply/{replyId}/edit', [CommentController::class, 'editReply'])->name('editReply');
         Route::put('/{commentId}/reply/{replyId}', [CommentController::class, 'updateReply'])->name('updateReply');
         Route::delete('/{commentId}/reply/{replyId}', [CommentController::class, 'destroyReply'])->name('destroyReply');
+    });
+
+    // SupportTicket
+    Route::prefix('support-ticket')->name('support-ticket.')->group(function () {
+        Route::get('/', [SupportTicketController::class, 'index'])->name('index');
+        Route::get('/{id}', [SupportTicketController::class, 'show'])->name('show');
+        Route::post('/{id}/reply', [SupportTicketController::class, 'storeReply'])->name('storeReply');
+        Route::delete('/{id}', [SupportTicketController::class, 'destroy'])->name('destroy');
     });
 
 
