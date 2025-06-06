@@ -92,7 +92,7 @@ class CategoryController extends Controller
         $category = Category::findOrFail($id);
         $category->delete();
 
-        session()->flash('success', 'Xóa mềm danh mục thành công!');
+        session()->flash('success', 'Xóa danh mục thành công!');
 
         return redirect()->route('admin.categories.index');
     }
@@ -103,7 +103,7 @@ class CategoryController extends Controller
         $category = Category::withTrashed()->findOrFail($id);
         $category->forceDelete();
 
-        return response()->json(['message' => 'Xóa cứng danh mục thành công'], 200);
+        return response()->json(['message' => 'Xóa vĩnh viễn danh mục thành công'], 200);
     }
 
     // Khôi phục soft deleted
