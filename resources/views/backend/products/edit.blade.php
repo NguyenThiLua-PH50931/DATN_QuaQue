@@ -52,7 +52,7 @@
                                             <option value="{{ $cat->id }}" {{ old('category_id', $product->category_id) == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
                                             @endforeach
                                         </select>
-                                        <button type="button" class="btn btn-link px-2" data-bs-toggle="modal" data-bs-target="#addCategoryModal">+ Thêm</button>
+                                        <button type="button" class="btn btn-link px-2" style="color: #0da487" data-bs-toggle="modal" data-bs-target="#addCategoryModal">+ Thêm danh mục</button>
                                     </div>
 
                                     {{-- Vùng miền --}}
@@ -64,7 +64,7 @@
                                             <option value="{{ $region->id }}" {{ old('region_id', $product->region_id) == $region->id ? 'selected' : '' }}>{{ $region->name }}</option>
                                             @endforeach
                                         </select>
-                                        <button type="button" class="btn btn-link px-2" data-bs-toggle="modal" data-bs-target="#addRegionModal">+ Thêm</button>
+                                        <button type="button" class="btn btn-link px-2" style="color: #0da487" data-bs-toggle="modal" data-bs-target="#addRegionModal">+ Thêm vùng miền</button>
                                     </div>
 
                                     {{-- Ảnh đại diện --}}
@@ -142,7 +142,10 @@
                                                 @endforeach
                                             </div>
                                         </div>
-                                        <a href="#" class="btn btn-link p-0 mt-3" data-bs-toggle="modal" data-bs-target="#addAttributeModal">+ Thêm thuộc tính</a>
+                                                                           <div class="attribue-space" style="display: flex; ">
+                                                <a href="#" class="btn btn-link p-0 mt-3" style="color: #0da487" data-bs-toggle="modal" data-bs-target="#addAttributeModal">+ Thêm thuộc tính</a>
+                                                <a href="#" class="btn btn-link p-0 mt-3 ms-3" style="color: #0da487" data-bs-toggle="modal" data-bs-target="#addAttributeValueModal">+ Thêm giá trị thuộc tính</a>
+                                            </div>
                                     </div>
 
                                     {{-- BIẾN THỂ --}}
@@ -420,6 +423,7 @@
         </form>
     </div>
 </div>
+<<<<<<< HEAD
 
 {{-- Modal thêm vùng miền --}}
 <div class="modal fade" id="addRegionModal" tabindex="-1">
@@ -464,6 +468,83 @@
         </form>
     </div>
 </div>
+=======
+
+{{-- Modal thêm vùng miền --}}
+<div class="modal fade" id="addRegionModal" tabindex="-1">
+    <div class="modal-dialog">
+        <form id="quickRegionForm" method="POST" action="{{ route('admin.regions.storeQuick') }}">
+            @csrf
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Thêm vùng miền mới</h5>
+                </div>
+                <div class="modal-body">
+                    <input type="text" name="name" class="form-control" placeholder="Tên vùng miền mới" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary">Thêm</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{{-- Modal thêm thuộc tính --}}
+<div class="modal fade" id="addAttributeModal" tabindex="-1">
+    <div class="modal-dialog">
+        <form id="quickAttributeForm" method="POST" action="{{ route('admin.attributes.storeQuick') }}">
+            @csrf
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Thêm thuộc tính mới</h5>
+                </div>
+                <div class="modal-body">
+                    <input type="text" name="name" class="form-control mb-2" placeholder="Tên thuộc tính" required>
+                    <input type="text" name="values" class="form-control" placeholder="Giá trị (cách nhau dấu phẩy)" required>
+                    <small>VD: 1kg, 2kg, 3kg</small>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary">Thêm</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{{-- Modal thêm giá trị thuộc tính --}}
+<div class="modal fade" id="addAttributeValueModal" tabindex="-1">
+    <div class="modal-dialog">
+        <form id="quickAttributeValueForm" method="POST" action="{{ route('admin.attribute_values.storeQuick') }}">
+            @csrf
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Thêm giá trị thuộc tính mới</h5>
+                </div>
+                <div class="modal-body">
+                    <label>Chọn thuộc tính</label>
+                    <select name="attribute_id" class="form-select mb-2" required>
+                        <option value="">-- Chọn thuộc tính --</option>
+                        @foreach($attributes as $attr)
+                        <option value="{{ $attr->id }}">{{ $attr->name }}</option>
+                        @endforeach
+                    </select>
+                    <label>Giá trị mới</label>
+                    <input type="text" name="value" class="form-control" placeholder="Nhập giá trị mới" required>
+                    <div class="invalid-feedback" id="attr-value-error"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary">Thêm giá trị</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+>>>>>>> main
 <style>
     /* CKEditor chữ đen */
     .ck-editor__editable {
@@ -616,31 +697,220 @@
             showRemoveButtons();
         };
     }
-    document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('btn-remove-desc-img')) {
-            if (confirm('Bạn có chắc chắn muốn xóa ảnh này không?')) {
-                let imgId = e.target.getAttribute('data-id');
-                fetch("{{ route('admin.products.deleteImage') }}", {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            id: imgId
-                        })
-                    })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.success) {
-                            document.getElementById('desc-img-' + imgId).remove();
-                        } else {
-                            alert(data.message || 'Xóa thất bại!');
+    // ajax them danh muc
+    document.addEventListener('DOMContentLoaded', function() {
+        const quickCategoryForm = document.getElementById('quickCategoryForm');
+        quickCategoryForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(quickCategoryForm);
+            const url = quickCategoryForm.action;
+
+            // Xóa lỗi cũ
+            document.getElementById('cat-error').innerText = '';
+
+            fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': formData.get('_token')
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Đóng modal
+                        const addCategoryModal = bootstrap.Modal.getInstance(document.getElementById('addCategoryModal'));
+                        addCategoryModal.hide();
+
+                        // Thêm option mới vào select danh mục
+                        const categorySelect = document.querySelector('select[name="category_id"]');
+                        const newOption = document.createElement('option');
+                        newOption.value = data.category.id; // phải trả về id category mới
+                        newOption.text = data.category.name; // phải trả về name category mới
+                        newOption.selected = true;
+                        categorySelect.appendChild(newOption);
+
+                        // Reset lại form
+                        quickCategoryForm.reset();
+                    } else {
+                        // Hiển thị lỗi (nếu có)
+                        document.getElementById('cat-error').innerText = data.message || 'Có lỗi xảy ra';
+                    }
+                })
+                .catch(err => {
+                    document.getElementById('cat-error').innerText = 'Lỗi server, thử lại sau.';
+                    console.error(err);
+                });
+        });
+    });
+    // ajax them vung miền
+    document.addEventListener('DOMContentLoaded', function() {
+        const quickRegionForm = document.getElementById('quickRegionForm');
+        quickRegionForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(quickRegionForm);
+            const url = quickRegionForm.action;
+
+            fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': formData.get('_token')
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Đóng modal
+                        const addRegionModal = bootstrap.Modal.getInstance(document.getElementById('addRegionModal'));
+                        addRegionModal.hide();
+
+                        // Thêm option mới vào select vùng miền
+                        const regionSelect = document.querySelector('select[name="region_id"]');
+                        const newOption = document.createElement('option');
+                        newOption.value = data.region.id;
+                        newOption.text = data.region.name;
+                        newOption.selected = true;
+                        regionSelect.appendChild(newOption);
+
+                        // Reset form
+                        quickRegionForm.reset();
+                    } else {
+                        alert(data.message || 'Có lỗi xảy ra khi thêm vùng miền');
+                    }
+                })
+                .catch(err => {
+                    alert('Lỗi server, thử lại sau.');
+                    console.error(err);
+                });
+        });
+    });
+    // ajax them thuoc tinh
+    document.addEventListener('DOMContentLoaded', function() {
+        const quickAttributeForm = document.getElementById('quickAttributeForm');
+        quickAttributeForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(quickAttributeForm);
+            const url = quickAttributeForm.action;
+
+            fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': formData.get('_token')
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Đóng modal
+                        const addAttributeModal = bootstrap.Modal.getInstance(document.getElementById('addAttributeModal'));
+                        addAttributeModal.hide();
+
+                        // Tạm thời chỉ append vào phần chọn thuộc tính:
+                        const container = document.querySelector('.card-body .row.gy-2.gx-3');
+                        if (container) {
+                            // Tạo 1 select mới
+                            const select = document.createElement('select');
+                            select.classList.add('form-select', 'form-select-sm', 'attribute-value-select');
+                            select.setAttribute('data-attrid', data.attribute.id);
+                            select.setAttribute('multiple', '');
+                            select.style.minHeight = '70px';
+
+                            data.attribute.values.forEach(val => {
+                                const option = document.createElement('option');
+                                option.value = val.id;
+                                option.text = val.value;
+                                select.appendChild(option);
+                            });
+
+                            const divCol = document.createElement('div');
+                            divCol.classList.add('col-6', 'col-md-3');
+                            const label = document.createElement('label');
+                            label.classList.add('form-label', 'mb-1');
+                            label.innerText = data.attribute.name;
+
+                            divCol.appendChild(label);
+                            divCol.appendChild(select);
+
+                            container.appendChild(divCol);
                         }
-                    });
-            }
-        }
+
+                        // Reset form
+                        quickAttributeForm.reset();
+                    } else {
+                        alert(data.message || 'Có lỗi xảy ra khi thêm thuộc tính');
+                    }
+                })
+                .catch(err => {
+                    alert('Lỗi server, thử lại sau.');
+                    console.error(err);
+                });
+        });
+    });
+    // ajax them gia tri thuoc tinh
+    document.addEventListener('DOMContentLoaded', function() {
+        const quickAttributeValueForm = document.getElementById('quickAttributeValueForm');
+        quickAttributeValueForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(quickAttributeValueForm);
+            const url = quickAttributeValueForm.action;
+
+            // Xóa lỗi cũ
+            const errorDiv = document.getElementById('attr-value-error');
+            errorDiv.innerText = '';
+            errorDiv.style.display = 'none';
+
+            fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': formData.get('_token')
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Đóng modal
+                        const addAttributeValueModal = bootstrap.Modal.getInstance(document.getElementById('addAttributeValueModal'));
+                        addAttributeValueModal.hide();
+
+                        // Thêm giá trị mới vào select thuộc tính tương ứng
+                        const attrId = data.attribute_id;
+                        const value = data.attributeValue.value;
+                        const valueId = data.attributeValue.id;
+
+                        // Tìm select thuộc tính tương ứng (data-attrid)
+                        const select = document.querySelector(`select.attribute-value-select[data-attrid="${attrId}"]`);
+                        if (select) {
+                            const option = document.createElement('option');
+                            option.value = valueId;
+                            option.text = value;
+                            option.selected = true;
+                            select.appendChild(option);
+                        }
+
+                        // Reset form
+                        quickAttributeValueForm.reset();
+                    } else {
+                        errorDiv.innerText = data.message || 'Có lỗi xảy ra';
+                        errorDiv.style.display = 'block';
+                    }
+                })
+                .catch(err => {
+                    errorDiv.innerText = 'Lỗi server, thử lại sau.';
+                    errorDiv.style.display = 'block';
+                    console.error(err);
+                });
+        });
     });
 </script>
 
