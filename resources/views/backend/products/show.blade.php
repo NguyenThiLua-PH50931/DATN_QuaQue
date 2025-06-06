@@ -113,6 +113,35 @@
         border-radius: 6px;
         font-size: 14px;
     }
+
+    .bulk-delete-btn[disabled] {
+        background: #e1e8f3 !important;
+        color: #66708a !important;
+        border: none !important;
+        cursor: not-allowed !important;
+        opacity: 1 !important;
+    }
+
+    .bulk-delete-btn[disabled] .delete-bulk-icon {
+        color: #66708a !important;
+    }
+
+    .bulk-delete-btn:not([disabled]) {
+        background: #becde4 !important;
+        color: #495057 !important;
+        border: none !important;
+        cursor: pointer !important;
+        box-shadow: 0 2px 8px #becde480;
+        transition: background .5s, color .5s;
+    }
+
+    .bulk-delete-btn:not([disabled]) .delete-bulk-icon {
+        color: #495057 !important;
+    }
+
+    .bulk-delete-btn:not([disabled]):hover {
+        background: #aac4e7 !important;
+    }
 </style>
 <!-- SwiperJS CSS & JS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
@@ -174,7 +203,9 @@
                     <p><b>Lượt xem ngày:</b> {{ $product->view_day }}</p>
                     <p><b>Lượt xem tuần:</b> {{ $product->view_week }}</p>
                     <p><b>Lượt xem tháng:</b> {{ $product->view_month }}</p>
-                    <p><b>Mô tả chung:</b> {!! nl2br(e($product->description)) !!}</p>
+                    <p><b>Mô tả chung:</b></p>
+                    <div>{!! $product->description !!}</div>
+                    <a href="{{ route('admin.products.edit', $product->slug) }}" class="btn btn-secondary mt-3">Sửa sản phẩm</a>
                 </div>
                 <!-- Biến thể -->
                 <div class="col-md-7">
@@ -182,54 +213,108 @@
                         <div class="card-body">
                             <h4>Biến thể</h4>
                             <div class="table-responsive">
-                                <!-- table biến thể ở đây -->
-                                <table class="table table-bordered align-middle product-table" id="variantTable">
-                                    <thead>
-                                        <tr>
-                                            <th>STT</th>
-                                            <th>Tên biến thể</th>
-                                            <th>Ảnh</th>
-                                            <th>Mô tả</th>
-                                            <th>Giá</th>
-                                            <th>Số lượng</th>
-                                            <th>SKU</th>
-                                            <th>Barcode</th>
-                                            <th>Trạng thái</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($product->variants as $k => $variant)
-                                        <tr>
-                                            <td>{{ $k+1 }}</td>
-                                            <td>{{ $variant->name }}</td>
-                                            <td>
-                                                @if($variant->image)
-                                                <img src="{{ asset('storage/' . $variant->image) }}" width="70">
-                                                @else
-                                                <img src="{{ asset('storage/' . $product->image) }}" width="70">
-                                                @endif
-                                            </td>
-                                            <td>{!! nl2br(e($variant->description)) !!}</td>
-                                            <td>{{ number_format($variant->price, 0, ',', '.') }}₫</td>
-                                            <td>{{ $variant->stock }}</td>
-                                            <td>{{ $variant->sku }}</td>
-                                            <td>{{ $variant->barcode }}</td>
-                                            <td>
-                                                <span class="badge status-badge {{ $variant->active ? 'bg-success' : 'bg-danger' }}"
-                                                    style="cursor:pointer"
-                                                    data-id="{{ $variant->id }}"
-                                                    data-name="{{ $variant->name ?? '' }}"
-                                                    data-status="{{ $variant->active }}">
-                                                    {{ $variant->active ? 'Đang bán' : 'Ngừng bán' }}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
+                                <form id="bulk-delete-form" method="POST" action="{{ route('admin.products.variant.bulkDelete') }}">
+                                    @csrf
+                                    <table class="table product-table align-middle" id="variantTable">
+                                        <thead>
+                                            <tr>
+                                                <th><input type="checkbox" id="select-all"></th> <!-- Checkbox chọn tất cả -->
+                                                <th>STT</th>
+                                                <th>Tên biến thể</th>
+                                                <th>Ảnh</th>
+                                                <th>Mô tả</th>
+                                                <th>Giá</th>
+                                                <th>Số lượng</th>
+                                                <th>SKU</th>
+                                                <th>Barcode</th>
+                                                <th>Trạng thái</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($product->variants as $k => $variant)
+                                            <tr class="product-row">
+                                                <td>
+                                                    <input type="checkbox" class="row-checkbox" name="ids[]" value="{{ $variant->id }}">
+                                                </td>
+                                                <td>{{ $k + 1 }}</td>
+                                                <td>
+                                                    <a href="{{ route('admin.products.variant.show', $variant->id) }}" class="fw-bold text-primary" style="font-size:16px;">
+                                                        {{ $variant->name }}
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    @if($variant->image)
+                                                    <img src="{{ asset('storage/' . $variant->image) }}" height="50px" style="border-radius:8px; object-fit:cover;">
+                                                    @else
+                                                    <img src="{{ asset('storage/' . $product->image) }}" height="50px" style="border-radius:8px; object-fit:cover;">
+                                                    @endif
+                                                </td>
+                                                <td>{{ \Illuminate\Support\Str::limit(strip_tags($variant->description), 50, '...') }}</td>
+
+                                                <td>{{ number_format($variant->price, 0, ',', '.') }}₫</td>
+                                                <td>{{ $variant->stock }}</td>
+                                                <td>{{ $variant->sku }}</td>
+                                                <td>{{ $variant->barcode }}</td>
+                                                <td>
+                                                    <span class="badge status-badge {{ $variant->active ? 'bg-success' : 'bg-danger' }}"
+                                                        style="cursor:pointer"
+                                                        data-id="{{ $variant->id }}"
+                                                        data-name="{{ $variant->name ?? '' }}"
+                                                        data-status="{{ $variant->active }}">
+                                                        {{ $variant->active ? 'Đang bán' : 'Ngừng bán' }}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <a href="{{ route('admin.products.variant.show', $variant->id) }}" class="action-link text-decoration-none me-2" title="Xem">
+                                                        <i class="ri-eye-line"></i>
+                                                    </a>
+                                                    <a href="{{ route('admin.products.variant.edit', $variant->id) }}" class="action-link text-decoration-none me-2" title="Sửa">
+                                                        <i class="ri-pencil-line"></i>
+                                                    </a>
+                                                    <a href="javascript:void(0)" class="action-link text-decoration-none text-danger"
+                                                        data-bs-toggle="modal" data-bs-target="#deleteVariantModal"
+                                                        data-id="{{ $variant->id }}" data-name="{{ $variant->name }}">
+                                                        <i class="ri-delete-bin-line"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                    <button type="button"
+                                        id="delete-selected"
+                                        class="btn bulk-delete-btn btn-sm mt-2 d-inline-flex align-items-center gap-2 mb-3"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#deleteBulkModal"
+                                        disabled>
+                                        <i class="ri-delete-bin-line delete-bulk-icon"></i> Xóa
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Modal xác nhận xóa biến thể -->
+                    <div class="modal fade" id="deleteVariantModal" tabindex="-1" aria-labelledby="deleteVariantModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <form id="delete-variant-form" method="POST" action="">
+                                    @csrf
+                                    @method('DELETE')
+                                    <div class="modal-body text-center">
+                                        <h5 class="modal-title mb-2">Xóa biến thể?</h5>
+                                        <p id="delete-variant-message">Bạn chắc chắn muốn xóa biến thể này?</p>
+                                        <div class="button-box mt-4">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Không</button>
+                                            <button type="submit" class="btn btn-danger">Có</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
             <hr>
@@ -300,7 +385,7 @@
                 </div>
             </div>
 
-            <a href="" class="btn btn-secondary mt-3">Quay lại danh sách</a>
+
         </div>
     </div>
     @includeIf('backend.footer')
@@ -320,6 +405,7 @@
                         @csrf
                         <button type="submit" class="btn btn--yes btn-primary">Đồng ý</button>
                     </form>
+
                 </div>
             </div>
         </div>
@@ -390,11 +476,24 @@
             $('.paginate_button.first a').text(1);
         }
     });
-</script>
 
-@endpush
-@push('scripts')
-<script>
+    $(document).on('click', '.status-badge', function() {
+        var id = $(this).data('id');
+        var name = $(this).data('name');
+        var status = $(this).data('status');
+
+        let nextStatus = (status == 1) ? 'Ngừng bán' : 'Đang bán';
+        if (!name) name = '(ID ' + id + ')';
+        $('#modal-status-text').html('Bạn muốn chuyển trạng thái biến thể <b>' + name + '</b> sang <span class="text-primary">' + nextStatus + '</span>?');
+
+        // Tạo URL chính xác bằng cách thay :id bằng giá trị thực
+        let url = toggleUrlBase.replace(':id', id);
+        $('#status-toggle-form').attr('action', url);
+
+        var modal = new bootstrap.Modal(document.getElementById('statusModal'));
+        modal.show();
+    });
+
     $('.status-badge').click(function() {
         var id = $(this).data('id');
         var name = $(this).data('name');
@@ -404,39 +503,13 @@
         if (!name) name = '(ID ' + id + ')';
         $('#modal-status-text').html('Bạn muốn chuyển trạng thái biến thể <b>' + name + '</b> sang <span class="text-primary">' + nextStatus + '</span>?');
 
-        // Set action cho form: route đổi trạng thái biến thể!
-        let url = '{{ route("admin.products.variant.toggle", ":id") }}';
-        url = url.replace(':id', id);
+        let url = toggleUrlBase.replace(':id', id); // Thay :id thành id thực tế
         $('#status-toggle-form').attr('action', url);
 
-        // Show modal
         var modal = new bootstrap.Modal(document.getElementById('statusModal'));
         modal.show();
     });
-</script>
 
-<script>
-    $('.status-badge').click(function() {
-        var id = $(this).data('id');
-        var name = $(this).data('name'); // phải có data-name ở trên
-        var status = $(this).data('status');
-
-        let nextStatus = (status == 1) ? 'Ngừng bán' : 'Đang bán';
-        // Nếu name rỗng (undefined/null), show id cho dễ debug
-        if (!name) name = '(ID ' + id + ')';
-        $('#modal-status-text').html('Bạn muốn chuyển trạng thái sản phẩm <b>' + name + '</b> sang <span class="text-primary">' + nextStatus + '</span>?');
-
-        // Set action cho form
-        let url = '{{ route("admin.products.toggle", ":id") }}';
-        url = url.replace(':id', id);
-        $('#status-toggle-form').attr('action', url);
-
-        // Show modal
-        var modal = new bootstrap.Modal(document.getElementById('statusModal'));
-        modal.show();
-    });
-</script>
-<script>
     document.addEventListener("DOMContentLoaded", function() {
         var gallery = @json($gallery);
         var currentIndex = 0;
@@ -494,6 +567,32 @@
 
         // Init lần đầu
         showMainImage(0);
+    });
+    $('#deleteVariantModal').on('show.bs.modal', function(e) {
+        var button = $(e.relatedTarget);
+        var id = button.data('id');
+        var name = button.data('name');
+        var form = $('#delete-variant-form');
+        form.attr('action', '/admin/products/variant/' + id);
+        $('#delete-variant-message').text('Bạn chắc chắn muốn xóa biến thể "' + name + '"?');
+    });
+    $(function() {
+        $('#select-all').on('change', function() {
+            $('.row-checkbox').prop('checked', $(this).is(':checked'));
+            updateBulkDeleteBtn();
+        });
+
+        $('.row-checkbox').on('change', function() {
+            updateBulkDeleteBtn();
+        });
+
+        function updateBulkDeleteBtn() {
+            $('#delete-selected').prop('disabled', $('.row-checkbox:checked').length === 0);
+        }
+
+        $('#confirm-bulk-delete').on('click', function() {
+            $('#bulk-delete-form').submit();
+        });
     });
 </script>
 

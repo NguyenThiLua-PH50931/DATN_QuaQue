@@ -147,10 +147,17 @@ class RegionController extends Controller
             'name' => 'required|max:100|unique:regions,name',
         ]);
 
-        Region::create([
+        $region = Region::create([
             'name' => $request->name,
-            'slug' => Str::slug($request->name)
+            'slug' => Str::slug($request->name),
         ]);
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'region' => $region,
+            ]);
+        }
 
         return redirect()->back()->with('success', 'Đã thêm vùng miền mới!');
     }

@@ -130,10 +130,17 @@ class CategoryController extends Controller
             'name' => 'required|max:100|unique:categories,name',
         ]);
 
-        Category::create([
+        $category = Category::create([
             'name' => $request->name,
-            'slug' => Str::slug($request->name)
+            'slug' => Str::slug($request->name),
         ]);
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'category' => $category,
+            ]);
+        }
 
         return redirect()->back()->with('success', 'Đã thêm danh mục mới!');
     }
