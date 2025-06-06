@@ -185,7 +185,7 @@
             var id = $(this).data('id');
             var name = $(this).data('name');
             $('#categoryName').text(name);
-            $('#deleteForm').attr('action', '/admin/categories/' + id + '/soft-delete');
+            $('#deleteForm').attr('action', '/admin/categories/' + id + '/trashed');
         });
 
         // Xử lý sự kiện click nút sửa
