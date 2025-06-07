@@ -22,7 +22,8 @@
                 <div class="Typeahead Typeahead--twitterUsers">
                     <div class="u-posRelative">
                         <input class="demo-input Typeahead-input form-control-plaintext w-100" type="text"
-                            placeholder="Tìm kiếm trong admin..." name="q" title="" id="search-input" autocomplete="off">
+                            placeholder="Tìm kiếm trong admin..." name="q" title="" id="search-input"
+                            autocomplete="off">
                         <i class="close-search" data-feather="x"></i>
                         <div class="spinner-border Typeahead-spinner" role="status">
                             <span class="sr-only">Đang tải...</span>
@@ -57,7 +58,8 @@
                                     class="pull-right">10 phút</span></p>
                         </li>
                         <li>
-                            <p><i class="fa fa-circle me-2 font-success"></i>Hoàn tất đơn hàng <span class="pull-right">1
+                            <p><i class="fa fa-circle me-2 font-success"></i>Hoàn tất đơn hàng <span
+                                    class="pull-right">1
                                     giờ</span></p>
                         </li>
                         <li>
@@ -65,7 +67,8 @@
                                     giờ</span></p>
                         </li>
                         <li>
-                            <p><i class="fa fa-circle me-2 font-danger"></i>Hoàn tất giao hàng <span class="pull-right">6
+                            <p><i class="fa fa-circle me-2 font-danger"></i>Hoàn tất giao hàng <span
+                                    class="pull-right">6
                                     giờ</span></p>
                         </li>
                         <li>
@@ -82,54 +85,55 @@
 
                 <li class="profile-nav onhover-dropdown pe-0 me-0">
                     @auth
-                    <div class="media profile-media">
-                        <img class="user-profile rounded-circle"
-                            src="{{ Auth::user()->avatar ? asset('storage/avatars/' . Auth::user()->avatar) : asset('backend/assets/images/users/default.jpg') }}"
-                            alt="Avatar người dùng">
-                        <div class="user-name-hide media-body">
-                            <span>{{ Auth::user()->name }}</span>
-                            <p class="mb-0 font-roboto">
-                                {{ ucfirst(Auth::user()->role) }}
-                                <i class="middle ri-arrow-down-s-line"></i>
-                            </p>
+                        <div class="media profile-media">
+                            <img class="user-profile rounded-circle"
+                                src="{{ Auth::user()->avatar
+                                    ? asset('storage/' . Auth::user()->avatar) . '?v=' . time()
+                                    : asset('backend/assets/images/users/default.jpg') }}" />
+                            <div class="user-name-hide media-body">
+                                <span>{{ Auth::user()->name }}</span>
+                                <p class="mb-0 font-roboto">
+                                    {{ ucfirst(Auth::user()->role) }}
+                                    <i class="middle ri-arrow-down-s-line"></i>
+                                </p>
+                            </div>
                         </div>
-                    </div>
 
-                    <ul class="profile-dropdown onhover-show-div">
-                        <li>
-                            <a href="{{ url('/admin/users') }}">
-                                <i data-feather="users"></i>
-                                <span>Người dùng</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ url('/admin/orders') }}">
-                                <i data-feather="archive"></i>
-                                <span>Đơn hàng</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ url('/admin/support-ticket') }}">
-                                <i data-feather="phone"></i>
-                                <span>Vé hỗ trợ</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ url('/admin/profile') }}">
-                                <i data-feather="settings"></i>
-                                <span>Cài đặt</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a data-bs-toggle="modal" data-bs-target="#staticBackdrop" href="javascript:void(0)">
-                                <i data-feather="log-out"></i>
-                                <span>Đăng xuất</span>
-                            </a>
-                        </li>
-                    </ul>
+                        <ul class="profile-dropdown onhover-show-div">
+                            <li>
+                                <a href="{{ url('/admin/users') }}">
+                                    <i data-feather="users"></i>
+                                    <span>Người dùng</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ url('/admin/orders') }}">
+                                    <i data-feather="archive"></i>
+                                    <span>Đơn hàng</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ url('/admin/support-ticket') }}">
+                                    <i data-feather="phone"></i>
+                                    <span>Vé hỗ trợ</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ url('/admin/profile') }}">
+                                    <i data-feather="settings"></i>
+                                    <span>Cài đặt</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a data-bs-toggle="modal" data-bs-target="#staticBackdrop" href="javascript:void(0)">
+                                    <i data-feather="log-out"></i>
+                                    <span>Đăng xuất</span>
+                                </a>
+                            </li>
+                        </ul>
                     @else
-                    {{-- Tùy chọn: Hiển thị liên kết đăng nhập hoặc nội dung khác khi chưa đăng nhập --}}
-                    {{-- <li><a href="{{ route('login') }}">Đăng nhập</a></li> --}}
+                        {{-- Tùy chọn: Hiển thị liên kết đăng nhập hoặc nội dung khác khi chưa đăng nhập --}}
+                        {{-- <li><a href="{{ route('login') }}">Đăng nhập</a></li> --}}
                     @endauth
                 </li>
             </ul>

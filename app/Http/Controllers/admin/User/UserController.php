@@ -6,14 +6,23 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
+
+
     public function index()
     {
-        $users = User::where('status', 1)->get(); // chỉ lấy user đang hoạt động
+        $currentUserId = Auth::id(); // ID user đang đăng nhập
+
+        $users = User::where('status', 1)
+            ->where('id', '!=', $currentUserId)
+            ->get();
+
         return view('backend.users.index', compact('users'));
     }
+
 
     // Hiển thị form thêm user
     public function create()
