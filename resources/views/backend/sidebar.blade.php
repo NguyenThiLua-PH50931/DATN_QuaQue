@@ -132,6 +132,27 @@
                     </li>
 
                      <li class="sidebar-list">
+                        <a class="sidebar-link sidebar-title" href="javascript:void(0)">
+                            <i class="ri-settings-line"></i>
+                            <span>Cài đặt</span>
+                        </a>
+                        <ul class="sidebar-submenu">
+                            <li><a href="{{ route('admin.setting.profile') }}">Chỉnh sửa hồ sơ</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="sidebar-list">
+                        <a class="sidebar-link sidebar-title" href="javascript:void(0)">
+                            <i class="ri-price-tag-3-line"></i>
+                            <span>Mã giảm giá</span>
+                        </a>
+                        <ul class="sidebar-submenu">
+                            <li><a href="{{ route('admin.coupon.index')}}">Danh sách</a></li>
+                            {{-- <li><a href="{{ url('/admin/coupons/create') }}">Create Coupon</a></li> --}}
+                        </ul>
+                    </li>
+
+                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title link-nav" href="{{ url('/admin/media') }}">
                             <i class="ri-price-tag-3-line"></i>
                             <span>Media</span>
@@ -150,16 +171,7 @@
                     </li>
 
 
-                    <li class="sidebar-list">
-                        <a class="sidebar-link sidebar-title" href="javascript:void(0)">
-                            <i class="ri-price-tag-3-line"></i>
-                            <span>Coupons</span>
-                        </a>
-                        <ul class="sidebar-submenu">
-                            <li><a href="{{ url('/admin/coupons') }}">Coupon List</a></li>
-                            <li><a href="{{ url('/admin/coupons/create') }}">Create Coupon</a></li>
-                        </ul>
-                    </li>
+                    
 
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title link-nav" href="{{ url('/admin/taxes') }}">
@@ -177,15 +189,7 @@
                         </a>
                     </li>
 
-                    <li class="sidebar-list">
-                        <a class="sidebar-link sidebar-title" href="javascript:void(0)">
-                            <i class="ri-settings-line"></i>
-                            <span>Settings</span>
-                        </a>
-                        <ul class="sidebar-submenu">
-                            <li><a href="{{ url('/admin/profile-setting') }}">Profile Setting</a></li>
-                        </ul>
-                    </li>
+                   
 
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title link-nav" href="{{ url('/admin/reports') }}">
