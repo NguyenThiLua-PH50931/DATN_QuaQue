@@ -20,11 +20,11 @@ use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\CouponsController;
 use App\Http\Controllers\Admin\RegionController as AdminRegionController;
 use App\Http\Controllers\Admin\OrderController;
-<<<<<<< HEAD
+
 use App\Http\Controllers\Admin\User\ProfileController;
-=======
+
 use App\Http\Controllers\Admin\SupportTicketController;
->>>>>>> 6c69b7ebdc1071f18cd8843b69aa508042261b77
+
 use App\Http\Controllers\Client\ClientHomeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController as GlobalProductController; // Nếu cần dùng controller gốc ngoài admin/client
@@ -75,10 +75,14 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
         Route::group(['prefix' => 'order', 'as' => 'order.'], function () {});
     });
     // Support ticket (yêu cầu đăng nhập)
-    Route::middleware('auth')->group(function () {
-        Route::get('support-ticket/create', [SupportTicketController::class, 'create'])->name('support-ticket.create');
-        Route::post('support-ticket', [SupportTicketController::class, 'store'])->name('support-ticket.store');
-    });
+    // Route::middleware('auth')->group(function () {
+    //     Route::get('support-ticket/create', [SupportTicketController::class, 'create'])->name('support-ticket.create');
+    //     Route::post('support-ticket', [SupportTicketController::class, 'store'])->name('support-ticket.store');
+    // });
+    Route::get('/contact-us', function () {
+        return view('frontend.pages.contact');
+    })->name('contact-us');
+    Route::post('/support-ticket', [SupportTicketController::class, 'store'])->name('support-ticket.store');
 });
 
 //----------------------------------------------------------
@@ -197,7 +201,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
     // bien the
     Route::prefix('products/variant')->name('products.variant.')->group(function () {
     Route::get('/{productId}', [AdminProductVariantController::class, 'index'])->name('index'); // Danh sách biến thể của sản phẩm
-    Route::get('/{productId}/create', [AdminProductVariantController::class, 'create'])->name('create'); 
+    Route::get('/{productId}/create', [AdminProductVariantController::class, 'create'])->name('create');
     Route::post('/{productId}/store', [AdminProductVariantController::class, 'store'])->name('store');
     Route::get('/show/{id}', [AdminProductVariantController::class, 'show'])->name('show');
     Route::get('/edit/{id}', [AdminProductVariantController::class, 'edit'])->name('edit');
@@ -303,7 +307,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
 
     // Quản lý đánh giá
     Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');
-<<<<<<< HEAD
+
 
     // Quản lý sản phẩm
     Route::post('/categories/store-quick', [AdminCategoryController::class, 'storeQuick'])->name('categories.storeQuick');
@@ -339,8 +343,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         Route::get('edit/{id}', [CouponsController::class, 'edit'])->name('edit');
         Route::put('update/{id}', [CouponsController::class, 'update'])->name('update');
     });
-=======
->>>>>>> 6c69b7ebdc1071f18cd8843b69aa508042261b77
+
+
 });
 
 
