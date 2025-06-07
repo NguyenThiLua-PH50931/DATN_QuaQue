@@ -44,6 +44,6 @@ class ProfileController extends Controller
 
        User::where('id', $user->id)->update($data);
 
-        return redirect()->back()->with('success', 'Cập nhật thông tin thành công!');
+        return redirect()->route('admin.setting.profile')->with('success', 'Cập nhật thông tin thành công!');
     }
 }
