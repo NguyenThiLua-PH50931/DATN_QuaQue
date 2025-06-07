@@ -104,11 +104,11 @@
                                                                         <option disabled
                                                                             {{ old('discount_type') ? '' : 'selected' }}>
                                                                             --Chọn--</option>
-                                                                        <option value="Phần trăm"
-                                                                            {{ old('discount_type') == 'Phần trăm' ? 'selected' : '' }}>
+                                                                        <option value="percent"
+                                                                            {{ old('discount_type') == 'percent' ? 'selected' : '' }}>
                                                                             Phần trăm</option>
-                                                                        <option value="Tiền cố định"
-                                                                            {{ old('discount_type') == 'Tiền cố định' ? 'selected' : '' }}>
+                                                                        <option value="fixed"
+                                                                            {{ old('discount_type') == 'fixed' ? 'selected' : '' }}>
                                                                             Tiền cố định</option>
                                                                     </select>
                                                                     @error('discount_type')
@@ -190,6 +190,28 @@
                                                                 </div>
                                                             </div>
 
+                                                            {{-- Sử dụng cho sản phẩm nào --}}
+                                                            <div class="mb-4 row align-items-center">
+                                                                <label for="products"
+                                                                    class="form-label-title col-lg-2 col-md-3 mb-0">
+                                                                    Sử dụng cho sản phẩm
+                                                                </label>
+                                                                <div class="col-md-9 col-lg-10">
+                                                                    <select name="products[]" multiple
+                                                                        class="form-control">
+                                                                        @foreach ($products as $product)
+                                                                            <option value="{{ $product->id }}">
+                                                                                {{ $product->name }}
+                                                                            </option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                    @error('products')
+                                                                        <div class="text-danger">{{ $message }}</div>
+                                                                    @enderror
+                                                                </div>
+                                                            </div>
+
+
                                                         </div>
                                                     </div>
 
@@ -205,7 +227,8 @@
 
                                                 </div>
                                                 <div class="d-flex justify-content-end gap-2 mt-4">
-                                                    <button type="submit" class="btn btn-primary">Tạo mã giảm giá</button>
+                                                    <button type="submit" class="btn btn-primary">Tạo mã giảm
+                                                        giá</button>
                                                     <a href="{{ route('admin.coupon.index') }}"
                                                         class="btn btn-secondary">Quay
                                                         lại</a>

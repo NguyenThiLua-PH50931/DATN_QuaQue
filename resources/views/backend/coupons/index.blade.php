@@ -29,6 +29,7 @@
                                             <tr>
                                                 <th>ID</th>
                                                 <th>Mã giảm giá</th>
+
                                                 <th>Mô tả</th>
                                                 <th>Loại giảm giá</th>
                                                 <th>Giá trị giảm</th>
@@ -74,8 +75,7 @@
                                                     <td>
                                                         <ul>
                                                             <li>
-                                                                <a
-                                                                    href="{{ route('admin.coupon.edit',$coupon->id)}}">
+                                                                <a href="{{ route('admin.coupon.edit', $coupon->id) }}">
                                                                     <i class="ri-pencil-line"></i>
                                                                 </a>
                                                             </li>
@@ -85,24 +85,32 @@
                                                                     <i class="ri-delete-bin-line"></i>
                                                                 </a>
                                                                 <!-- Delete Modal -->
+                                                                <!-- Modal -->
                                                                 <div class="modal fade" id="deleteModal{{ $coupon->id }}"
-                                                                    tabindex="-1" aria-hidden="true">
+                                                                    tabindex="-1"
+                                                                    aria-labelledby="deleteModalLabel{{ $coupon->id }}"
+                                                                    aria-hidden="true">
                                                                     <div class="modal-dialog modal-dialog-centered">
-                                                                        <form method="POST"
-                                                                            action="{{ route('admin.coupon.destroy', $coupon->id) }}">
-                                                                            @csrf
-                                                                            @method('DELETE')
-                                                                            <div class="modal-content">
+                                                                        <div class="modal-content">
+                                                                            <form method="POST"
+                                                                                action="{{ route('admin.coupon.destroy', $coupon->id) }}">
+                                                                                @csrf
+                                                                                @method('DELETE')
+
                                                                                 <div class="modal-header">
-                                                                                    <h5 class="modal-title">Xác nhận xóa
-                                                                                    </h5>
+                                                                                    <h5 class="modal-title"
+                                                                                        id="deleteModalLabel{{ $coupon->id }}">
+                                                                                        Xác nhận xóa</h5>
                                                                                     <button type="button" class="btn-close"
-                                                                                        data-bs-dismiss="modal"></button>
+                                                                                        data-bs-dismiss="modal"
+                                                                                        aria-label="Đóng"></button>
                                                                                 </div>
+
                                                                                 <div class="modal-body">
                                                                                     Bạn có chắc chắn muốn xóa mã
                                                                                     <strong>{{ $coupon->code }}</strong>?
                                                                                 </div>
+
                                                                                 <div class="modal-footer">
                                                                                     <button type="button"
                                                                                         class="btn btn-secondary"
@@ -110,10 +118,11 @@
                                                                                     <button type="submit"
                                                                                         class="btn btn-danger">Xóa</button>
                                                                                 </div>
-                                                                            </div>
-                                                                        </form>
+                                                                            </form>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
+
                                                             </li>
                                                         </ul>
                                                     </td>
