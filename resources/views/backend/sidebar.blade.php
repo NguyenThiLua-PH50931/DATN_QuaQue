@@ -151,6 +151,12 @@
                             {{-- <li><a href="{{ url('/admin/coupons/create') }}">Create Coupon</a></li> --}}
                         </ul>
                     </li>
+                    <li class="sidebar-list">
+                        <a class="sidebar-link sidebar-title link-nav" href="{{ route('admin.support-ticket.index') }}">
+                            <i class="ri-phone-line"></i>
+                            <span>Support Ticket</span>
+                        </a>
+                    </li>
 
                      {{-- <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title link-nav" href="{{ url('/admin/media') }}">
@@ -171,7 +177,7 @@
                     </li> --}}
 
 
-                    
+
 
                     {{-- <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title link-nav" href="{{ url('/admin/taxes') }}">
@@ -182,14 +188,9 @@
 
 
 
-                    {{-- <li class="sidebar-list">
-                        <a class="sidebar-link sidebar-title link-nav" href="{{ route('admin.support-ticket.index') }}">
-                            <i class="ri-phone-line"></i>
-                            <span>Support Ticket</span>
-                        </a>
-                    </li> --}}
 
-                   
+
+
 
                     {{-- <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title link-nav" href="{{ url('/admin/reports') }}">
