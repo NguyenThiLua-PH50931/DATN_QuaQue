@@ -87,14 +87,18 @@
                                             <select class="form-select" name="discount_type">
                                                 <option value="" disabled
                                                     {{ old('discount_type', $coupon->discount_type) == null ? 'selected' : '' }}>
-                                                    --Chọn--</option>
-                                                <option value="Phần trăm"
-                                                    {{ old('discount_type', $coupon->discount_type) == 'Phần trăm' ? 'selected' : '' }}>
-                                                    Phần trăm</option>
-                                                <option value="Tiền cố định"
-                                                    {{ old('discount_type', $coupon->discount_type) == 'Tiền cố định' ? 'selected' : '' }}>
-                                                    Tiền cố định</option>
+                                                    --Chọn--
+                                                </option>
+                                                <option value="percent"
+                                                    {{ old('discount_type', $coupon->discount_type) == 'percent' ? 'selected' : '' }}>
+                                                    Phần trăm
+                                                </option>
+                                                <option value="fixed"
+                                                    {{ old('discount_type', $coupon->discount_type) == 'fixed' ? 'selected' : '' }}>
+                                                    Tiền cố định
+                                                </option>
                                             </select>
+
                                             @error('discount_type')
                                                 <div class="text-danger">{{ $message }}</div>
                                             @enderror
@@ -163,6 +167,44 @@
                                             @enderror
                                         </div>
                                     </div>
+
+                                    <div class="mb-4 row align-items-start">
+                                        <label class="form-label-title col-lg-2 col-md-3 mb-2">Sản phẩm đã chọn</label>
+                                        <div class="col-md-9 col-lg-10">
+                                            {{-- Hiển thị sản phẩm đã chọn dưới dạng badge --}}
+                                            @if (!empty($coupon->products) && $coupon->products->count() > 0)
+                                                <div class="mb-3">
+                                                    @foreach ($coupon->products as $p)
+                                                        <span class="badge bg-primary me-2 mb-2"
+                                                            style="font-size: 0.9rem;">
+                                                            {{ $p->name }}
+                                                        </span>
+                                                    @endforeach
+                                                </div>
+                                            @else
+                                                <p class="mb-3 text-muted fst-italic">Chưa có sản phẩm nào được chọn.</p>
+                                            @endif
+
+                                            {{-- Label và select chọn thêm sản phẩm --}}
+                                            <label for="product_ids" class="form-label fw-semibold">Chọn thêm sản phẩm áp
+                                                dụng:</label>
+                                            <select name="product_ids[]" multiple class="form-control" size="6"
+                                                aria-label="Chọn sản phẩm áp dụng">
+                                                @foreach ($products as $product)
+                                                    <option value="{{ $product->id }}"
+                                                        @if ($coupon->products && $coupon->products->contains('id', $product->id)) selected @endif>
+                                                        {{ $product->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+
+                                            {{-- Hiển thị lỗi validate --}}
+                                            @error('product_ids')
+                                                <div class="text-danger mt-1">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+
 
                                     {{-- Nút submit --}}
                                     <div class="d-flex justify-content-end gap-2 mt-4">

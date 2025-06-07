@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Coupons extends Model
 {
     use HasFactory;
-     use SoftDeletes;
+    use SoftDeletes;
 
     protected $table = 'discount_codes'; // tên bảng trong database
 
@@ -39,4 +39,9 @@ class Coupons extends Model
         'used_count' => 'integer',
         'active' => 'boolean',
     ];
+
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, 'coupon_product', 'coupon_id', 'product_id');
+    }
 }
