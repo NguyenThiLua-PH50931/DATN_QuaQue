@@ -2,50 +2,40 @@
 
 namespace Database\Seeders;
 
-<<<<<<< HEAD
-use App\Models\admin\Review;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\admin\Product;
+use App\Models\admin\Review; // Hoặc App\Models\Review nếu bạn không dùng thư mục con "admin"
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-=======
-use App\Models\Review;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 
->>>>>>> 4462985ab5e2de3f6f036916a5fd1082cbb78391
 class ReviewSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
-    public function run(): void
+   public function run()
     {
-<<<<<<< HEAD
-        DB::statement('ALTER TABLE reviews AUTO_INCREMENT = 1');
-=======
->>>>>>> 4462985ab5e2de3f6f036916a5fd1082cbb78391
-        $reviews = [
-            [
-                'user_id'    => 2,
-                'product_id' => 1,
-                'rating'     => 4,
-                'comment'    => 'Great product, very comfortable!',
-            ],
-            [
-                'user_id'    => 3,
-                'product_id' => 2,
-                'rating'     => 2,
-                'comment'    => 'Did not meet my expectations.',
-            ],
-            [
-                'user_id'    => 4,
-                'product_id' => 3,
-                'rating'     => 5,
-                'comment'    => 'Absolutely love it! Highly recommend.',
-            ],
-        ];
-        foreach ($reviews as $data) {
-            Review::create($data);
+        $products = Product::pluck('id')->toArray();
+        $users = User::pluck('id')->toArray();
+
+        if (empty($products) || empty($users)) {
+            $this->command->info('Không có sản phẩm hoặc user để tạo review.');
+            return;
         }
+
+        // Tạo một review mẫu
+        Review::create([
+            'user_id' => $users[0], // user đầu tiên
+            'product_id' => $products[0], // product đầu tiên
+            'rating' => 4,
+            'comment' => 'Sản phẩm chất lượng, đáng tiền!',
+        ]);
+
+        Review::create([
+            'user_id' => $users[1] ?? $users[0], // user thứ 2 hoặc user đầu tiên
+            'product_id' => $products[1] ?? $products[0], // product thứ 2 hoặc product đầu tiên
+            'rating' => 2,
+            'comment' => 'Did not meet my expectations.',
+        ]);
     }
 }

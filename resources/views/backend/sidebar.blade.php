@@ -38,6 +38,14 @@
                         </a>
                     </li>
 
+                  <li class="sidebar-list">
+                        <a class="sidebar-link sidebar-title link-nav" href="{{ route('admin.reports.dashboard') }}">
+                            <i class="ri-list-check"></i>
+                            <span>Báo cáo hệ thống</span>
+                        </a>
+                    </li>
+
+
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                             <i class="ri-store-3-line"></i>
@@ -49,7 +57,7 @@
 
                         </ul>
                     </li>
-
+                   
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                             <i class="ri-list-check-2"></i>
@@ -155,7 +163,6 @@
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                             <i class="ri-focus-3-line"></i>
-                            <span>Localization Bỏ</span>
 
                             <span>Đơn hàng</span>
 
@@ -186,7 +193,7 @@
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title link-nav" href="{{ route('admin.reviews.index') }}">
                             <i class="ri-star-line"></i>
-                            <span>Product Review</span>
+                            <span>Đánh giá sản phẩm</span>
                         </a>
                     </li>
 

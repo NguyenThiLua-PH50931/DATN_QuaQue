@@ -18,7 +18,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\RegionController as AdminRegionController;
 use App\Http\Controllers\Admin\OrderController;
-
+use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Client\ClientHomeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController as GlobalProductController; // Nếu cần dùng controller gốc ngoài admin/client
@@ -163,6 +163,19 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
 
     Route::get('home', [HomeController::class, 'home'])->name('home');
 
+    Route::get('/reports', [ReportController::class, 'dashboard'])->name('dashboard');
+// Route cho dashboard tổng quan và báo cáo
+    Route::group(['prefix' => 'reports', 'as' => 'reports.'], function () {
+        Route::get('/', [ReportController::class, 'dashboard'])->name('dashboard');
+        Route::get('/revenue', [ReportController::class, 'revenueByMonthYear'])->name('revenue');
+        Route::get('/completed-orders', [ReportController::class, 'completedOrders'])->name('completed_orders');
+        Route::get('/top-product', [ReportController::class, 'topProductRevenue'])->name('top_product');
+        Route::get('/top-region', [ReportController::class, 'topRegionRevenue'])->name('top_region');
+        Route::get('/new-users', [ReportController::class, 'newUsers'])->name('new_users');
+        Route::get('/support-requests', [ReportController::class, 'supportRequests'])->name('support_requests');
+        Route::get('/top-rated-product', [ReportController::class, 'topRatedProduct'])->name('top_rated_product');
+        Route::get('/order-status', [ReportController::class, 'orderStatus'])->name('order_status');
+    });
     // Product
     Route::group(['prefix' => 'products', 'as' => 'products.'], function () {
         Route::get('/', [AdminProductController::class, 'index'])->name('products.index');
