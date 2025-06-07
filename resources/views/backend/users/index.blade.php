@@ -35,6 +35,7 @@
 
                                     <tbody>
                                         @foreach ($users as $value)
+                                        @if ($value->id != Auth::id())
                                             <tr>
                                                 <td>
                                                     <div class="table-image">
@@ -122,6 +123,7 @@
                                                     </ul>
                                                 </td>
                                             </tr>
+                                              @endif
                                         @endforeach
                                     </tbody>
                                 </table>
