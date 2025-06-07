@@ -109,7 +109,7 @@
                         </ul>
                     </li>
 
-                   
+
 
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
@@ -180,10 +180,10 @@
                         </a>
                     </li>
 
-                   
+
 
                     <li class="sidebar-list">
-                        <a class="sidebar-link sidebar-title link-nav" href="{{ url('/admin/support-ticket') }}">
+                        <a class="sidebar-link sidebar-title link-nav" href="{{ route('admin.support-ticket.index') }}">
                             <i class="ri-phone-line"></i>
                             <span>Support Ticket</span>
                         </a>
