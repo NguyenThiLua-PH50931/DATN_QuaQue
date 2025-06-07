@@ -185,7 +185,7 @@
             var id = $(this).data('id');
             var name = $(this).data('name');
             $('#regionName').text(name);
-            $('#deleteForm').attr('action', '/admin/regions/' + id + '/soft-delete');
+            $('#deleteForm').attr('action', '/admin/regions/' + id + '/soft');
         });
 
         // Xử lý sự kiện click nút sửa

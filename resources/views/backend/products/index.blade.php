@@ -197,7 +197,7 @@
                                                     </td>
                                                     <td>
                                                         <div>
-                                                            <a href="" class="fw-bold text-primary" style="font-size:16px;">
+                                                            <a href="{{ route('admin.products.show', $product->slug) }}" class="fw-bold text-primary" style="font-size:16px;">
                                                                 {{ $product->name }}
                                                             </a>
                                                             <div class="small text-muted mt-1">
@@ -366,12 +366,7 @@
             $('.paginate_button.first a').text(1);
         }
     });
-</script>
-@endpush
 
-
-@push('scripts')
-<script>
     $('.status-badge').click(function() {
         var id = $(this).data('id');
         var name = $(this).data('name'); // phải có data-name ở trên
@@ -391,9 +386,7 @@
         var modal = new bootstrap.Modal(document.getElementById('statusModal'));
         modal.show();
     });
-</script>
 
-<script>
     $(function() {
         // Select all
         $('#select-all').on('change', function() {
