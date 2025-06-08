@@ -78,11 +78,11 @@
                                         <div class="modal-dialog">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="deleteModalLabel{{ $item->id }}">Delete Confirmation</h5>
+                                                    <h5 class="modal-title" id="deleteModalLabel{{ $item->id }}">Xác nhận xóa</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    Are you sure you want to delete the post <strong>{{ $item->title }}</strong>?
+                                                   Bạn chắc chắn muốn xóa ? <strong>{{ $item->title }}</strong>?
                                                 </div>
                                                 <div class="modal-footer">
                                                     <form action="{{ route('admin.blog.destroy', $item->id) }}" method="POST" class="d-flex justify-content-end">
