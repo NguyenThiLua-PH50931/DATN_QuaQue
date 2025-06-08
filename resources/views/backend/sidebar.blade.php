@@ -105,7 +105,7 @@
                             <span>Tin tức</span>
                         </a>
                         <ul class="sidebar-submenu">
-                            <li><a href="{{ url('/admin/blog/index') }}">Tin tức</a></li>
+                            <li><a href="{{ url('/admin/blog/index') }}"> Danh sách tin tức</a></li>
                         </ul>
                     </li>
 
