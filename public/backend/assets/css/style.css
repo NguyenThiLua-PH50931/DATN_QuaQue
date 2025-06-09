@@ -56174,6 +56174,17 @@ body.dark .select2-search__field {
     color: #ffffff !important;
     border-color: #555 !important;
 }
+/* CUSTOM BUTTON STYLES FOR OVERRIDE */
+.btn.btn-warning {
+    background-color: #ffc107 !important; /* Màu vàng */
+    border-color: #ffc107 !important;
+    color: #212529 !important; /* Màu chữ đen */
+}
 
+.btn.btn-danger {
+    background-color: #dc3545 !important; /* Màu đỏ */
+    border-color: #dc3545 !important;
+    color: #fff !important; /* Màu chữ trắng */
+}
 
 /*# sourceMappingURL=style.css.map */

@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\AttributeController as AdminAttributeController;
 use App\Http\Controllers\Admin\AttributeValueController as AdminAttributeValueController;
+use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\ProductVariantController as AdminProductVariantController;
 use App\Http\Controllers\Admin\CommentController;
 
@@ -140,15 +141,15 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
 
     // bien the
     Route::prefix('products/variant')->name('products.variant.')->group(function () {
-    Route::get('/{productId}', [AdminProductVariantController::class, 'index'])->name('index'); // Danh sách biến thể của sản phẩm
-    Route::get('/{productId}/create', [AdminProductVariantController::class, 'create'])->name('create');
-    Route::post('/{productId}/store', [AdminProductVariantController::class, 'store'])->name('store');
-    Route::get('/show/{id}', [AdminProductVariantController::class, 'show'])->name('show');
-    Route::get('/edit/{id}', [AdminProductVariantController::class, 'edit'])->name('edit');
-    Route::post('/update/{id}', [AdminProductVariantController::class, 'update'])->name('update');
-    Route::delete('/delete/{id}', [AdminProductVariantController::class, 'destroy'])->name('destroy');
-    Route::post('/bulk-delete', [AdminProductVariantController::class, 'bulkDelete'])->name('bulkDelete');
-});
+        Route::get('/{productId}', [AdminProductVariantController::class, 'index'])->name('index'); // Danh sách biến thể của sản phẩm
+        Route::get('/{productId}/create', [AdminProductVariantController::class, 'create'])->name('create');
+        Route::post('/{productId}/store', [AdminProductVariantController::class, 'store'])->name('store');
+        Route::get('/show/{id}', [AdminProductVariantController::class, 'show'])->name('show');
+        Route::get('/edit/{id}', [AdminProductVariantController::class, 'edit'])->name('edit');
+        Route::post('/update/{id}', [AdminProductVariantController::class, 'update'])->name('update');
+        Route::delete('/delete/{id}', [AdminProductVariantController::class, 'destroy'])->name('destroy');
+        Route::post('/bulk-delete', [AdminProductVariantController::class, 'bulkDelete'])->name('bulkDelete');
+    });
     // thuoc tinh
     Route::prefix('attributes')->name('attributes.')->group(function () {
         Route::get('/', [AdminAttributeController::class, 'index'])->name('index');               // Danh sách thuộc tính
@@ -156,7 +157,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         Route::post('/store', [AdminAttributeController::class, 'store'])->name('store');         // Lưu mới
         Route::get('/{slug}', [AdminAttributeController::class, 'show'])->name('show');           // Xem chi tiết
         Route::get('/{slug}/edit', [AdminAttributeController::class, 'edit'])->name('edit');      // Form chỉnh sửa
-        Route::post('/{slug}/update', [AdminAttributeController::class, 'update'])->name('update');// Cập nhật
+        Route::post('/{slug}/update', [AdminAttributeController::class, 'update'])->name('update'); // Cập nhật
         Route::delete('/{id}', [AdminAttributeController::class, 'destroy'])->name('destroy');    // Xóa
         Route::post('/bulk-delete', [AdminAttributeController::class, 'bulkDelete'])->name('bulkDelete'); // Xóa nhiều
         Route::post('/{id}/toggle', [AdminAttributeController::class, 'toggleStatus'])->name('toggle'); // Toggle trạng thái (nếu dùng)
@@ -173,6 +174,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         Route::delete('{id}/force', [AdminCategoryController::class, 'forceDelete'])->name('forceDelete');  // xóa cứng
         Route::post('{id}/restore', [AdminCategoryController::class, 'restore'])->name('restore');  // khôi phục
         Route::get('trashed', [AdminCategoryController::class, 'trashed'])->name('trashed');        // danh sách đã xóa mềm
+        Route::delete('bulk-delete', [AdminCategoryController::class, 'bulkDelete'])->name('bulkDelete');
+        Route::delete('bulk-force-delete', [AdminCategoryController::class, 'bulkForceDelete'])->name('bulkForceDelete');
+        Route::post('bulk-restore', [AdminCategoryController::class, 'bulkRestore'])->name('bulkRestore');
     });
 
     // Regions
@@ -186,6 +190,26 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         Route::delete('{id}/force', [AdminRegionController::class, 'forceDelete'])->name('forceDelete');
         Route::post('{id}/restore', [AdminRegionController::class, 'restore'])->name('restore');
         Route::get('trashed', [AdminRegionController::class, 'trashed'])->name('trashed');
+        Route::delete('bulk-delete', [AdminRegionController::class, 'bulkDelete'])->name('bulkDelete');
+        Route::delete('bulk-force-delete', [AdminRegionController::class, 'bulkForceDelete'])->name('bulkForceDelete');
+        Route::post('bulk-restore', [AdminRegionController::class, 'bulkRestore'])->name('bulkRestore');
+    });
+
+    // Banners
+    Route::group(['prefix' => 'banners', 'as' => 'banners.'], function () {
+        Route::get('/', [BannerController::class, 'index'])->name('index');
+        Route::post('/', [BannerController::class, 'store'])->name('store');
+        Route::put('{id}', [BannerController::class, 'update'])->name('update');
+        Route::get('create', [BannerController::class, 'create'])->name('create');
+        Route::get('{id}/edit', [BannerController::class, 'edit'])->name('edit');
+        Route::delete('{id}/soft', [BannerController::class, 'softDelete'])->name('softDelete');
+        Route::delete('{id}/force', [BannerController::class, 'forceDelete'])->name('forceDelete');
+        Route::post('{id}/restore', [BannerController::class, 'restore'])->name('restore');
+        Route::get('trashed', [BannerController::class, 'trashed'])->name('trashed');
+        Route::get('{id}', [BannerController::class, 'show'])->name('show');
+        Route::delete('bulk-delete', [BannerController::class, 'bulkDelete'])->name('bulkDelete');
+        Route::delete('bulk-force-delete', [BannerController::class, 'bulkForceDelete'])->name('bulkForceDelete');
+        Route::post('bulk-restore', [BannerController::class, 'bulkRestore'])->name('bulkRestore');
     });
 
     // Order
@@ -282,15 +306,4 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         Route::get('edit/{id}', [CouponsController::class, 'edit'])->name('edit');
         Route::put('update/{id}', [CouponsController::class, 'update'])->name('update');
     });
-
-
-
 });
-
-
-
-
-
-
-
-
