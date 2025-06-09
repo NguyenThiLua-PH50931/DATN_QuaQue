@@ -4,22 +4,15 @@ use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\Client\ProductController;
-use App\Http\Controllers\Admin\RegionController;
-use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\AttributeController as AdminAttributeController;
+use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\CommentController;
-
-
 use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\UserController;
-//use App\Http\Controllers\Admin\ProductController as AdminProductController;
-
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\RegionController as AdminRegionController;
 use App\Http\Controllers\Admin\OrderController;
-
 use App\Http\Controllers\Client\ClientHomeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController as GlobalProductController; // Nếu cần dùng controller gốc ngoài admin/client
@@ -225,7 +218,6 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
 
     // Comments
 
-    
     Route::prefix('comments')->name('comments.')->group(function () {
         Route::get('/', [CommentController::class, 'index'])->name('index');
         Route::get('/{id}/edit', [CommentController::class, 'edit'])->name('edit');
@@ -270,6 +262,20 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         Route::get('/{slug}/edit', [AdminProductController::class, 'edit'])->name('edit');
         Route::post('/{slug}/update', [AdminProductController::class, 'update'])->name('update');
         Route::post('/delete-image', [AdminProductController::class, 'deleteImage'])->name('deleteImage');
+    });
+
+    // Banners
+    Route::group(['prefix' => 'banners', 'as' => 'banners.'], function () {
+        Route::get('/', [BannerController::class, 'index'])->name('index');
+        Route::post('/', [BannerController::class, 'store'])->name('store');
+        Route::put('{id}', [BannerController::class, 'update'])->name('update');
+        Route::get('create', [BannerController::class, 'create'])->name('create');
+        Route::get('{id}/edit', [BannerController::class, 'edit'])->name('edit');
+        Route::delete('{id}/soft', [BannerController::class, 'softDelete'])->name('softDelete');
+        Route::delete('{id}/force', [BannerController::class, 'forceDelete'])->name('forceDelete');
+        Route::post('{id}/restore', [BannerController::class, 'restore'])->name('restore');
+        Route::get('trashed', [BannerController::class, 'trashed'])->name('trashed');
+        Route::get('{id}', [BannerController::class, 'show'])->name('show');
     });
 });
 
@@ -345,4 +351,5 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/{slug}/edit', [AdminProductController::class, 'edit'])->name('edit');
         Route::post('/{slug}/update', [AdminProductController::class, 'update'])->name('update');
     });
+
 });

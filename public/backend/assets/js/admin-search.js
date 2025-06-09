@@ -29,7 +29,9 @@
         { name: 'Settings', url: '/admin/profile-setting' },
         { name: 'Profile Setting', url: '/admin/profile-setting' },
         { name: 'Reports', url: '/admin/reports' },
-        { name: 'List Page', url: '/admin/list-page' }
+        { name: 'List Page', url: '/admin/list-page' },
+        { name: 'Regions', url: '/admin/regions' },
+        { name: 'Banners', url: '/admin/banners' },
     ];
 
     var searchInput = $('#search-input');
