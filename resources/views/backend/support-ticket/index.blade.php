@@ -6,360 +6,99 @@
 <!-- Ticket Section Start -->
 <div class="page-body">
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="card card-table">
-                    <!-- Table Start -->
+                <div class="card">
+                    <div class="card-header">
+                        <h1 class="mb-0">Yêu cầu hỗ trợ</h1>
+                    </div>
                     <div class="card-body">
-                        <div class="title-header option-title">
-                            <h5>Support Ticket</h5>
-                        </div>
-                        <div>
-                            <div class="table-responsive">
-                                <table class="table ticket-table all-package theme-table" id="table_id">
-                                    <thead>
-                                        <tr>
-                                            <th>
-                                                <div class="check-box-contain">
-                                                    <span class="form-check user-checkbox checkall">
-                                                        <input class="checkbox_animated" type="checkbox"
-                                                            value="">
-                                                    </span>
-                                                    <span style="color: black; background-color: #f8f9fa;">Ticket Number</span>
-                                                </div>
-                                            </th>
-                                            <th>
-                                                <span style="color: black; background-color: #f8f9fa;">Date</span>
-                                            </th>
-                                            <th>
-                                                <span style="color: black; background-color: #f8f9fa;">Subject</span>
-                                            </th>
-                                            <th>
-                                                <span style="color: black; background-color: #f8f9fa;">Status</span>
-                                            </th>
-                                            <th>
-                                                <span style="color: black; background-color: #f8f9fa;">Options</span>
-                                            </th>
-                                        </tr>
-                                    </thead>
-
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                <div class="check-box-contain">
-                                                    <span class="form-check user-checkbox">
-                                                        <input class="checkbox_animated check-it"
-                                                            type="checkbox" value="">
-                                                    </span>
-                                                    <span>#453</span>
-                                                </div>
-                                            </td>
-                                            <td>25-09-2021</td>
-
-                                            <td>Query about return & exchange</td>
-
-                                            <td class="status-danger">
-                                                <span>Pending</span>
-                                            </td>
-                                            <td>
-                                                <ul>
-                                                    <li>
-                                                        <a href="javascript:void(0)">
-                                                            <i class="ri-pencil-line"></i>
-                                                        </a>
-                                                    </li>
-
-                                                    <li>
-                                                        <a href="javascript:void(0)" data-bs-toggle="modal"
-                                                            data-bs-target="#exampleModalToggle">
-                                                            <i class="ri-delete-bin-line"></i>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>
-                                                <div class="check-box-contain">
-                                                    <span class="form-check user-checkbox">
-                                                        <input class="checkbox_animated check-it"
-                                                            type="checkbox" value="">
-                                                    </span>
-                                                    <span>#453</span>
-                                                </div>
-                                            </td>
-
-                                            <td>20-10-2021</td>
-                                            <td>Query about return & exchange</td>
-                                            <td class="status-close">
-                                                <span>Closed</span>
-                                            </td>
-                                            <td>
-                                                <ul>
-                                                    <li>
-                                                        <a href="javascript:void(0)">
-                                                            <i class="ri-pencil-line"></i>
-                                                        </a>
-                                                    </li>
-
-                                                    <li>
-                                                        <a href="javascript:void(0)" data-bs-toggle="modal"
-                                                            data-bs-target="#exampleModalToggle">
-                                                            <i class="ri-delete-bin-line"></i>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>
-                                                <div class="check-box-contain">
-                                                    <span class="form-check user-checkbox">
-                                                        <input class="checkbox_animated check-it"
-                                                            type="checkbox" value="">
-                                                    </span>
-                                                    <span>#456</span>
-                                                </div>
-                                            </td>
-
-                                            <td>30-01-2021</td>
-                                            <td>Query about return & exchange</td>
-                                            <td class="status-danger">
-                                                <span>Pending</span>
-                                            </td>
-                                            <td>
-                                                <ul>
-                                                    <li>
-                                                        <a href="javascript:void(0)">
-                                                            <i class="ri-pencil-line"></i>
-                                                        </a>
-                                                    </li>
-
-                                                    <li>
-                                                        <a href="javascript:void(0)" data-bs-toggle="modal"
-                                                            data-bs-target="#exampleModalToggle">
-                                                            <i class="ri-delete-bin-line"></i>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>
-                                                <div class="check-box-contain">
-                                                    <span class="form-check user-checkbox">
-                                                        <input class="checkbox_animated check-it"
-                                                            type="checkbox" value="">
-                                                    </span>
-                                                    <span>#456</span>
-                                                </div>
-                                            </td>
-
-                                            <td>30-01-2021</td>
-                                            <td>Query about return & exchange</td>
-                                            <td class="status-danger">
-                                                <span>Pending</span>
-                                            </td>
-                                            <td>
-                                                <ul>
-                                                    <li>
-                                                        <a href="javascript:void(0)">
-                                                            <i class="ri-pencil-line"></i>
-                                                        </a>
-                                                    </li>
-
-                                                    <li>
-                                                        <a href="javascript:void(0)" data-bs-toggle="modal"
-                                                            data-bs-target="#exampleModalToggle">
-                                                            <i class="ri-delete-bin-line"></i>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>
-                                                <div class="check-box-contain">
-                                                    <span class="form-check user-checkbox">
-                                                        <input class="checkbox_animated check-it"
-                                                            type="checkbox" value="">
-                                                    </span>
-                                                    <span>#782</span>
-                                                </div>
-                                            </td>
-
-                                            <td>02-04-2021</td>
-                                            <td>Query about return & exchange</td>
-                                            <td class="status-close">
-                                                <span>Closed</span>
-                                            </td>
-                                            <td>
-                                                <ul>
-                                                    <li>
-                                                        <a href="javascript:void(0)">
-                                                            <i class="ri-pencil-line"></i>
-                                                        </a>
-                                                    </li>
-
-                                                    <li>
-                                                        <a href="javascript:void(0)" data-bs-toggle="modal"
-                                                            data-bs-target="#exampleModalToggle">
-                                                            <i class="ri-delete-bin-line"></i>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>
-                                                <div class="check-box-contain">
-                                                    <span class="form-check user-checkbox">
-                                                        <input class="checkbox_animated check-it"
-                                                            type="checkbox" value="">
-                                                    </span>
-                                                    <span>#214</span>
-                                                </div>
-                                            </td>
-
-                                            <td>10-01-2021</td>
-                                            <td>Query about return & exchange</td>
-                                            <td class="status-close">
-                                                <span>Closed</span>
-                                            </td>
-                                            <td>
-                                                <ul>
-                                                    <li>
-                                                        <a href="javascript:void(0)">
-                                                            <i class="ri-pencil-line"></i>
-                                                        </a>
-                                                    </li>
-
-                                                    <li>
-                                                        <a href="javascript:void(0)" data-bs-toggle="modal"
-                                                            data-bs-target="#exampleModalToggle">
-                                                            <i class="ri-delete-bin-line"></i>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>
-                                                <div class="check-box-contain">
-                                                    <span class="form-check user-checkbox">
-                                                        <input class="checkbox_animated check-it"
-                                                            type="checkbox" value="">
-                                                    </span>
-                                                    <span>#258</span>
-                                                </div>
-                                            </td>
-
-                                            <td>26-07-2021</td>
-                                            <td>Query about return & exchange</td>
-                                            <td class="status-danger">
-                                                <span>Pending</span>
-                                            </td>
-                                            <td>
-                                                <ul>
-                                                    <li>
-                                                        <a href="javascript:void(0)">
-                                                            <i class="ri-pencil-line"></i>
-                                                        </a>
-                                                    </li>
-
-                                                    <li>
-                                                        <a href="javascript:void(0)" data-bs-toggle="modal"
-                                                            data-bs-target="#exampleModalToggle">
-                                                            <i class="ri-delete-bin-line"></i>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>
-                                                <div class="check-box-contain">
-                                                    <span class="form-check user-checkbox">
-                                                        <input class="checkbox_animated check-it"
-                                                            type="checkbox" value="">
-                                                    </span>
-                                                    <span>#634</span>
-                                                </div>
-                                            </td>
-
-                                            <td>30-10-2020</td>
-                                            <td>Query about return & exchange</td>
-                                            <td class="status-close">
-                                                <span>Closed</span>
-                                            </td>
-                                            <td>
-                                                <ul>
-                                                    <li>
-                                                        <a href="javascript:void(0)">
-                                                            <i class="ri-pencil-line"></i>
-                                                        </a>
-                                                    </li>
-
-                                                    <li>
-                                                        <a href="javascript:void(0)" data-bs-toggle="modal"
-                                                            data-bs-target="#exampleModalToggle">
-                                                            <i class="ri-delete-bin-line"></i>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>
-                                                <div class="check-box-contain">
-                                                    <span class="form-check user-checkbox">
-                                                        <input class="checkbox_animated check-it"
-                                                            type="checkbox" value="">
-                                                    </span>
-                                                    <span>#124</span>
-                                                </div>
-                                            </td>
-
-                                            <td>09-08-2021</td>
-                                            <td>Query about return & exchange</td>
-                                            <td class="status-danger">
-                                                <span>Pending</span>
-                                            </td>
-                                            <td>
-                                                <ul>
-                                                    <li>
-                                                        <a href="javascript:void(0)">
-                                                            <i class="ri-pencil-line"></i>
-                                                        </a>
-                                                    </li>
-
-                                                    <li>
-                                                        <a href="javascript:void(0)" data-bs-toggle="modal"
-                                                            data-bs-target="#exampleModalToggle">
-                                                            <i class="ri-delete-bin-line"></i>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                        @if (session('success'))
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                {{ session('success') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
+                        @endif
+                        @if (session('error'))
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                {{ session('error') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        @endif
+
+                        <!-- Form tìm kiếm và lọc -->
+                        <form method="GET" action="{{ route('admin.support-ticket.index') }}" class="mb-4">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <input type="text" name="search" class="form-control" placeholder="Tìm kiếm theo tiêu đề, nội dung, người gửi..." value="{{ request('search') }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <select name="status" class="form-control">
+                                        <option value="">-- Chọn trạng thái --</option>
+                                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Chờ xử lý</option>
+                                        <option value="resolved" {{ request('status') == 'resolved' ? 'selected' : '' }}>Đã giải quyết</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="date" name="date" class="form-control" value="{{ request('date') }}">
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="submit" class="btn btn-primary w-100">Lọc</button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Ticket Number</th>
+                                        <th>Date</th>
+                                        <th>Subject</th>
+                                        <th>Status</th>
+                                        <th>Options</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($tickets as $ticket)
+                                        <tr>
+                                            <td>#{{ $ticket->id }}</td>
+                                            <td>{{ $ticket->created_at ? $ticket->created_at->format('d/m/Y') : 'Chưa xác định' }}</td>
+                                            <td>{{ Str::limit($ticket->title, 50) }}</td>
+                                            <td>
+                                                @if ($ticket->status == 'pending')
+                                                    <span class="badge badge-warning">Chờ xử lý</span>
+                                                @else
+                                                    <span class="badge badge-success">Đã giải quyết</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <div class="action-buttons">
+                                                    <a href="{{ route('admin.support-ticket.show', $ticket->id) }}" class="btn btn-primary btn-sm" title="Xem chi tiết">
+                                                        <i class="fa fa-eye"></i>
+                                                    </a>
+                                                    <form method="POST" action="{{ route('admin.support-ticket.destroy', $ticket->id) }}" style="display:inline;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-danger btn-sm" title="Xóa" onclick="return confirm('Bạn có chắc muốn xóa?')">
+                                                            <i class="fa fa-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="5" class="text-center">Không có yêu cầu hỗ trợ nào.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="d-flex justify-content-center">
+                            {{ $tickets->links('pagination::bootstrap-5') }}
                         </div>
                     </div>
-                    <!-- Table End -->
                 </div>
             </div>
-        </div>
-    </div>
 
     @includeIf('backend.footer')
 </div>
