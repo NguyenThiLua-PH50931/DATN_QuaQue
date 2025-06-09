@@ -110,7 +110,7 @@
                                             <img src="../frontend/assets/images/country/united-states.png"
                                                 class="img-fluid blur-up lazyload" alt="">
                                             <span>Tiếng Anh</span>
-                                
+
                                         </button>
                                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="select-language">
                                             <li>
@@ -118,7 +118,7 @@
                                                     <img src="../frontend/assets/images/country/united-kingdom.png"
                                                         class="img-fluid blur-up lazyload" alt="">
                                                     <span>Tiếng Anh</span>
-                                                
+
                                                 </a>
                                             </li>
                                             <li>
@@ -126,7 +126,7 @@
                                                     <img src="../frontend/assets/images/country/germany.png"
                                                         class="img-fluid blur-up lazyload" alt="">
                                                     <span>Tiếng Đức</span>
-                                              
+
                                                 </a>
                                             </li>
                                             <li>
@@ -134,7 +134,7 @@
                                                     <img src="../frontend/assets/images/country/turkish.png"
                                                         class="img-fluid blur-up lazyload" alt="">
                                                     <span>Tiếng Thổ Nhĩ Kì</span>
-                                              
+
                                                 </a>
                                             </li>
                                         </ul>
@@ -145,7 +145,7 @@
                                         <button class="btn dropdown-toggle" type="button" id="select-dollar"
                                             data-bs-toggle="dropdown" aria-expanded="false">
                                             <span>VNĐ</span>
-                             
+
                                         </button>
                                         <ul class="dropdown-menu dropdown-menu-end sm-dropdown-menu"
                                             aria-labelledby="select-dollar">
@@ -228,7 +228,7 @@
                                             </div>
                                         </li>
                                         <li class="right-side">
-                                            <a href="{{ url('/contact') }}" class="delivery-login-box">
+                                         <a href="{{ route('client.contact-us') }}" class="delivery-login-box">
                                                 <div class="delivery-icon">
                                                     <i data-feather="phone-call"></i>
                                                 </div>

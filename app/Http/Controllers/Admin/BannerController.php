@@ -145,4 +145,57 @@ class BannerController extends Controller
         $banners = Banner::onlyTrashed()->get();
         return view('backend.banners.trashed', compact('banners'));
     }
+
+    public function bulkDelete(Request $request)
+    {
+        $ids = $request->input('ids');
+        if (!is_array($ids)) {
+            $ids = explode(',', $ids); // Đảm bảo $ids là một mảng
+        }
+
+        $deletedCount = 0;
+        // Đối với banner, thường không có liên kết với sản phẩm, nên sẽ xóa tất cả các id được cung cấp.
+        // Nếu có logic kiểm tra liên kết sản phẩm trong tương lai, bạn có thể thêm vào đây.
+        Banner::whereIn('id', $ids)->delete();
+        $deletedCount = count($ids);
+
+        return response()->json(['message' => 'Đã xóa mềm ' . $deletedCount . ' banner thành công.', 'status' => 'success', 'deletedCount' => $deletedCount], 200);
+    }
+
+    public function bulkRestore(Request $request)
+    {
+        $ids = $request->input('ids');
+        if (!is_array($ids)) {
+            $ids = explode(',', $ids); // Đảm bảo $ids là một mảng
+        }
+
+        Banner::onlyTrashed()->whereIn('id', $ids)->restore();
+
+        return response()->json(['message' => 'Đã khôi phục các banner đã chọn thành công.'], 200);
+    }
+
+    public function bulkForceDelete(Request $request)
+    {
+        $ids = $request->input('ids');
+        if (!is_array($ids)) {
+            $ids = explode(',', $ids); // Đảm bảo $ids là một mảng
+        }
+
+        $deletedCount = 0;
+        $notDeletedTitles = [];
+
+        $banners = Banner::onlyTrashed()->whereIn('id', $ids)->get();
+
+        foreach ($banners as $banner) {
+            // Tương tự, nếu có liên kết sản phẩm với banner bị xóa mềm, có thể kiểm tra ở đây
+            // Hiện tại, không có liên kết trực tiếp giữa banner và sản phẩm, nên sẽ xóa vĩnh viễn.
+            if ($banner->image) {
+                Storage::disk('public')->delete($banner->image);
+            }
+            $banner->forceDelete();
+            $deletedCount++;
+        }
+
+        return response()->json(['message' => 'Đã xóa vĩnh viễn ' . $deletedCount . ' banner đã chọn thành công.', 'status' => 'success', 'deletedCount' => $deletedCount], 200);
+    }
 }

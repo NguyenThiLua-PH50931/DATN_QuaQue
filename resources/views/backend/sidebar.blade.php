@@ -106,7 +106,7 @@
                             <span>Tin tức</span>
                         </a>
                         <ul class="sidebar-submenu">
-                            <li><a href="{{ url('/admin/blog/index') }}">Tin tức</a></li>
+                            <li><a href="{{ url('/admin/blog/index') }}"> Danh sách tin tức</a></li>
                         </ul>
                     </li>
 
@@ -117,6 +117,7 @@
                             <span>Banner</span>
                         </a>
                     </li>
+
 
 
                     <li class="sidebar-list">
@@ -139,14 +140,44 @@
                         </a>
                     </li>
 
+
+                     <li class="sidebar-list">
+                        <a class="sidebar-link sidebar-title" href="javascript:void(0)">
+                            <i class="ri-settings-line"></i>
+                            <span>Cài đặt</span>
+                        </a>
+                        <ul class="sidebar-submenu">
+                            <li><a href="{{ route('admin.setting.profile') }}">Chỉnh sửa hồ sơ</a></li>
+                        </ul>
+                    </li>
+
                     <li class="sidebar-list">
+                        <a class="sidebar-link sidebar-title" href="javascript:void(0)">
+                            <i class="ri-price-tag-3-line"></i>
+                            <span>Mã giảm giá</span>
+                        </a>
+                        <ul class="sidebar-submenu">
+                            <li><a href="{{ route('admin.coupon.index')}}">Danh sách</a></li>
+                            <li><a href="{{ url('/admin/coupons/create') }}">Create Coupon</a></li>
+                        </ul>
+                    </li>
+                    <li class="sidebar-list">
+                        <a class="sidebar-link sidebar-title link-nav" href="{{ route('admin.support-ticket.index') }}">
+                            <i class="ri-phone-line"></i>
+                            <span>Support Ticket</span>
+                        </a>
+                    </li>
+
+                     {{-- <li class="sidebar-list">
+
                         <a class="sidebar-link sidebar-title link-nav" href="{{ url('/admin/media') }}">
                             <i class="ri-price-tag-3-line"></i>
                             <span>Media</span>
                         </a>
-                    </li>
+                    </li> --}}
 
-                    <li class="sidebar-list">
+                     {{-- <li class="sidebar-list">
+
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                             <i class="ri-list-settings-line"></i>
                             <span>Attributes</span>
@@ -155,58 +186,37 @@
                             <li><a href="{{ url('/admin/attributes') }}">Attributes</a></li>
                             <li><a href="{{ url('/admin/attributes/create') }}">Add Attributes</a></li>
                         </ul>
-                    </li>
+                    </li> --}}
 
 
-                    <li class="sidebar-list">
-                        <a class="sidebar-link sidebar-title" href="javascript:void(0)">
-                            <i class="ri-price-tag-3-line"></i>
-                            <span>Coupons</span>
-                        </a>
-                        <ul class="sidebar-submenu">
-                            <li><a href="{{ url('/admin/coupons') }}">Coupon List</a></li>
-                            <li><a href="{{ url('/admin/coupons/create') }}">Create Coupon</a></li>
-                        </ul>
-                    </li>
 
-                    <li class="sidebar-list">
+
+                    {{-- <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title link-nav" href="{{ url('/admin/taxes') }}">
                             <i class="ri-price-tag-3-line"></i>
                             <span>Tax</span>
                         </a>
-                    </li>
+                    </li> --}}
 
 
-                    <li class="sidebar-list">
-                        <a class="sidebar-link sidebar-title link-nav" href="{{ url('/admin/support-ticket') }}">
-                            <i class="ri-phone-line"></i>
-                            <span>Support Ticket</span>
-                        </a>
-                    </li>
 
-                    <li class="sidebar-list">
-                        <a class="sidebar-link sidebar-title" href="javascript:void(0)">
-                            <i class="ri-settings-line"></i>
-                            <span>Settings</span>
-                        </a>
-                        <ul class="sidebar-submenu">
-                            <li><a href="{{ url('/admin/profile-setting') }}">Profile Setting</a></li>
-                        </ul>
-                    </li>
 
-                    <li class="sidebar-list">
+
+
+
+                    {{-- <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title link-nav" href="{{ url('/admin/reports') }}">
                             <i class="ri-file-chart-line"></i>
                             <span>Reports</span>
                         </a>
-                    </li>
+                    </li> --}}
 
-                    <li class="sidebar-list">
+                    {{-- <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title link-nav" href="{{ url('/admin/list-page') }}">
                             <i class="ri-list-check"></i>
                             <span>List Page</span>
                         </a>
-                    </li>
+                    </li> --}}
                 </ul>
             </div>
             <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
