@@ -16,6 +16,7 @@ class Banner extends Model
         'link',
         'active',
         'display_at',
+        'display_end_at',
     ];
 
     protected $dates = [
@@ -23,5 +24,10 @@ class Banner extends Model
         'display_at',
         'created_at',
         'updated_at',
+    ];
+
+    protected $casts = [
+        'display_at' => 'date',
+        'display_end_at' => 'date',
     ];
 }

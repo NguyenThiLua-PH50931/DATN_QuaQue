@@ -25,6 +25,24 @@
                                 </div>
                             @endif
 
+                            {{-- Date Filter Form --}}
+                            <form class="row g-3 mb-3" method="GET" action="{{ route('admin.banners.index') }}">
+                                <div class="col-md-4">
+                                    <label for="start_date" class="form-label">Ngày bắt đầu hiển thị:</label>
+                                    <input type="date" class="form-control" id="start_date" name="start_date"
+                                        value="{{ request('start_date') }}">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="end_date" class="form-label">Ngày dừng hiển thị:</label>
+                                    <input type="date" class="form-control" id="end_date" name="end_date"
+                                        value="{{ request('end_date') }}">
+                                </div>
+                                <div class="col-md-4 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-primary me-2">Lọc</button>
+                                    <a href="{{ route('admin.banners.index') }}" class="btn btn-secondary">Đặt lại</a>
+                                </div>
+                            </form>
+
                             <div class="table-responsive category-table">
                                 <table class="table all-package theme-table" id="table_id">
                                     <thead>
@@ -38,6 +56,7 @@
                                             <th style="color: black; background-color: #f8f9fa;">Link</th>
                                             <th style="color: black; background-color: #f8f9fa;">Hoạt động</th>
                                             <th style="color: black; background-color: #f8f9fa;">Hiển thị lúc</th>
+                                            <th style="color: black; background-color: #f8f9fa;">Ngày dừng hiển thị</th>
                                             <th style="color: black; background-color: #f8f9fa;">Hành động</th>
                                         </tr>
                                     </thead>
@@ -57,7 +76,8 @@
                                                 </td>
                                                 <td>{{ $banner->link }}</td>
                                                 <td>{{ $banner->active ? 'Có' : 'Không' }}</td>
-                                                <td>{{ $banner->display_at }}</td>
+                                                <td>{{ $banner->display_at ? $banner->display_at->format('d-m-Y') : 'N/A' }}</td>
+                                                <td>{{ $banner->display_end_at ? $banner->display_end_at->format('d-m-Y') : 'N/A' }}</td>
                                                 <td>
                                                     <ul>
                                                         <li>
@@ -81,7 +101,7 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="8" class="py-4 px-4 text-center">Không có banner nào.</td>
+                                                <td colspan="9" class="py-4 px-4 text-center">Không có banner nào.</td>
                                             </tr>
                                         @endforelse
                                     </tbody>
