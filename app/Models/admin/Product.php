@@ -9,7 +9,7 @@ use App\Models\admin\Region;
 use App\Models\admin\Variant;
 use App\Models\admin\Review;
 use App\Models\admin\Comment;
-use App\Models\ProductImage;
+use App\Models\admin\ProductImage;
 
 class Product extends Model
 {
@@ -67,5 +67,9 @@ class Product extends Model
     public function comments()
     {
         return $this->hasMany(Comment::class);
+    }
+    public function coupons()
+    {
+        return $this->belongsToMany(Coupons::class, 'coupon_product', 'product_id', 'coupon_id');
     }
 }

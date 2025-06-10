@@ -112,7 +112,7 @@ class RegionController extends Controller
         $region->delete();
 
         // Flash a success message and redirect
-        session()->flash('success', 'Xóa mềm vùng miền thành công!');
+        session()->flash('success', 'Xóa vùng miền thành công!');
         return redirect()->route('admin.regions.index');
     }
 
@@ -125,7 +125,7 @@ class RegionController extends Controller
         $region->forceDelete();
 
         // Still return JSON for AJAX handling on trashed page
-        return response()->json(['message' => 'Xóa cứng vùng miền thành công'], 200);
+        return response()->json(['message' => 'Xóa vĩnh viễn vùng miền thành công'], 200);
     }
 
     /**
@@ -139,5 +139,26 @@ class RegionController extends Controller
         // Flash a success message and redirect
         session()->flash('success', 'Khôi phục vùng miền thành công!');
         return redirect()->route('admin.regions.index'); // Redirect to index page after restore
+    }
+
+    public function storeQuick(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|max:100|unique:regions,name',
+        ]);
+
+        $region = Region::create([
+            'name' => $request->name,
+            'slug' => Str::slug($request->name),
+        ]);
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'region' => $region,
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Đã thêm vùng miền mới!');
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Admin;
+namespace App\Models\admin;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -29,7 +29,7 @@ class Order extends Model
     // Mã giảm giá (nếu có)
     public function discountCode()
     {
-        return $this->belongsTo(\App\Models\DiscountCode::class, 'discount_code_id');
+        return $this->belongsTo(\App\Models\admin\DiscountCode::class, 'discount_code_id');
     }
     public function items()
 {

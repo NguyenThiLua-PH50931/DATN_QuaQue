@@ -1,0 +1,12 @@
+/* Fix modal backdrop */
+.modal-backdrop {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+.modal-backdrop.show {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
