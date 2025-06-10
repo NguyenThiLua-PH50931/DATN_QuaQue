@@ -20,15 +20,15 @@
                             </div>
                         </div>
                         <div>
-                            <div class="table-responsive">
-                                <table class="table all-package theme-table table-product" id="table_id">
+                            <div class="table-responsive overflow-hidden">
+                                <table class="table table-hover w-90 coupon-list-table theme-table" id="table_id">
                                     <thead>
                                         <tr>
-                                            <th  style="color: black; background-color: #f8f9fa;">Ảnh</th>
-                                            <th  style="color: black; background-color: #f8f9fa;">Tiêu đề</th>
-                                            <th  style="color: black; background-color: #f8f9fa;">Đường Link</th>
-                                            <th  style="color: black; background-color: #f8f9fa;">Ngày tạo</th>
-                                            <th  style="color: black; background-color: #f8f9fa;">Hàng động</th>
+                                            <th>Ảnh</th>
+                                            <th>Tiêu đề</th>
+                                            <th>Đường Link</th>
+                                            <th>Ngày tạo</th>
+                                            <th>Hàng động</th>
                                         </tr>
                                     </thead>
 
