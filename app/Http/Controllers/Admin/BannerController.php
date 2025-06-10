@@ -12,9 +12,21 @@ class BannerController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $banners = Banner::all();
+        $query = Banner::query();
+
+        // Lọc theo ngày bắt đầu hiển thị
+        if ($request->has('start_date') && $request->input('start_date')) {
+            $query->whereDate('display_at', '>=', $request->input('start_date'));
+        }
+
+        // Lọc theo ngày kết thúc hiển thị
+        if ($request->has('end_date') && $request->input('end_date')) {
+            $query->whereDate('display_end_at', '<=', $request->input('end_date'));
+        }
+
+        $banners = $query->get();
         return view('backend.banners.index', compact('banners'));
     }
 
@@ -37,6 +49,7 @@ class BannerController extends Controller
             'link' => 'nullable|url|max:255',
             'active' => 'boolean',
             'display_at' => 'nullable|date',
+            'display_end_at' => 'nullable|date|after_or_equal:display_at',
         ]);
 
         $imagePath = $request->file('image')->store('banners', 'public');
@@ -47,6 +60,7 @@ class BannerController extends Controller
             'link' => $request->link,
             'active' => $request->has('active'),
             'display_at' => $request->display_at,
+            'display_end_at' => $request->display_end_at,
         ]);
 
         return redirect()->route('admin.banners.index')->with('success', 'Banner đã được tạo mới thành công.');
@@ -83,6 +97,7 @@ class BannerController extends Controller
             'link' => 'nullable|url|max:255',
             'active' => 'boolean',
             'display_at' => 'nullable|date',
+            'display_end_at' => 'nullable|date|after_or_equal:display_at',
         ]);
 
         $imagePath = $banner->image;
@@ -99,6 +114,7 @@ class BannerController extends Controller
             'link' => $request->link,
             'active' => $request->has('active'),
             'display_at' => $request->display_at,
+            'display_end_at' => $request->display_end_at,
         ]);
 
         return redirect()->route('admin.banners.index')->with('success', 'Banner đã được cập nhật thành công.');

@@ -81,10 +81,6 @@
                                     </tbody>
                                 </table>
                                 <form class="d-inline-flex">
-                                    <a href="{{ route('admin.categories.trashed') }}"
-                                        class="align-items-center btn btn-warning d-flex me-2">
-                                        <i data-feather="trash-2"></i> Thùng rác
-                                    </a>
                                     <button type="button" id="bulk-delete-btn"
                                         class="align-items-center btn btn-danger d-flex ms-2" style="display: none;">
                                         <i data-feather="trash"></i> Xóa đã chọn

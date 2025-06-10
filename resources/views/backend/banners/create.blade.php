@@ -41,14 +41,29 @@
                                 <input type="url" name="link" id="link" class="form-control" value="{{ old('link') }}">
                             </div>
 
-                            <div class="mb-3">
-                                <label for="display_at" class="form-label">Hiển thị lúc:</label>
-                                <input type="date" name="display_at" id="display_at" class="form-control" value="{{ old('display_at') }}">
+                            <div class="col-xxl-4 col-sm-6">
+                                <label for="display_at" class="form-label">Ngày bắt đầu hiển thị</label>
+                                <input type="date" class="form-control" id="display_at" name="display_at"
+                                    value="{{ old('display_at', date('Y-m-d')) }}">
+                                @error('display_at')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
 
-                            <div class="mb-3 form-check">
-                                <input type="checkbox" name="active" id="active" class="form-check-input" {{ old('active') ? 'checked' : '' }}>
-                                <label for="active" class="form-check-label">Hoạt động</label>
+                            <div class="col-xxl-4 col-sm-6">
+                                <label for="display_end_at" class="form-label">Ngày dừng hiển thị</label>
+                                <input type="date" class="form-control" id="display_end_at" name="display_end_at"
+                                    value="{{ old('display_end_at') }}">
+                                @error('display_end_at')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-xxl-4 col-sm-6">
+                                <label for="active" class="form-label">Hoạt động</label>
+                                <div class="form-check">
+                                    <input type="checkbox" name="active" id="active" class="form-check-input" {{ old('active') ? 'checked' : '' }}>
+                                </div>
                             </div>
 
                             <div class="d-flex justify-content-between">
