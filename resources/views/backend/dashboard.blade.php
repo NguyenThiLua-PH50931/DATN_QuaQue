@@ -2,8 +2,6 @@
 
 @section('title', 'Bảng điều khiển')
 
-
-
 @section('content')
 
  @if(session('msg'))

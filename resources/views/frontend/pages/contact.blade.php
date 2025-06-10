@@ -1,6 +1,6 @@
 @extends('layouts.frontend')
 @section('title', 'Liên hệ')
-@section('contents')  
+@section('contents')
     <!-- Breadcrumb Section Start -->
         <section class="breadscrumb-section pt-0">
             <div class="container-fluid-lg">
@@ -116,6 +116,7 @@
                             <h2>Contact Us</h2>
                         </div>
                         <div class="right-sidebar-box">
+
                             <div class="row">
                                 <div class="col-xxl-6 col-lg-12 col-sm-6">
                                     <div class="mb-md-4 mb-3 custom-form">
@@ -175,11 +176,13 @@
                             </div>
                             <button class="btn btn-animation btn-md fw-bold ms-auto">Send Message</button>
                         </div>
+
                     </div>
                 </div>
             </div>
         </section>
     <!-- Contact Box Section End -->
+
 
     <!-- Map Section Start -->
         <section class="map-section">
