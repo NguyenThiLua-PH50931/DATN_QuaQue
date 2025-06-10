@@ -8,21 +8,29 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+
 class UserController extends Controller
 {
-
-
-    public function index()
+    public function index(Request $request)
     {
-        $currentUserId = Auth::id(); // ID user đang đăng nhập
+        $currentUserId = Auth::id();
+        $data = $request->validate([
+            'role'      => 'nullable|in:admin,member',
+            'date_from' => 'nullable|date',
+            'date_to'   => 'nullable|date|after_or_equal:date_from',
+        ]);
 
-        $users = User::where('status', 1)
-            ->where('id', '!=', $currentUserId)
-            ->get();
+        $query = User::where('id', '!=', $currentUserId)
+            ->when($data['role'] ?? null, fn($q, $role) => $q->where('role', $role))
+            ->when($data['date_from'] ?? null, fn($q, $df) => $q->whereDate('created_at', '>=', $df))
+            ->when($data['date_to'] ?? null, fn($q, $dt) => $q->whereDate('created_at', '<=', $dt));
 
+        $users = $query
+            ->orderBy('created_at', 'desc')
+            ->paginate(10)
+            ->appends($request->only(['role', 'date_from', 'date_to']));
         return view('backend.users.index', compact('users'));
     }
-
 
     // Hiển thị form thêm user
     public function create()
@@ -90,5 +98,30 @@ class UserController extends Controller
         $user->delete();
 
         return redirect()->route('admin.user.index')->with('success', 'Xóa tài khoản thành công.');
+    }
+
+    // Hiển thị form sửa
+    public function edit($id)
+    {
+        $user = User::findOrFail($id);
+        return view('backend.users.edit', compact('user'));
+    }
+
+    // Xử lý cập nhật
+    // Xử lý cập nhật
+    public function update(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        // Validate
+        $request->validate([
+            'role' => 'required|in:admin,member',
+        ]);
+
+        // Cập nhật role
+        $user->role = $request->role;
+        $user->save();
+
+        return redirect()->route('admin.user.index')->with('success', 'Cập nhật vai trò thành công!');
     }
 }

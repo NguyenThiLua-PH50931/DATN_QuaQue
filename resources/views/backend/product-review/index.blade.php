@@ -13,7 +13,7 @@
                     <!-- Table Start -->
                     <div class="card-body">
                         <div class="title-header option-title">
-                            <h5>Product Reviews</h5>
+                            <h5>Đánh giá sản phẩm</h5>
                         </div>
                         <div>
                             <div class="table-responsive">
@@ -64,7 +64,7 @@
 @endsection
 
 @push('scripts')
-    <script>
+    {{-- <script>
         $(document).ready(function() {
             $('#table_id').DataTable({
                 language: {
@@ -81,6 +81,6 @@
                 }
             });
         });
-    </script>
+    </script> --}}
 @endpush
 
