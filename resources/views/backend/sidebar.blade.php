@@ -51,18 +51,26 @@
                     </li>
 
                     <li class="sidebar-list">
-                        <a class="sidebar-link" href="{{ url('/admin/categories') }}">
+                        <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                             <i class="ri-list-check-2"></i>
                             <span>Danh mục</span>
                         </a>
+                         <ul class="sidebar-submenu">
+                            <li><a href="{{ url('/admin/categories') }}">Danh sách danh mục</a></li>
+                            <li><a href="{{ url('/admin/categories/trashed') }}">Thùng rác</a></li>
+                        </ul>
 
                     </li>
 
                     <li class="sidebar-list">
-                        <a class="sidebar-link"href="{{ url('/admin/regions') }}">
+                        <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                             <i class="ri-landscape-line"></i>
                             <span>Vùng miền</span>
                         </a>
+                          <ul class="sidebar-submenu">
+                            <li><a href="{{ url('/admin/regions') }}">Danh sách vùng miền</a></li>
+                            <li><a href="{{ url('/admin/regions/trashed') }}">Thùng rác</a></li>
+                        </ul>
                     </li>
 
 
@@ -112,10 +120,14 @@
 
                     </li>
                     <li class="sidebar-list">
-                        <a class="sidebar-link" href="{{ url('/admin/banners') }}">
+                        <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                             <i class="ri-image-2-line"></i>
                             <span>Banner</span>
                         </a>
+                         <ul class="sidebar-submenu">
+                            <li><a href="{{ url('/admin/banners') }}">Danh sách banner</a></li>
+                            <li><a href="{{ url('/admin/banners/trashed') }}">Thùng rác</a></li>
+                        </ul>
                     </li>
 
 
