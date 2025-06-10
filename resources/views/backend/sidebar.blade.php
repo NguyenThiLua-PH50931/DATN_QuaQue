@@ -77,6 +77,9 @@
                     </li>
 
 
+
+
+
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                             <i class="ri-list-settings-line"></i>
@@ -87,6 +90,9 @@
                             <li><a href="{{ url('/admin/attributes/create') }}">Thêm thuộc tính</a></li>
                         </ul>
                     </li>
+
+                   
+                   
 
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
@@ -100,6 +106,21 @@
                             <li><a href="{{ url('/admin/orders/tracking') }}">Theo dõi đơn hàng</a></li>
                         </ul>
                     </li>
+                    </li>
+                    <li class="sidebar-list">
+                        <a class="sidebar-link sidebar-title" href="javascript:void(0)">
+                            <i class="ri-image-2-line"></i>
+                            <span>Banner</span>
+                        </a>
+                        <ul class="sidebar-submenu">
+                            <li><a href="{{ url('/admin/banners') }}">Danh sách banner</a></li>
+                            <li><a href="{{ url('/admin/banners/trashed') }}">Thùng rác</a></li>
+                        </ul>
+                    </li>
+
+
+
+
 
 
 
@@ -124,10 +145,6 @@
                         </ul>
                     </li>
 
-
-
-
-
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title link-nav" href="{{ route('admin.reviews.index') }}">
                             <i class="ri-star-line"></i>
@@ -143,19 +160,33 @@
                             <span>Mã giảm giá</span>
                         </a>
                         <ul class="sidebar-submenu">
+
                             <li><a href="{{ route('admin.coupon.index') }}">Danh sách</a></li>
-                            {{-- <li><a href="{{ url('/admin/coupons/create') }}">Create Coupon</a></li> --}}
                         </ul>
                     </li>
+                    <li class="sidebar-list">
+                        <a class="sidebar-link sidebar-title link-nav"
+                            href="{{ route('admin.support-ticket.index') }}">
+                            <i class="ri-phone-line"></i>
+                            <span>Support Ticket</span>
+                        </a>
+                    </li>
+
 
                     {{-- <li class="sidebar-list">
+                     {{-- <li class="sidebar-list">
+
                         <a class="sidebar-link sidebar-title link-nav" href="{{ url('/admin/media') }}">
                             <i class="ri-price-tag-3-line"></i>
                             <span>Media</span>
                         </a>
                     </li> --}}
 
+
                     {{-- <li class="sidebar-list">
+
+                     {{-- <li class="sidebar-list">
+
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                             <i class="ri-list-settings-line"></i>
                             <span>Attributes</span>

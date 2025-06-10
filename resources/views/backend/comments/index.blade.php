@@ -151,8 +151,8 @@
                                 </div>
                             </form>
 
-                            <div class="table-responsive">
-                                <table class="table table-striped table-hover">
+                            <div class="table-responsive overflow-hidden">
+                                <table class="table all-package theme-table">
                                     <thead>
                                         <tr>
                                             <th>ID</th>
