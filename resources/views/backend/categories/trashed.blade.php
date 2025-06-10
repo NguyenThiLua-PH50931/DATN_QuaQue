@@ -29,6 +29,9 @@
                                 <table class="table all-package theme-table" id="trashed_categories_table">
                                     <thead>
                                         <tr>
+                                            <th style="color: black; background-color: #f8f9fa; width: 30px;">
+                                                <input type="checkbox" id="select-all-checkbox">
+                                            </th>
                                             <th style="color: black; background-color: #f8f9fa;">Tên danh mục</th>
                                             <th style="color: black; background-color: #f8f9fa;">Slug</th>
                                             <th style="color: black; background-color: #f8f9fa;">Ngày xóa</th>
@@ -36,31 +39,53 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($categories as $category)
+                                        @forelse ($categories as $category)
                                             <tr>
+                                                <td>
+                                                    <input type="checkbox" class="row-checkbox" name="selected_ids[]"
+                                                        value="{{ $category->id }}">
+                                                </td>
                                                 <td>{{ $category->name }}</td>
                                                 <td>{{ $category->slug }}</td>
                                                 <td>{{ $category->deleted_at->format('d-m-Y') }}</td>
                                                 <td>
                                                     <ul>
                                                         <li>
-                                                            <button type="button" class="btn btn-success btn-sm restore-btn"
-                                                                data-id="{{ $category->id }}" data-name="{{ $category->name }}">
-                                                                <i class="ri-arrow-go-back-line"></i> Khôi phục
+                                                            <button type="button"
+                                                                class="btn btn-success btn-sm restore-btn"
+                                                                data-id="{{ $category->id }}"
+                                                                data-name="{{ $category->name }}">
+                                                                <i class="ri-refresh-line"></i> Khôi phục
                                                             </button>
                                                         </li>
                                                         <li>
-                                                            <button type="button" class="btn btn-danger btn-sm force-delete-btn"
-                                                                data-id="{{ $category->id }}" data-name="{{ $category->name }}">
+                                                            <button type="button"
+                                                                class="btn btn-danger btn-sm force-delete-btn"
+                                                                data-id="{{ $category->id }}"
+                                                                data-name="{{ $category->name }}">
                                                                 <i data-feather="trash-2"></i> Xoá vĩnh viễn
                                                             </button>
                                                         </li>
                                                     </ul>
                                                 </td>
                                             </tr>
-                                        @endforeach
+                                        @empty
+                                            <tr>
+                                                <td colspan="5">Không có danh mục đã xóa.</td>
+                                            </tr>
+                                        @endforelse
                                     </tbody>
                                 </table>
+                                <form class="d-inline-flex">
+                                    <button type="button" id="bulk-restore-btn"
+                                        class="align-items-center btn btn-success d-flex me-2" style="display: none;">
+                                        <i class="ri-refresh-line"></i> Khôi phục đã chọn
+                                    </button>
+                                    <button type="button" id="bulk-force-delete-btn"
+                                        class="align-items-center btn btn-danger d-flex ms-2" style="display: none;">
+                                        <i data-feather="trash"></i> Xóa đã chọn (vĩnh viễn)
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -91,7 +116,8 @@
         </div>
 
         <!-- Modal xác nhận xóa vĩnh viễn -->
-        <div class="modal fade" id="forceDeleteModal" tabindex="-1" aria-labelledby="forceDeleteModalLabel" aria-hidden="true">
+        <div class="modal fade" id="forceDeleteModal" tabindex="-1" aria-labelledby="forceDeleteModalLabel"
+            aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -108,6 +134,68 @@
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger">Xóa vĩnh viễn</button>
                         </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Bulk Restore Modal --}}
+        <div class="modal fade" id="bulkRestoreModal" tabindex="-1" aria-labelledby="bulkRestoreModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="bulkRestoreModalLabel">Xác nhận khôi phục hàng loạt</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Bạn có chắc chắn muốn khôi phục <span id="selectedTrashedCategoryCountRestore"></span> danh mục
+                        đã chọn không?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="button" class="btn btn-success" id="confirm-bulk-restore-btn">Khôi phục hàng loạt</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Bulk Force Delete Modal --}}
+        <div class="modal fade" id="bulkForceDeleteModal" tabindex="-1" aria-labelledby="bulkForceDeleteModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="bulkForceDeleteModalLabel">Xác nhận xóa vĩnh viễn hàng loạt</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Bạn có chắc chắn muốn xóa vĩnh viễn <span id="selectedTrashedCategoryCount"></span> danh mục đã
+                        chọn không? Hành động này không thể hoàn tác.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="button" class="btn btn-danger" id="confirm-bulk-force-delete-btn">Xóa vĩnh viễn
+                            hàng loạt</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Cannot Delete Modal (for trashed categories) --}}
+        <div class="modal fade" id="cannotDeleteModal" tabindex="-1" aria-labelledby="cannotDeleteModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="cannotDeleteModalLabel">Lỗi xóa</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <span id="cannotDeleteMessage"></span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                     </div>
                 </div>
             </div>
@@ -159,18 +247,22 @@
                             if (row && row.remove) {
                                 row.remove().draw(); // Remove row and redraw the table
                             } else {
-                                console.error('Could not get valid DataTables row object. Removing row directly.');
+                                console.error(
+                                    'Could not get valid DataTables row object. Removing row directly.'
+                                    );
                                 form.closest('tr').remove();
                             }
-                            toastr.success(response.message || 'Xóa vĩnh viễn danh mục thành công!');
+                            toastr.success(response.message ||
+                                'Xóa vĩnh viễn danh mục thành công!');
                         },
                         error: function(xhr) {
                             console.error('Force delete AJAX failed!', xhr);
                             let errorMessage = 'Lỗi khi xóa vĩnh viễn danh mục';
-                             if (xhr.responseJSON && xhr.responseJSON.message) {
-                                 errorMessage = xhr.responseJSON.message;
-                             } else if (xhr.responseText) {
-                                errorMessage = 'Lỗi server: ' + xhr.responseText.substring(0, 100) + '...';
+                            if (xhr.responseJSON && xhr.responseJSON.message) {
+                                errorMessage = xhr.responseJSON.message;
+                            } else if (xhr.responseText) {
+                                errorMessage = 'Lỗi server: ' + xhr.responseText.substring(0,
+                                    100) + '...';
                             } else {
                                 errorMessage = 'Lỗi không xác định';
                             }
@@ -219,7 +311,8 @@
                         if (row.length) {
                             row.remove();
                         }
-                        toastr.success(response.message || 'Xóa vĩnh viễn danh mục thành công!');
+                        toastr.success(response.message ||
+                        'Xóa vĩnh viễn danh mục thành công!');
                     },
                     error: function(xhr) {
                         $('#forceDeleteModal').modal('hide');
@@ -227,7 +320,8 @@
                         if (xhr.responseJSON && xhr.responseJSON.message) {
                             errorMessage = xhr.responseJSON.message;
                         } else if (xhr.responseText) {
-                            errorMessage = 'Lỗi server: ' + xhr.responseText.substring(0, 100) + '...';
+                            errorMessage = 'Lỗi server: ' + xhr.responseText.substring(0, 100) +
+                                '...';
                         } else {
                             errorMessage = 'Lỗi không xác định';
                         }
@@ -235,6 +329,79 @@
                     }
                 });
             });
+
+            // Logic cho chức năng chọn tất cả và xóa hàng loạt vĩnh viễn
+            $('#select-all-checkbox').change(function() {
+                $('.row-checkbox').prop('checked', $(this).prop('checked'));
+                toggleBulkForceDeleteButton();
+            });
+
+            $('.row-checkbox').change(function() {
+                toggleBulkForceDeleteButton();
+            });
+
+            function toggleBulkForceDeleteButton() {
+                if ($('.row-checkbox:checked').length > 0) {
+                    $('#bulk-force-delete-btn').show();
+                    $('#bulk-restore-btn').show(); // Hiển thị nút khôi phục hàng loạt
+                } else {
+                    $('#bulk-force-delete-btn').hide();
+                    $('#bulk-restore-btn').hide(); // Ẩn nút khôi phục hàng loạt
+                }
+            }
+
+            // Logic cho chức năng khôi phục hàng loạt
+            $('#bulk-restore-btn').click(function() {
+                var selectedIds = [];
+                $('.row-checkbox:checked').each(function() {
+                    selectedIds.push($(this).val());
+                });
+
+                if (selectedIds.length > 0) {
+                    $('#selectedTrashedCategoryCountRestore').text(selectedIds.length);
+                    $('#bulkRestoreModal').modal('show');
+
+                    $('#confirm-bulk-restore-btn').off('click').on('click', function() {
+                        $.ajax({
+                            url: '{{ route('admin.categories.bulkRestore') }}',
+                            method: 'POST',
+                            data: {
+                                _token: '{{ csrf_token() }}',
+                                ids: selectedIds
+                            },
+                            success: function(response) {
+                                $('#bulkRestoreModal').modal('hide');
+                                toastr.success(response.message || 'Khôi phục danh mục đã chọn thành công!');
+                                // Tải lại trang hoặc cập nhật bảng nếu cần
+                                window.location.reload();
+                            },
+                            error: function(xhr) {
+                                $('#bulkRestoreModal').modal('hide');
+                                let errorMessage = 'Lỗi khi khôi phục danh mục đã chọn';
+                                if (xhr.responseJSON && xhr.responseJSON.message) {
+                                    errorMessage = xhr.responseJSON.message;
+                                } else if (xhr.responseText) {
+                                    errorMessage = 'Lỗi server: ' + xhr.responseText.substring(0, 100) + '...';
+                                } else {
+                                    errorMessage = 'Lỗi không xác định';
+                                }
+                                toastr.error(errorMessage);
+                            }
+                        });
+                    });
+                } else {
+                    alert('Vui lòng chọn ít nhất một danh mục để khôi phục.');
+                }
+            });
+
+            // Hiển thị modal lỗi nếu có session error
+            @if(session('error'))
+                var errorMessage = "{{ session('error') }}";
+                if (errorMessage.includes('sản phẩm liên kết')) {
+                    $('#cannotDeleteMessage').text(errorMessage);
+                    $('#cannotDeleteModal').modal('show');
+                }
+            @endif
         });
     </script>
 @endpush

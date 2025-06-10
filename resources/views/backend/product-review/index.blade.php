@@ -64,7 +64,7 @@
 @endsection
 
 @push('scripts')
-    <script>
+    {{-- <script>
         $(document).ready(function() {
             $('#table_id').DataTable({
                 language: {
@@ -81,6 +81,6 @@
                 }
             });
         });
-    </script>
+    </script> --}}
 @endpush
 
