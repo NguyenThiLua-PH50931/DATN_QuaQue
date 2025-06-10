@@ -107,10 +107,6 @@
                                     </tbody>
                                 </table>
                                 <form class="d-inline-flex">
-                                    <a href="{{ route('admin.banners.trashed') }}"
-                                        class="align-items-center btn btn-warning d-flex me-2">
-                                        <i data-feather="trash-2"></i> Thùng rác
-                                    </a>
                                     <button type="button" id="bulk-delete-btn"
                                         class="align-items-center btn btn-danger d-flex ms-2" style="display: none;">
                                         <i data-feather="trash"></i> Xóa đã chọn
@@ -233,15 +229,36 @@
 
                     // Gán sự kiện cho nút xác nhận trong modal
                     $('#confirm-bulk-delete-btn').off('click').on('click', function() {
-                        $('#bulk-delete-ids').val(selectedIds.join(','));
-                        $('#bulk-delete-form').submit();
-                        $('#bulkDeleteModal').modal('hide');
+                        $.ajax({
+                            url: '{{ route('admin.banners.bulkDelete') }}',
+                            method: 'DELETE',
+                            data: {
+                                _token: '{{ csrf_token() }}',
+                                ids: selectedIds
+                            },
+                            success: function(response) {
+                                $('#bulkDeleteModal').modal('hide');
+                                toastr.success(response.message || 'Xóa banner đã chọn thành công!');
+                                window.location.reload();
+                            },
+                            error: function(xhr) {
+                                $('#bulkDeleteModal').modal('hide');
+                                let errorMessage = 'Lỗi khi xóa banner đã chọn';
+                                if (xhr.responseJSON && xhr.responseJSON.message) {
+                                    errorMessage = xhr.responseJSON.message;
+                                } else if (xhr.responseText) {
+                                    errorMessage = 'Lỗi server: ' + xhr.responseText.substring(0, 100) + '...';
+                                } else {
+                                    errorMessage = 'Lỗi không xác định';
+                                }
+                                toastr.error(errorMessage);
+                            }
+                        });
                     });
                 } else {
                     alert('Vui lòng chọn ít nhất một banner để xóa.');
                 }
             });
-
         });
     </script>
 @endpush

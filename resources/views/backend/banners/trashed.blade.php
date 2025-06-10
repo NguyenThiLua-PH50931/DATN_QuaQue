@@ -281,8 +281,7 @@
                             },
                             success: function(response) {
                                 $('#bulkRestoreModal').modal('hide');
-                                toastr.success(response.message ||
-                                    'Khôi phục banner đã chọn thành công!');
+                                toastr.success(response.message || 'Khôi phục banner đã chọn thành công!');
                                 window.location.reload();
                             },
                             error: function(xhr) {
@@ -291,8 +290,7 @@
                                 if (xhr.responseJSON && xhr.responseJSON.message) {
                                     errorMessage = xhr.responseJSON.message;
                                 } else if (xhr.responseText) {
-                                    errorMessage = 'Lỗi server: ' + xhr.responseText
-                                        .substring(0, 100) + '...';
+                                    errorMessage = 'Lỗi server: ' + xhr.responseText.substring(0, 100) + '...';
                                 } else {
                                     errorMessage = 'Lỗi không xác định';
                                 }
@@ -312,40 +310,35 @@
                 });
 
                 if (selectedIds.length > 0) {
-                    // Mở modal xác nhận xóa hàng loạt vĩnh viễn
                     $('#selectedTrashedBannerCount').text(selectedIds.length);
                     $('#bulkForceDeleteModal').modal('show');
 
-                    // Gán sự kiện cho nút xác nhận trong modal
                     $('#confirm-bulk-force-delete-btn').off('click').on('click', function() {
-                        // Tạo một form tạm thời để gửi yêu cầu DELETE
-                        var tempForm = $('<form>', {
-                            'action': '{{ route('admin.banners.bulkForceDelete') }}',
-                            'method': 'POST',
-                            'style': 'display:none;'
-                        }).append(
-                            $('<input>', {
-                                'type': 'hidden',
-                                'name': '_token',
-                                'value': '{{ csrf_token() }}'
-                            })
-                        ).append(
-                            $('<input>', {
-                                'type': 'hidden',
-                                'name': '_method',
-                                'value': 'DELETE'
-                            })
-                        ).append(
-                            $('<input>', {
-                                'type': 'hidden',
-                                'name': 'ids',
-                                'value': selectedIds.join(',')
-                            })
-                        );
-
-                        $('body').append(tempForm);
-                        tempForm.submit();
-                        $('#bulkForceDeleteModal').modal('hide');
+                        $.ajax({
+                            url: '{{ route('admin.banners.bulkForceDelete') }}',
+                            method: 'DELETE',
+                            data: {
+                                _token: '{{ csrf_token() }}',
+                                ids: selectedIds
+                            },
+                            success: function(response) {
+                                $('#bulkForceDeleteModal').modal('hide');
+                                toastr.success(response.message || 'Xóa vĩnh viễn banner đã chọn thành công!');
+                                window.location.reload();
+                            },
+                            error: function(xhr) {
+                                $('#bulkForceDeleteModal').modal('hide');
+                                let errorMessage = 'Lỗi khi xóa vĩnh viễn banner đã chọn';
+                                if (xhr.responseJSON && xhr.responseJSON.message) {
+                                    errorMessage = xhr.responseJSON.message;
+                                } else if (xhr.responseText) {
+                                    errorMessage = 'Lỗi server: ' + xhr.responseText.substring(0, 100) + '...';
+                                } else {
+                                    errorMessage = 'Lỗi không xác định';
+                                }
+                                toastr.error(errorMessage);
+                            }
+                        });
                     });
                 } else {
                     alert('Vui lòng chọn ít nhất một banner để xóa vĩnh viễn.');
