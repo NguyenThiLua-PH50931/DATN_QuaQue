@@ -94,7 +94,8 @@ class CommentController extends Controller
         $comment = Comment::findOrFail($id);
         CommentReply::create([
             'comment_id' => $id,
-            'admin_id' => auth()->$id(),
+           'admin_id' => auth()->id(),
+
             'reply' => $request->reply,
         ]);
 

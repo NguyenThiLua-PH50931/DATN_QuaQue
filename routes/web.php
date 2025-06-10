@@ -11,10 +11,11 @@ use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\AttributeController as AdminAttributeController;
 use App\Http\Controllers\Admin\AttributeValueController as AdminAttributeValueController;
 use App\Http\Controllers\Admin\ProductVariantController as AdminProductVariantController;
+use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\CommentController;
 
 use App\Http\Controllers\Admin\HomeController;
-use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\User\UserController;
 
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\CouponsController;
