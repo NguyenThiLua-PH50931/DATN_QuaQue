@@ -10,30 +10,35 @@ use Illuminate\Support\Facades\DB;
 
 class CategoriesTableSeeder extends Seeder
 {
-    public function run()
-    {
-        // Đặt lại ID tự tăng nếu cần
-        DB::statement('ALTER TABLE categories AUTO_INCREMENT = 1');
+   public function run()
+{
+    // Vô hiệu hóa kiểm tra khóa ngoại
+    DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 
-        // Xóa dữ liệu cũ (dùng delete thay vì truncate nếu có ràng buộc khóa ngoại)
-        Category::query()->delete();
+    // Xoá sạch bảng categories và reset auto_increment
+    DB::table('categories')->truncate();
 
-        $categories = [
-            'Đặc sản vùng miền',
-            'Thực phẩm khô',
-            'Đồ uống truyền thống',
-            'Mứt và kẹo',
-            'Gia vị',
-            'Thủ công mỹ nghệ',
-            'Quà biếu và tặng',
-            'Hàng lưu niệm',
-        ];
+    // Bật lại kiểm tra khóa ngoại
+    DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        foreach ($categories as $name) {
-            Category::create([
-                'name' => $name,
-                'slug' => Str::slug($name),
-            ]);
-        }
+    // Seed dữ liệu
+    $categories = [
+        'Đặc sản vùng miền',
+        'Thực phẩm khô',
+        'Đồ uống truyền thống',
+        'Mứt và kẹo',
+        'Gia vị',
+        'Thủ công mỹ nghệ',
+        'Quà biếu và tặng',
+        'Hàng lưu niệm',
+    ];
+
+    foreach ($categories as $name) {
+        Category::create([
+            'name' => $name,
+            'slug' => \Illuminate\Support\Str::slug($name),
+        ]);
     }
+}
+
 }

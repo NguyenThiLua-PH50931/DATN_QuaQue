@@ -22,8 +22,7 @@ use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\CouponsController;
 use App\Http\Controllers\Admin\RegionController as AdminRegionController;
 use App\Http\Controllers\Admin\OrderController;
-
-
+use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\User\ProfileController;
 
 use App\Http\Controllers\Admin\SupportTicketController;
@@ -119,7 +118,20 @@ Route::view('/seller/seller-dashboard', 'frontend.seller.seller-dashboard');
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin'], function () {
 
     Route::get('home', [HomeController::class, 'home'])->name('home');
-
+     // Route cho dashboard tổng quan và báo cáo
+    Route::get('/reports', [ReportController::class, 'dashboard'])->name('dashboard');
+   
+    // Route::group(['prefix' => 'reports', 'as' => 'reports.'], function () {
+    //     Route::get('/', [ReportController::class, 'dashboard'])->name('dashboard');
+    //     Route::get('/revenue', [ReportController::class, 'revenueByMonthYear'])->name('revenue');
+    //     Route::get('/completed-orders', [ReportController::class, 'completedOrders'])->name('completed_orders');
+    //     Route::get('/top-product', [ReportController::class, 'topProductRevenue'])->name('top_product');
+    //     Route::get('/top-region', [ReportController::class, 'topRegionRevenue'])->name('top_region');
+    //     Route::get('/new-users', [ReportController::class, 'newUsers'])->name('new_users');
+    //     Route::get('/support-requests', [ReportController::class, 'supportRequests'])->name('support_requests');
+    //     Route::get('/top-rated-product', [ReportController::class, 'topRatedProduct'])->name('top_rated_product');
+    //     Route::get('/order-status', [ReportController::class, 'orderStatus'])->name('order_status');
+    // });
     // Quản lý sản phẩm
     Route::post('/categories/store-quick', [AdminCategoryController::class, 'storeQuick'])->name('categories.storeQuick');
     Route::post('/regions/store-quick', [AdminRegionController::class, 'storeQuick'])->name('regions.storeQuick');

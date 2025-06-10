@@ -33,11 +33,16 @@
                     {{-- <li class="sidebar-list">
 
                         <a class="sidebar-link sidebar-title link-nav" href="{{ route('admin.home') }}">
-                            <i class="ri-home-line"></i>
-                            <span>Trang chủ</span>
-                        </a>
+                    <i class="ri-home-line"></i>
+                    <span>Trang chủ</span>
+                    </a>
                     </li> --}}
-
+                    <li class="sidebar-list">
+                        <a class="sidebar-link sidebar-title link-nav" href="{{ route('admin.dashboard') }}">
+                            <i class="ri-list-check"></i>
+                            <span>Báo cáo hệ thống</span>
+                        </a>
+                    </li>
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                             <i class="ri-user-3-line"></i>
@@ -58,7 +63,7 @@
                     </li>
 
                     <li class="sidebar-list">
-                        <a class="sidebar-link"href="{{ url('/admin/regions') }}">
+                        <a class="sidebar-link" href="{{ url('/admin/regions') }}">
                             <i class="ri-landscape-line"></i>
                             <span>Vùng miền</span>
                         </a>
@@ -91,8 +96,8 @@
                         </ul>
                     </li>
 
-                   
-                   
+
+
 
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
@@ -177,9 +182,9 @@
                      {{-- <li class="sidebar-list">
 
                         <a class="sidebar-link sidebar-title link-nav" href="{{ url('/admin/media') }}">
-                            <i class="ri-price-tag-3-line"></i>
-                            <span>Media</span>
-                        </a>
+                    <i class="ri-price-tag-3-line"></i>
+                    <span>Media</span>
+                    </a>
                     </li> --}}
 
 
@@ -193,53 +198,53 @@
                         </a>
                         <ul class="sidebar-submenu">
                             <li><a href="{{ url('/admin/attributes') }}">Attributes</a></li>
-                            <li><a href="{{ url('/admin/attributes/create') }}">Add Attributes</a></li>
-                        </ul>
-                    </li> --}}
+                    <li><a href="{{ url('/admin/attributes/create') }}">Add Attributes</a></li>
+                </ul>
+                </li> --}}
 
 
 
 
-                    {{-- <li class="sidebar-list">
+                {{-- <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title link-nav" href="{{ url('/admin/taxes') }}">
-                            <i class="ri-price-tag-3-line"></i>
-                            <span>Tax</span>
-                        </a>
-                    </li> --}}
+                <i class="ri-price-tag-3-line"></i>
+                <span>Tax</span>
+                </a>
+                </li> --}}
 
-                    <li class="sidebar-list">
-                        <a class="sidebar-link sidebar-title" href="javascript:void(0)">
-                            <i class="ri-settings-line"></i>
-                            <span>Cài đặt</span>
-                        </a>
-                        <ul class="sidebar-submenu">
-                            <li><a href="{{ route('admin.setting.profile') }}">Chỉnh sửa hồ sơ</a></li>
-                        </ul>
-                    </li>
+                <li class="sidebar-list">
+                    <a class="sidebar-link sidebar-title" href="javascript:void(0)">
+                        <i class="ri-settings-line"></i>
+                        <span>Cài đặt</span>
+                    </a>
+                    <ul class="sidebar-submenu">
+                        <li><a href="{{ route('admin.setting.profile') }}">Chỉnh sửa hồ sơ</a></li>
+                    </ul>
+                </li>
 
-                    <li class="sidebar-list">
-                        <a class="sidebar-link sidebar-title link-nav"
-                            href="{{ route('admin.support-ticket.index') }}">
-                            <i class="ri-phone-line"></i>
-                            <span>Hỗ trợ</span>
-                        </a>
-                    </li>
+                <li class="sidebar-list">
+                    <a class="sidebar-link sidebar-title link-nav"
+                        href="{{ route('admin.support-ticket.index') }}">
+                        <i class="ri-phone-line"></i>
+                        <span>Hỗ trợ</span>
+                    </a>
+                </li>
 
 
 
-                    {{-- <li class="sidebar-list">
+                {{-- <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title link-nav" href="{{ url('/admin/reports') }}">
-                            <i class="ri-file-chart-line"></i>
-                            <span>Reports</span>
-                        </a>
-                    </li> --}}
+                <i class="ri-file-chart-line"></i>
+                <span>Reports</span>
+                </a>
+                </li> --}}
 
-                    {{-- <li class="sidebar-list">
+                {{-- <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title link-nav" href="{{ url('/admin/list-page') }}">
-                            <i class="ri-list-check"></i>
-                            <span>List Page</span>
-                        </a>
-                    </li> --}}
+                <i class="ri-list-check"></i>
+                <span>List Page</span>
+                </a>
+                </li> --}}
                 </ul>
             </div>
             <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
