@@ -36,7 +36,10 @@ class AttributeController extends Controller
                 ]);
             }
         }
-        return back()->with('success', 'Tạo thuộc tính thành công!');
+        return response()->json([
+            'success' => true,
+            'attribute' => $attr->load('values')
+        ]);
     }
 
     public function index()
