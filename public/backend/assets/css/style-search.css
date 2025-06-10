@@ -2,7 +2,7 @@
     padding: 10px;
     cursor: pointer;
     transition: background-color 0.2s ease;
-    color: #f50606 !important; /* Màu đỏ cho chữ */
+    color: #ff7300 !important; /* Màu cam đậm cho chữ */
     background-color: #ffffff !important; /* Nền trắng */
 }
 .suggestion-item:hover {
@@ -22,21 +22,21 @@
     left: 0;
 }
 .tt-suggestion {
-    color: #f50606 !important; /* Màu đỏ cho chữ */
+    color: #ff7300 !important; /* Màu cam đậm cho chữ */
     background-color: #ffffff !important; /* Nền trắng */
 }
 .tt-suggestion.tt-cursor {
     background-color: #f8f9fa !important; /* Màu xám nhạt khi hover */
-    color: #f50606 !important; /* Màu đỏ cho chữ khi hover */
+    color: #ff7300 !important; /* Màu cam đậm cho chữ khi hover */
 }
 /* Tương thích dark mode */
 .dark .tt-menu {
     background-color: #ffffff !important; /* Nền trắng trong dark mode */
     border-color: #444;
-    color: #f50606 !important; /* Màu đỏ cho chữ trong dark mode */
+    color: #ff7300 !important; /* Màu cam đậm cho chữ trong dark mode */
 }
 .dark .suggestion-item {
-    color: #f50606 !important; /* Màu đỏ cho chữ trong dark mode */
+    color: #ff7300 !important; /* Màu cam đậm cho chữ trong dark mode */
     background-color: #ffffff !important; /* Nền trắng trong dark mode */
 }
 .dark .suggestion-item:hover {
@@ -44,7 +44,7 @@
 }
 .dark .tt-suggestion.tt-cursor {
     background-color: #f8f9fa !important; /* Màu xám nhạt khi hover trong dark mode */
-    color: #f50606 !important; /* Màu đỏ cho chữ khi hover trong dark mode */
+    color: #ff7300 !important; /* Màu cam đậm cho chữ khi hover trong dark mode */
 }
 /* Ngăn mờ nội dung phía sau */
 .search-full .Typeahead-menu {
@@ -79,15 +79,15 @@ body.offcanvas {
 .sidebar-links .sidebar-title span.active, .sidebar-links .sidebar-submenu a.active {
     background-color: transparent !important;
     font-weight: bold !important;
-    color: #f50606 !important; /* Màu đỏ */
-    border-left: 3px solid #f50606 !important; /* Viền đỏ */
+    color: #ff7300 !important; /* Màu cam đậm */
+    border-left: 3px solid #ff7300 !important; /* Viền cam đậm */
     padding-left: 10px !important;
     transition: all 0.3s ease !important;
 }
 .dark .sidebar-links .sidebar-title span.active, .dark .sidebar-links .sidebar-submenu a.active {
     background-color: transparent !important;
-    color: #f50606 !important; /* Màu đỏ trong dark mode */
-    border-left: 3px solid #f50606 !important;
+    color: #ff7300 !important; /* Màu cam đậm trong dark mode */
+    border-left: 3px solid #ff7300 !important;
 }
 /* Đảm bảo menu con hiển thị */
 .sidebar-submenu {
