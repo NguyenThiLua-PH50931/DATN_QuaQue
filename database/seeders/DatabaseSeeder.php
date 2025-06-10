@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\admin\ShippingMethod;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -32,9 +31,8 @@ class DatabaseSeeder extends Seeder
             OrdersTableSeeder::class,               // Tạo đơn hàng, cần user, address, shipping_method
             OrderItemsTableSeeder::class,           // Tạo chi tiết đơn hàng, cần orders, products
             CommentSeeder::class,// Thêm comment (nếu có)
-            ReviewSeeder::class,
 
-
+            CouponSeeder::class,
 
         ]);
     }

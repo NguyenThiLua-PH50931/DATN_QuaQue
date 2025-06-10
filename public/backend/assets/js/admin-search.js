@@ -1,5 +1,4 @@
 (function () {
-    // Danh sách các mục sidebar (có thể lấy từ biến global hoặc API)
     window.sidebarItems = window.sidebarItems || [
         { name: 'Dashboard', url: '/admin' },
         { name: 'Product', url: '/admin/products' },
@@ -33,7 +32,6 @@
         { name: 'List Page', url: '/admin/list-page' }
     ];
 
-    // Khởi tạo biến
     var searchInput = $('#search-input');
     var typeaheadMenu = $('#typeahead-menu');
     var searchForm = $('#search-form');
@@ -44,11 +42,10 @@
     function restorePageContent() {
         $('body').removeClass('offcanvas');
         $('.search-full').removeClass('open');
-        // Chỉ đặt lại CSS nếu không có modal đang hiển thị
-        if (!$('.modal.show').length) {
-            pageWrapper.css({ 'display': 'block', 'visibility': 'visible', 'opacity': '1' });
-            pageBodyWrapper.css({ 'display': 'block', 'visibility': 'visible', 'opacity': '1' });
-        }
+        // Xóa triệt để overlay và backdrop
+        $('.modal-backdrop, .overlay').removeClass('show').remove();
+        pageWrapper.css({ 'display': 'block', 'visibility': 'visible', 'opacity': '1' });
+        pageBodyWrapper.css({ 'display': 'block', 'visibility': 'visible', 'opacity': '1' });
         console.log('Restored page content visibility');
     }
 
@@ -58,23 +55,23 @@
         console.log('Form submit prevented');
     });
 
-    // Vô hiệu hóa sự kiện gốc của theme (trừ click để không ảnh hưởng đến modal)
+    // Vô hiệu hóa sự kiện gốc
     $(document).ready(function() {
         $('.header-search, .form-inline.search-full, .Typeahead-input').off('submit keypress keydown keyup input');
         $('.search-full input').off('keyup input');
         $('.search-full input').on('keyup input', function(e) {
             e.stopImmediatePropagation();
             console.log('Blocked original keyup/input event');
-            restorePageContent(); // Khôi phục nội dung sau mỗi lần nhập
+            restorePageContent();
         });
         console.log('Initialized event overrides');
-        restorePageContent(); // Khôi phục khi tải trang
+        restorePageContent();
     });
 
     $(window).on('load', function() {
         $('.search-full input').off('keyup input');
         console.log('Re-ensured original events are removed');
-        restorePageContent(); // Khôi phục khi tải xong
+        restorePageContent();
     });
 
     // Khởi tạo Typeahead
@@ -84,7 +81,6 @@
         local: window.sidebarItems
     });
 
-    // Cấu hình Typeahead
     searchInput.typeahead({
         hint: true,
         highlight: true,
@@ -94,102 +90,106 @@
         display: 'name',
         source: typeahead,
         templates: {
-            suggestion: function(data) {
-                return '<div class="suggestion-item">' + data.name + '</div>';
-            },
+            suggestion: function(data) { return '<div class="suggestion-item">' + data.name + '</div>'; },
             empty: '<div class="suggestion-item">Không tìm thấy kết quả</div>'
         }
     });
 
-    // Hàm làm nổi bật mục trong sidebar
     function highlightSidebarItems(query) {
         $('.sidebar-links .sidebar-title span, .sidebar-links .sidebar-submenu a').removeClass('active');
         $('.sidebar-submenu').hide();
-
         if (query) {
             query = query.toLowerCase().trim();
-            console.log('Highlighting items for query:', query);
             $('.sidebar-links .sidebar-title span, .sidebar-links .sidebar-submenu a').each(function() {
                 var text = $(this).text().toLowerCase();
                 if (text.includes(query)) {
                     $(this).addClass('active');
-                    console.log('Highlighted:', $(this).text());
                     var parentSubmenu = $(this).closest('.sidebar-submenu');
                     if (parentSubmenu.length) {
                         parentSubmenu.show();
                         parentSubmenu.prev('.sidebar-title').find('span').addClass('active');
-                        console.log('Opened parent menu for:', parentSubmenu.prev('.sidebar-title').find('span').text());
                     }
                 }
             });
         }
     }
 
-    // Xử lý khi nhập từ khóa
     searchInput.on('input', function(e) {
         var query = $(this).val();
         highlightSidebarItems(query);
-        console.log('Input event triggered with query:', query);
-        restorePageContent(); // Khôi phục nội dung sau mỗi lần nhập
+        restorePageContent();
     });
 
-    // Xử lý khi chọn gợi ý
     searchInput.on('typeahead:select', function(ev, suggestion) {
         try {
-            console.log('Chuyển hướng đến:', suggestion.url);
             $('.sidebar-links .sidebar-title span, .sidebar-links .sidebar-submenu a').removeClass('active');
             $('.sidebar-links .sidebar-submenu a[href="' + suggestion.url + '"]').addClass('active');
             $('.sidebar-links .sidebar-title span:contains("' + suggestion.name + '")').addClass('active');
             window.location.href = suggestion.url;
         } catch (error) {
             console.error('Lỗi chuyển hướng:', error);
-            restorePageContent(); // Khôi phục nếu có lỗi
+            restorePageContent();
         }
     });
 
-    // Xử lý khi nhấn Enter
     searchInput.on('keypress', function(e) {
         if (e.which === 13) {
             e.preventDefault();
             var query = $(this).val().toLowerCase().trim();
             if (query) {
-                console.log('Tìm kiếm:', query);
                 var matchedItem = window.sidebarItems.find(function(item) {
                     return item.name.toLowerCase() === query;
                 });
                 if (matchedItem) {
                     try {
-                        console.log('Chuyển hướng đến:', matchedItem.url);
                         $('.sidebar-links .sidebar-title span, .sidebar-links .sidebar-submenu a').removeClass('active');
                         $('.sidebar-links .sidebar-submenu a[href="' + matchedItem.url + '"]').addClass('active');
                         $('.sidebar-links .sidebar-title span:contains("' + matchedItem.name + '")').addClass('active');
                         window.location.href = matchedItem.url;
                     } catch (error) {
                         console.error('Lỗi chuyển hướng:', error);
-                        restorePageContent(); // Khôi phục nếu có lỗi
+                        restorePageContent();
                     }
                 } else {
                     typeaheadMenu.html('<div class="suggestion-item">Không tìm thấy kết quả</div>');
-                    console.log('Không tìm thấy kết quả cho:', query);
-                    restorePageContent(); // Khôi phục sau khi tìm kiếm
+                    restorePageContent();
                 }
             }
         }
     });
 
-    // Xử lý nút xóa tìm kiếm
     $('.close-search').on('click', function() {
         searchInput.typeahead('val', '');
         typeaheadMenu.empty();
         $('.sidebar-links .sidebar-title span, .sidebar-links .sidebar-submenu a').removeClass('active');
         $('.sidebar-submenu').hide();
-        console.log('Đã xóa nội dung tìm kiếm');
-        restorePageContent(); // Khôi phục nội dung
+        restorePageContent();
     });
 
-    // Đảm bảo nội dung trang không bị ẩn khi tương tác
     $(document).on('click keypress', '.search-full, .Typeahead-input', function(e) {
-        e.stopPropagation(); // Ngăn sự kiện lan truyền
-        restorePageContent(); // Khôi phục nội dung
+        e.stopPropagation();
+        restorePageContent();
+    });
+
+    // Xử lý khi modal đóng
+    $(document).on('hidden.bs.modal', '.modal', function () {
+        console.log('Modal đã đóng, khôi phục giao diện');
+        $('.modal-backdrop').remove();
+        restorePageContent();
+    });
+
+    // Xử lý lỗi 404 cho hình ảnh
+    $(document).ready(function() {
+        $('img').on('error', function() {
+            console.warn('Không thể tải hình ảnh:', $(this).attr('src'));
+            $(this).hide();
+            restorePageContent();
+        });
+    });
+
+    // Thêm sự kiện click để đóng overlay thủ công (phòng trường hợp bị kẹt)
+    $(document).on('click', '.modal-backdrop, .overlay', function() {
+        $(this).removeClass('show').remove();
+        restorePageContent();
     });
 })();

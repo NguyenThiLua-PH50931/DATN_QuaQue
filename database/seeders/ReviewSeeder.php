@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\admin\Product;
 use App\Models\admin\Review; // Hoặc App\Models\Review nếu bạn không dùng thư mục con "admin"
 use App\Models\User;
+ // Hoặc App\Models\Review nếu bạn không dùng thư mục con "admin"
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 

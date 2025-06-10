@@ -46,8 +46,8 @@
                             <div class="mb-4 row align-items-center">
                                 <label class="form-label-title col-sm-3 mb-0">Nội dung</label>
                                 <div class="col-sm-9">
-                                    <textarea class="form-control" name="content" rows="6" 
-                                        placeholder="Nội dung bài viết" required>{{ old('content', $blog->content) }}</textarea>
+                                    <textarea class="form-control content-editor" name="content" rows="6" 
+                                        placeholder="Nội dung bài viết">{{ old('content', $blog->content) }}</textarea>
                                 </div>
                             </div>
 
@@ -78,6 +78,52 @@
         </div>
     </div>
 </div>
-<!-- New Product Add End -->
+
 @includeIf('backend.footer')
+
+<style>
+    .ck-editor__editable {
+        color: #222 !important;
+        background: #fff;
+        height: 300px !important;
+    }
+</style>
+
+{{-- CKEditor 5 CDN --}}
+<script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+<script>
+    let contentEditors = [];
+
+    function initContentEditors() {
+        document.querySelectorAll('.content-editor').forEach((textarea) => {
+            if (!textarea.classList.contains('ck-editor-initialized')) {
+                ClassicEditor.create(textarea).then(editor => {
+                    contentEditors.push({ editor, textarea });
+                    textarea.classList.add('ck-editor-initialized');
+                });
+            }
+        });
+    }
+
+    initContentEditors();
+
+    // Đồng bộ nội dung từ CKEditor vào textarea + kiểm tra required
+    document.querySelector('form').addEventListener('submit', function (e) {
+        let isValid = true;
+
+        contentEditors.forEach(({ editor, textarea }) => {
+            const data = editor.getData().trim();
+            textarea.value = data;
+
+            if (!data) {
+                isValid = false;
+                alert("Nội dung không được để trống.");
+            }
+        });
+
+        if (!isValid) {
+            e.preventDefault(); // Chặn gửi form
+        }
+    });
+</script>
 @endsection
