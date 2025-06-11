@@ -12,11 +12,30 @@ class BlogController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $blog = Blog::latest()->paginate(10);
-        return view('backend.blogs.index', compact('blog'));
+  public function index(Request $request)
+{
+    $data = $request->validate([
+        'date_from' => 'nullable|date',
+        'date_to'   => 'nullable|date|after_or_equal:date_from',
+    ]);
+
+    $query = Blog::query();
+
+    // Lọc theo ngày
+    if (!empty($data['date_from'])) {
+        $query->whereDate('created_at', '>=', $data['date_from']);
     }
+
+    if (!empty($data['date_to'])) {
+        $query->whereDate('created_at', '<=', $data['date_to']);
+    }
+
+    $blog = $query->latest()
+        ->paginate(10)
+        ->appends($request->only(['date_from', 'date_to'])); // Giữ lại dữ liệu lọc trên phân trang
+
+    return view('backend.blogs.index', compact('blog'));
+}
 
     /**
      * Show the form for creating a new resource.
