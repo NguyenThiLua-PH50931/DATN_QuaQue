@@ -11,12 +11,6 @@
                         <div class="card-body">
                             <div class="title-header option-title">
                                 <h5>Tất cả banner</h5>
-                                <form class="d-inline-flex">
-                                    <a href="{{ route('admin.banners.create') }}"
-                                        class="align-items-center btn btn-theme d-flex">
-                                        <i data-feather="plus-square"></i> Thêm mới
-                                    </a>
-                                </form>
                             </div>
 
                             @if (session('success'))
@@ -53,14 +47,31 @@
                                             <th style="color: black; background-color: #f8f9fa;">ID</th>
                                             <th style="color: black; background-color: #f8f9fa;">Tiêu đề</th>
                                             <th style="color: black; background-color: #f8f9fa;">Ảnh</th>
+                                            <th style="color: black; background-color: #f8f9fa;">Vị trí</th>
                                             <th style="color: black; background-color: #f8f9fa;">Link</th>
                                             <th style="color: black; background-color: #f8f9fa;">Hoạt động</th>
-                                            <th style="color: black; background-color: #f8f9fa;">Hiển thị lúc</th>
+                                            <th style="color: black; background-color: #f8f9fa;">Ngày hiển thị </th>
                                             <th style="color: black; background-color: #f8f9fa;">Ngày dừng hiển thị</th>
                                             <th style="color: black; background-color: #f8f9fa;">Hành động</th>
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @php
+                                            $locationNames = [
+                                                'main_hero_banner' => 'Banner Chính Đầu Trang',
+                                                'small_promo_banner_top' => 'Banner Đầu Trang Nhỏ Bên Phải (Trên)',
+                                                'small_promo_banner_bottom' => 'Banner Đầu Trang Nhỏ Bên Phải (Dưới)',
+                                                'slider_banner' => 'Banner Trượt (Slider)',
+                                                'product_section_promo_left_top' => 'Banner Sản Phẩm Dọc - Trên',
+                                                'product_section_promo_left_bottom' => 'Banner Sản Phẩm Dọc - Dưới',
+                                                'category_section_promo_left' => 'Banner Sản Phẩm Theo Danh Mục - Trái',
+                                                'category_section_promo_right' =>'Banner Sản Phẩm Theo Danh Mục - Phải',
+                                                'new_products_cashback_banner' => 'Banner Sản Phẩm Mới',
+                                                'new_products_promo_left' => 'Banner Sản Phẩm Mới (Trái)',
+                                                'new_products_promo_right' => 'Banner Sản Phẩm Mới (Phải)',
+                                                'last_page_promo_banner' => 'Banner Cuối Trang (Quảng Cáo)',
+                                            ];
+                                        @endphp
                                         @forelse ($banners as $banner)
                                             <tr>
                                                 <td>
@@ -74,10 +85,14 @@
                                                         alt="{{ $banner->title }}" class="w-20 h-20 object-cover"
                                                         width="100px">
                                                 </td>
+                                                <td>{{ $locationNames[$banner->location] ?? ($banner->location ?? 'N/A') }}
+                                                </td>
                                                 <td>{{ $banner->link }}</td>
                                                 <td>{{ $banner->active ? 'Có' : 'Không' }}</td>
-                                                <td>{{ $banner->display_at ? $banner->display_at->format('d-m-Y') : 'N/A' }}</td>
-                                                <td>{{ $banner->display_end_at ? $banner->display_end_at->format('d-m-Y') : 'N/A' }}</td>
+
+                                                <td>{{ $banner->display_at }}</td>
+                                                <td>{{ $banner->display_end_at ? $banner->display_end_at->format('d-m-Y') : 'N/A' }}
+                                                </td>
                                                 <td>
                                                     <ul>
                                                         <li>
@@ -101,7 +116,7 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="9" class="py-4 px-4 text-center">Không có banner nào.</td>
+                                                <td colspan="10" class="py-4 px-4 text-center">Không có banner nào.</td>
                                             </tr>
                                         @endforelse
                                     </tbody>
@@ -169,6 +184,42 @@
         </div>
     </div>
 
+    {{-- Success Message Modal --}}
+    <div class="modal fade" id="successMessageModal" tabindex="-1" aria-labelledby="successMessageModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="successMessageModalLabel">Thành công!</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="successMessageContent">
+                    <!-- Message will be inserted here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Error Message Modal --}}
+    <div class="modal fade" id="errorMessageModal" tabindex="-1" aria-labelledby="errorMessageModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="errorMessageModalLabel">Lỗi!</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="errorMessageContent">
+                    <!-- Message will be inserted here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     @includeIf('backend.footer')
 @endsection
 
@@ -223,11 +274,9 @@
                 });
 
                 if (selectedIds.length > 0) {
-                    // Mở modal xác nhận xóa hàng loạt
                     $('#selectedBannerCount').text(selectedIds.length);
                     $('#bulkDeleteModal').modal('show');
 
-                    // Gán sự kiện cho nút xác nhận trong modal
                     $('#confirm-bulk-delete-btn').off('click').on('click', function() {
                         $.ajax({
                             url: '{{ route('admin.banners.bulkDelete') }}',
@@ -238,8 +287,11 @@
                             },
                             success: function(response) {
                                 $('#bulkDeleteModal').modal('hide');
-                                toastr.success(response.message || 'Xóa banner đã chọn thành công!');
-                                window.location.reload();
+                                $('#successMessageContent').text(response.message || 'Xóa banner đã chọn thành công!');
+                                $('#successMessageModal').modal('show');
+                                $('#successMessageModal').on('hidden.bs.modal', function () {
+                                    window.location.reload();
+                                });
                             },
                             error: function(xhr) {
                                 $('#bulkDeleteModal').modal('hide');
@@ -251,12 +303,18 @@
                                 } else {
                                     errorMessage = 'Lỗi không xác định';
                                 }
-                                toastr.error(errorMessage);
+                                $('#errorMessageContent').text(errorMessage);
+                                $('#errorMessageModal').modal('show');
+                                $('#errorMessageModal').on('hidden.bs.modal', function () {
+                                    window.location.reload();
+                                });
                             }
                         });
                     });
                 } else {
-                    alert('Vui lòng chọn ít nhất một banner để xóa.');
+                    // Thay thế alert bằng modal thông báo lỗi
+                    $('#errorMessageContent').text('Vui lòng chọn ít nhất một banner để xóa.');
+                    $('#errorMessageModal').modal('show');
                 }
             });
         });
