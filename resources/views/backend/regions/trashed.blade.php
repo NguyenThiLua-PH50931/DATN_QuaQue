@@ -262,7 +262,8 @@
                         if (xhr.responseJSON && xhr.responseJSON.message) {
                             errorMessage = xhr.responseJSON.message;
                         } else if (xhr.responseText) {
-                            errorMessage = 'Lỗi server: ' + xhr.responseText.substring(0, 100) + '...';
+                            errorMessage = 'Lỗi server: ' + xhr.responseText.substring(0, 100) +
+                                '...';
                         } else {
                             errorMessage = 'Lỗi không xác định';
                         }
@@ -298,43 +299,41 @@
                 });
 
                 if (selectedIds.length > 0) {
-                    // Mở modal xác nhận xóa hàng loạt vĩnh viễn
                     $('#selectedTrashedRegionCount').text(selectedIds.length);
                     $('#bulkForceDeleteModal').modal('show');
 
-                    // Gán sự kiện cho nút xác nhận trong modal
                     $('#confirm-bulk-force-delete-btn').off('click').on('click', function() {
-                        // Tạo một form tạm thời để gửi yêu cầu DELETE
-                        var tempForm = $('<form>', {
-                            'action': '{{ route('admin.regions.bulkForceDelete') }}',
-                            'method': 'POST',
-                            'style': 'display:none;'
-                        }).append(
-                            $('<input>', {
-                                'type': 'hidden',
-                                'name': '_token',
-                                'value': '{{ csrf_token() }}'
-                            })
-                        ).append(
-                            $('<input>', {
-                                'type': 'hidden',
-                                'name': '_method',
-                                'value': 'DELETE'
-                            })
-                        ).append(
-                            $('<input>', {
-                                'type': 'hidden',
-                                'name': 'ids',
-                                'value': selectedIds.join(',')
-                            })
-                        );
-
-                        $('body').append(tempForm);
-                        tempForm.submit();
-                        $('#bulkForceDeleteModal').modal('hide');
+                        $.ajax({
+                            url: '{{ route('admin.regions.bulkForceDelete') }}',
+                            method: 'POST',
+                            data: {
+                                _token: '{{ csrf_token() }}',
+                                _method: 'DELETE',
+                                ids: selectedIds.join(',')
+                            },
+                            success: function(response) {
+                                $('#bulkForceDeleteModal').modal('hide');
+                                toastr.success(response.message ||
+                                    'Xóa vĩnh viễn vùng miền đã chọn thành công!');
+                                window.location.reload();
+                            },
+                            error: function(xhr) {
+                                $('#bulkForceDeleteModal').modal('hide');
+                                let errorMessage = 'Lỗi khi xóa vĩnh viễn vùng miền đã chọn';
+                                if (xhr.responseJSON && xhr.responseJSON.message) {
+                                    errorMessage = xhr.responseJSON.message;
+                                } else if (xhr.responseText) {
+                                    errorMessage = 'Lỗi server: ' + xhr.responseText.substring(0, 100) +
+                                        '...';
+                                } else {
+                                    errorMessage = 'Lỗi không xác định';
+                                }
+                                toastr.error(errorMessage);
+                            }
+                        });
                     });
                 } else {
-                    alert('Vui lòng chọn ít nhất một vùng miền để xóa vĩnh viễn.');
+                    toastr.error('Vui lòng chọn ít nhất một vùng miền để xóa vĩnh viễn.');
                 }
             });
 
@@ -359,7 +358,8 @@
                             },
                             success: function(response) {
                                 $('#bulkRestoreModal').modal('hide');
-                                toastr.success(response.message || 'Khôi phục vùng miền đã chọn thành công!');
+                                toastr.success(response.message ||
+                                    'Khôi phục vùng miền đã chọn thành công!');
                                 // Tải lại trang hoặc cập nhật bảng nếu cần
                                 window.location.reload();
                             },
@@ -369,7 +369,8 @@
                                 if (xhr.responseJSON && xhr.responseJSON.message) {
                                     errorMessage = xhr.responseJSON.message;
                                 } else if (xhr.responseText) {
-                                    errorMessage = 'Lỗi server: ' + xhr.responseText.substring(0, 100) + '...';
+                                    errorMessage = 'Lỗi server: ' + xhr.responseText.substring(0, 100) +
+                                        '...';
                                 } else {
                                     errorMessage = 'Lỗi không xác định';
                                 }
@@ -378,12 +379,12 @@
                         });
                     });
                 } else {
-                    alert('Vui lòng chọn ít nhất một vùng miền để khôi phục.');
+                    toastr.error('Vui lòng chọn ít nhất một vùng miền để khôi phục.');
                 }
             });
 
             // Hiển thị modal lỗi nếu có session error
-            @if(session('error'))
+            @if (session('error'))
                 var errorMessage = "{{ session('error') }}";
                 if (errorMessage.includes('sản phẩm liên kết')) {
                     $('#cannotDeleteMessage').text(errorMessage);
