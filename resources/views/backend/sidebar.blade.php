@@ -107,12 +107,6 @@
                         </ul>
                     </li>
 
-<<<<<<< HEAD
-=======
-
-
-
->>>>>>> c535ceb11eae96cf2d8cb1a55998a67ae1e9c313
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                             <i class="ri-archive-line"></i>
@@ -152,15 +146,6 @@
                             <li>
                                 <a href="{{ route('admin.comments.index') }}">Danh sách bình luận </a>
                             </li>
-                        </ul>
-                    </li>
-                    <li class="sidebar-list">
-                        <a class="sidebar-link sidebar-title" href="javascript:void(0)">
-                            <i class="ri-megaphone-line"></i>
-                            <span>Tin tức</span>
-                        </a>
-                        <ul class="sidebar-submenu">
-                            <li><a href="{{ url('/admin/blog/index') }}">Tin tức</a></li>
                         </ul>
                     </li>
 
