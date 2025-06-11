@@ -45,23 +45,30 @@ class BannerController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
             'link' => 'nullable|url|max:255',
-            'active' => 'boolean',
             'display_at' => 'nullable|date',
             'display_end_at' => 'nullable|date|after_or_equal:display_at',
+            'location' => 'nullable|string|max:255',
         ]);
 
         $imagePath = $request->file('image')->store('banners', 'public');
 
-        Banner::create([
+        $banner = new Banner([
             'title' => $request->title,
             'image' => $imagePath,
             'link' => $request->link,
-            'active' => $request->has('active'),
+            'active' => $request->boolean('active'),
             'display_at' => $request->display_at,
             'display_end_at' => $request->display_end_at,
+            'location' => $request->location,
         ]);
+
+        if ($banner->active && $banner->hasOverlappingActiveBanner()) {
+            return back()->withErrors(['active' => 'Không thể kích hoạt banner này vì đã có banner khác đang hoạt động trong khoảng thời gian này tại vị trí này.'])->withInput();
+        }
+
+        $banner->save();
 
         return redirect()->route('admin.banners.index')->with('success', 'Banner đã được tạo mới thành công.');
     }
@@ -93,11 +100,11 @@ class BannerController extends Controller
 
         $request->validate([
             'title' => 'required|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
             'link' => 'nullable|url|max:255',
-            'active' => 'boolean',
             'display_at' => 'nullable|date',
             'display_end_at' => 'nullable|date|after_or_equal:display_at',
+            'location' => 'nullable|string|max:255',
         ]);
 
         $imagePath = $banner->image;
@@ -108,14 +115,21 @@ class BannerController extends Controller
             $imagePath = $request->file('image')->store('banners', 'public');
         }
 
-        $banner->update([
+        $banner->fill([
             'title' => $request->title,
             'image' => $imagePath,
             'link' => $request->link,
-            'active' => $request->has('active'),
+            'active' => $request->boolean('active'),
             'display_at' => $request->display_at,
             'display_end_at' => $request->display_end_at,
+            'location' => $request->location,
         ]);
+
+        if ($banner->active && $banner->hasOverlappingActiveBanner()) {
+            return back()->withErrors(['active' => 'Không thể kích hoạt banner này vì đã có banner khác đang hoạt động trong khoảng thời gian này tại vị trí này.'])->withInput();
+        }
+
+        $banner->save();
 
         return redirect()->route('admin.banners.index')->with('success', 'Banner đã được cập nhật thành công.');
     }

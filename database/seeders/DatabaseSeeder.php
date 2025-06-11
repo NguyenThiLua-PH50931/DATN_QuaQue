@@ -33,7 +33,6 @@ class DatabaseSeeder extends Seeder
             CommentSeeder::class,// Thêm comment (nếu có)
 
             CouponSeeder::class,
-
         ]);
     }
 }

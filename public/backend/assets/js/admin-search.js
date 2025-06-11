@@ -1,6 +1,9 @@
 (function () {
     window.sidebarItems = window.sidebarItems || [
         { name: 'Trang chủ', url: '/admin/home' },
+        { name: 'Người dùng', url: '/admin/user/index' },
+        { name: 'Tài khoản', url: '/admin/user/index' },
+        { name: 'Tài khoản đã ẩn', url: '/admin/user/hidden' },
         { name: 'Sản Phẩm', url: '/admin/products' },
         { name: 'Danh sách sản phẩm', url: '/admin/products' },
         { name: 'Thêm sản phẩm', url: '/admin/products/create' },
@@ -13,27 +16,24 @@
         { name: 'Thuộc tính', url: '/admin/attributes' },
         { name: 'Danh sách thuộc tính', url: '/admin/attributes' },
         { name: 'Thêm thuộc tính', url: '/admin/attributes/create' },
-        { name: 'Người dùng', url: '/admin/user/index' },
-        { name: 'Tài khoản', url: '/admin/user/index' },
-        { name: 'Tài khoản đã ẩn', url: '/admin/user/hidden' },
-        { name: 'Bình luận', url: '/admin/comments' },
-        { name: 'Danh sách bình luận', url: '/admin/comments/index' },
-        { name: 'Tin tức', url: '/admin/blog/index' },
-        { name: 'Danh sách tin tức', url: '/admin/blog/index' },
-        { name: 'Banner', url: '/admin/banners' },
-        { name: 'Danh sách banner', url: '/admin/banners' },
-        { name: 'Thùng rác', url: '/admin/banners/trashed' },
         { name: 'Đơn hàng', url: '/admin/orders' },
         { name: 'Danh sách', url: '/admin/orders' },
         { name: 'Chi tiết', url: '/admin/orders/detail' },
         { name: 'Theo dõi đơn hàng', url: '/admin/orders/tracking' },
+        { name: 'Banner', url: '/admin/banners' },
+        { name: 'Danh sách banner', url: '/admin/banners' },
+        { name: 'Thùng rác', url: '/admin/banners/trashed' },
+        { name: 'Tin tức', url: '/admin/blog/index' },
+        { name: 'Danh sách tin tức', url: '/admin/blog/index' },
+        { name: 'Bình luận', url: '/admin/comments' },
+        { name: 'Danh sách bình luận', url: '/admin/comments/index' },
         { name: 'Đánh giá', url: '/admin/reviews' },
-        { name: 'Cài đặt', url: '/admin/setting/profile' },
-        { name: 'Chỉnh sửa hồ sơ', url: '/admin/setting/profile' },
         { name: 'Mã giảm giá', url: '/admin/coupon/index' },
         { name: 'Danh sách', url: '/admin/coupon/index' },
         { name: 'Create Coupon', url: '/admin/coupons/create' },
         { name: 'Support Ticket', url: '/admin/support-ticket' },
+        { name: 'Cài đặt', url: '/admin/setting/profile' },
+        { name: 'Chỉnh sửa hồ sơ', url: '/admin/setting/profile' },
     ];
 
     var searchInput = $('#search-input');
@@ -101,7 +101,7 @@
 
     function highlightSidebarItems(query) {
         $('.sidebar-links .sidebar-title span, .sidebar-links .sidebar-submenu a').removeClass('active');
-        $('.sidebar-submenu').hide();
+        $('.sidebar-links .sidebar-submenu').hide();
         if (query) {
             query = query.toLowerCase().trim();
             $('.sidebar-links .sidebar-title span, .sidebar-links .sidebar-submenu a').each(function() {
@@ -166,7 +166,7 @@
         searchInput.typeahead('val', '');
         typeaheadMenu.empty();
         $('.sidebar-links .sidebar-title span, .sidebar-links .sidebar-submenu a').removeClass('active');
-        $('.sidebar-submenu').hide();
+        $('.sidebar-links .sidebar-submenu').hide();
         restorePageContent();
     });
 

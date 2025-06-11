@@ -40,11 +40,28 @@
                                             <th style="color: black; background-color: #f8f9fa;">Link</th>
                                             <th style="color: black; background-color: #f8f9fa;">Hoạt động</th>
                                             <th style="color: black; background-color: #f8f9fa;">Hiển thị lúc</th>
+                                            <th style="color: black; background-color: #f8f9fa;">Vị trí</th>
                                             <th style="color: black; background-color: #f8f9fa;">Ngày xóa</th>
                                             <th style="color: black; background-color: #f8f9fa;">Hành động</th>
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @php
+                                            $locationNames = [
+                                                'main_hero_banner' => 'Banner Chính Đầu Trang',
+                                                'small_promo_banner_top' => 'Banner Đầu Trang Nhỏ Bên Phải (Trên)',
+                                                'small_promo_banner_bottom' => 'Banner Đầu Trang Nhỏ Bên Phải (Dưới)',
+                                                'slider_banner' => 'Banner Trượt (Slider)',
+                                                'product_section_promo_left_top' => 'Banner Sản Phẩm Dọc - Trên',
+                                                'product_section_promo_left_bottom' => 'Banner Sản Phẩm Dọc - Dưới',
+                                                'category_section_promo_left' => 'Banner Sản Phẩm Theo Danh Mục - Trái',
+                                                'category_section_promo_right' => 'Banner Sản Phẩm Theo Danh Mục - Phải',
+                                                'new_products_cashback_banner' => 'Banner Sản Phẩm Mới (Hoàn Tiền)',
+                                                'new_products_promo_left' => 'Banner Sản Phẩm Mới (Trái)',
+                                                'new_products_promo_right' => 'Banner Sản Phẩm Mới (Phải)',
+                                                'last_page_promo_banner' => 'Banner Cuối Trang (Quảng Cáo)',
+                                            ];
+                                        @endphp
                                         @forelse ($banners as $banner)
                                             <tr>
                                                 <td>
@@ -61,6 +78,7 @@
                                                 <td>{{ $banner->link }}</td>
                                                 <td>{{ $banner->active ? 'Có' : 'Không' }}</td>
                                                 <td>{{ $banner->display_at }}</td>
+                                                <td>{{ $locationNames[$banner->location] ?? $banner->location ?? 'N/A' }}</td>
                                                 <td>{{ $banner->deleted_at }}</td>
                                                 <td>
                                                     <ul>
@@ -87,7 +105,7 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="8" class="text-center">Không có banner nào đã bị xóa mềm.
+                                                <td colspan="10" class="text-center">Không có banner nào đã bị xóa mềm.
                                                 </td>
                                             </tr>
                                         @endforelse
@@ -201,6 +219,42 @@
         </div>
     </div>
 
+    {{-- Success Message Modal --}}
+    <div class="modal fade" id="successMessageModal" tabindex="-1" aria-labelledby="successMessageModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="successMessageModalLabel">Thành công!</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="successMessageContent">
+                    <!-- Message will be inserted here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Error Message Modal --}}
+    <div class="modal fade" id="errorMessageModal" tabindex="-1" aria-labelledby="errorMessageModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="errorMessageModalLabel">Lỗi!</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="errorMessageContent">
+                    <!-- Message will be inserted here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 {{-- Include Toastr CSS and JS (Moved here to ensure it loads before other scripts) --}}
@@ -281,8 +335,11 @@
                             },
                             success: function(response) {
                                 $('#bulkRestoreModal').modal('hide');
-                                toastr.success(response.message || 'Khôi phục banner đã chọn thành công!');
-                                window.location.reload();
+                                $('#successMessageContent').text(response.message || 'Khôi phục banner đã chọn thành công!');
+                                $('#successMessageModal').modal('show');
+                                $('#successMessageModal').on('hidden.bs.modal', function () {
+                                    window.location.reload();
+                                });
                             },
                             error: function(xhr) {
                                 $('#bulkRestoreModal').modal('hide');
@@ -294,12 +351,17 @@
                                 } else {
                                     errorMessage = 'Lỗi không xác định';
                                 }
-                                toastr.error(errorMessage);
+                                $('#errorMessageContent').text(errorMessage);
+                                $('#errorMessageModal').modal('show');
+                                $('#errorMessageModal').on('hidden.bs.modal', function () {
+                                    window.location.reload();
+                                });
                             }
                         });
                     });
                 } else {
-                    alert('Vui lòng chọn ít nhất một banner để khôi phục.');
+                    $('#errorMessageContent').text('Vui lòng chọn ít nhất một banner để khôi phục.');
+                    $('#errorMessageModal').modal('show');
                 }
             });
 
@@ -323,8 +385,11 @@
                             },
                             success: function(response) {
                                 $('#bulkForceDeleteModal').modal('hide');
-                                toastr.success(response.message || 'Xóa vĩnh viễn banner đã chọn thành công!');
-                                window.location.reload();
+                                $('#successMessageContent').text(response.message || 'Xóa vĩnh viễn banner đã chọn thành công!');
+                                $('#successMessageModal').modal('show');
+                                $('#successMessageModal').on('hidden.bs.modal', function () {
+                                    window.location.reload();
+                                });
                             },
                             error: function(xhr) {
                                 $('#bulkForceDeleteModal').modal('hide');
@@ -336,12 +401,17 @@
                                 } else {
                                     errorMessage = 'Lỗi không xác định';
                                 }
-                                toastr.error(errorMessage);
+                                $('#errorMessageContent').text(errorMessage);
+                                $('#errorMessageModal').modal('show');
+                                $('#errorMessageModal').on('hidden.bs.modal', function () {
+                                    window.location.reload();
+                                });
                             }
                         });
                     });
                 } else {
-                    alert('Vui lòng chọn ít nhất một banner để xóa vĩnh viễn.');
+                    $('#errorMessageContent').text('Vui lòng chọn ít nhất một banner để xóa vĩnh viễn.');
+                    $('#errorMessageModal').modal('show');
                 }
             });
         });
