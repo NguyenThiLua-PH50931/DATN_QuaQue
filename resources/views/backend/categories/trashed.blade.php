@@ -249,7 +249,7 @@
                             } else {
                                 console.error(
                                     'Could not get valid DataTables row object. Removing row directly.'
-                                    );
+                                );
                                 form.closest('tr').remove();
                             }
                             toastr.success(response.message ||
@@ -261,8 +261,8 @@
                             if (xhr.responseJSON && xhr.responseJSON.message) {
                                 errorMessage = xhr.responseJSON.message;
                             } else if (xhr.responseText) {
-                                errorMessage = 'Lỗi server: ' + xhr.responseText.substring(0,
-                                    100) + '...';
+                                errorMessage = 'Lỗi server: ' + xhr.responseText.substring(0, 100) +
+                                    '...';
                             } else {
                                 errorMessage = 'Lỗi không xác định';
                             }
@@ -312,7 +312,7 @@
                             row.remove();
                         }
                         toastr.success(response.message ||
-                        'Xóa vĩnh viễn danh mục thành công!');
+                            'Xóa vĩnh viễn danh mục thành công!');
                     },
                     error: function(xhr) {
                         $('#forceDeleteModal').modal('hide');
@@ -371,7 +371,8 @@
                             },
                             success: function(response) {
                                 $('#bulkRestoreModal').modal('hide');
-                                toastr.success(response.message || 'Khôi phục danh mục đã chọn thành công!');
+                                toastr.success(response.message ||
+                                    'Khôi phục danh mục đã chọn thành công!');
                                 // Tải lại trang hoặc cập nhật bảng nếu cần
                                 window.location.reload();
                             },
@@ -381,7 +382,8 @@
                                 if (xhr.responseJSON && xhr.responseJSON.message) {
                                     errorMessage = xhr.responseJSON.message;
                                 } else if (xhr.responseText) {
-                                    errorMessage = 'Lỗi server: ' + xhr.responseText.substring(0, 100) + '...';
+                                    errorMessage = 'Lỗi server: ' + xhr.responseText.substring(0, 100) +
+                                        '...';
                                 } else {
                                     errorMessage = 'Lỗi không xác định';
                                 }
@@ -390,12 +392,58 @@
                         });
                     });
                 } else {
-                    alert('Vui lòng chọn ít nhất một danh mục để khôi phục.');
+                    toastr.error('Vui lòng chọn ít nhất một danh mục để khôi phục.');
+                }
+            });
+
+            // Logic cho chức năng xóa hàng loạt vĩnh viễn
+            $('#bulk-force-delete-btn').click(function() {
+                var selectedIds = [];
+                $('.row-checkbox:checked').each(function() {
+                    selectedIds.push($(this).val());
+                });
+
+                if (selectedIds.length > 0) {
+                    $('#selectedTrashedCategoryCount').text(selectedIds.length);
+                    $('#bulkForceDeleteModal').modal('show');
+
+                    $('#confirm-bulk-force-delete-btn').off('click').on('click', function() {
+                        $.ajax({
+                            url: '{{ route('admin.categories.bulkForceDelete') }}',
+                            method: 'POST',
+                            data: {
+                                _token: '{{ csrf_token() }}',
+                                _method: 'DELETE',
+                                ids: selectedIds.join(',')
+                            },
+                            success: function(response) {
+                                $('#bulkForceDeleteModal').modal('hide');
+                                toastr.success(response.message ||
+                                    'Xóa vĩnh viễn danh mục đã chọn thành công!');
+                                window.location.reload();
+                            },
+                            error: function(xhr) {
+                                $('#bulkForceDeleteModal').modal('hide');
+                                let errorMessage = 'Lỗi khi xóa vĩnh viễn danh mục đã chọn';
+                                if (xhr.responseJSON && xhr.responseJSON.message) {
+                                    errorMessage = xhr.responseJSON.message;
+                                } else if (xhr.responseText) {
+                                    errorMessage = 'Lỗi server: ' + xhr.responseText.substring(0, 100) +
+                                        '...';
+                                } else {
+                                    errorMessage = 'Lỗi không xác định';
+                                }
+                                toastr.error(errorMessage);
+                            }
+                        });
+                    });
+                } else {
+                    toastr.error('Vui lòng chọn ít nhất một danh mục để xóa vĩnh viễn.');
                 }
             });
 
             // Hiển thị modal lỗi nếu có session error
-            @if(session('error'))
+            @if (session('error'))
                 var errorMessage = "{{ session('error') }}";
                 if (errorMessage.includes('sản phẩm liên kết')) {
                     $('#cannotDeleteMessage').text(errorMessage);

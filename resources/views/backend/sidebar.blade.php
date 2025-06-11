@@ -116,6 +116,7 @@
                         </a>
                          <ul class="sidebar-submenu">
                             <li><a href="{{ url('/admin/banners') }}">Danh sách banner</a></li>
+                            <li><a href="{{ url('/admin/banners/create') }}">Thêm mới banner</a></li>
                             <li><a href="{{ url('/admin/banners/trashed') }}">Thùng rác</a></li>
                         </ul>
                     </li>
