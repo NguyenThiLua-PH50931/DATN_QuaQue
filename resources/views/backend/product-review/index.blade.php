@@ -13,18 +13,18 @@
                     <!-- Table Start -->
                     <div class="card-body">
                         <div class="title-header option-title">
-                            <h5>Product Reviews</h5>
+                            <h5>Đánh Giá Sản Phẩm</h5>
                         </div>
                         <div>
                             <div class="table-responsive">
                                 <table class="user-table ticket-table review-table theme-table table" id="table_id">
                                     <thead>
                                         <tr>
-                                            <th>No.</th>
-                                            <th>Customer Name</th>
-                                            <th>Product Name</th>
-                                            <th>Rating</th>
-                                            <th>Comment</th>
+                                            <th>ID</th>
+                                            <th>Người Dùng</th>
+                                            <th>Sản Phẩm</th>
+                                            <th>Đánh Giá</th>
+                                            <th>Bình Luận</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -64,7 +64,7 @@
 @endsection
 
 @push('scripts')
-    <script>
+    {{-- <script>
         $(document).ready(function() {
             $('#table_id').DataTable({
                 language: {
@@ -81,6 +81,6 @@
                 }
             });
         });
-    </script>
+    </script> --}}
 @endpush
 
