@@ -282,8 +282,17 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
     });
 
     // Quản lý đánh giá
-    Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');
-
+  Route::prefix('reviews')->name('reviews.')->group(function () {
+    Route::get('/', [ReviewController::class, 'index'])->name('index');
+    Route::get('/{id}/edit', [ReviewController::class, 'edit'])->name('edit');
+    Route::put('/{id}', [ReviewController::class, 'update'])->name('update');
+    Route::delete('/{id}', [ReviewController::class, 'destroy'])->name('destroy');
+    // Route::get('/{id}/reply', [ReviewController::class, 'reply'])->name('reviews.reply');
+    // Route::post('/{id}/reply', [ReviewController::class, 'storeReply'])->name('reviews.storeReply');
+    // Route::get('/{reviewId}/reply/{replyId}/edit', [ReviewController::class, 'editReply'])->name('reviews.editReply');
+    // Route::put('/{reviewId}/reply/{replyId}', [ReviewController::class, 'updateReply'])->name('reviews.updateReply');
+    // Route::delete('/{reviewId}/reply/{replyId}', [ReviewController::class, 'destroyReply'])->name('reviews.destroyReply');
+});
 
     // Quản lý sản phẩm
     Route::post('/categories/store-quick', [AdminCategoryController::class, 'storeQuick'])->name('categories.storeQuick');
