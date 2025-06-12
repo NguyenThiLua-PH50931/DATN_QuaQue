@@ -60,8 +60,8 @@ class BannerController extends Controller
             'image' => $imagePath,
             'link' => $request->link,
             'active' => $request->boolean('active'),
-            'display_at' => $request->display_at,
-            'display_end_at' => $request->display_end_at,
+            'display_at' => $request->display_at ? Carbon::parse($request->display_at)->startOfDay() : null,
+            'display_end_at' => $request->display_end_at ? Carbon::parse($request->display_end_at)->endOfDay() : null,
             'location' => $request->location,
         ]);
 
@@ -121,8 +121,8 @@ class BannerController extends Controller
             'image' => $imagePath,
             'link' => $request->link,
             'active' => $request->boolean('active'),
-            'display_at' => $request->display_at,
-            'display_end_at' => $request->display_end_at,
+            'display_at' => $request->display_at ? Carbon::parse($request->display_at)->startOfDay() : null,
+            'display_end_at' => $request->display_end_at ? Carbon::parse($request->display_end_at)->endOfDay() : null,
             'location' => $request->location,
         ]);
 
