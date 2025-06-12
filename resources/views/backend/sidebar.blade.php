@@ -30,13 +30,13 @@
                 <ul class="sidebar-links" id="simple-bar">
                     <li class="back-btn"></li>
 
-                    {{-- <li class="sidebar-list">
+                    <li class="sidebar-list">
 
                         <a class="sidebar-link sidebar-title link-nav" href="{{ route('admin.home') }}">
                             <i class="ri-home-line"></i>
                             <span>Trang chủ</span>
                         </a>
-                    </li> --}}
+                    </li>
 
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
@@ -45,7 +45,7 @@
                         </a>
                         <ul class="sidebar-submenu">
                             <li><a href="{{ route('admin.user.index') }}">Tài khoản</a></li>
-                            <li><a href="{{ route('admin.user.hidden') }}">Tài khoản đã ẩn</a></li>
+                            {{-- <li><a href="{{ route('admin.user.hidden') }}">Tài khoản đã ẩn</a></li> --}}
                         </ul>
                     </li>
 
