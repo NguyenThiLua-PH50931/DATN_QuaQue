@@ -8,18 +8,25 @@ trait BannerTimeValidation
 {
     public function hasOverlappingActiveBanner()
     {
+        // Đảm bảo thời gian bắt đầu là 00:00:00 và kết thúc là 23:59:59
+        $startTime = Carbon::parse($this->display_at)->startOfDay();
+        $endTime = Carbon::parse($this->display_end_at)->endOfDay();
+
         $query = static::where('active', true)
             ->where('location', $this->location)
-            ->where(function ($query) {
-                $query->where(function ($q) {
-                    $q->where('display_at', '<=', $this->display_at)
-                        ->where('display_end_at', '>=', $this->display_at);
-                })->orWhere(function ($q) {
-                    $q->where('display_at', '<=', $this->display_end_at)
-                        ->where('display_end_at', '>=', $this->display_end_at);
-                })->orWhere(function ($q) {
-                    $q->where('display_at', '>=', $this->display_at)
-                        ->where('display_end_at', '<=', $this->display_end_at);
+            ->where(function ($query) use ($startTime, $endTime) {
+                $query->where(function ($q) use ($startTime, $endTime) {
+                    // Kiểm tra nếu banner mới nằm trong khoảng thời gian của banner hiện có
+                    $q->where('display_at', '<=', $startTime)
+                        ->where('display_end_at', '>=', $startTime);
+                })->orWhere(function ($q) use ($startTime, $endTime) {
+                    // Kiểm tra nếu banner mới kết thúc trong khoảng thời gian của banner hiện có
+                    $q->where('display_at', '<=', $endTime)
+                        ->where('display_end_at', '>=', $endTime);
+                })->orWhere(function ($q) use ($startTime, $endTime) {
+                    // Kiểm tra nếu banner mới bao trùm hoàn toàn banner hiện có
+                    $q->where('display_at', '>=', $startTime)
+                        ->where('display_end_at', '<=', $endTime);
                 });
             });
 

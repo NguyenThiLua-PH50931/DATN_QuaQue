@@ -154,7 +154,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <form id="deleteForm" method="POST" style="display: inline;">
+                    <form id="deleteForm" method="POST" action="" style="display: inline;">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-danger">Xóa mềm</button>
@@ -241,12 +241,22 @@
                 }
             });
 
-            // Xử lý sự kiện click nút xóa mềm
-            $('.delete-btn').click(function() {
+            // Xử lý sự kiện click nút xóa mềm (sử dụng event delegation)
+            $(document).on('click', '.delete-btn', function(e) {
                 var id = $(this).data('id');
                 var title = $(this).data('title');
-                $('#bannerTitleDelete').text(title);
-                $('#deleteForm').attr('action', '{{ url('admin/banners/') }}' + '/' + id + '/soft');
+
+                if (id) {
+                    var formAction = '{{ url('admin/banners/') }}' + '/' + id + '/soft';
+                    $('#bannerTitleDelete').text(title);
+                    $('#deleteForm').attr('action', formAction);
+                    console.log('Delete form action set to:', formAction);
+                } else {
+                    e.preventDefault();
+                    $('#errorMessageContent').text('Không thể xóa banner này do thiếu thông tin ID.');
+                    $('#errorMessageModal').modal('show');
+                    console.error('Error: data-id is missing for delete button:', this);
+                }
             });
 
             // Logic cho chức năng chọn tất cả và xóa hàng loạt
@@ -287,9 +297,20 @@
                             },
                             success: function(response) {
                                 $('#bulkDeleteModal').modal('hide');
-                                $('#successMessageContent').text(response.message || 'Xóa banner đã chọn thành công!');
-                                $('#successMessageModal').modal('show');
+                                if (response.status === 'success') {
+                                    $('#successMessageContent').text(response.message || 'Xóa banner đã chọn thành công!');
+                                    $('#successMessageModal').modal('show');
+                                } else if (response.status === 'warning') {
+                                    $('#errorMessageContent').text(response.message || 'Có một số banner không thể xóa.');
+                                    $('#errorMessageModal').modal('show');
+                                } else {
+                                    $('#errorMessageContent').text(response.message || 'Lỗi khi xóa banner đã chọn.');
+                                    $('#errorMessageModal').modal('show');
+                                }
                                 $('#successMessageModal').on('hidden.bs.modal', function () {
+                                    window.location.reload();
+                                });
+                                $('#errorMessageModal').on('hidden.bs.modal', function () {
                                     window.location.reload();
                                 });
                             },
@@ -312,11 +333,17 @@
                         });
                     });
                 } else {
-                    // Thay thế alert bằng modal thông báo lỗi
                     $('#errorMessageContent').text('Vui lòng chọn ít nhất một banner để xóa.');
                     $('#errorMessageModal').modal('show');
                 }
             });
+            
+            // Hiển thị modal lỗi nếu có session error từ server (đối với xóa mềm cá nhân)
+            @if(session('error'))
+                var errorMessage = "{{ session('error') }}";
+                $('#errorMessageContent').text(errorMessage);
+                $('#errorMessageModal').modal('show');
+            @endif
         });
     </script>
 @endpush
