@@ -29,8 +29,8 @@ class Banner extends Model
     ];
 
     protected $casts = [
-        'display_at' => 'date',
-        'display_end_at' => 'date',
+        'display_at' => 'datetime',
+        'display_end_at' => 'datetime',
         'active' => 'boolean',
     ];
 }
