@@ -252,8 +252,8 @@
             }
         });
 
-        // Xử lý sự kiện click nút xóa
-        $('.delete-btn').click(function() {
+        // Xử lý sự kiện click nút xóa (sử dụng event delegation)
+        $(document).on('click', '.delete-btn', function() {
             var id = $(this).data('id');
             var name = $(this).data('name');
             $('#regionName').text(name);

@@ -76,7 +76,7 @@
                         </a>
                          <ul class="sidebar-submenu">
                             <li><a href="{{ url('/admin/regions') }}">Danh sách vùng miền</a></li>
-                            <li><a href="{{ url('/admin/categories/regions') }}">Thùng rác</a></li>
+                            <li><a href="{{ url('/admin/regions/trashed') }}">Thùng rác</a></li>
                         </ul>
                     </li>
 
