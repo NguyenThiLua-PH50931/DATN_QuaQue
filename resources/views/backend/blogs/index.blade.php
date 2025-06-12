@@ -1,6 +1,6 @@
-@extends('layouts.backend') {{-- Kế thừa layout chính --}}
+@extends('layouts.backend') 
 
-@section('title', 'Quản lý tin tức') {{-- Tiêu đề trang --}}
+@section('title', 'Quản lý tin tức') 
 
 @section('content')
 <div class="page-body">
@@ -19,6 +19,24 @@
                                 </ul>
                             </div>
                         </div>
+                          <form method="GET" action="{{ route('admin.blog.index') }}" class="mb-4">
+                                <div class="row g-3">
+                                    <!-- Lọc từ ngày -->
+                                    <div class="col-md-2">
+                                        <input type="date" name="date_from" class="form-control"
+                                            value="{{ request('date_from') }}">
+                                    </div>
+                                    <!-- Lọc đến ngày -->
+                                    <div class="col-md-2">
+                                        <input type="date" name="date_to" class="form-control"
+                                            value="{{ request('date_to') }}">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="submit" class="btn btn-primary w-100">Lọc</button>
+                                    </div>
+                                </div>
+                            </form>
+
                         <div>
                             <div class="table-responsive overflow-hidden">
                                 <table class="table table-hover w-90 coupon-list-table theme-table" id="table_id">
@@ -82,7 +100,7 @@
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
                                                 <div class="modal-body">
-                                                   Bạn chắc chắn muốn xóa ? <strong>{{ $item->title }}</strong>?
+                                                   Bạn chắc chắn muốn xóa <strong>{{ $item->title }}</strong>?
                                                 </div>
                                                 <div class="modal-footer">
                                                     <form action="{{ route('admin.blog.destroy', $item->id) }}" method="POST" class="d-flex justify-content-end">
@@ -110,21 +128,21 @@
 @push('scripts')
 <script>
     $(document).ready(function () {
-        $('#table_id').DataTable({
-            language: {
-                search: "Tìm kiếm:",
-                lengthMenu: "Hiển thị _MENU_ tin tức",
-                info: "Hiển thị _START_ đến _END_ trong tổng _TOTAL_ tin tức",
-                paginate: {
-                    first: "Đầu",
-                    last: "Cuối",
-                    next: "Sau",
-                    previous: "Trước"
-                },
-                zeroRecords: "Không tìm thấy tin tức nào.",
-            }
-        });
+    $('#table_id').DataTable({
+        language: {
+            search: "Search:",
+            lengthMenu: "",
+            info: "Showing _START_ to _END_ of _TOTAL_ entries",
+            paginate: {
+                first: "First",
+                last: "Last",
+                next: "Next",
+                previous: "Previous"
+            },
+            zeroRecords: "Không tìm thấy tin tức nào.",
+        }
     });
+});
 </script>
 @endpush
 
