@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Filters\ReviewFilter;
 use App\Http\Controllers\Controller;
 use App\Models\admin\Product;
 use App\Models\admin\Review;
@@ -13,17 +14,28 @@ class ReviewController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $reviews = Review::with(['user', 'product'])
-            ->whereHas('user', function ($query) {
-                $query->where('role', 'member');
-            })
-            ->latest()
-            ->paginate(10);
+ 
+public function index(Request $request, ReviewFilter $filter)
+{
+    $products = Product::all();
+    $users = \App\Models\User::where('role', 'member')->get();
 
-        return view('backend.product-review.index', compact('reviews'));
+    $reviewsQuery = Review::with(['user', 'product'])
+        ->whereHas('user', function ($query) {
+            $query->where('role', 'member');
+        });
+
+
+    if (!empty(array_filter($request->all()))) { 
+        $reviewsQuery->filter($filter);
     }
+
+    $reviews = $reviewsQuery->latest()
+        ->paginate($request->query('per_page', 10));
+
+    return view('backend.product-review.index', compact('reviews', 'products', 'users'));
+}
+
 
     /**
      * Show the form for creating a new resource.
@@ -52,7 +64,7 @@ class ReviewController extends Controller
             'comment' => $request->comment,
         ]);
 
-        return redirect()->route('reviews.index')->with('success', 'Đánh giá đã được thêm!');
+        return redirect()->route('admin.reviews.index')->with('success', 'Đánh giá đã được thêm!');
     }
 
     /**
@@ -74,6 +86,6 @@ class ReviewController extends Controller
         $review->delete();
 
 
-        return redirect()->route('reviews.index')->with('success', 'Đánh giá đã được xoá.');
+        return redirect()->route('admin.reviews.index')->with('success', 'Đánh giá đã được xoá.');
     }
 }
