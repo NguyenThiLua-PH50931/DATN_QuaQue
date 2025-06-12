@@ -16,19 +16,21 @@ class UserController extends Controller
         $currentUserId = Auth::id();
         $data = $request->validate([
             'role'      => 'nullable|in:admin,member',
+            'status'      => 'nullable|in:1,0',
             'date_from' => 'nullable|date',
             'date_to'   => 'nullable|date|after_or_equal:date_from',
         ]);
 
         $query = User::where('id', '!=', $currentUserId)
             ->when($data['role'] ?? null, fn($q, $role) => $q->where('role', $role))
+            ->when(! is_null($data['status'] ?? null), fn($q) => $q->where('status', $data['status']))
             ->when($data['date_from'] ?? null, fn($q, $df) => $q->whereDate('created_at', '>=', $df))
             ->when($data['date_to'] ?? null, fn($q, $dt) => $q->whereDate('created_at', '<=', $dt));
 
         $users = $query
             ->orderBy('created_at', 'desc')
             ->paginate(10)
-            ->appends($request->only(['role', 'date_from', 'date_to']));
+            ->appends($request->only(['role','status', 'date_from', 'date_to']));
         return view('backend.users.index', compact('users'));
     }
 
