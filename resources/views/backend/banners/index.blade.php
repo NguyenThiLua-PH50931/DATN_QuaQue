@@ -89,9 +89,8 @@
                                                 </td>
                                                 <td>{{ $banner->link }}</td>
                                                 <td>{{ $banner->active ? 'Có' : 'Không' }}</td>
-
-                                                <td>{{ $banner->display_at }}</td>
-                                                <td>{{ $banner->display_end_at ? $banner->display_end_at->format('d-m-Y') : 'N/A' }}
+                                                <td>{{ $banner->display_at ? $banner->display_at->format('d-m-Y H:i:s') : 'N/A' }}</td>
+                                                <td>{{ $banner->display_end_at ? $banner->display_end_at->format('d-m-Y H:i:s') : 'N/A' }}
                                                 </td>
                                                 <td>
                                                     <ul>
