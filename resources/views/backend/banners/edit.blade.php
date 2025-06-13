@@ -33,19 +33,41 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="image" class="form-label">Ảnh hiện tại:</label>
+                                <label for="image" class="form-label">Ảnh:</label>
                                 @if ($banner->image)
-                                    <img src="{{ asset('storage/' . $banner->image) }}" alt="{{ $banner->title }}" class="img-fluid mb-2" style="max-width: 200px;">
-                                @else
-                                    <p>Không có ảnh.</p>
+                                    <div class="mb-2">
+                                        <img src="{{ asset('storage/' . $banner->image) }}" alt="Ảnh banner hiện tại" style="max-width: 200px; height: auto;">
+                                    </div>
                                 @endif
-                                <label for="image" class="form-label">Chọn ảnh mới (nếu muốn thay đổi):</label>
                                 <input type="file" name="image" id="image" class="form-control">
                             </div>
 
-                            <div class="mb-3">
-                                <label for="link" class="form-label">Link:</label>
-                                <input type="url" name="link" id="link" class="form-control" value="{{ old('link', $banner->link) }}">
+                            <div class="mb-4 row align-items-center">
+                                <label class="form-label-title col-sm-3 mb-0">Link</label>
+                                <div class="col-sm-9">
+                                    <input class="form-control" name="link" type="url" placeholder="Link" value="{{ old('link', $banner->link) }}">
+                                </div>
+                            </div>
+
+                            <div class="mb-4 row align-items-center">
+                                <label class="form-label-title col-sm-3 mb-0">Vị trí hiển thị (Location)</label>
+                                <div class="col-sm-9">
+                                    <select class="form-control" name="location">
+                                        <option value="">-- Chọn vị trí --</option>
+                                        <option value="main_hero_banner" {{ old('location', $banner->location) == 'main_hero_banner' ? 'selected' : '' }}>Banner Chính Đầu Trang</option>
+                                        <option value="small_promo_banner_top" {{ old('location', $banner->location) == 'small_promo_banner_top' ? 'selected' : '' }}>Banner Đầu Trang Nhỏ Bên Phải (Trên)</option>
+                                        <option value="small_promo_banner_bottom" {{ old('location', $banner->location) == 'small_promo_banner_bottom' ? 'selected' : '' }}>Banner Đầu Trang Nhỏ Bên Phải (Dưới)</option>
+                                        <option value="slider_banner" {{ old('location', $banner->location) == 'slider_banner' ? 'selected' : '' }}>Banner Trượt (Slider)</option>
+                                        <option value="product_section_promo_left_top" {{ old('location', $banner->location) == 'product_section_promo_left_top' ? 'selected' : '' }}>Banner Sản Phẩm Dọc - Trên</option>
+                                        <option value="product_section_promo_left_bottom" {{ old('location', $banner->location) == 'product_section_promo_left_bottom' ? 'selected' : '' }}>Banner Sản Phẩm Dọc - Dưới</option>
+                                        <option value="category_section_promo_left" {{ old('location', $banner->location) == 'category_section_promo_left' ? 'selected' : '' }}>Banner Sản Phẩm Theo Danh Mục - Trái</option>
+                                        <option value="category_section_promo_right" {{ old('location', $banner->location) == 'category_section_promo_right' ? 'selected' : '' }}>Banner Sản Phẩm Theo Danh Mục - Phải</option>
+                                        <option value="new_products_cashback_banner" {{ old('location', $banner->location) == 'new_products_cashback_banner' ? 'selected' : '' }}>Banner Sản Phẩm Mới</option>
+                                        <option value="new_products_promo_left" {{ old('location', $banner->location) == 'new_products_promo_left' ? 'selected' : '' }}>Banner Sản Phẩm Mới (Trái)</option>
+                                        <option value="new_products_promo_right" {{ old('location', $banner->location) == 'new_products_promo_right' ? 'selected' : '' }}>Banner Sản Phẩm Mới (Phải)</option>
+                                        <option value="last_page_promo_banner" {{ old('location', $banner->location) == 'last_page_promo_banner' ? 'selected' : '' }}>Banner Cuối Trang</option>
+                                    </select>
+                                </div>
                             </div>
 
                             <div class="col-xxl-4 col-sm-6">
@@ -66,10 +88,15 @@
                                 @enderror
                             </div>
 
-                            <div class="col-xxl-4 col-sm-6">
-                                <label for="active" class="form-label">Hoạt động</label>
-                                <div class="form-check">
-                                    <input type="checkbox" name="active" id="active" class="form-check-input" {{ old('active', $banner->active) ? 'checked' : '' }}>
+                            <div class="mb-4 row align-items-center">
+                                <label class="form-label-title col-sm-3 mb-0">Kích hoạt</label>
+                                <div class="col-sm-9">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" name="active" value="1" {{ old('active', $banner->active) ? 'checked' : '' }}>
+                                    </div>
+                                    @error('active')
+                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
 
@@ -87,3 +114,29 @@
 
 @includeIf('backend.footer')
 @endsection
+
+@push('styles')
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+@endpush
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#description').summernote({
+            placeholder: 'Nhập mô tả banner tại đây',
+            tabsize: 2,
+            height: 120,
+            toolbar: [
+                ['style', ['style']],
+                ['font', ['bold', 'italic', 'underline', 'clear']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['table', ['table']],
+                ['insert', ['link', 'picture', 'video']],
+                ['view', ['fullscreen', 'codeview', 'help']]
+            ]
+        });
+    });
+</script>
+@endpush
