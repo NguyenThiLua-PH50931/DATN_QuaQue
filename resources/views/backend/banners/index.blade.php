@@ -45,7 +45,6 @@
                                                 <input type="checkbox" id="select-all-checkbox">
                                             </th>
                                             <th style="color: black; background-color: #f8f9fa;">ID</th>
-                                            <th style="color: black; background-color: #f8f9fa;">Tiêu đề</th>
                                             <th style="color: black; background-color: #f8f9fa;">Ảnh</th>
                                             <th style="color: black; background-color: #f8f9fa;">Vị trí</th>
                                             <th style="color: black; background-color: #f8f9fa;">Link</th>
@@ -79,7 +78,6 @@
                                                         value="{{ $banner->id }}">
                                                 </td>
                                                 <td>{{ $banner->id }}</td>
-                                                <td>{{ $banner->title }}</td>
                                                 <td>
                                                     <img src="{{ asset('storage/' . $banner->image) }}"
                                                         alt="{{ $banner->title }}" class="w-20 h-20 object-cover"
@@ -336,7 +334,7 @@
                     $('#errorMessageModal').modal('show');
                 }
             });
-            
+
             // Hiển thị modal lỗi nếu có session error từ server (đối với xóa mềm cá nhân)
             @if(session('error'))
                 var errorMessage = "{{ session('error') }}";
