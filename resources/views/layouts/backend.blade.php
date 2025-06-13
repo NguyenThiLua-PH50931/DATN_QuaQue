@@ -119,8 +119,6 @@
     <script src="{{ asset('backend/assets/js/sidebar-menu.js') }}"></script>
     <script src="{{ asset('backend/assets/js/script.js') }}"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="{{ asset('backend/assets/js/ckeditor.js') }}"></script>
-    <script src="{{ asset('backend/assets/js/ckeditor-custom.js') }}"></script>
     <script src="{{ asset('backend/assets/js/select2.min.js') }}"></script>
     <script src="{{ asset('backend/assets/js/select2-custom.js') }}"></script>
     <script src="{{ asset('backend/assets/js/bootstrap-tagsinput.min.js') }}"></script>
