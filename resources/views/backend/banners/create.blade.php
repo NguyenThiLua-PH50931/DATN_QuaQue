@@ -28,7 +28,7 @@
 
                             <div class="mb-3">
                                 <label for="title" class="form-label">Tiêu đề:</label>
-                                <input type="text" name="title" id="title" class="form-control" value="{{ old('title') }}" required>
+                                <textarea name="title" id="title" class="form-control" rows="4">{{ old('title') }}</textarea>
                             </div>
 
                             <div class="mb-3">
@@ -110,23 +110,38 @@
 
 @push('styles')
 <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+<style>
+    /* Style chung cho trình soạn thảo */
+    .note-editable {
+        min-height: 250px; /* Chiều cao tối thiểu, có thể điều chỉnh */
+    }
+    /* Chế độ sáng */
+    body:not(.dark) .note-editable {
+        color: #222 !important;
+        background-color: #fff !important;
+    }
+    /* Chế độ tối */
+    body.dark .note-editable {
+        color: #eee !important; /* Màu chữ sáng */
+        background-color: #333 !important; /* Nền tối */
+    }
+</style>
 @endpush
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
 <script>
     $(document).ready(function() {
-        $('#description').summernote({
-            placeholder: 'Nhập mô tả banner tại đây',
+        $('#title').summernote({
+            placeholder: 'Nhập tiêu đề banner...',
             tabsize: 2,
-            height: 120,
+            height: 250, // Chiều cao của trình soạn thảo
             toolbar: [
                 ['style', ['style']],
                 ['font', ['bold', 'italic', 'underline', 'clear']],
-                ['color', ['color']],
+                ['color', ['color']], // Thêm tùy chọn màu chữ
                 ['para', ['ul', 'ol', 'paragraph']],
-                ['table', ['table']],
-                ['insert', ['link', 'picture', 'video']],
+                ['insert', ['link']],
                 ['view', ['fullscreen', 'codeview', 'help']]
             ]
         });

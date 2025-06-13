@@ -21,7 +21,7 @@
 
                             <div class="mb-3">
                                 <h5 class="fw-bold">Tiêu đề:</h5>
-                                <p>{{ $banner->title }}</p>
+                                <div class="ck-content">{!! $banner->title !!}</div>
                             </div>
 
                             <div class="mb-3">
