@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('banners', function (Blueprint $table) {
-            $table->dateTime('display_end_at')->nullable()->after('display_at');
+            $table->string('location')->nullable()->after('image');
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('banners', function (Blueprint $table) {
-            $table->dropColumn('display_end_at');
+            $table->dropColumn('location');
         });
     }
 };

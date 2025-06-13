@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Admin\Banner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class BannerController extends Controller
 {
@@ -45,23 +46,30 @@ class BannerController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
             'link' => 'nullable|url|max:255',
-            'active' => 'boolean',
             'display_at' => 'nullable|date',
             'display_end_at' => 'nullable|date|after_or_equal:display_at',
+            'location' => 'nullable|string|max:255',
         ]);
 
         $imagePath = $request->file('image')->store('banners', 'public');
 
-        Banner::create([
+        $banner = new Banner([
             'title' => $request->title,
             'image' => $imagePath,
             'link' => $request->link,
-            'active' => $request->has('active'),
-            'display_at' => $request->display_at,
-            'display_end_at' => $request->display_end_at,
+            'active' => $request->boolean('active'),
+            'display_at' => $request->display_at ? Carbon::parse($request->display_at)->startOfDay() : null,
+            'display_end_at' => $request->display_end_at ? Carbon::parse($request->display_end_at)->endOfDay() : null,
+            'location' => $request->location,
         ]);
+
+        if ($banner->active && $banner->hasOverlappingActiveBanner()) {
+            return back()->withErrors(['active' => 'Không thể kích hoạt banner này vì đã có banner khác đang hoạt động trong khoảng thời gian này tại vị trí này.'])->withInput();
+        }
+
+        $banner->save();
 
         return redirect()->route('admin.banners.index')->with('success', 'Banner đã được tạo mới thành công.');
     }
@@ -93,11 +101,11 @@ class BannerController extends Controller
 
         $request->validate([
             'title' => 'required|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
             'link' => 'nullable|url|max:255',
-            'active' => 'boolean',
             'display_at' => 'nullable|date',
             'display_end_at' => 'nullable|date|after_or_equal:display_at',
+            'location' => 'nullable|string|max:255',
         ]);
 
         $imagePath = $banner->image;
@@ -108,14 +116,21 @@ class BannerController extends Controller
             $imagePath = $request->file('image')->store('banners', 'public');
         }
 
-        $banner->update([
+        $banner->fill([
             'title' => $request->title,
             'image' => $imagePath,
             'link' => $request->link,
-            'active' => $request->has('active'),
-            'display_at' => $request->display_at,
-            'display_end_at' => $request->display_end_at,
+            'active' => $request->boolean('active'),
+            'display_at' => $request->display_at ? Carbon::parse($request->display_at)->startOfDay() : null,
+            'display_end_at' => $request->display_end_at ? Carbon::parse($request->display_end_at)->endOfDay() : null,
+            'location' => $request->location,
         ]);
+
+        if ($banner->active && $banner->hasOverlappingActiveBanner()) {
+            return back()->withErrors(['active' => 'Không thể kích hoạt banner này vì đã có banner khác đang hoạt động trong khoảng thời gian này tại vị trí này.'])->withInput();
+        }
+
+        $banner->save();
 
         return redirect()->route('admin.banners.index')->with('success', 'Banner đã được cập nhật thành công.');
     }
@@ -126,6 +141,14 @@ class BannerController extends Controller
     public function softDelete(string $id)
     {
         $banner = Banner::findOrFail($id);
+        $now = Carbon::now();
+
+        // Kiểm tra nếu banner đang hoạt động và thời gian hiển thị chưa kết thúc
+        // Hoặc nếu banner có display_end_at nhưng thời gian hiện tại vẫn <= display_end_at (cuối ngày đó)
+        if ($banner->active && $banner->display_end_at && $now->lessThanOrEqualTo(Carbon::parse($banner->display_end_at)->endOfDay())) {
+            return redirect()->route('admin.banners.index')->with('error', 'Không thể xóa banner này vì nó đang trong quá trình hiển thị.');
+        }
+
         $banner->delete();
         return redirect()->route('admin.banners.index')->with('success', 'Banner đã được chuyển vào thùng rác.');
     }
@@ -169,13 +192,49 @@ class BannerController extends Controller
             $ids = explode(',', $ids); // Đảm bảo $ids là một mảng
         }
 
-        $deletedCount = 0;
-        // Đối với banner, thường không có liên kết với sản phẩm, nên sẽ xóa tất cả các id được cung cấp.
-        // Nếu có logic kiểm tra liên kết sản phẩm trong tương lai, bạn có thể thêm vào đây.
-        Banner::whereIn('id', $ids)->delete();
-        $deletedCount = count($ids);
+        $bannersToDelete = [];
+        $notDeletedBannerTitles = [];
+        $now = Carbon::now();
 
-        return response()->json(['message' => 'Đã xóa mềm ' . $deletedCount . ' banner thành công.', 'status' => 'success', 'deletedCount' => $deletedCount], 200);
+        foreach ($ids as $id) {
+            $banner = Banner::find($id);
+            if ($banner) {
+                // Kiểm tra nếu banner đang hoạt động và thời gian hiển thị chưa kết thúc
+                if ($banner->active && $banner->display_end_at && $now->lessThanOrEqualTo(Carbon::parse($banner->display_end_at)->endOfDay())) {
+                    $notDeletedBannerTitles[] = $banner->title;
+                } else {
+                    $bannersToDelete[] = $id;
+                }
+            }
+        }
+
+        if (!empty($bannersToDelete)) {
+            Banner::whereIn('id', $bannersToDelete)->delete();
+        }
+
+        $deletedCount = count($bannersToDelete);
+        $notDeletedCount = count($notDeletedBannerTitles);
+
+        $message = '';
+        if ($deletedCount > 0) {
+            $message .= 'Đã xóa mềm ' . $deletedCount . ' banner thành công.';
+        }
+        if ($notDeletedCount > 0) {
+            if ($deletedCount > 0) {
+                $message .= ' Tuy nhiên, không thể xóa ' . $notDeletedCount . ' banner đang hiển thị: ' . implode(', ', $notDeletedBannerTitles) . '.';
+            } else {
+                $message .= 'Không thể xóa ' . $notDeletedCount . ' banner đang hiển thị: ' . implode(', ', $notDeletedBannerTitles) . '.';
+            }
+        }
+
+        $status = 'success';
+        if ($deletedCount == 0 && $notDeletedCount > 0) {
+            $status = 'error';
+        } elseif ($deletedCount > 0 && $notDeletedCount > 0) {
+            $status = 'warning';
+        }
+
+        return response()->json(['message' => $message, 'status' => $status, 'deletedCount' => $deletedCount], 200);
     }
 
     public function bulkRestore(Request $request)
