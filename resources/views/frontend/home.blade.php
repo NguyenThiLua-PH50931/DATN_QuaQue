@@ -583,7 +583,7 @@
                     {{-- Cashback banner --}}
                     @if ($newProductsCashbackBanner)
                         <div class="section-t-space">
-                            <div class="banner-contain hover-effect" style="min-height: 350px;">
+                            <div class="banner-contain hover-effect" style="min-height: 450px;">
                                 <img src="{{ asset('storage/' . $newProductsCashbackBanner->image) }}"
                                     class="bg-img blur-up lazyload" alt="{{ $newProductsCashbackBanner->title }}">
                                 <div class="banner-details p-center p-4 text-white text-center">
