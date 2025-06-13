@@ -336,7 +336,7 @@
                     $('#errorMessageModal').modal('show');
                 }
             });
-            
+
             // Hiển thị modal lỗi nếu có session error từ server (đối với xóa mềm cá nhân)
             @if(session('error'))
                 var errorMessage = "{{ session('error') }}";
