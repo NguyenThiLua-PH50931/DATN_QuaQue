@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('banners', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 100); // Tiêu đề hiển thị
+            $table->string('title', 255); // Tiêu đề hiển thị
             $table->string('image', 255); // Ảnh banner
             $table->string('link', 255); // Liên kết khi click
             $table->boolean('active')->default(true); // Có hiển thị không
