@@ -45,6 +45,17 @@
                                                 Member</option>
                                         </select>
                                     </div>
+                                    {{-- Lọc theo trạng thái --}}
+                                    <div class="col-md-2">
+                                        <select name="status" class="form-control">
+                                            <option value="">-- Trạng thái --</option>
+                                            <option value="1" {{ request('status') === '1' ? 'selected' : '' }}>Hiện
+                                            </option>
+                                            <option value="0" {{ request('status') === '0' ? 'selected' : '' }}>Ẩn
+                                            </option>
+                                        </select>
+                                    </div>
+
                                     <!-- Lọc từ ngày -->
                                     <div class="col-md-2">
                                         <input type="date" name="date_from" class="form-control"
@@ -120,48 +131,11 @@
                                                                 </a>
                                                             </li>
 
-                                                            <li>
-                                                                <a href="javascript:void(0)" data-bs-toggle="modal"
-                                                                    data-bs-target="#deleteModal{{ $value->id }}">
-                                                                    <i class="ri-delete-bin-line" title="Xóa"></i>
-                                                                </a>
-                                                            </li>
-
                                                             <!-- Modal xác nhận xóa tài khoản -->
                                                             <div class="modal fade" id="deleteModal{{ $value->id }}"
                                                                 tabindex="-1"
                                                                 aria-labelledby="deleteModalLabel{{ $value->id }}"
                                                                 aria-hidden="true">
-                                                                <div class="modal-dialog">
-                                                                    <div class="modal-content">
-                                                                        <div class="modal-header">
-                                                                            <h5 class="modal-title"
-                                                                                id="deleteModalLabel{{ $value->id }}">
-                                                                                Xác nhận xóa tài khoản
-                                                                            </h5>
-                                                                            <button type="button" class="btn-close"
-                                                                                data-bs-dismiss="modal"
-                                                                                aria-label="Đóng"></button>
-                                                                        </div>
-                                                                        <div class="modal-body">
-                                                                            Bạn có chắc chắn muốn xóa tài khoản
-                                                                            <strong>{{ $value->name }}</strong> không?
-                                                                        </div>
-                                                                        <div class="modal-footer">
-                                                                            <form
-                                                                                action="{{ route('admin.user.delete', $value->id) }}"
-                                                                                method="POST">
-                                                                                @csrf
-                                                                                @method('DELETE')
-                                                                                <button type="button"
-                                                                                    class="btn btn-secondary"
-                                                                                    data-bs-dismiss="modal">Hủy</button>
-                                                                                <button type="submit"
-                                                                                    class="btn btn-danger">Xóa</button>
-                                                                            </form>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
                                                             </div>
 
                                                         </ul>

@@ -29,7 +29,6 @@
             <div id="sidebar-menu">
                 <ul class="sidebar-links" id="simple-bar">
                     <li class="back-btn"></li>
-
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title link-nav" href="{{ route('admin.dashboard') }}">
                             <i class="ri-list-check"></i>
@@ -43,7 +42,7 @@
                         </a>
                         <ul class="sidebar-submenu">
                             <li><a href="{{ route('admin.user.index') }}">Tài khoản</a></li>
-                            <li><a href="{{ route('admin.user.hidden') }}">Tài khoản đã ẩn</a></li>
+                            {{-- <li><a href="{{ route('admin.user.hidden') }}">Tài khoản đã ẩn</a></li> --}}
                         </ul>
                     </li>
 
@@ -74,7 +73,7 @@
                             <i class="ri-landscape-line"></i>
                             <span>Vùng miền</span>
                         </a>
-                         <ul class="sidebar-submenu">
+                        <ul class="sidebar-submenu">
                             <li><a href="{{ url('/admin/regions') }}">Danh sách vùng miền</a></li>
                             <li><a href="{{ url('/admin/regions/trashed') }}">Thùng rác</a></li>
                         </ul>
