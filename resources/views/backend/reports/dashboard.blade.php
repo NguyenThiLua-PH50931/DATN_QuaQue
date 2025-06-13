@@ -15,7 +15,7 @@
     <div class="page-body">
 
         <div class="container mt-5">
-            <h2 class="mb-4">Dashboard Báo cáo</h2>
+            <h2 class="mb-4">Thống kê</h2>
             <div class="row">
                 <!-- Tổng doanh thu -->
                 <div class="col-sm-6 col-xxl-3 col-lg-6">
