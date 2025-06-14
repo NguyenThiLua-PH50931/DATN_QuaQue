@@ -19,6 +19,11 @@
                                 </ul>
                             </div>
                         </div>
+                        @if (session('success'))
+                            <div class="alert alert-success">
+                                {{ session('success') }}
+                            </div>
+                        @endif
                         {{-- Date Filter Form --}}
                         <form class="row g-3 mb-3" method="GET" action="{{ route('admin.blog.index') }}">
                             <div class="col-md-4">

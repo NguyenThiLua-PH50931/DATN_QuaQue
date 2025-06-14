@@ -32,7 +32,7 @@ class BlogController extends Controller
             $query->whereDate('end_date', '<=', $request->input('end_date'));
         }
 
-        $blog = $query->get();
+        $blog = $query->orderBy('id', 'desc')->get();
 
         return view('backend.blogs.index', compact('blog'));
     }
