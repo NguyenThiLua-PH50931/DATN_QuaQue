@@ -44,8 +44,8 @@
                                             <th>Ảnh</th>
                                             <th>Tiêu đề</th>
                                             <th>Đường link</th>
-                                            <th style="color: black; background-color: #f8f9fa;">Ngày hiển thị</th>
-                                            <th style="color: black; background-color: #f8f9fa;">Ngày dừng hiển thị</th>
+                                            <th>Ngày hiển thị</th>
+                                            <th>Ngày dừng hiển thị</th>
                                             <th>Hành động</th>
                                         </tr>
                                     </thead>
@@ -104,7 +104,7 @@
                                                    Bạn chắc chắn muốn xóa <strong>{{ $item->title }}</strong>?
                                                 </div>
                                                 <div class="modal-footer">
-                                                    <form action="{{ route('admin.blog.destroy', $item->id) }}" method="POST" class="d-flex justify-content-end">
+                                                    <form action="{{ route('admin.blog.softDelete', $item->id) }}" method="POST" class="d-flex justify-content-end">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Hủy</button>

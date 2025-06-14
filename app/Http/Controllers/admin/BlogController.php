@@ -146,20 +146,140 @@ class BlogController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Kiểm tra blog có đang hiển thị để chặn xóa mềm.
      */
-    public function destroy(string $id)
+    protected function isCurrentlyDisplaying(Blog $blog): bool
+    {
+        return $blog->active && $blog->end_date && now()->lessThanOrEqualTo(Carbon::parse($blog->end_date)->endOfDay());
+    }
+
+    /**
+     * Xóa mềm một blog (nếu không còn hiển thị).
+     */
+    public function softDelete(string $id)
     {
         $blog = Blog::findOrFail($id);
-        
-        // Delete thumbnail file
-        if ($blog->thumbnail && file_exists(public_path($blog->thumbnail))) {
-            unlink(public_path($blog->thumbnail));
+
+        if ($this->isCurrentlyDisplaying($blog)) {
+            return redirect()->route('admin.blog.index')->with('error', 'Không thể xóa blog đang trong thời gian hiển thị.');
         }
 
         $blog->delete();
+        return redirect()->route('admin.blog.index')->with('success', 'Blog đã được chuyển vào thùng rác.');
+    }
 
-        return redirect()->route('admin.blog.index')
-            ->with('success', 'Bài viết đã được xóa thành công!');
+    /**
+     * Xóa vĩnh viễn một blog đã bị xóa mềm.
+     */
+    public function forceDelete(string $id)
+    {
+        $blog = Blog::onlyTrashed()->findOrFail($id);
+
+        if ($blog->image) {
+            Storage::disk('public')->delete($blog->image);
+        }
+
+        $blog->forceDelete();
+        return redirect()->route('admin.blog.trashed')->with('success', 'Đã xoá vĩnh viễn blog.');
+    }
+
+    /**
+     * Khôi phục một blog đã bị xóa mềm.
+     */
+    public function restore(string $id)
+    {
+        Blog::onlyTrashed()->findOrFail($id)->restore();
+        return redirect()->route('admin.blog.index')->with('success', 'Blog đã được khôi phục.');
+    }
+
+    /**
+     * Danh sách các blog đã bị xóa mềm.
+     */
+    public function trashed()
+    {
+        $blogs = Blog::onlyTrashed()->get();
+        return view('backend.blogs.trashed', compact('blogs'));
+    }
+
+    /**
+     * Xóa mềm nhiều blog cùng lúc.
+     */
+    public function bulkDelete(Request $request)
+    {
+        $ids = collect($request->input('ids'))->filter()->values();
+
+        $blogs = Blog::whereIn('id', $ids)->get();
+
+        $deletable = [];
+        $blockedTitles = [];
+
+        foreach ($blogs as $blog) {
+            if ($this->isCurrentlyDisplaying($blog)) {
+                $blockedTitles[] = $blog->title;
+            } else {
+                $deletable[] = $blog->id;
+            }
+        }
+
+        Blog::whereIn('id', $deletable)->delete();
+
+        $deletedCount = count($deletable);
+        $blockedCount = count($blockedTitles);
+
+        $messages = [];
+        if ($deletedCount) {
+            $messages[] = "Đã xóa mềm $deletedCount blog.";
+        }
+        if ($blockedCount) {
+            $messages[] = "Không thể xóa $blockedCount blog đang hiển thị: " . implode(', ', $blockedTitles);
+        }
+
+        return response()->json([
+            'message' => implode(' ', $messages),
+            'status' => $deletedCount > 0
+                ? ($blockedCount > 0 ? 'warning' : 'success')
+                : 'error',
+            'deletedCount' => $deletedCount
+        ], 200);
+    }
+
+    /**
+     * Khôi phục nhiều blog đã bị xóa mềm.
+     */
+    public function bulkRestore(Request $request)
+    {
+        $ids = collect($request->input('ids'))->filter()->values();
+        Blog::onlyTrashed()->whereIn('id', $ids)->restore();
+
+        return response()->json([
+            'message' => 'Đã khôi phục các blog đã chọn thành công.',
+            'status' => 'success'
+        ], 200);
+    }
+
+    /**
+     * Xóa vĩnh viễn nhiều blog.
+     */
+    public function bulkForceDelete(Request $request)
+    {
+        $ids = collect($request->input('ids'))->filter()->values();
+
+        $deletedCount = 0;
+
+        $blogs = Blog::onlyTrashed()->whereIn('id', $ids)->get();
+
+        foreach ($blogs as $blog) {
+            if ($blog->image) {
+                Storage::disk('public')->delete($blog->image);
+            }
+            $blog->forceDelete();
+            $deletedCount++;
+        }
+
+        return response()->json([
+            'message' => "Đã xóa vĩnh viễn $deletedCount blog.",
+            'status' => 'success',
+            'deletedCount' => $deletedCount
+        ], 200);
     }
 }

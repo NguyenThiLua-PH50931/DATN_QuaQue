@@ -281,7 +281,14 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         Route::get('show/{blog}', [BlogController::class, 'show'])->name('show');
         Route::get('edit/{blog}', [BlogController::class, 'edit'])->name('edit');
         Route::put('update/{blog}', [BlogController::class, 'update'])->name('update');
-        Route::delete('destroy/{blog}', [BlogController::class, 'destroy'])->name('destroy');
+        Route::delete('destroy/{blog}', [BlogController::class, 'softDelete'])->name('softDelete');
+        Route::delete('{id}/force', [BlogController::class, 'forceDelete'])->name('forceDelete');
+        Route::post('{id}/restore', [BlogController::class, 'restore'])->name('restore');
+        Route::get('trashed', [BlogController::class, 'trashed'])->name('trashed');
+        Route::get('{id}', [BlogController::class, 'show'])->name('show');
+        Route::delete('bulk-delete', [BlogController::class, 'bulkDelete'])->name('bulkDelete');
+        Route::delete('bulk-force-delete', [BlogController::class, 'bulkForceDelete'])->name('bulkForceDelete');
+        Route::post('bulk-restore', [BlogController::class, 'bulkRestore'])->name('bulkRestore');
     });
 
     // Quản lý đánh giá
