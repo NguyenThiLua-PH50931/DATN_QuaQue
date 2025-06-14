@@ -78,6 +78,28 @@
                                                     </div>
                                                 </div>
 
+                                                <div class="mb-4 row align-items-center">
+                                                    <label for="start_date" class="col-lg-2 col-md-3 col-form-label form-label-title">Ngày hiển thị</label>
+                                                    <div class="col-md-3 col-lg-3">
+                                                        <input type="date" class="form-control" id="start_date" name="start_date"
+                                                            value="{{ old('start_date', date('Y-m-d')) }}">
+                                                        @error('start_date')
+                                                            <div class="text-danger">{{ $message }}</div>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                    
+                                                <div class="mb-4 row align-items-center">
+                                                    <label for="end_date" class="col-lg-2 col-md-3 col-form-label form-label-title">Ngày dừng hiển thị</label>
+                                                    <div class="col-md-3 col-lg-3">
+                                                        <input type="date" class="form-control" id="end_date" name="end_date"
+                                                            value="{{ old('end_date') }}">
+                                                        @error('end_date')
+                                                            <div class="text-danger">{{ $message }}</div>
+                                                        @enderror
+                                                    </div>   
+                                                </div>
+
                                                 <div class="row">
                                                     <div class="col-12 d-flex justify-content-end mt-4">
                                                         <a href="{{ route('admin.blog.index') }}" class="btn btn-secondary me-2">Hủy</a>
