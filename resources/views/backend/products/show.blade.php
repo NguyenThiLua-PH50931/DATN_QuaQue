@@ -1,601 +1,628 @@
 @extends('layouts.backend')
 @section('title', 'Chi tiết sản phẩm')
 @section('content')
+
+<!-- Modal mô tả đầy đủ -->
+<div class="modal fade" id="descriptionModal" tabindex="-1" aria-labelledby="descriptionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="descriptionModalLabel">Mô tả chi tiết</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body" id="descriptionModalBody"></div>
+        </div>
+    </div>
+</div>
+
+<div class="page-body">
+    <div class="card card-table p-3">
+
+        <div class="title-header option-title d-sm-flex d-block align-items-center justify-content-between">
+            <h5 class="mb-3 mb-sm-0">{{ $product->name }}</h5>
+            <a class="btn btn-solid" href="{{ route('admin.products.index') }}">Quay lại</a>
+        </div>
+
+        @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
+        @if(session('error'))
+        <div class="alert alert-danger">{{ session('error') }}</div>
+        @endif
+
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs mt-3" id="productTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab">Thông tin</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="variants-tab" data-bs-toggle="tab" data-bs-target="#variants" type="button" role="tab">Biến thể</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab">Đánh giá</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="comments-tab" data-bs-toggle="tab" data-bs-target="#comments" type="button" role="tab">Bình luận</button>
+            </li>
+        </ul>
+
+        <!-- Tab content -->
+        <div class="tab-content mt-3" id="productTabContent">
+
+            <!-- Thông tin -->
+            <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
+                <div class="row g-4">
+                    <div class="col-md-5">
+
+                        @php
+                        $gallery = [];
+                        if ($product->image) $gallery[] = asset('storage/' . $product->image);
+                        if ($product->product_images && $product->product_images->count()) {
+                        foreach ($product->product_images as $img) {
+                        $gallery[] = asset('storage/' . $img->image_url);
+                        }
+                        }
+                        if ($product->variants && $product->variants->count()) {
+                        foreach ($product->variants as $variant) {
+                        if (!empty($variant->image)) {
+                        $gallery[] = asset('storage/' . $variant->image);
+                        }
+                        }
+                        }
+                        @endphp
+
+                        <div class="product-gallery" style="max-width:350px; margin:auto;">
+
+                            <!-- Ảnh lớn hiển thị chính -->
+                            <div class="main-image-wrapper" style="border:1px solid #ddd; border-radius:10px; padding:10px; background:#fafafa;">
+                                <img id="mainImage" src="{{ $gallery[0] ?? '' }}" alt="Ảnh sản phẩm" style="width:100%; height:auto; border-radius:10px; object-fit:contain;">
+                            </div>
+
+                            <!-- Ảnh thumbnail -->
+                            <div class="thumbnail-wrapper" style="display:flex; justify-content:center; gap:8px; margin-top:10px; overflow-x:auto; padding-bottom:5px;">
+                                @foreach($gallery as $index => $img)
+                                <img src="{{ $img }}" alt="Thumbnail {{ $index + 1 }}"
+                                    class="thumbnail-image"
+                                    data-index="{{ $index }}"
+                                    style="width:60px; height:60px; object-fit:cover; border-radius:6px; border:2px solid transparent; cursor:pointer;">
+                                @endforeach
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <p><b>Danh mục:</b> {{ $product->category->name ?? 'N/A' }}</p>
+                        <p><b>Vùng miền:</b> {{ $product->region->name ?? 'N/A' }}</p>
+                        <p><b>Trạng thái:</b>
+                            <span class="badge status-badge product-status-badge {{ $product->active ? 'bg-success' : 'bg-danger' }}"
+                                style="cursor:pointer;"
+                                data-id="{{ $product->id }}"
+                                data-name="{{ $product->name }}"
+                                data-status="{{ $product->active }}">
+                                {{ $product->active ? 'Đang bán' : 'Ẩn' }}
+                            </span>
+                        </p>
+                        <p><b>Lượt xem tổng:</b> {{ $product->view_total }}</p>
+                        <p><b>Lượt xem ngày:</b> {{ $product->view_day }}</p>
+                        <p><b>Lượt xem tuần:</b> {{ $product->view_week }}</p>
+                        <p><b>Lượt xem tháng:</b> {{ $product->view_month }}</p>
+
+                        <p><b>Mô tả chung:</b></p>
+                        <p class="description-short text-primary"
+                            data-bs-toggle="modal" data-bs-target="#descriptionModal"
+                            data-id="{{ $product->id }}">
+                            {!! Str::limit(strip_tags($product->description), 200) !!}
+                            <br><small><i>Nhấn để xem thêm</i></small>
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Biến thể -->
+            <div class="tab-pane fade" id="variants" role="tabpanel" aria-labelledby="variants-tab">
+                <form id="bulk-delete-variants-form" method="POST" action="{{ route('admin.products.variant.bulkDelete') }}">
+                    @csrf
+                    <div class="product-table-wrapper">
+                        <table id="variantTable" class="table product-table align-middle">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="select-all-variants"></th>
+                                    <th>Tên biến thể</th>
+                                    <th>Mô tả</th>
+                                    <th>Giá</th>
+                                    <th>Số lượng</th>
+                                    <th>SKU</th>
+                                    <th>Trạng thái</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($product->variants as $variant)
+                                <tr class="product-row">
+                                    <td>
+                                        <input type="checkbox" class="variant-checkbox row-checkbox" name="variant_ids[]" value="{{ $variant->id }}">
+                                    </td>
+                                    <td>
+                                        <a href="{{ route('admin.products.variant.show', $variant->id) }}" class="fw-bold text-primary" style="font-size:16px;">
+                                            {{ $variant->name }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <span class="text-truncate description-short text-primary" style="max-width: 250px; cursor: pointer;"
+                                            data-bs-toggle="modal" data-bs-target="#descriptionModal"
+                                            data-variant-id="{{ $variant->id }}">
+                                            {!! Str::limit(strip_tags($variant->description), 50) ?: '<em>(Chưa có mô tả)</em>' !!}
+                                        </span>
+                                    </td>
+                                    <td>{{ number_format($variant->price, 0, ',', '.') }}₫</td>
+                                    <td>{{ $variant->stock }}</td>
+                                    <td>{{ $variant->sku }}</td>
+                                    <td>
+                                        <span class="badge {{ $variant->active ? 'bg-success' : 'bg-danger' }} status-badge variant-status-badge"
+                                            style="cursor:pointer"
+                                            data-id="{{ $variant->id }}"
+                                            data-name="{{ $variant->name }}"
+                                            data-status="{{ $variant->active }}">
+                                            {{ $variant->active ? 'Đang bán' : 'Ngừng bán' }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="{{ route('admin.products.variant.show', $variant->id) }}" class="action-link text-decoration-none me-2">
+                                            <i class="ri-eye-line"></i>
+                                        </a>
+                                        <a href="{{ route('admin.products.variant.edit', $variant->id) }}" class="action-link text-decoration-none me-2">
+                                            <i class="ri-pencil-line"></i>
+                                        </a>
+                                        <a href="javascript:void(0)" class="action-link text-decoration-none text-danger"
+                                            data-bs-toggle="modal" data-bs-target="#deleteVariantModal"
+                                            data-id="{{ $variant->id }}" data-name="{{ $variant->name }}">
+                                            <i class="ri-delete-bin-line"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                        <button type="button"
+                            id="delete-selected-variants"
+                            class="btn bulk-delete-btn btn-sm mt-2 d-inline-flex align-items-center gap-2"
+                            data-bs-toggle="modal"
+                            data-bs-target="#deleteBulkVariantModal"
+                            disabled>
+                            <i class="ri-delete-bin-line delete-bulk-icon"></i> Xóa chọn
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Đánh giá -->
+            <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
+                @if($product->reviews->count())
+                @foreach($product->reviews->take(5) as $review)
+                <div class="review-item border rounded p-3 mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <strong>{{ $review->user->name ?? 'Ẩn danh' }}</strong>
+                        <span class="text-warning">
+                            @for($i=1; $i<=5; $i++)
+                                <i class="fa{{ $i <= $review->rating ? 's' : 'r' }} fa-star"></i>
+                                @endfor
+                                <span class="ms-1 text-dark">({{ $review->rating }}/5)</span>
+                        </span>
+                    </div>
+                    <div class="text-muted mb-2" style="font-size: 13px;">{{ $review->created_at->format('d/m/Y H:i') }}</div>
+                    <div>{{ $review->comment }}</div>
+                </div>
+                @endforeach
+                @if($product->reviews->count() > 5)
+                <button class="btn btn-link" id="loadMoreReviewsBtn">Xem thêm đánh giá</button>
+                @endif
+                @else
+                <div class="text-muted">Chưa có đánh giá nào.</div>
+                @endif
+            </div>
+
+            <!-- Bình luận -->
+            <div class="tab-pane fade" id="comments" role="tabpanel" aria-labelledby="comments-tab">
+                @if($product->comments->count())
+                @foreach($product->comments->take(5) as $comment)
+                <div class="comment-item border rounded p-3 mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <strong>{{ $comment->user->name ?? 'Ẩn danh' }}</strong>
+                        <span class="text-muted" style="font-size: 13px;">{{ $comment->created_at->format('d/m/Y H:i') }}</span>
+                    </div>
+                    <div>{!! nl2br(e($comment->content)) !!}</div>
+                    @if($comment->replies->count())
+                    <div class="reply-box ms-3 mt-2">
+                        @foreach($comment->replies as $reply)
+                        <div class="{{ $reply->user && $reply->user->is_admin ? 'text-primary' : '' }}">
+                            <strong>
+                                {{ $reply->user && $reply->user->is_admin ? 'Quản trị viên ' : '' }}{{ $reply->user->name ?? 'Ẩn danh' }} trả lời:
+                            </strong>
+                            {!! nl2br(e($reply->reply)) !!}
+                            <span class="text-muted" style="font-size:12px;">({{ $reply->created_at->format('d/m/Y H:i') }})</span>
+                        </div>
+                        @endforeach
+                    </div>
+                    @endif
+                </div>
+                @endforeach
+                @if($product->comments->count() > 5)
+                <button class="btn btn-link" id="loadMoreCommentsBtn">Xem thêm bình luận</button>
+                @endif
+                @else
+                <div class="text-muted">Chưa có bình luận nào.</div>
+                @endif
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="changeVariantStatusModal" tabindex="-1" aria-labelledby="changeVariantStatusModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="change-variant-status-form" method="POST" action="">
+                @csrf
+                <div class="modal-body text-center">
+                    <h5 class="modal-title mb-3" id="changeVariantStatusModalLabel">Đổi trạng thái biến thể</h5>
+                    <p id="changeVariantStatusModalText"></p>
+                    <div class="btn space-between">
+                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-primary">Đồng ý</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="toggleStatusModal" tabindex="-1" aria-labelledby="toggleStatusModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="toggleStatusForm" method="POST" action="">
+                @csrf
+                <div class="modal-body text-center">
+                    <h5 class="modal-title mb-3" id="toggleStatusModalLabel">Đổi trạng thái sản phẩm</h5>
+                    <p id="toggleStatusModalText"></p>
+                    <div class="btn space-between">
+                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-primary">Đồng ý</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@push('styles')
+<link rel="stylesheet" href="//cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
 <style>
-    /* Base style */
-    .dataTables_paginate .pagination .page-item .page-link {
-        min-width: 36px;
-        height: 36px;
-        font-size: 16px;
-        border-radius: 8px;
-        margin: 0 1.5px;
-        color: #495057;
-        background: none;
-        border: none !important;
-        font-weight: 500;
-        box-shadow: none;
-        transition: background 0.15s, color 0.15s;
-        cursor: pointer;
-        padding: 0;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
+    .gallery-container {
+        display: flex;
+        gap: 12px;
+        max-width: 465px;
+        height: 350px;
     }
 
-    .dataTables_paginate .pagination .page-item.active .page-link,
-    .dataTables_paginate .pagination .page-item.active .page-link:hover,
-    .dataTables_paginate .pagination .page-item.active .page-link:focus,
-    .dataTables_wrapper .dataTables_paginate .paginate_button.active,
-    .dataTables_wrapper .dataTables_paginate .paginate_button.active:hover,
-    .dataTables_wrapper .dataTables_paginate .paginate_button.active:focus {
-        background: #0da487 !important;
-        border-radius: 7px;
-        color: #fff !important;
-        background-image: none !important;
-        box-shadow: 0 2px 8px #0da48725 !important;
-        border: none !important;
-        outline: none !important;
-    }
-
-
-    .dataTables_paginate .pagination .page-item .page-link {
-        min-width: 28px;
-        /* hoặc 24px nếu muốn nhỏ nữa */
-        height: 28px;
-        font-size: 14px;
-        /* chữ nhỏ hơn */
-        border-radius: 6px;
-        margin: 0 1px;
-        padding: 0;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    /* Hover các nút KHÔNG phải active hoặc disabled */
-    .dataTables_paginate .pagination .page-item:not(.active):not(.disabled) .page-link:hover {
-        background: #fff !important;
-        color: #0da487 !important;
-        box-shadow: 0 2px 8px #0da48725;
-        border: none !important;
-    }
-
-    /* Nút disabled */
-    .dataTables_paginate .pagination .page-item.disabled .page-link {
-        color: #e5e7eb !important;
-        background: none !important;
-        pointer-events: none;
-    }
-
-    /* Nút ellipsis (dấu ...) */
-    .dataTables_paginate .pagination .page-item .ellipsis {
-        pointer-events: none;
-        color: #b1bacf !important;
-        background: none !important;
-        font-size: 16px;
-        border: none !important;
-    }
-
-    .dataTables_paginate .pagination .page-item.active .page-link:hover,
-    .dataTables_paginate .pagination .page-item.active .page-link:focus {
-        background: #0da487 !important;
-        color: #fff !important;
-        box-shadow: 0 2px 8px #0da48725 !important;
-        border: none !important;
-        outline: none !important;
-        pointer-events: none;
-    }
-
-    .img-thumb {
-        transition: .25s;
+    .thumb-swiper {
+        height: 350px;
+        width: 85px;
     }
 
     .thumb-swiper .swiper-slide img {
-        cursor: pointer;
+        width: 80px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 7px;
+        border: 2px solid #ccc;
     }
 
-    .thumb-swiper .swiper-slide {
+    .main-image-wrapper {
+        flex: 1;
+        height: 320px;
+        max-width: 350px;
         display: flex;
         align-items: center;
         justify-content: center;
+        background: #fafafa;
+        border-radius: 10px;
+        overflow: hidden;
     }
 
-    .review-item,
-    .comment-item {
-        background: #f9f9fc;
-        border: 1px solid #e0e7ef;
-        border-radius: 8px;
+    .main-image-wrapper img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        border-radius: 10px;
     }
 
-    .reply-box {
-        background: #f0f5ff;
-        padding: 8px 12px;
-        border-radius: 6px;
-        font-size: 14px;
+    .description-short {
+        cursor: pointer;
+        color: #0d6efd;
     }
 
-    .bulk-delete-btn[disabled] {
-        background: #e1e8f3 !important;
-        color: #66708a !important;
-        border: none !important;
-        cursor: not-allowed !important;
-        opacity: 1 !important;
+    .thumbnail-image.selected {
+        border-color: #0d6efd !important;
     }
 
-    .bulk-delete-btn[disabled] .delete-bulk-icon {
-        color: #66708a !important;
+    .modal-dialog {
+        display: flex !important;
+        align-items: center !important;
+        min-height: calc(100vh - 1rem) !important;
     }
 
-    .bulk-delete-btn:not([disabled]) {
-        background: #becde4 !important;
-        color: #495057 !important;
-        border: none !important;
-        cursor: pointer !important;
-        box-shadow: 0 2px 8px #becde480;
-        transition: background .5s, color .5s;
+    .variant-name {
+        color: #0d6efd;
+        /* xanh bootstrap */
+        font-weight: 700;
+        /* in đậm */
+        text-decoration: none;
     }
 
-    .bulk-delete-btn:not([disabled]) .delete-bulk-icon {
-        color: #495057 !important;
+    .variant-name:hover {
+        text-decoration: underline;
     }
 
-    .bulk-delete-btn:not([disabled]):hover {
-        background: #aac4e7 !important;
+    .product-table-wrapper {
+        background: #f8fafd;
+        border-radius: 12px;
+        box-shadow: 0 2px 14px #dbeafe40;
+        padding: 16px;
+    }
+
+    .product-table thead tr,
+    .product-table tfoot tr {
+        background: #f1f5f9;
+    }
+
+    .product-row {
+        background: #fff;
+        border-radius: 10px;
+        border-bottom: 1px solid #e5e7eb;
+        transition: box-shadow .2s;
+    }
+
+    .product-row:hover {
+        background: #eef6ff;
+        box-shadow: 0 2px 8px #93c5fd22;
+    }
+
+    .action-link {
+        color: #7c3aed !important;
+        font-weight: 500;
     }
 </style>
-<!-- SwiperJS CSS & JS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-<div class="page-body">
-    <div class="container my-4">
-        <div class="card card-table">
-            <div class="title-header option-title d-sm-flex d-block">
-                <h5>{{ $product->name }}</h5>
-                <div class="right-options">
-                    <ul>
-                        <li>
-                            <a class="btn btn-solid" href="{{ route('admin.products.index') }}">Quay lại</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="row">
-                <!-- Thông tin sản phẩm chung -->
-                <div class="col-md-5">
-                    @php
-                    $gallery = [];
-                    if ($product->image) $gallery[] = asset('storage/' . $product->image);
-                    foreach ($product->images as $img) $gallery[] = asset('storage/' . $img->image_url);
-                    @endphp
-
-                    <div style="width:465px;height:350px;display:flex;gap:12px;">
-                        {{-- Thumbnails vertical --}}
-                        <div class="swiper thumb-swiper" style="height:350px; width:85px;">
-                            <div class="swiper-wrapper">
-                                @foreach($gallery as $img)
-                                <div class="swiper-slide">
-                                    <img src="{{ $img }}" class="img-thumb" style="width:80px; height:60px; object-fit:cover; border-radius:7px; border:2px solid #ccc;">
-                                </div>
-                                @endforeach
-                            </div>
-                        </div>
-                        {{-- Main image --}}
-                        <div style="flex:1; height:350px; display:flex; align-items:center; justify-content:center; background:#fafafa; border-radius:10px;">
-                            <img id="mainProductImg" src="{{ $gallery[0] ?? '' }}"
-                                class="img-fluid"
-                                style="max-width:350px; max-height:330px; object-fit:contain; border-radius:10px;">
-                        </div>
-                    </div>
-
-                    <p><b>Danh mục:</b> {{ $product->category->name ?? 'N/A' }}</p>
-                    <p><b>Vùng miền:</b> {{ $product->region->name ?? 'N/A' }}</p>
-                    <p><b>Trạng thái:</b>
-                        <span class="badge {{ $product->active ? 'bg-success' : 'bg-danger' }} status-badge"
-                            style="cursor:pointer"
-                            data-id="{{ $product->id }}"
-                            data-name="{{ $product->name ?? '' }}"
-                            data-status="{{ $product->active }}">
-                            {{ $product->active ? 'Đang bán' : 'Ẩn' }}
-                        </span>
-                    </p>
-                    <p><b>Lượt xem tổng:</b> {{ $product->view_total }}</p>
-                    <p><b>Lượt xem ngày:</b> {{ $product->view_day }}</p>
-                    <p><b>Lượt xem tuần:</b> {{ $product->view_week }}</p>
-                    <p><b>Lượt xem tháng:</b> {{ $product->view_month }}</p>
-                    <p><b>Mô tả chung:</b></p>
-                    <div>{!! $product->description !!}</div>
-                    <a href="{{ route('admin.products.edit', $product->slug) }}" class="btn btn-secondary mt-3">Sửa sản phẩm</a>
-                </div>
-                <!-- Biến thể -->
-                <div class="col-md-7">
-                    <div class="card card-table">
-                        <div class="card-body">
-                            <h4>Biến thể</h4>
-                            <div class="table-responsive">
-                                <form id="bulk-delete-form" method="POST" action="{{ route('admin.products.variant.bulkDelete') }}">
-                                    @csrf
-                                    <table class="table product-table align-middle" id="variantTable">
-                                        <thead>
-                                            <tr>
-                                                <th><input type="checkbox" id="select-all"></th> <!-- Checkbox chọn tất cả -->
-                                                <th>STT</th>
-                                                <th>Tên biến thể</th>
-                                                <th>Ảnh</th>
-                                                <th>Mô tả</th>
-                                                <th>Giá</th>
-                                                <th>Số lượng</th>
-                                                <th>SKU</th>
-                                                <th>Barcode</th>
-                                                <th>Trạng thái</th>
-                                                <th>Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach($product->variants as $k => $variant)
-                                            <tr class="product-row">
-                                                <td>
-                                                    <input type="checkbox" class="row-checkbox" name="ids[]" value="{{ $variant->id }}">
-                                                </td>
-                                                <td>{{ $k + 1 }}</td>
-                                                <td>
-                                                    <a href="{{ route('admin.products.variant.show', $variant->id) }}" class="fw-bold text-primary" style="font-size:16px;">
-                                                        {{ $variant->name }}
-                                                    </a>
-                                                </td>
-                                                <td>
-                                                    @if($variant->image)
-                                                    <img src="{{ asset('storage/' . $variant->image) }}" height="50px" style="border-radius:8px; object-fit:cover;">
-                                                    @else
-                                                    <img src="{{ asset('storage/' . $product->image) }}" height="50px" style="border-radius:8px; object-fit:cover;">
-                                                    @endif
-                                                </td>
-                                                <td>{{ \Illuminate\Support\Str::limit(strip_tags($variant->description), 50, '...') }}</td>
-
-                                                <td>{{ number_format($variant->price, 0, ',', '.') }}₫</td>
-                                                <td>{{ $variant->stock }}</td>
-                                                <td>{{ $variant->sku }}</td>
-                                                <td>{{ $variant->barcode }}</td>
-                                                <td>
-                                                    <span class="badge status-badge {{ $variant->active ? 'bg-success' : 'bg-danger' }}"
-                                                        style="cursor:pointer"
-                                                        data-id="{{ $variant->id }}"
-                                                        data-name="{{ $variant->name ?? '' }}"
-                                                        data-status="{{ $variant->active }}">
-                                                        {{ $variant->active ? 'Đang bán' : 'Ngừng bán' }}
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <a href="{{ route('admin.products.variant.show', $variant->id) }}" class="action-link text-decoration-none me-2" title="Xem">
-                                                        <i class="ri-eye-line"></i>
-                                                    </a>
-                                                    <a href="{{ route('admin.products.variant.edit', $variant->id) }}" class="action-link text-decoration-none me-2" title="Sửa">
-                                                        <i class="ri-pencil-line"></i>
-                                                    </a>
-                                                    <a href="javascript:void(0)" class="action-link text-decoration-none text-danger"
-                                                        data-bs-toggle="modal" data-bs-target="#deleteVariantModal"
-                                                        data-id="{{ $variant->id }}" data-name="{{ $variant->name }}">
-                                                        <i class="ri-delete-bin-line"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                    <button type="button"
-                                        id="delete-selected"
-                                        class="btn bulk-delete-btn btn-sm mt-2 d-inline-flex align-items-center gap-2 mb-3"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#deleteBulkModal"
-                                        disabled>
-                                        <i class="ri-delete-bin-line delete-bulk-icon"></i> Xóa
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Modal xác nhận xóa biến thể -->
-                    <div class="modal fade" id="deleteVariantModal" tabindex="-1" aria-labelledby="deleteVariantModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
-                                <form id="delete-variant-form" method="POST" action="">
-                                    @csrf
-                                    @method('DELETE')
-                                    <div class="modal-body text-center">
-                                        <h5 class="modal-title mb-2">Xóa biến thể?</h5>
-                                        <p id="delete-variant-message">Bạn chắc chắn muốn xóa biến thể này?</p>
-                                        <div class="button-box mt-4">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Không</button>
-                                            <button type="submit" class="btn btn-danger">Có</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-            <hr>
-
-            <!-- Đánh giá và bình luận -->
-            <div class="row mt-4">
-                {{-- Đánh giá --}}
-                <div class="col-md-6 mb-4">
-                    <h4 class="mb-3">Đánh giá sản phẩm</h4>
-                    @if($product->reviews->count())
-                    @foreach($product->reviews as $review)
-                    <div class="review-item border rounded p-2 mb-3">
-                        <div class="d-flex justify-content-between align-items-center mb-1">
-                            <b>{{ $review->user->name ?? 'Ẩn danh' }}</b>
-                            <span class="text-warning">
-                                @for($i=1;$i<=5;$i++)
-                                    <i class="fa{{ $i <= $review->rating ? 's' : 'r' }} fa-star"></i>
-                                    @endfor
-                                    <span class="ms-1 text-dark">({{ $review->rating }}/5)</span>
-                            </span>
-                        </div>
-                        <div class="text-muted mb-1" style="font-size: 13px;">{{ $review->created_at->format('d/m/Y H:i') }}</div>
-                        <div>{{ $review->comment }}</div>
-                    </div>
-                    @endforeach
-                    @else
-                    <div class="text-muted">Chưa có đánh giá nào.</div>
-                    @endif
-                </div>
-
-                {{-- Bình luận --}}
-                <div class="col-md-6 mb-4">
-                    <h4 class="mb-3">Bình luận sản phẩm</h4>
-                    @if($product->comments->count())
-                    @foreach($product->comments as $comment)
-                    <div class="comment-item border rounded p-2 mb-3">
-                        <div class="d-flex justify-content-between align-items-center mb-1">
-                            <b>{{ $comment->user->name ?? 'Ẩn danh' }}</b>
-                            <span class="text-muted" style="font-size: 13px;">{{ $comment->created_at->format('d/m/Y H:i') }}</span>
-                        </div>
-                        <div>{{ $comment->content }}</div>
-
-                        {{-- Các trả lời (nếu có) --}}
-                        @if($comment->replies && count($comment->replies))
-                        <div class="reply-box ms-3 mt-2">
-                            @foreach($comment->replies as $reply)
-                            @php
-                            $isAdmin = $reply->user && $reply->user->is_admin;
-                            $userName = $reply->user->name ?? 'Ẩn danh';
-                            @endphp
-                            <div class="{{ $isAdmin ? 'text-primary' : '' }}">
-                                <b>
-                                    {{ $isAdmin ? 'Quản trị viên '.$userName.' trả lời:' : $userName.' trả lời:' }}
-                                </b>
-                                {{ $reply->reply }}
-                                <span class="text-muted" style="font-size:12px;">
-                                    ({{ $reply->created_at->format('d/m/Y H:i') }})
-                                </span>
-                            </div>
-                            @endforeach
-                        </div>
-                        @endif
-                    </div>
-                    @endforeach
-                    @else
-                    <div class="text-muted">Chưa có bình luận nào.</div>
-                    @endif
-                </div>
-            </div>
-
-
-        </div>
-    </div>
-    @includeIf('backend.footer')
-</div>
-<!-- Modal đổi trạng thái biến thể -->
-<div class="modal fade" id="statusModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="statusModalLabel" aria-hidden="true">
-    <div class="modal-dialog  modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-body">
-                <h5 class="modal-title mb-3" id="statusModalLabel">Đổi trạng thái biến thể</h5>
-                <p id="modal-status-text"></p>
-                <button type="button" class="btn-close position-absolute top-0 end-0 m-2" data-bs-dismiss="modal" aria-label="Close"></button>
-                <div class="button-box text-end mt-4">
-                    <button type="button" class="btn btn--no btn-secondary me-2" data-bs-dismiss="modal">Không</button>
-                    <form id="status-toggle-form" method="POST" style="display:inline;">
-                        @csrf
-                        <button type="submit" class="btn btn--yes btn-primary">Đồng ý</button>
-                    </form>
-
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Modal đổi trạng thái sản phẩm -->
-<div class="modal fade" id="statusModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="statusModalLabel" aria-hidden="true">
-    <div class="modal-dialog  modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-body">
-                <h5 class="modal-title mb-3" id="statusModalLabel">Đổi trạng thái sản phẩm</h5>
-                <p id="modal-status-text"></p>
-                <button type="button" class="btn-close position-absolute top-0 end-0 m-2" data-bs-dismiss="modal" aria-label="Close"></button>
-                <div class="button-box text-end mt-4">
-                    <button type="button" class="btn btn--no btn-secondary me-2" data-bs-dismiss="modal">Không</button>
-                    <form id="status-toggle-form" method="POST" style="display:inline;">
-                        @csrf
-                        <button type="submit" class="btn btn--yes btn-primary">Đồng ý</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-@push('styles')
-<link rel="stylesheet" href="//cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 @endpush
 
 @push('scripts')
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-<script src="//cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script>
-    $('#variantTable').DataTable({
-        "pagingType": "full_numbers",
-        "lengthMenu": [10, 25, 50, 100],
-        "language": {
-            "lengthMenu": "Hiển thị _MENU_ dòng/trang",
-            "zeroRecords": "Không tìm thấy dữ liệu",
-            "info": "Hiển thị _START_ đến _END_ của _TOTAL_ dòng",
-            "infoEmpty": "Không có dữ liệu",
-            "infoFiltered": "(lọc từ _MAX_ dòng)",
-            "search": "Tìm kiếm:",
-            "paginate": {
-                "first": "1",
-                "last": "",
-                "next": ">",
-                "previous": "<"
-            }
-        },
-        "columnDefs": [{
-            "orderable": false,
-            "targets": [0, 8] // 0: STT, 8: Trạng thái (tùy table bạn không có cột thao tác nữa)
-        }]
-    });
+    function removeVietnameseTones(str) {
+        if (!str) return '';
+        str = str.toLowerCase();
+        str = str.replace(/á|à|ả|ã|ạ|ă|ắ|ằ|ẳ|ẵ|ặ|â|ấ|ầ|ẩ|ẫ|ậ/g, "a");
+        str = str.replace(/é|è|ẻ|ẽ|ẹ|ê|ế|ề|ể|ễ|ệ/g, "e");
+        str = str.replace(/i|í|ì|ỉ|ĩ|ị/g, "i");
+        str = str.replace(/ó|ò|ỏ|õ|ọ|ô|ố|ồ|ổ|ỗ|ộ|ơ|ớ|ờ|ở|ỡ|ợ/g, "o");
+        str = str.replace(/ú|ù|ủ|ũ|ụ|ư|ứ|ừ|ử|ữ|ự/g, "u");
+        str = str.replace(/ý|ỳ|ỷ|ỹ|ỵ/g, "y");
+        str = str.replace(/đ/g, "d");
+        str = str.replace(/\u0300|\u0301|\u0303|\u0309|\u0323/g, "");
+        str = str.replace(/\u02C6|\u0306|\u031B/g, "");
+        str = str.replace(/[^a-z0-9\s]/g, "");
+        return str;
+    }
 
-    // Fix nhãn "last" thành số cuối, ẩn khi chỉ 1 trang (y chang index)
-    $('#variantTable').on('draw.dt', function() {
-        var table = $('#variantTable').DataTable();
-        var totalPages = table.page.info().pages;
-
-        if (totalPages === 1) {
-            $('.paginate_button').not('.previous,.active,.next').hide();
-            $('.paginate_button.last').hide();
-        } else {
-            $('.paginate_button').show();
-            $('.paginate_button.last a').text(totalPages);
-            $('.paginate_button.first a').text(1);
-        }
-    });
-
-    $(document).on('click', '.status-badge', function() {
-        var id = $(this).data('id');
-        var name = $(this).data('name');
-        var status = $(this).data('status');
-
-        let nextStatus = (status == 1) ? 'Ngừng bán' : 'Đang bán';
-        if (!name) name = '(ID ' + id + ')';
-        $('#modal-status-text').html('Bạn muốn chuyển trạng thái biến thể <b>' + name + '</b> sang <span class="text-primary">' + nextStatus + '</span>?');
-
-        // Tạo URL chính xác bằng cách thay :id bằng giá trị thực
-        let url = toggleUrlBase.replace(':id', id);
-        $('#status-toggle-form').attr('action', url);
-
-        var modal = new bootstrap.Modal(document.getElementById('statusModal'));
-        modal.show();
-    });
-
-    $('.status-badge').click(function() {
-        var id = $(this).data('id');
-        var name = $(this).data('name');
-        var status = $(this).data('status');
-
-        let nextStatus = (status == 1) ? 'Ngừng bán' : 'Đang bán';
-        if (!name) name = '(ID ' + id + ')';
-        $('#modal-status-text').html('Bạn muốn chuyển trạng thái biến thể <b>' + name + '</b> sang <span class="text-primary">' + nextStatus + '</span>?');
-
-        let url = toggleUrlBase.replace(':id', id); // Thay :id thành id thực tế
-        $('#status-toggle-form').attr('action', url);
-
-        var modal = new bootstrap.Modal(document.getElementById('statusModal'));
-        modal.show();
-    });
-
+    // Custom search để hỗ trợ tìm không dấu
+    $.fn.dataTable.ext.type.search.string = function(data) {
+        return !data ? '' : removeVietnameseTones(data);
+    };
     document.addEventListener("DOMContentLoaded", function() {
-        var gallery = @json($gallery);
-        var currentIndex = 0;
-
-        var thumbSwiper = new Swiper('.thumb-swiper', {
-            direction: 'vertical',
-            slidesPerView: 4,
-            spaceBetween: 7,
-            mousewheel: true,
-            loop: true,
-            slideToClickedSlide: false,
-        });
-
-        function updateThumbActive(idx) {
-            // Reset tất cả thumbnail về mờ
-            document.querySelectorAll('.thumb-swiper .swiper-slide img').forEach(img => {
-                img.style.filter = 'grayscale(20%) blur(1px)';
-                img.style.opacity = '0.8';
-                img.style.borderColor = '#ccc';
-            });
-            // Chỉ ảnh ở ô đầu tiên được rõ nét
-            const slides = document.querySelectorAll('.thumb-swiper .swiper-slide');
-            if (slides.length > 0) {
-                const firstSlide = slides[thumbSwiper.activeIndex]; // ảnh ở ô đầu
-                if (firstSlide) {
-                    const img = firstSlide.querySelector('img');
-                    if (img) {
-                        img.style.filter = 'none';
-                        img.style.opacity = '1';
-                        img.style.borderColor = '#1976d2';
-                    }
+        // =======================
+        // 1. DataTable cho bảng biến thể
+        // =======================
+        var variantTable = $('#variantTable').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [10, 25, 50, 100],
+            "language": {
+                "lengthMenu": "Hiển thị _MENU_ dòng/trang",
+                "zeroRecords": "Không tìm thấy dữ liệu",
+                "info": "Hiển thị _START_ đến _END_ của _TOTAL_ dòng",
+                "infoEmpty": "Không có dữ liệu",
+                "infoFiltered": "(lọc từ _MAX_ dòng)",
+                "search": "Tìm kiếm:",
+                "paginate": {
+                    "first": "1",
+                    "last": "",
+                    "next": ">",
+                    "previous": "<"
                 }
+            },
+            "columnDefs": [{
+                "orderable": false,
+                "targets": [0, 7] // Cột checkbox và actions không cho sắp xếp
+            }]
+        });
+
+        // =======================
+        // 2. Checkbox chọn tất cả biến thể và bật/tắt nút xóa nhóm
+        // =======================
+        const selectAllVariants = $('#select-all-variants');
+        const variantCheckboxes = $('.variant-checkbox');
+        const deleteSelectedVariantsBtn = $('#delete-selected-variants');
+
+        // Cập nhật trạng thái nút xóa nhóm dựa vào checkbox được chọn
+        function updateDeleteButton() {
+            deleteSelectedVariantsBtn.prop('disabled', !variantCheckboxes.is(':checked'));
+        }
+
+        // Khi checkbox chọn tất cả thay đổi
+        selectAllVariants.on('change', function() {
+            variantCheckboxes.prop('checked', $(this).prop('checked')); // check/uncheck tất cả biến thể
+            updateDeleteButton();
+        });
+
+        // Khi checkbox từng biến thể thay đổi
+        variantCheckboxes.on('change', function() {
+            if (!$(this).prop('checked')) {
+                selectAllVariants.prop('checked', false); // Nếu có checkbox nào bỏ chọn, bỏ chọn luôn chọn tất cả
+            } else if (variantCheckboxes.length === $('.variant-checkbox:checked').length) {
+                selectAllVariants.prop('checked', true); // Nếu tất cả checkbox được chọn thì check select all
             }
+            updateDeleteButton();
+        });
+
+        // Khởi tạo trạng thái nút xóa nhóm
+        updateDeleteButton();
+
+        // =======================
+        // 3. Cập nhật phân trang nút "last" của DataTable cho hợp lý
+        // =======================
+        variantTable.on('draw.dt', function() {
+            var totalPages = variantTable.page.info().pages;
+
+            if (totalPages === 1) {
+                // Nếu chỉ có 1 trang thì ẩn các nút phân trang không cần thiết
+                $('.paginate_button').not('.previous,.active,.next').hide();
+                $('.paginate_button.last').hide();
+            } else {
+                // Hiện nút phân trang và cập nhật nhãn số trang đầu/cuối
+                $('.paginate_button').show();
+                $('.paginate_button.last a').text(totalPages);
+                $('.paginate_button.first a').text(1);
+            }
+        });
+
+        // =======================
+        // 4. Modal mô tả chi tiết (sản phẩm & biến thể) - Fetch mô tả qua AJAX
+        // =======================
+        const descriptionModal = new bootstrap.Modal(document.getElementById('descriptionModal'));
+        const descriptionModalBody = document.getElementById('descriptionModalBody');
+        const descriptionModalLabel = document.getElementById('descriptionModalLabel');
+
+        document.querySelectorAll('.description-short').forEach(el => {
+            el.addEventListener('click', function() {
+                const productId = this.getAttribute('data-id');
+                const variantId = this.getAttribute('data-variant-id');
+
+                let url = '';
+                if (variantId) {
+                    url = `/admin/products/variant/${variantId}/description`;
+                } else if (productId) {
+                    url = `/admin/products/${productId}/description`;
+                } else {
+                    alert('Không tìm thấy mô tả.');
+                    return;
+                }
+
+                // Gọi fetch lấy mô tả chi tiết từ server
+                fetch(url)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Không tải được mô tả.');
+                        }
+                        return response.text();
+                    })
+                    .then(html => {
+                        // Gán mô tả trả về vào modal và show modal
+                        descriptionModalBody.innerHTML = html;
+                        descriptionModalLabel.textContent = 'Mô tả chi tiết';
+                        descriptionModal.show();
+                    })
+                    .catch(err => {
+                        alert(err.message);
+                    });
+            });
+        });
+
+        // =======================
+        // 5. Xử lý thay đổi ảnh chính khi click thumbnail ảnh sản phẩm
+        // =======================
+        const gallery = @json($gallery); // Biến gallery từ server qua blade (array các url ảnh)
+        const mainImage = document.getElementById('mainImage');
+        const thumbnails = document.querySelectorAll('.thumbnail-image');
+
+        function setActiveThumbnail(index) {
+            thumbnails.forEach((thumb, i) => {
+                if (i === index) {
+                    thumb.classList.add('selected'); // Highlight thumbnail đang chọn
+                } else {
+                    thumb.classList.remove('selected');
+                }
+            });
         }
 
-        function showMainImage(idx) {
-            document.getElementById('mainProductImg').src = gallery[idx];
-            thumbSwiper.slideToLoop(idx, 400, false);
-            setTimeout(() => updateThumbActive(idx), 410); // Đợi slide xong mới cập nhật active
-        }
-
-        // Sự kiện click vào thumbnail (luôn lấy realIndex gốc)
-        thumbSwiper.on('click', function(swiper, e) {
-            var clickedSlide = e.target.closest('.swiper-slide');
-            if (!clickedSlide) return;
-            var idx = parseInt(clickedSlide.getAttribute('data-swiper-slide-index')) || 0;
-            showMainImage(idx);
+        thumbnails.forEach(thumb => {
+            thumb.addEventListener('click', () => {
+                const idx = parseInt(thumb.getAttribute('data-index'));
+                if (gallery[idx]) {
+                    mainImage.src = gallery[idx]; // Thay ảnh chính theo thumbnail chọn
+                    setActiveThumbnail(idx);
+                }
+            });
         });
 
-        // Khi next/prev bằng chuột/drag
-        thumbSwiper.on('slideChange', function() {
-            var idx = thumbSwiper.realIndex;
-            showMainImage(idx);
+        // Mặc định chọn thumbnail đầu tiên
+        setActiveThumbnail(0);
+
+        // =======================
+        // 6. Modal đổi trạng thái biến thể
+        // =======================
+        const variantStatusBadges = document.querySelectorAll('.variant-status-badge');
+        const variantModal = new bootstrap.Modal(document.getElementById('changeVariantStatusModal'));
+        const variantModalForm = document.getElementById('change-variant-status-form');
+        const variantModalText = document.getElementById('changeVariantStatusModalText');
+
+        variantStatusBadges.forEach(badge => {
+            badge.addEventListener('click', () => {
+                const id = badge.getAttribute('data-id');
+                const name = badge.getAttribute('data-name');
+                const status = badge.getAttribute('data-status');
+
+                const nextStatus = status == 1 ? 0 : 1;
+                const nextStatusText = nextStatus == 1 ? 'Đang bán' : 'Ngừng bán';
+
+                variantModalText.innerHTML = `Bạn có muốn đổi trạng thái biến thể <strong>${name}</strong> sang <span class="text-primary">${nextStatusText}</span>?`;
+                variantModalForm.action = `/admin/products/variant/${id}/toggle-status`;
+                variantModal.show();
+            });
         });
 
-        // Init lần đầu
-        showMainImage(0);
-    });
-    $('#deleteVariantModal').on('show.bs.modal', function(e) {
-        var button = $(e.relatedTarget);
-        var id = button.data('id');
-        var name = button.data('name');
-        var form = $('#delete-variant-form');
-        form.attr('action', '/admin/products/variant/' + id);
-        $('#delete-variant-message').text('Bạn chắc chắn muốn xóa biến thể "' + name + '"?');
-    });
-    $(function() {
-        $('#select-all').on('change', function() {
-            $('.row-checkbox').prop('checked', $(this).is(':checked'));
-            updateBulkDeleteBtn();
+        // =======================
+        // 7. Modal đổi trạng thái sản phẩm
+        // =======================
+        const productStatusBadges = document.querySelectorAll('.product-status-badge');
+        const productModal = new bootstrap.Modal(document.getElementById('toggleStatusModal'));
+        const productForm = document.getElementById('toggleStatusForm');
+        const productModalText = document.getElementById('toggleStatusModalText');
+
+        productStatusBadges.forEach(badge => {
+            badge.addEventListener('click', () => {
+                const id = badge.getAttribute('data-id');
+                const name = badge.getAttribute('data-name');
+                const status = badge.getAttribute('data-status');
+
+                const nextStatusText = status == 1 ? 'Ẩn' : 'Đang bán';
+
+                productModalText.innerHTML = `Bạn có chắc muốn đổi trạng thái sản phẩm <strong>${name}</strong> sang <span class="text-primary">${nextStatusText}</span>?`;
+                productForm.action = `/admin/products/${id}/toggle`;
+                productModal.show();
+            });
         });
 
-        $('.row-checkbox').on('change', function() {
-            updateBulkDeleteBtn();
+        // =======================
+        // 8. Nút "Xem thêm đánh giá" và "Xem thêm bình luận" - hiện alert (chưa có AJAX)
+        // =======================
+        document.getElementById('loadMoreReviewsBtn')?.addEventListener('click', function() {
+            alert('Bạn có thể mở rộng chức năng này bằng AJAX hoặc phân trang riêng.');
         });
 
-        function updateBulkDeleteBtn() {
-            $('#delete-selected').prop('disabled', $('.row-checkbox:checked').length === 0);
-        }
-
-        $('#confirm-bulk-delete').on('click', function() {
-            $('#bulk-delete-form').submit();
+        document.getElementById('loadMoreCommentsBtn')?.addEventListener('click', function() {
+            alert('Bạn có thể mở rộng chức năng này bằng AJAX hoặc phân trang riêng.');
         });
     });
 </script>
 
-
 @endpush
+
 @endsection

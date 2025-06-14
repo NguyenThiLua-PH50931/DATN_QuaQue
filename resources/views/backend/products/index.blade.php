@@ -171,7 +171,93 @@
                                     </ul>
                                 </div>
                             </div>
+<<<<<<< HEAD
+                        </div>
+
+                        @if(session('success'))
+                        <div class="alert alert-success">{{ session('success') }}</div>
+                        @endif
+                        @if(session('error'))
+                        <div class="alert alert-danger">{{ session('error') }}</div>
+                        @endif
+                        <div>
+                            <div class="table-responsive">
+                                <div class="product-table-wrapper">
+                                    <form id="bulk-delete-form" method="POST" action="{{ route('admin.products.bulkDelete') }}">
+                                        @csrf
+                                        <table class="table product-table align-middle" id="productTable">
+                                            <thead>
+                                                <tr>
+                                                    <th><input type="checkbox" id="select-all"></th>
+                                                    <th>Thông tin</th>
+                                                    <th>Ảnh</th>
+                                                    <th>Danh mục</th>
+                                                    <th>Vùng miền</th>
+                                                    <th>Cập nhật lúc</th>
+                                                    <th>Trạng thái</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($products as $product)
+                                                <tr class="product-row">
+                                                    <td>
+                                                        <input type="checkbox" class="row-checkbox" name="ids[]" value="{{ $product->id }}">
+                                                    </td>
+                                                    <td>
+                                                        <div>
+                                                            <a href="{{ route('admin.products.show', $product->slug) }}" class="fw-bold text-primary" style="font-size:16px;">
+                                                                {{ $product->name }}
+                                                            </a>
+                                                            <div class="small text-muted mt-1">
+                                                                {{ $product->short_desc ?? '' }}
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <img src="{{ asset('storage/' . $product->image) }}" class="product-thumb" alt="" style="width:64px;height:64px;object-fit:cover;border-radius:8px;">
+                                                    </td>
+                                                    <td>{{ $product->category->name ?? '' }}</td>
+                                                    <td>{{ $product->region->name ?? '' }}</td>
+                                                    <td>{{ $product->updated_at->format('d/m/Y H:i:s') }}</td>
+                                                    <td>
+                                                        <span class="badge {{ $product->active ? 'bg-success' : 'bg-danger' }} status-badge"
+                                                            style="cursor:pointer"
+                                                            data-id="{{ $product->id }}"
+                                                            data-name="{{ $product->name ?? '' }}"
+                                                            data-status="{{ $product->active }}">
+                                                            {{ $product->active ? 'Đang bán' : 'Ngừng bán' }}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <a href="{{ route('admin.products.show', $product->slug) }}" class="action-link text-decoration-none me-2">
+                                                            <i class="ri-eye-line"></i>
+                                                        </a>
+                                                        <a href="{{ route('admin.products.edit', $product->slug) }}" class="action-link text-decoration-none me-2">
+                                                            <i class="ri-pencil-line"></i>
+                                                        </a>
+                                                        <a href="#" class="action-link text-decoration-none text-danger" data-bs-toggle="modal"
+                                                            data-bs-target="#deleteOneModal"
+                                                            data-id="{{ $product->id }}"
+                                                            data-name="{{ $product->name }}">
+                                                            <i class="ri-delete-bin-line"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                        <button type="button"
+                                            id="delete-selected"
+                                            class="btn bulk-delete-btn btn-sm mt-2 d-inline-flex align-items-center gap-2"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteBulkModal"
+                                            disabled>
+                                            <i class="ri-delete-bin-line delete-bulk-icon"></i> Xóa
+                                        </button>
+=======
                             <div>
+>>>>>>> b42e700c7e2fc1f0ff37ccb9176e9e83536e2888
 
                                 <div class="table-responsive overflow-hidden">
                                     <div class="product-table-wrapper">
@@ -273,6 +359,56 @@
         @includeIf('backend.footer')
     </div>
 
+<<<<<<< HEAD
+<!-- Modal đổi trạng thái sản phẩm -->
+<div class="modal fade" id="statusModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="statusModalLabel" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <h5 class="modal-title mb-3" id="statusModalLabel">Đổi trạng thái sản phẩm</h5>
+                <p id="modal-status-text"></p>
+                <button type="button" class="btn-close position-absolute top-0 end-0 m-2" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="button-box text-end mt-4">
+                    <button type="button" class="btn btn--no btn-secondary me-2" data-bs-dismiss="modal">Không</button>
+                    <form id="status-toggle-form" method="POST" style="display:inline;">
+                        @csrf
+                        <button type="submit" class="btn btn--yes btn-primary">Đồng ý</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Xác Nhận Xóa Nhiều -->
+<div class="modal fade" id="deleteBulkModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="deleteBulkModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <h5 class="modal-title mb-2">Xóa sản phẩm đã chọn?</h5>
+                <p>Bạn chắc chắn muốn xóa các sản phẩm đã chọn?</p>
+                <div class="button-box mt-4">
+                    <button type="button" class="btn btn--no btn-secondary" data-bs-dismiss="modal">No</button>
+                    <button type="button" id="confirm-bulk-delete" class="btn btn--yes btn-danger">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Xác Nhận Xóa Một -->
+<div class="modal fade" id="deleteOneModal" data-bs-toggle="modal" tabindex="-1" aria-labelledby="deleteOneModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="delete-one-form" method="POST">
+                @csrf
+                @method('DELETE')
+                <div class="modal-body text-center">
+                    <h5 class="modal-title mb-2">Xóa sản phẩm?</h5>
+                    <p id="delete-one-message">Bạn chắc chắn muốn xóa sản phẩm này?</p>
+                    <div class="button-box mt-4">
+                        <button type="button" class="btn btn--no btn-secondary" data-bs-dismiss="modal">No</button>
+                        <button type="submit" class="btn btn--yes btn-danger">Yes</button>
+=======
     <!-- Modal đổi trạng thái sản phẩm -->
     <div class="modal fade" id="statusModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="statusModalLabel" aria-hidden="true">
@@ -289,6 +425,7 @@
                             @csrf
                             <button type="submit" class="btn btn--yes btn-primary">Đồng ý</button>
                         </form>
+>>>>>>> b42e700c7e2fc1f0ff37ccb9176e9e83536e2888
                     </div>
                 </div>
             </div>
@@ -337,6 +474,75 @@
         <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
     @endpush
 
+<<<<<<< HEAD
+@push('scripts')
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script>
+    function removeVietnameseTones(str) {
+        if (!str) return '';
+        str = str.toLowerCase();
+        str = str.replace(/á|à|ả|ã|ạ|ă|ắ|ằ|ẳ|ẵ|ặ|â|ấ|ầ|ẩ|ẫ|ậ/g, "a");
+        str = str.replace(/é|è|ẻ|ẽ|ẹ|ê|ế|ề|ể|ễ|ệ/g, "e");
+        str = str.replace(/i|í|ì|ỉ|ĩ|ị/g, "i");
+        str = str.replace(/ó|ò|ỏ|õ|ọ|ô|ố|ồ|ổ|ỗ|ộ|ơ|ớ|ờ|ở|ỡ|ợ/g, "o");
+        str = str.replace(/ú|ù|ủ|ũ|ụ|ư|ứ|ừ|ử|ữ|ự/g, "u");
+        str = str.replace(/ý|ỳ|ỷ|ỹ|ỵ/g, "y");
+        str = str.replace(/đ/g, "d");
+        str = str.replace(/\u0300|\u0301|\u0303|\u0309|\u0323/g, "");
+        str = str.replace(/\u02C6|\u0306|\u031B/g, "");
+        str = str.replace(/[^a-z0-9\s]/g, "");
+        return str;
+    }
+
+    // Custom search để hỗ trợ tìm không dấu
+    $.fn.dataTable.ext.type.search.string = function(data) {
+        return !data ? '' : removeVietnameseTones(data);
+    };
+    $('#productTable').DataTable({
+        "pagingType": "full_numbers",
+        "lengthMenu": [10, 25, 50, 100],
+        "language": {
+            "lengthMenu": "Hiển thị _MENU_ dòng/trang",
+            "zeroRecords": "Không tìm thấy dữ liệu",
+            "info": "Hiển thị _START_ đến _END_ của _TOTAL_ dòng",
+            "infoEmpty": "Không có dữ liệu",
+            "infoFiltered": "(lọc từ _MAX_ dòng)",
+            "search": "Tìm kiếm:",
+            "paginate": {
+                "first": "1",
+                "last": "", // Không để _MAX_ nữa
+                "next": ">",
+                "previous": "<"
+            }
+        },
+        "columnDefs": [{
+            "orderable": false,
+            "targets": [0,2, 7]
+        }]
+    });
+
+    function removeVietnameseTones(str) {
+        str = str.toLowerCase();
+        str = str.replace(/á|à|ả|ã|ạ|ă|ắ|ằ|ẳ|ẵ|ặ|â|ấ|ầ|ẩ|ẫ|ậ/g, "a");
+        str = str.replace(/é|è|ẻ|ẽ|ẹ|ê|ế|ề|ể|ễ|ệ/g, "e");
+        str = str.replace(/i|í|ì|ỉ|ĩ|ị/g, "i");
+        str = str.replace(/ó|ò|ỏ|õ|ọ|ô|ố|ồ|ổ|ỗ|ộ|ơ|ớ|ờ|ở|ỡ|ợ/g, "o");
+        str = str.replace(/ú|ù|ủ|ũ|ụ|ư|ứ|ừ|ử|ữ|ự/g, "u");
+        str = str.replace(/ý|ỳ|ỷ|ỹ|ỵ/g, "y");
+        str = str.replace(/đ/g, "d");
+        // Loại bỏ ký tự đặc biệt
+        str = str.replace(/\u0300|\u0301|\u0303|\u0309|\u0323/g, "");
+        str = str.replace(/\u02C6|\u0306|\u031B/g, "");
+        str = str.replace(/[^a-z0-9\s]/g, "");
+        return str;
+    }
+    // Fix nhãn "last" thành số cuối, ẩn khi chỉ 1 trang
+    $('#productTable').on('draw.dt', function() {
+        var table = $('#productTable').DataTable();
+        var totalPages = table.page.info().pages;
+=======
     @push('scripts')
         <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
         <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
@@ -369,6 +575,7 @@
             $('#productTable').on('draw.dt', function() {
                 var table = $('#productTable').DataTable();
                 var totalPages = table.page.info().pages;
+>>>>>>> b42e700c7e2fc1f0ff37ccb9176e9e83536e2888
 
                 if (totalPages === 1) {
                     // Chỉ hiện nút active và trái/phải (nếu muốn), ẩn hết số khác và "last"
@@ -381,10 +588,17 @@
                 }
             });
 
+<<<<<<< HEAD
+    $('.status-badge').click(function() {
+        var id = $(this).data('id');
+        var name = $(this).data('name');
+        var status = $(this).data('status');
+=======
             $('.status-badge').click(function() {
                 var id = $(this).data('id');
                 var name = $(this).data('name'); // phải có data-name ở trên
                 var status = $(this).data('status');
+>>>>>>> b42e700c7e2fc1f0ff37ccb9176e9e83536e2888
 
                 let nextStatus = (status == 1) ? 'Ngừng bán' : 'Đang bán';
                 // Nếu name rỗng (undefined/null), show id cho dễ debug
@@ -432,6 +646,5 @@
             });
         </script>
     @endpush
-
 
 @endsection
