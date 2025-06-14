@@ -339,12 +339,15 @@ ul {
 
                                             {{-- TTTT (trạng thái thanh toán) --}}
                                             <td>
-                                                <span class="text-nowrap text-truncate d-inline-block"
-                                                    style="max-width: 100px; font-weight: normal;"
-                                                    title="{{ $paymentStatusText }}">
-                                                    {{ $paymentStatusText }}
+                                                <span 
+                                                    class="payment-status-label {{ $order->payment_status === 'paid' ? 'payment-paid' : ($order->payment_status === 'unpaid' ? 'payment-unpaid' : 'payment-failed') }}"
+                                                    id="payment-status-{{ $order->id }}"
+                                                >
+                                                    {{ $order->payment_status === 'paid' ? 'Đã thanh toán' : ($order->payment_status === 'unpaid' ? 'Chưa thanh toán' : 'Thanh toán thất bại') }}
                                                 </span>
                                             </td>
+
+
 
                                             {{-- Trạng thái đơn hàng --}}
                                             <td>

@@ -10,11 +10,30 @@ use App\Models\admin\Product;
 
 class CouponsController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $coupons = Coupons::with('products')->get();
-        return view('backend.coupons.index', compact('coupons'));
+        $query = Coupons::with('products');
+
+        if ($request->filled('active')) {
+            $query->where('active', $request->input('active'));
+        }
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->input('date_from'));
+        }
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->input('date_to'));
+        }
+        $coupons = $query->orderBy('created_at', 'desc')
+            ->paginate(15)
+            ->appends($request->except('page'));
+        return view('backend.coupons.index', [
+            'coupons'    => $coupons,
+            'filterActive'   => $request->input('active', ''),
+            'filterDateFrom' => $request->input('date_from', ''),
+            'filterDateTo'   => $request->input('date_to', ''),
+        ]);
     }
+
     public function create()
     {
         $products = Product::all();

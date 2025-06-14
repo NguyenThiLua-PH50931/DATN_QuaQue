@@ -20,8 +20,8 @@
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Tiêu đề:</label>
-                                <p class="form-control-plaintext">{{ $banner->title }}</p>
+                                <h5 class="fw-bold">Tiêu đề:</h5>
+                                <div class="ck-content">{!! $banner->title !!}</div>
                             </div>
 
                             <div class="mb-3">
@@ -46,6 +46,11 @@
                             <div class="mb-3">
                                 <label class="form-label">Hiển thị lúc:</label>
                                 <p class="form-control-plaintext">{{ $banner->display_at ?? 'N/A' }}</p>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Vị trí:</label>
+                                <p class="form-control-plaintext">{{ $banner->location ?? 'N/A' }}</p>
                             </div>
 
                             <div class="mb-3">

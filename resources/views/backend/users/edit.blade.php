@@ -17,7 +17,8 @@
 
                                     <ul class="nav nav-pills mb-3" role="tablist">
                                         <li class="nav-item" role="presentation">
-                                            <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#account-info" type="button">Thông tin tài khoản</button>
+                                            <button class="nav-link active" data-bs-toggle="pill"
+                                                data-bs-target="#account-info" type="button">Thông tin tài khoản</button>
                                         </li>
                                     </ul>
 
@@ -30,7 +31,7 @@
                                                 @method('PUT')
 
                                                 {{-- Họ và tên --}}
-                                                <div class="mb-4 row align-items-center">
+                                                {{-- <div class="mb-4 row align-items-center">
                                                     <label class="form-label-title col-lg-2 col-md-3 mb-0">Họ và tên</label>
                                                     <div class="col-md-9 col-lg-10">
                                                         <input class="form-control" type="text" name="name" value="{{ old('name', $user->name) }}">
@@ -38,10 +39,10 @@
                                                             <p class="text-danger">{{ $message }}</p>
                                                         @enderror
                                                     </div>
-                                                </div>
+                                                </div> --}}
 
                                                 {{-- Email --}}
-                                                <div class="mb-4 row align-items-center">
+                                                {{-- <div class="mb-4 row align-items-center">
                                                     <label class="form-label-title col-lg-2 col-md-3 mb-0">Email</label>
                                                     <div class="col-md-9 col-lg-10">
                                                         <input class="form-control" type="email" name="email" value="{{ old('email', $user->email) }}">
@@ -49,10 +50,10 @@
                                                             <p class="text-danger">{{ $message }}</p>
                                                         @enderror
                                                     </div>
-                                                </div>
+                                                </div> --}}
 
                                                 {{-- Số điện thoại --}}
-                                                <div class="mb-4 row align-items-center">
+                                                {{-- <div class="mb-4 row align-items-center">
                                                     <label class="form-label-title col-lg-2 col-md-3 mb-0">Số điện thoại</label>
                                                     <div class="col-md-9 col-lg-10">
                                                         <input class="form-control" type="text" name="phone" value="{{ old('phone', $user->phone) }}">
@@ -60,7 +61,7 @@
                                                             <p class="text-danger">{{ $message }}</p>
                                                         @enderror
                                                     </div>
-                                                </div>
+                                                </div> --}}
 
                                                 {{-- Vai trò --}}
                                                 <div class="mb-4 row align-items-center">
@@ -68,8 +69,12 @@
                                                     <div class="col-md-9 col-lg-10">
                                                         <select class="form-control" name="role">
                                                             <option value="">-- Chọn vai trò --</option>
-                                                            <option value="admin" {{ old('role', $user->role) == 'admin' ? 'selected' : '' }}>Admin</option>
-                                                            <option value="member" {{ old('role', $user->role) == 'member' ? 'selected' : '' }}>Member</option>
+                                                            <option value="admin"
+                                                                {{ old('role', $user->role) == 'admin' ? 'selected' : '' }}>
+                                                                Admin</option>
+                                                            <option value="member"
+                                                                {{ old('role', $user->role) == 'member' ? 'selected' : '' }}>
+                                                                Member</option>
                                                         </select>
                                                         @error('role')
                                                             <p class="text-danger">{{ $message }}</p>
@@ -78,7 +83,7 @@
                                                 </div>
 
                                                 {{-- Mật khẩu (để trống nếu không đổi) --}}
-                                                <div class="mb-4 row align-items-center">
+                                                {{-- <div class="mb-4 row align-items-center">
                                                     <label class="form-label-title col-lg-2 col-md-3 mb-0">Mật khẩu mới</label>
                                                     <div class="col-md-9 col-lg-10">
                                                         <input class="form-control" type="password" name="password">
@@ -87,10 +92,10 @@
                                                             <p class="text-danger">{{ $message }}</p>
                                                         @enderror
                                                     </div>
-                                                </div>
+                                                </div> --}}
 
                                                 {{-- Xác nhận mật khẩu --}}
-                                                <div class="mb-4 row align-items-center">
+                                                {{-- <div class="mb-4 row align-items-center">
                                                     <label class="form-label-title col-lg-2 col-md-3 mb-0">Xác nhận mật khẩu</label>
                                                     <div class="col-md-9 col-lg-10">
                                                         <input class="form-control" type="password" name="password_confirmation">
@@ -98,10 +103,10 @@
                                                             <p class="text-danger">{{ $message }}</p>
                                                         @enderror
                                                     </div>
-                                                </div>
+                                                </div> --}}
 
                                                 {{-- Ảnh đại diện --}}
-                                                <div class="mb-4 row align-items-center">
+                                                {{-- <div class="mb-4 row align-items-center">
                                                     <label class="form-label-title col-lg-2 col-md-3 mb-0">Ảnh đại diện</label>
                                                     <div class="col-md-9 col-lg-10">
                                                         <input class="form-control mb-2" type="file" name="avatar">
@@ -112,13 +117,14 @@
                                                             <p class="text-danger">{{ $message }}</p>
                                                         @enderror
                                                     </div>
-                                                </div>
+                                                </div> --}}
 
                                                 {{-- Nút gửi --}}
-                                                <div class="row align-items-center">
-                                                    <div class="col-md-12 text-end mt-3">
-                                                        <button type="submit" class="btn btn-primary">Cập nhật tài khoản</button>
-                                                    </div>
+                                                <div class="d-flex justify-content-end gap-2 mt-4">
+                                                    <button type="submit" class="btn btn-primary">Cập nhật</button>
+                                                    <a href="{{ route('admin.user.index') }}"
+                                                        class="btn btn-secondary">Quay
+                                                        lại</a>
                                                 </div>
                                             </form>
                                         </div>
@@ -130,5 +136,5 @@
                 </div>
             </div>
         </div>
-     </div>
+    </div>
 @endsection
