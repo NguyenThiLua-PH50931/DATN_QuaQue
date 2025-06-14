@@ -51,7 +51,7 @@ class Product extends Model
 
     public function variants()
     {
-        return $this->hasMany(Variant::class, 'product_id');
+        return $this->hasMany(Variant::class, 'product_id', 'id');
     }
 
     public function reviews()
@@ -59,10 +59,11 @@ class Product extends Model
         return $this->hasMany(Review::class)->latest();
     }
 
-    public function images()
+    public function product_images()
     {
-        return $this->hasMany(ProductImage::class);
+        return $this->hasMany(ProductImage::class, 'product_id', 'id');
     }
+
 
     public function comments()
     {

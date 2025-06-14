@@ -118,9 +118,10 @@ Route::view('/seller/seller-dashboard', 'frontend.seller.seller-dashboard');
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin'], function () {
 
     Route::get('home', [HomeController::class, 'home'])->name('home');
-     // Route cho dashboard tổng quan và báo cáo
+
+    // Route cho dashboard tổng quan và báo cáo
     Route::get('/reports', [ReportController::class, 'dashboard'])->name('dashboard');
-   
+
     // Route::group(['prefix' => 'reports', 'as' => 'reports.'], function () {
     //     Route::get('/', [ReportController::class, 'dashboard'])->name('dashboard');
     //     Route::get('/revenue', [ReportController::class, 'revenueByMonthYear'])->name('revenue');
@@ -144,12 +145,14 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         Route::post('/store', [AdminProductController::class, 'store'])->name('store');
         Route::get('/{slug}', [AdminProductController::class, 'show'])->name('show');
         Route::post('/{id}/toggle', [AdminProductController::class, 'toggleStatus'])->name('toggle');
-        Route::post('/variant/{id}/toggle', [AdminProductController::class, 'toggleVariantStatus'])->name('variant.toggle');
         Route::post('/bulk-delete', [AdminProductController::class, 'bulkDelete'])->name('bulkDelete');
         Route::delete('/{id}', [AdminProductController::class, 'destroy'])->name('destroy');
         Route::get('/{slug}/edit', [AdminProductController::class, 'edit'])->name('edit');
         Route::post('/{slug}/update', [AdminProductController::class, 'update'])->name('update');
         Route::post('/delete-image', [AdminProductController::class, 'deleteImage'])->name('deleteImage');
+        Route::get('/{id}/description', [AdminProductController::class, 'getDescription'])->name('description');
+        Route::get('/variant/{id}/description', [AdminProductController::class, 'getVariantDescription'])->name('variant.description');
+        Route::post('/variant/{id}/toggle-status', [AdminProductController::class, 'toggleVariantStatus'])->name('variant.toggleStatus');
     });
 
     // bien the
@@ -282,17 +285,18 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
     });
 
     // Quản lý đánh giá
-  Route::prefix('reviews')->name('reviews.')->group(function () {
-    Route::get('/', [ReviewController::class, 'index'])->name('index');
-    Route::get('/{id}/edit', [ReviewController::class, 'edit'])->name('edit');
-    Route::put('/{id}', [ReviewController::class, 'update'])->name('update');
-    Route::delete('/{id}', [ReviewController::class, 'destroy'])->name('destroy');
-    // Route::get('/{id}/reply', [ReviewController::class, 'reply'])->name('reviews.reply');
-    // Route::post('/{id}/reply', [ReviewController::class, 'storeReply'])->name('reviews.storeReply');
-    // Route::get('/{reviewId}/reply/{replyId}/edit', [ReviewController::class, 'editReply'])->name('reviews.editReply');
-    // Route::put('/{reviewId}/reply/{replyId}', [ReviewController::class, 'updateReply'])->name('reviews.updateReply');
-    // Route::delete('/{reviewId}/reply/{replyId}', [ReviewController::class, 'destroyReply'])->name('reviews.destroyReply');
-});
+    Route::prefix('reviews')->name('reviews.')->group(function () {
+        Route::get('/', [ReviewController::class, 'index'])->name('index');
+        Route::get('/{id}/edit', [ReviewController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [ReviewController::class, 'update'])->name('update');
+        Route::delete('/{id}', [ReviewController::class, 'destroy'])->name('destroy');
+        // Route::get('/{id}/reply', [ReviewController::class, 'reply'])->name('reviews.reply');
+        // Route::post('/{id}/reply', [ReviewController::class, 'storeReply'])->name('reviews.storeReply');
+        // Route::get('/{reviewId}/reply/{replyId}/edit', [ReviewController::class, 'editReply'])->name('reviews.editReply');
+        // Route::put('/{reviewId}/reply/{replyId}', [ReviewController::class, 'updateReply'])->name('reviews.updateReply');
+        // Route::delete('/{reviewId}/reply/{replyId}', [ReviewController::class, 'destroyReply'])->name('reviews.destroyReply');
+    });
+
 
     // Quản lý sản phẩm
     Route::post('/categories/store-quick', [AdminCategoryController::class, 'storeQuick'])->name('categories.storeQuick');
