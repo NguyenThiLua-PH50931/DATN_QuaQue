@@ -118,9 +118,15 @@ Route::view('/seller/seller-dashboard', 'frontend.seller.seller-dashboard');
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin'], function () {
 
     Route::get('home', [HomeController::class, 'home'])->name('home');
+<<<<<<< HEAD
     // Route cho dashboard tổng quan và báo cáo
     Route::get('/reports', [ReportController::class, 'dashboard'])->name('dashboard');
 
+=======
+     // Route cho dashboard tổng quan và báo cáo
+    Route::get('/reports', [ReportController::class, 'dashboard'])->name('dashboard');
+   
+>>>>>>> b42e700c7e2fc1f0ff37ccb9176e9e83536e2888
     // Route::group(['prefix' => 'reports', 'as' => 'reports.'], function () {
     //     Route::get('/', [ReportController::class, 'dashboard'])->name('dashboard');
     //     Route::get('/revenue', [ReportController::class, 'revenueByMonthYear'])->name('revenue');
@@ -284,6 +290,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
     });
 
     // Quản lý đánh giá
+<<<<<<< HEAD
     Route::prefix('reviews')->name('reviews.')->group(function () {
         Route::get('/', [ReviewController::class, 'index'])->name('index');
         Route::get('/{id}/edit', [ReviewController::class, 'edit'])->name('edit');
@@ -295,6 +302,19 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         // Route::put('/{reviewId}/reply/{replyId}', [ReviewController::class, 'updateReply'])->name('reviews.updateReply');
         // Route::delete('/{reviewId}/reply/{replyId}', [ReviewController::class, 'destroyReply'])->name('reviews.destroyReply');
     });
+=======
+  Route::prefix('reviews')->name('reviews.')->group(function () {
+    Route::get('/', [ReviewController::class, 'index'])->name('index');
+    Route::get('/{id}/edit', [ReviewController::class, 'edit'])->name('edit');
+    Route::put('/{id}', [ReviewController::class, 'update'])->name('update');
+    Route::delete('/{id}', [ReviewController::class, 'destroy'])->name('destroy');
+    // Route::get('/{id}/reply', [ReviewController::class, 'reply'])->name('reviews.reply');
+    // Route::post('/{id}/reply', [ReviewController::class, 'storeReply'])->name('reviews.storeReply');
+    // Route::get('/{reviewId}/reply/{replyId}/edit', [ReviewController::class, 'editReply'])->name('reviews.editReply');
+    // Route::put('/{reviewId}/reply/{replyId}', [ReviewController::class, 'updateReply'])->name('reviews.updateReply');
+    // Route::delete('/{reviewId}/reply/{replyId}', [ReviewController::class, 'destroyReply'])->name('reviews.destroyReply');
+});
+>>>>>>> b42e700c7e2fc1f0ff37ccb9176e9e83536e2888
 
     // Quản lý sản phẩm
     Route::post('/categories/store-quick', [AdminCategoryController::class, 'storeQuick'])->name('categories.storeQuick');
