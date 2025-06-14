@@ -6,36 +6,36 @@ use App\Http\Controllers\Controller;
 use App\Models\admin\Blog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class BlogController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-  public function index(Request $request)
-{
-    $data = $request->validate([
-        'date_from' => 'nullable|date',
-        'date_to'   => 'nullable|date|after_or_equal:date_from',
-    ]);
+    public function index(Request $request)
+    {
+        $data = $request->validate([
+            'start_date' => 'nullable|date',
+            'end_date'   => 'nullable|date|after_or_equal:start_date',
+        ]);
 
-    $query = Blog::query();
+        $query = Blog::query();
 
-    // Lọc theo ngày
-    if (!empty($data['date_from'])) {
-        $query->whereDate('created_at', '>=', $data['date_from']);
+        // Lọc theo ngày bắt đầu hiển thị
+        if ($request->has('start_date') && $request->input('start_date')) {
+            $query->whereDate('start_date', '>=', $request->input('start_date'));
+        }
+
+        // Lọc theo ngày kết thúc hiển thị
+        if ($request->has('end_date') && $request->input('end_date')) {
+            $query->whereDate('end_date', '<=', $request->input('end_date'));
+        }
+
+        $blog = $query->get();
+
+        return view('backend.blogs.index', compact('blog'));
     }
-
-    if (!empty($data['date_to'])) {
-        $query->whereDate('created_at', '<=', $data['date_to']);
-    }
-
-    $blog = $query->latest()
-        ->paginate(10)
-        ->appends($request->only(['date_from', 'date_to'])); // Giữ lại dữ liệu lọc trên phân trang
-
-    return view('backend.blogs.index', compact('blog'));
-}
 
     /**
      * Show the form for creating a new resource.
@@ -53,7 +53,9 @@ class BlogController extends Controller
         $request->validate([
             'title' => 'required|string|max:200',
             'content' => 'required|string',
-            'thumbnail' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'thumbnail' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date'
         ]);
 
         // Handle file upload
@@ -68,7 +70,13 @@ class BlogController extends Controller
             'title' => $request->title,
             'slug' => Str::slug($request->title),
             'content' => $request->content,
-            'thumbnail' => $thumbnail
+            'thumbnail' => $thumbnail,
+            'start_date' => $request->start_date
+                ? Carbon::parse($request->start_date)->startOfDay()->format('Y-m-d')
+                : null,
+            'end_date' => $request->end_date
+                ? Carbon::parse($request->end_date)->endOfDay()->format('Y-m-d')
+                : null
         ]);
 
         return redirect()->route('admin.blog.index')
@@ -101,7 +109,9 @@ class BlogController extends Controller
         $request->validate([
             'title' => 'required|string|max:200',
             'content' => 'required|string',
-            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date'
         ]);
 
         $blog = Blog::findOrFail($id);
@@ -122,6 +132,13 @@ class BlogController extends Controller
         $blog->title = $request->title;
         $blog->slug = Str::slug($request->title);
         $blog->content = $request->content;
+        $blog->start_date = $request->start_date
+            ? Carbon::parse($request->start_date)->startOfDay()->format('Y-m-d')
+            : null;
+
+        $blog->end_date = $request->end_date
+            ? Carbon::parse($request->end_date)->endOfDay()->format('Y-m-d')
+            : null;
         $blog->save();
 
         return redirect()->route('admin.blog.index')
