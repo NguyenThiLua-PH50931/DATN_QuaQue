@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\admin\Attribute;
 use App\Models\admin\AttributeValue;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
 
@@ -13,30 +14,47 @@ class AttributeController extends Controller
 {
     public function storeQuick(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:100',
-            'values' => 'required|string'
+        // Tạo validator với rule unique cho cột name, trả về lỗi nếu trùng
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:100|unique:attributes,name',
+            'values' => 'required|string',
         ], [
             'name.required' => 'Tên thuộc tính bắt buộc',
+            'name.unique' => 'Tên thuộc tính đã tồn tại, vui lòng chọn tên khác',
             'values.required' => 'Nhập giá trị thuộc tính (phân tách bởi dấu phẩy)',
         ]);
 
+        // Nếu validate lỗi, trả về JSON lỗi với status 422
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        // Tạo thuộc tính mới
         $attr = Attribute::create([
             'name' => $request->name,
-            'slug' => Str::slug($request->name)
+            'slug' => Str::slug($request->name),
         ]);
-        $values = explode(',', $request->values);
+
+        // Tạo các giá trị thuộc tính
+        $values = array_filter(array_map('trim', explode(',', $request->values)), fn($v) => $v !== '');
+        $attributeValues = [];
         foreach ($values as $val) {
-            $val = trim($val);
-            if ($val) {
-                AttributeValue::create([
-                    'attribute_id' => $attr->id,
-                    'value' => $val,
-                    'slug' => Str::slug($val)
-                ]);
-            }
+            $attributeValues[] = AttributeValue::create([
+                'attribute_id' => $attr->id,
+                'value' => $val,
+                'slug' => Str::slug($val),
+            ]);
         }
-        return back()->with('success', 'Tạo thuộc tính thành công!');
+
+        // Trả về JSON thành công kèm dữ liệu thuộc tính và các giá trị
+        return response()->json([
+            'success' => true,
+            'attribute' => $attr,
+            'attributeValues' => $attributeValues,
+        ]);
     }
 
     public function index()

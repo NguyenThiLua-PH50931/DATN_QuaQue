@@ -1,4 +1,3 @@
-
 @extends('layouts.backend')
 @section('title', 'Quản lý sản phẩm')
 @section('content')
@@ -171,6 +170,13 @@
                                 </ul>
                             </div>
                         </div>
+
+                        @if(session('success'))
+                        <div class="alert alert-success">{{ session('success') }}</div>
+                        @endif
+                        @if(session('error'))
+                        <div class="alert alert-danger">{{ session('error') }}</div>
+                        @endif
                         <div>
                             <div class="table-responsive">
                                 <div class="product-table-wrapper">
@@ -298,7 +304,7 @@
     </div>
 </div>
 <!-- Modal Xác Nhận Xóa Một -->
-<div class="modal fade" id="deleteOneModal" data-bs-toggle="modal" tabindex="-1" aria-labelledby="deleteOneModalLabel" aria-hidden="true" >
+<div class="modal fade" id="deleteOneModal" data-bs-toggle="modal" tabindex="-1" aria-labelledby="deleteOneModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <form id="delete-one-form" method="POST">
@@ -328,6 +334,26 @@
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 <script>
+    function removeVietnameseTones(str) {
+        if (!str) return '';
+        str = str.toLowerCase();
+        str = str.replace(/á|à|ả|ã|ạ|ă|ắ|ằ|ẳ|ẵ|ặ|â|ấ|ầ|ẩ|ẫ|ậ/g, "a");
+        str = str.replace(/é|è|ẻ|ẽ|ẹ|ê|ế|ề|ể|ễ|ệ/g, "e");
+        str = str.replace(/i|í|ì|ỉ|ĩ|ị/g, "i");
+        str = str.replace(/ó|ò|ỏ|õ|ọ|ô|ố|ồ|ổ|ỗ|ộ|ơ|ớ|ờ|ở|ỡ|ợ/g, "o");
+        str = str.replace(/ú|ù|ủ|ũ|ụ|ư|ứ|ừ|ử|ữ|ự/g, "u");
+        str = str.replace(/ý|ỳ|ỷ|ỹ|ỵ/g, "y");
+        str = str.replace(/đ/g, "d");
+        str = str.replace(/\u0300|\u0301|\u0303|\u0309|\u0323/g, "");
+        str = str.replace(/\u02C6|\u0306|\u031B/g, "");
+        str = str.replace(/[^a-z0-9\s]/g, "");
+        return str;
+    }
+
+    // Custom search để hỗ trợ tìm không dấu
+    $.fn.dataTable.ext.type.search.string = function(data) {
+        return !data ? '' : removeVietnameseTones(data);
+    };
     $('#productTable').DataTable({
         "pagingType": "full_numbers",
         "lengthMenu": [10, 25, 50, 100],
@@ -347,10 +373,25 @@
         },
         "columnDefs": [{
             "orderable": false,
-            "targets": [0, 7]
+            "targets": [0,2, 7]
         }]
     });
 
+    function removeVietnameseTones(str) {
+        str = str.toLowerCase();
+        str = str.replace(/á|à|ả|ã|ạ|ă|ắ|ằ|ẳ|ẵ|ặ|â|ấ|ầ|ẩ|ẫ|ậ/g, "a");
+        str = str.replace(/é|è|ẻ|ẽ|ẹ|ê|ế|ề|ể|ễ|ệ/g, "e");
+        str = str.replace(/i|í|ì|ỉ|ĩ|ị/g, "i");
+        str = str.replace(/ó|ò|ỏ|õ|ọ|ô|ố|ồ|ổ|ỗ|ộ|ơ|ớ|ờ|ở|ỡ|ợ/g, "o");
+        str = str.replace(/ú|ù|ủ|ũ|ụ|ư|ứ|ừ|ử|ữ|ự/g, "u");
+        str = str.replace(/ý|ỳ|ỷ|ỹ|ỵ/g, "y");
+        str = str.replace(/đ/g, "d");
+        // Loại bỏ ký tự đặc biệt
+        str = str.replace(/\u0300|\u0301|\u0303|\u0309|\u0323/g, "");
+        str = str.replace(/\u02C6|\u0306|\u031B/g, "");
+        str = str.replace(/[^a-z0-9\s]/g, "");
+        return str;
+    }
     // Fix nhãn "last" thành số cuối, ẩn khi chỉ 1 trang
     $('#productTable').on('draw.dt', function() {
         var table = $('#productTable').DataTable();
@@ -369,7 +410,7 @@
 
     $('.status-badge').click(function() {
         var id = $(this).data('id');
-        var name = $(this).data('name'); // phải có data-name ở trên
+        var name = $(this).data('name');
         var status = $(this).data('status');
 
         let nextStatus = (status == 1) ? 'Ngừng bán' : 'Đang bán';
@@ -417,6 +458,5 @@
     });
 </script>
 @endpush
-
 
 @endsection

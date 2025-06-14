@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\admin\Comment;
 use App\Models\admin\CommentReply;
 use Illuminate\Http\Request;
+use App\Mail\CommentReplied;
+use Illuminate\Support\Facades\Mail;
 
 class CommentController extends Controller
 {
@@ -18,12 +20,12 @@ class CommentController extends Controller
         if ($request->filled('search')) {
             $search = $request->input('search');
             $query->where('content', 'like', "%{$search}%")
-                  ->orWhereHas('user', function ($q) use ($search) {
-                      $q->where('name', 'like', "%{$search}%");
-                  })
-                  ->orWhereHas('product', function ($q) use ($search) {
-                      $q->where('name', 'like', "%{$search}%");
-                  });
+                ->orWhereHas('user', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                })
+                ->orWhereHas('product', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                });
         }
 
         if ($request->filled('status')) {
@@ -60,7 +62,18 @@ class CommentController extends Controller
         ]);
 
         $comment = Comment::findOrFail($id);
+        $oldStatus = $comment->status;
         $comment->update(['status' => $request->status]);
+
+        // Gửi email nếu trạng thái thay đổi
+        if ($oldStatus !== $request->status) {
+            try {
+                Mail::to($comment->user->email)->send(new CommentReplied($comment));
+                \Log::info('Status update email sent to: ' . $comment->user->email);
+            } catch (\Exception $e) {
+                \Log::error('Failed to send status update email for comment ' . $id . ': ' . $e->getMessage());
+            }
+        }
 
         return redirect()->route('admin.comments.index')->with('success', 'Trạng thái bình luận đã được cập nhật thành công!');
     }
@@ -68,15 +81,27 @@ class CommentController extends Controller
     public function approve($id)
     {
         $comment = Comment::findOrFail($id);
-        $comment->update(['status' => 'approved']);
-        return redirect()->route('admin.comments.index')->with('success', 'Bình luận đã được duyệt!');
+        $comment->update(['status' => 'visible']);
+        try {
+            Mail::to($comment->user->email)->send(new CommentReplied($comment));
+            \Log::info('Approval email sent to: ' . $comment->user->email);
+        } catch (\Exception $e) {
+            \Log::error('Failed to send approval email for comment ' . $id . ': ' . $e->getMessage());
+        }
+        return redirect()->route('admin.comments.index')->with('success', 'Bình luận đã được hiển thị!');
     }
 
     public function reject($id)
     {
         $comment = Comment::findOrFail($id);
-        $comment->update(['status' => 'rejected']);
-        return redirect()->route('admin.comments.index')->with('success', 'Bình luận đã bị từ chối!');
+        $comment->update(['status' => 'hidden']);
+        try {
+            Mail::to($comment->user->email)->send(new CommentReplied($comment));
+            \Log::info('Rejection email sent to: ' . $comment->user->email);
+        } catch (\Exception $e) {
+            \Log::error('Failed to send rejection email for comment ' . $id . ': ' . $e->getMessage());
+        }
+        return redirect()->route('admin.comments.index')->with('success', 'Bình luận đã bị ẩn!');
     }
 
     public function reply($id)
@@ -94,9 +119,17 @@ class CommentController extends Controller
         $comment = Comment::findOrFail($id);
         CommentReply::create([
             'comment_id' => $id,
+           'admin_id' => auth()->id(),
             'admin_id' => auth()->id(),
             'reply' => $request->reply,
         ]);
+
+        try {
+            Mail::to($comment->user->email)->send(new CommentReplied($comment, $request->reply));
+            \Log::info('Reply email sent to: ' . $comment->user->email);
+        } catch (\Exception $e) {
+            \Log::error('Failed to send reply email for comment ' . $id . ': ' . $e->getMessage());
+        }
 
         return redirect()->route('admin.comments.reply', $id)->with('success', 'Phản hồi đã được gửi!');
     }
@@ -118,6 +151,14 @@ class CommentController extends Controller
             'reply' => $request->reply,
         ]);
 
+        $comment = Comment::findOrFail($id);
+        try {
+            Mail::to($comment->user->email)->send(new CommentReplied($comment, $request->reply));
+            \Log::info('Updated reply email sent to: ' . $comment->user->email);
+        } catch (\Exception $e) {
+            \Log::error('Failed to send updated reply email for comment ' . $id . ': ' . $e->getMessage());
+        }
+
         return redirect()->route('admin.comments.reply', $id)->with('success', 'Phản hồi đã được cập nhật thành công!');
     }
 
@@ -127,5 +168,4 @@ class CommentController extends Controller
         $reply->delete();
         return redirect()->route('admin.comments.reply', $id)->with('success', 'Phản hồi đã được xóa thành công!');
     }
-    
 }

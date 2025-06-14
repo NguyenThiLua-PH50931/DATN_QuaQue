@@ -20,7 +20,7 @@ class DiscountCodeRequest extends FormRequest
             'end_date' => 'required|date|after_or_equal:start_date',
             'free_shipping' => 'sometimes|accepted',
             'usage_limit' => 'required|integer|min:1',
-            'discount_type' => 'required|in:Phần trăm,Tiền cố định',
+            'discount_type' => 'required|in:percent,fixed',
             'discount_value' => 'required|numeric|min:0',
             'active' => 'sometimes|accepted',
             'min_order_amount' => 'nullable|numeric|min:0',
