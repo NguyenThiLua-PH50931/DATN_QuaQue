@@ -51,7 +51,7 @@
                     </li>
 
                     <li class="sidebar-list">
-                        <a class="sidebar-link" href="{{ url('/admin/categories') }}">
+                        <a class="sidebar-link"  href="{{ url('/admin/categories') }}" >
                             <i class="ri-list-check-2"></i>
                             <span>Danh mục</span>
                         </a>
@@ -64,8 +64,6 @@
                             <span>Vùng miền</span>
                         </a>
                     </li>
-
-
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                             <i class="ri-list-settings-line"></i>
@@ -98,9 +96,8 @@
                                 <a href="{{ route('admin.comments.index') }}">Danh sách bình luận </a>
                             </li>
                         </ul>
-
                     </li>
-                    <li class="sidebar-list">
+                       <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                             <i class="ri-megaphone-line"></i>
                             <span>Tin tức</span>
@@ -109,40 +106,22 @@
                             <li><a href="{{ url('/admin/blog/index') }}"> Danh sách tin tức</a></li>
                         </ul>
                     </li>
-
-                    </li>
                     <li class="sidebar-list">
-                        <a class="sidebar-link" href="{{ url('/admin/banners') }}">
-                            <i class="ri-image-2-line"></i>
-                            <span>Banner</span>
-                        </a>
-                    </li>
-
-
-
-                    <li class="sidebar-list">
-                        <a class="sidebar-link sidebar-title" href="javascript:void(0)">
-                            <i class="ri-archive-line"></i>
-
+                        <a class="sidebar-link"  href="{{ url('/admin/orders') }}" >
+                            <i class="ri-list-check-2"></i>
                             <span>Đơn hàng</span>
                         </a>
-                        <ul class="sidebar-submenu">
-                            <li><a href="{{ url('/admin/orders') }}">Danh sách</a></li>
-                            <li><a href="{{ url('/admin/orders/detail') }}">Chi tiết</a></li>
-                            <li><a href="{{ url('/admin/orders/tracking') }}">Theo dõi đơn hàng</a></li>
-                        </ul>
-                    </li>
 
-                    <li class="sidebar-list">
+                    </li>
+                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title link-nav" href="{{ route('admin.reviews.index') }}">
                             <i class="ri-star-line"></i>
                             <span>Đánh giá</span>
                         </a>
                     </li>
 
-
                      <li class="sidebar-list">
-                        <a class="sidebar-link sidebar-title" href="javascript:void(0)">
+                        <a class="sidebar-link sidebar" href="javascript:void(0)">
                             <i class="ri-settings-line"></i>
                             <span>Cài đặt</span>
                         </a>
@@ -158,7 +137,7 @@
                         </a>
                         <ul class="sidebar-submenu">
                             <li><a href="{{ route('admin.coupon.index')}}">Danh sách</a></li>
-                            <li><a href="{{ url('/admin/coupons/create') }}">Create Coupon</a></li>
+                            {{-- <li><a href="{{ url('/admin/coupons/create') }}">Create Coupon</a></li> --}}
                         </ul>
                     </li>
                     <li class="sidebar-list">
@@ -169,7 +148,6 @@
                     </li>
 
                      {{-- <li class="sidebar-list">
-
                         <a class="sidebar-link sidebar-title link-nav" href="{{ url('/admin/media') }}">
                             <i class="ri-price-tag-3-line"></i>
                             <span>Media</span>
@@ -177,7 +155,6 @@
                     </li> --}}
 
                      {{-- <li class="sidebar-list">
-
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                             <i class="ri-list-settings-line"></i>
                             <span>Attributes</span>
@@ -186,12 +163,19 @@
                             <li><a href="{{ url('/admin/attributes') }}">Attributes</a></li>
                             <li><a href="{{ url('/admin/attributes/create') }}">Add Attributes</a></li>
                         </ul>
-                    </li> --}}
+                    </li>
+                    <li class="sidebar-list">
+                        <a class="sidebar-link sidebar-title" href="javascript:void(0)">
+                            <i class="ri-price-tag-3-line"></i>
+                            <span>Coupons</span>
+                        </a>
+                        <ul class="sidebar-submenu">
+                            <li><a href="{{ url('/admin/coupons') }}">Coupon List</a></li>
+                            <li><a href="{{ url('/admin/coupons/create') }}">Create Coupon</a></li>
+                        </ul>
+                    </li>
 
-
-
-
-                    {{-- <li class="sidebar-list">
+                    <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title link-nav" href="{{ url('/admin/taxes') }}">
                             <i class="ri-price-tag-3-line"></i>
                             <span>Tax</span>

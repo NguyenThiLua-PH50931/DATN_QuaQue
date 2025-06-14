@@ -4,103 +4,107 @@
 
 @section('content')
 <div class="page-body">
-    <!-- Order Tracking Section starts-->
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="title-header option-title">
-                                    <h5>Theo dõi đơn hàng</h5>
-                                </div>
-                                <div class="row">
-                                    <div class="col-12 overflow-hidden">
-                                        <div class="order-left-image d-flex">
-                                            <div class="order-image-contain">
-                                                <div class="order-products-list">
-                                                    @foreach ($order->items as $item)
-                                                        <div class="product-item d-flex mb-3">
-                                                            <div class="product-image me-3" style="width: 100px;">
-                                                                <img src="{{ $item->product_image ?? asset('assets/images/default-product.png') }}" alt="{{ $item->product_name }}" class="img-fluid">
-                                                            </div>
-                                                            <div class="product-info">
-                                                                <h5>{{ $item->product_name }}</h5>
-                                                                <p>Số lượng: {{ $item->quantity }}</p>
-                                                                <p>Tổng: {{ number_format($item->total, 0, ',', '.') }} VNĐ</p>
-                                                            </div>
-                                                        </div>
-                                                    @endforeach
-                                                </div>
-                                                <h5>
-                                                    @if ($order->status === 'completed')
-                                                        Đơn hàng đã được giao thành công.
-                                                    @elseif ($order->status === 'cancelled')
-                                                        Đơn hàng đã bị hủy.
-                                                    @else
-                                                        Đơn hàng đang được xử lý. Thông tin tracking sẽ cập nhật trong 24 giờ tới.
-                                                    @endif
-                                                </h5>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <ol class="progtrckr">
-                                        @foreach ($steps as $step)
-                                            <li class="{{ $step['done'] ? 'progtrckr-done' : 'progtrckr-todo' }}">
-                                                <h5>{{ $step['name'] }}</h5>
-                                                <h6>{{ $step['done'] ? 'Hoàn thành' : 'Đang chờ' }}</h6>
-                                            </li>
-                                        @endforeach
-                                    </ol>
-
-                                    <div class="col-12 overflow-visible">
-                                        <div class="tracker-table">
-                                            <div class="table-responsive">
-                                                <table class="table">
-                                                    <thead>
-                                                        <tr class="table-head">
-                                                            <th scope="col">Ngày</th>
-                                                            <th scope="col">Giờ</th>
-                                                            <th scope="col">Mô tả</th>
-                                                            <th scope="col">Địa điểm</th>
-                                                        </tr>
-                                                    </thead>
-
-                                                    <tbody>
-                                                        @foreach ($order->trackingUpdates ?? [] as $update)
-                                                        <tr>
-                                                            <td><h6>{{ \Carbon\Carbon::parse($update->date)->format('d/m/Y') }}</h6></td>
-                                                            <td><h6>{{ \Carbon\Carbon::parse($update->date)->format('H:i A') }}</h6></td>
-                                                            <td><p class="fw-bold">{{ $update->description }}</p></td>
-                                                            <td><h6>{{ $update->location }}</h6></td>
-                                                        </tr>
-                                                        @endforeach
-
-                                                        @if(empty($order->trackingUpdates) || count($order->trackingUpdates) === 0)
-                                                        <tr>
-                                                            <td colspan="4" class="text-center">Chưa có thông tin tracking.</td>
-                                                        </tr>
-                                                        @endif
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                <div class="card">
+                    <div class="card-body">
+                        {{-- <div class="mb-4 border-bottom pb-2 d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">📦 Theo dõi đơn hàng</h5>
+                        </div> --}}
+                        <div class="title-header option-title">
+                                <h5>Theo dõi đơn hàng</h5>
                             </div>
-                            <div class="card-footer text-end border-0 pb-0 d-flex justify-content-end">
-                                <a href="{{ route('admin.orders.index') }}" class="btn btn-outline me-3">Quay lại</a>
-                                <button class="btn btn-primary">Cập nhật</button>
+                        <!-- Thông tin sản phẩm -->
+                        <div class="mb-4">
+                            @foreach ($order->items as $item)
+                                <div class="d-flex align-items-center gap-3 border rounded p-3 mb-2">
+                                    <img src="{{ $item->product_image ?? asset('assets/images/default-product.png') }}" alt="{{ $item->product_name }}" style="width: 70px; height: 70px; object-fit: cover;" class="rounded">
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">{{ $item->product_name }}</h6>
+                                        @if ($item->variant_name)
+                                            <small class="text-muted d-block mb-1">Biến thể: {{ $item->variant_name }}</small>
+                                        @endif
+                                        <small>Số lượng: {{ $item->quantity }}</small>
+                                    </div>
+                                    <div class="text-end fw-semibold align-self-center" style="min-width: 120px;">
+                                        {{ number_format($item->total, 0, ',', '.') }} VNĐ
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        <!-- Trạng thái đơn hàng -->
+                        <div class="mb-5 text-center">
+                            <h6 class="text-muted">Trạng thái hiện tại:</h6>
+                            <h5 class="fw-bold">
+                                @if ($order->status === 'completed')
+                                    <i class="ri-checkbox-circle-line text-success me-1"></i> Đơn hàng đã được giao thành công.
+                                @elseif ($order->status === 'cancelled')
+                                    <i class="ri-close-circle-line text-danger me-1"></i> Đơn hàng đã bị hủy.
+                                @else
+                                    <i class="ri-truck-line text-warning me-1"></i> Đơn hàng đang được xử lý. Thông tin sẽ cập nhật sớm.
+                                @endif
+                            </h5>
+                        </div>
+
+                        <!-- Tiến trình đơn hàng nằm ngang -->
+                        <div class="mb-5">
+                            <div class="d-flex flex-wrap justify-content-between align-items-start text-center">
+                                @foreach ($steps as $step)
+                                    <div class="flex-fill px-2">
+                                        <div class="mb-2">
+                                            <span class="badge rounded-pill {{ $step['done'] ? 'bg-success' : 'bg-secondary' }} px-3 py-2">
+                                                {{ $step['name'] }}
+                                            </span>
+                                        </div>
+                                        <small class="text-muted">{{ $step['done'] ? 'Hoàn thành' : 'Đang chờ' }}</small>
+                                    </div>
+                                @endforeach
                             </div>
                         </div>
+
+                        <!-- Bảng tracking -->
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Ngày</th>
+                                        <th>Giờ</th>
+                                        <th>Mô tả</th>
+                                        <th>Địa điểm</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($order->trackingUpdates ?? [] as $update)
+                                        <tr>
+                                            <td>{{ \Carbon\Carbon::parse($update->date)->format('d/m/Y') }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($update->date)->format('H:i A') }}</td>
+                                            <td>{{ $update->description }}</td>
+                                            <td>{{ $update->location }}</td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="4" class="text-center text-muted">Chưa có thông tin tracking.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex justify-content-end gap-2 border-0 pt-3">
+                        <a href="{{ route('admin.orders.index') }}" class="btn btn-outline-secondary">
+                            <i class="ri-arrow-left-line me-1"></i> Quay lại
+                        </a>
+                        <button class="btn btn-primary">
+                            <i class="ri-refresh-line me-1"></i> Cập nhật
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
-     </div>
-    <!-- Container-fluid Ends-->
+    </div>
     @includeIf('backend.footer')
 </div>
+
 @endsection
