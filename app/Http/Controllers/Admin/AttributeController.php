@@ -48,12 +48,18 @@ class AttributeController extends Controller
                 'slug' => Str::slug($val),
             ]);
         }
+<<<<<<< HEAD
 
         // Trả về JSON thành công kèm dữ liệu thuộc tính và các giá trị
         return response()->json([
             'success' => true,
             'attribute' => $attr,
             'attributeValues' => $attributeValues,
+=======
+        return response()->json([
+            'success' => true,
+            'attribute' => $attr->load('values')
+>>>>>>> b42e700c7e2fc1f0ff37ccb9176e9e83536e2888
         ]);
     }
 
