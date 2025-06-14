@@ -177,6 +177,65 @@
 
     @stack('scripts')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
+
+<script>
+document.querySelectorAll('.status-select').forEach(function(select) {
+    select.addEventListener('change', function() {
+        const orderId = this.getAttribute('data-order-id');
+        const newStatus = this.value;
+        const form = document.getElementById('status-form-' + orderId);
+        const token = form.querySelector('input[name="_token"]').value;
+        const currentStatus = this.getAttribute('data-current-status');
+
+        fetch(form.action, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': token,
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({ status: newStatus }),
+        })
+        .then(response => {
+            if (!response.ok) return response.json().then(err => { throw err; });
+            return response.json();
+        })
+        .then(data => {
+            alert(data.message || 'Cập nhật trạng thái thành công');
+            select.setAttribute('data-current-status', newStatus);
+
+            if (['delivered', 'cancelled', 'failed_delivery'].includes(newStatus)) {
+                const tr = form.closest('tr');
+                const optionsTd = tr.querySelector('td:last-child');
+                const ul = optionsTd.querySelector('ul');
+
+                if (ul && !ul.querySelector('form')) {
+                    const li = document.createElement('li');
+                    const deleteForm = document.createElement('form');
+                    deleteForm.action = form.action.replace('updateStatus', 'destroy');
+                    deleteForm.method = 'POST';
+                    deleteForm.onsubmit = () => confirm('Bạn có chắc chắn muốn xóa đơn hàng này không?');
+                    deleteForm.innerHTML = `
+                        <input type="hidden" name="_token" value="${token}">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <button type="submit" class="border-0 bg-transparent">
+                            <i class="ri-delete-bin-line text-danger"></i>
+                        </button>
+                    `;
+                    li.appendChild(deleteForm);
+                    ul.appendChild(li);
+                }
+            }
+        })
+        .catch(error => {
+            alert(error.message || 'Lỗi khi cập nhật trạng thái');
+            this.value = currentStatus;
+        });
+    });
+});
+
+</script>
+
 </body>
 
 </html>

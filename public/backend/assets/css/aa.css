@@ -1,4 +1,4 @@
-.status-select {
+/* .status-select {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -12,7 +12,7 @@
   box-shadow: 0 4px 8px rgb(0 0 0 / 0.05);
   background-clip: padding-box;
   background-color: #f9fafb;
-  color: #64748b; /* chữ nhạt hơn */
+  color: #64748b;
   position: relative;
   min-width: 200px;
   background-image:
@@ -41,16 +41,14 @@
   background-color: #dbeafe;
   color: #2563eb;
 }
-
-/* Màu nhạt, border mờ, chữ nhẹ hơn */
 .status-pending {
   background: linear-gradient(135deg, #fef9c3, #fef3c7);
   color: #a16207;
-  border-color: #fde68a80; /* 50% opacity */
+  border-color: #fde68a80; 
 }
 .status-confirmed {
   background: linear-gradient(135deg, #dbeafe, #bfdbfe);
-  color: #2563eb99; /* 60% opacity */
+  color: #2563eb99;
   border-color: #3b82f680;
 }
 .status-processing {
@@ -87,12 +85,12 @@
 
 
 .btn-primary.btn-sm {
-    padding: 6px 12px; /* Giảm bớt padding */
-    font-size: 12px;    /* Chữ nhỏ hơn */
-    border-radius: 6px; /* Bo góc nhẹ */
-    width: auto;        /* Đảm bảo chiều rộng tự động, không bị kéo dài */
-    text-align: center; /* Căn chỉnh văn bản vào giữa */
-    min-width: 100px;   /* Đặt độ dài tối thiểu */
+    padding: 6px 12px; 
+    font-size: 12px;   
+    border-radius: 6px; 
+    width: auto;       
+    text-align: center; 
+    min-width: 100px;   
     transition: all 0.3s ease;
 }
 
@@ -132,4 +130,4 @@
   height: auto;
   display: block;
   margin-bottom: 10px;
-}
+} */
