@@ -132,11 +132,6 @@
                             <!-- Form tìm kiếm và lọc -->
                             <form method="GET" action="{{ route('admin.comments.index') }}" class="mb-4">
                                 <div class="row g-3">
-                                    <div class="col-md-4">
-                                        <input type="text" name="search" class="form-control"
-                                            placeholder="Tìm kiếm theo nội dung, người dùng, sản phẩm..."
-                                            value="{{ request('search') }}">
-                                    </div>
                                     <div class="col-md-3">
                                         <select name="status" class="form-control">
                                             <option value="">-- Chọn trạng thái --</option>
@@ -156,8 +151,8 @@
                                 </div>
                             </form>
 
-                            <div class="table-responsive">
-                                <table class="table table-striped table-hover">
+                            <div class="table-responsive overflow-hidden">
+                                <table class="table all-package theme-table">
                                     <thead>
                                         <tr>
                                             <th>ID</th>

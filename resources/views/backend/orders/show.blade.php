@@ -91,8 +91,6 @@ ul {
     border-color: #666;
     outline: none;
 }
-
-
 /* Hover và focus cho select */
 .status-select:hover,
 .status-select:focus {
@@ -236,7 +234,7 @@ ul {
                         <div class="row g-4">
                             <div class="col-lg-8">
                                 <div class="table-responsive">
-                                    <table class="table table-bordered">
+                                   <table class="table table-bordered">
                                         <thead class="table-light">
                                             <tr>
                                                 <th colspan="2">Sản phẩm</th>
@@ -246,24 +244,25 @@ ul {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                                @foreach ($order->items as $item)
-                                                    <tr>
-                                                        <td style="width: 60px">
-                                                            <img src="{{ asset('backend/assets/images/profile/' . $item->product_image) }}" class="img-thumbnail" style="width: 60px; height: 60px" alt="{{ $item->product_name }}">
-                                                        </td>
-                                                        <td>
-                                                            {{ $item->product_name }}
-                                                            @if ($item->variant)
-                                                                <div class="text-muted small">Biến thể: {{ $item->variant->name }}</div>
-                                                            @endif
-                                                        </td>
-                                                        <td class="text-center">{{ $item->quantity }}</td>
-                                                        <td class="text-end">{{ number_format($item->price, 0, ',', '.') }} VNĐ</td>
-                                                        <td class="text-end text-danger">-{{ number_format($item->discount * $item->quantity, 0, ',', '.') }} VNĐ</td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-
+                                            @foreach ($order->items as $item)
+                                                <tr>
+                                                    <td style="width: 60px">
+                                                        <img src="{{ asset('backend/assets/images/profile/' . $item->product_image) }}"
+                                                            class="img-thumbnail" style="width: 60px; height: 60px"
+                                                            alt="{{ $item->product_name }}">
+                                                    </td>
+                                                    <td>
+                                                        {{ $item->product_name }}
+                                                        @if ($item->variant)
+                                                            <div class="text-muted small">Biến thể: {{ $item->variant->name }}</div>
+                                                        @endif
+                                                    </td>
+                                                    <td class="text-center">{{ $item->quantity }}</td>
+                                                    <td class="text-end">{{ number_format($item->price, 0, ',', '.') }} VNĐ</td>
+                                                    <td class="text-end text-danger">-{{ number_format($item->discount * $item->quantity, 0, ',', '.') }} VNĐ</td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
                                         <tfoot>
                                             @php
                                                 $subtotal = $order->items->sum(fn($item) => $item->price * $item->quantity);
@@ -289,6 +288,7 @@ ul {
                                             </tr>
                                         </tfoot>
                                     </table>
+
                                 </div>
                             </div>
                            <div class="col-lg-4">
@@ -315,9 +315,20 @@ ul {
                                             'momo' => 'Ví MoMo',
                                             default => 'Không xác định',
                                         };
+
+                                        $status = match ($order->payment_status) {
+                                            'paid' => ['text' => 'Đã thanh toán', 'class' => 'text-success'],
+                                            'unpaid' => ['text' => 'Chưa thanh toán', 'class' => 'text-danger'],
+                                            'refunded' => ['text' => 'Đã hoàn tiền', 'class' => 'text-warning'],
+                                            default => ['text' => 'Không xác định', 'class' => 'text-muted'],
+                                        };
                                     @endphp
+
                                     <h5 class="fw-bold mt-4 mb-2">Phương thức thanh toán</h5>
                                     <p>{{ $method }}</p>
+
+                                    <h5 class="fw-bold mt-4 mb-2">Trạng thái thanh toán</h5>
+                                    <p class="fw-semibold {{ $status['class'] }}">{{ $status['text'] }}</p>
 
                                     <div class="mt-4">
                                         <h5 class="fw-bold">Ngày giao dự kiến:</h5>
@@ -326,12 +337,13 @@ ul {
                                     </div>
                                 </div>
                             </div>
+                            <!-- section end -->
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        <!-- tracking table end -->
+        @includeIf('backend.footer')
     </div>
-    @includeIf('backend.footer')
-</div>
 @endsection

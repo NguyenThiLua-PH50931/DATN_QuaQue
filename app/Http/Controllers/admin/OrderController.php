@@ -103,47 +103,63 @@ public function index(Request $request)
 
     // Hàm cập nhật trạng thái đơn hàng
     public function updateStatus(Request $request, Order $order)
-        {
-            $request->validate([
-                'status' => 'required|in:pending,confirmed,processing,shipped,in_transit,delivered,cancelled,failed_delivery',
-            ]);
+{
+    // Xác thực trạng thái được gửi lên
+    $request->validate([
+        'status' => 'required|in:pending,confirmed,processing,shipped,in_transit,delivered,cancelled,failed_delivery',
+    ]);
 
-            $statusOrder = [
-                'pending' => 1,
-                'confirmed' => 2,
-                'processing' => 3,
-                'shipped' => 4,
-                'in_transit' => 5,
-                'delivered' => 6,
-                'cancelled' => 7,
-                'failed_delivery' => 8,
-            ];
+    // Xếp hạng mức độ tiến trình đơn hàng
+    $statusOrder = [
+        'pending' => 1,
+        'confirmed' => 2,
+        'processing' => 3,
+        'shipped' => 4,
+        'in_transit' => 5,
+        'delivered' => 6,
+        'cancelled' => 7,
+        'failed_delivery' => 8,
+    ];
 
-            $currentStatusRank = $statusOrder[$order->status];
-            $newStatusRank = $statusOrder[$request->status];
+    $currentStatusRank = $statusOrder[$order->status];
+    $newStatusRank = $statusOrder[$request->status];
 
-            if ($newStatusRank < $currentStatusRank && !in_array($request->status, ['cancelled', 'failed_delivery'])) {
-                return response()->json([
-                    'message' => 'Lỗi !.',
-                ], 422);
-            }
+    // Không cho phép lùi trạng thái (trừ khi hủy hoặc giao thất bại)
+    if ($newStatusRank < $currentStatusRank && !in_array($request->status, ['cancelled', 'failed_delivery'])) {
+        return response()->json([
+            'message' => 'Không thể quay lại trạng thái trước đó.',
+        ], 422);
+    }
 
-            $order->status = $request->status;
-            $order->save();
+    // Cập nhật trạng thái đơn hàng
+    $order->status = $request->status;
 
-            // ⚠ Load user để có email (nếu chưa eager load trước đó)
-            $order->load('user');
-
-            // ✅ Gửi mail
-            if ($order->user && $order->user->email) {
-                Mail::to($order->user->email)->send(new OrderStatusUpdated($order));
-            }
-
-            return response()->json([
-                'message' => 'Cập nhật trạng thái đơn hàng thành công.',
-                'status' => $order->status,
-            ]);
+    // Xử lý cập nhật trạng thái thanh toán nếu là COD
+    if ($order->payment_method === 'cod') {
+        if ($request->status === 'delivered') {
+            $order->payment_status = 'paid';
+        } else {
+            $order->payment_status = 'unpaid';
         }
+    }
+
+    $order->save();
+
+    // Load quan hệ user nếu chưa có
+    $order->loadMissing('user');
+
+    // Gửi email thông báo nếu có email
+    if ($order->user && $order->user->email) {
+        Mail::to($order->user->email)->send(new OrderStatusUpdated($order));
+    }
+
+    return response()->json([
+        'message' => 'Cập nhật trạng thái đơn hàng thành công.',
+        'status' => $order->status,
+        'payment_status' => $order->payment_status,
+    ]);
+}
+
 
 
     public function destroy(Order $order)

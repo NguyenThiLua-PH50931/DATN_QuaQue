@@ -11,12 +11,6 @@
                         <div class="card-body">
                             <div class="title-header option-title">
                                 <h5>Tất cả banner</h5>
-                                <form class="d-inline-flex">
-                                    <a href="{{ route('admin.banners.create') }}"
-                                        class="align-items-center btn btn-theme d-flex">
-                                        <i data-feather="plus-square"></i> Thêm mới
-                                    </a>
-                                </form>
                             </div>
 
                             @if (session('success'))
@@ -24,6 +18,24 @@
                                     {{ session('success') }}
                                 </div>
                             @endif
+
+                            {{-- Date Filter Form --}}
+                            <form class="row g-3 mb-3" method="GET" action="{{ route('admin.banners.index') }}">
+                                <div class="col-md-4">
+                                    <label for="start_date" class="form-label">Ngày bắt đầu hiển thị:</label>
+                                    <input type="date" class="form-control" id="start_date" name="start_date"
+                                        value="{{ request('start_date') }}">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="end_date" class="form-label">Ngày dừng hiển thị:</label>
+                                    <input type="date" class="form-control" id="end_date" name="end_date"
+                                        value="{{ request('end_date') }}">
+                                </div>
+                                <div class="col-md-4 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-primary me-2">Lọc</button>
+                                    <a href="{{ route('admin.banners.index') }}" class="btn btn-secondary">Đặt lại</a>
+                                </div>
+                            </form>
 
                             <div class="table-responsive category-table">
                                 <table class="table all-package theme-table" id="table_id">
@@ -33,15 +45,32 @@
                                                 <input type="checkbox" id="select-all-checkbox">
                                             </th>
                                             <th style="color: black; background-color: #f8f9fa;">ID</th>
-                                            <th style="color: black; background-color: #f8f9fa;">Tiêu đề</th>
                                             <th style="color: black; background-color: #f8f9fa;">Ảnh</th>
+                                            <th style="color: black; background-color: #f8f9fa;">Vị trí</th>
                                             <th style="color: black; background-color: #f8f9fa;">Link</th>
                                             <th style="color: black; background-color: #f8f9fa;">Hoạt động</th>
-                                            <th style="color: black; background-color: #f8f9fa;">Hiển thị lúc</th>
+                                            <th style="color: black; background-color: #f8f9fa;">Ngày hiển thị </th>
+                                            <th style="color: black; background-color: #f8f9fa;">Ngày dừng hiển thị</th>
                                             <th style="color: black; background-color: #f8f9fa;">Hành động</th>
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @php
+                                            $locationNames = [
+                                                'main_hero_banner' => 'Banner Chính Đầu Trang',
+                                                'small_promo_banner_top' => 'Banner Đầu Trang Nhỏ Bên Phải (Trên)',
+                                                'small_promo_banner_bottom' => 'Banner Đầu Trang Nhỏ Bên Phải (Dưới)',
+                                                'slider_banner' => 'Banner Trượt (Slider)',
+                                                'product_section_promo_left_top' => 'Banner Sản Phẩm Dọc - Trên',
+                                                'product_section_promo_left_bottom' => 'Banner Sản Phẩm Dọc - Dưới',
+                                                'category_section_promo_left' => 'Banner Sản Phẩm Theo Danh Mục - Trái',
+                                                'category_section_promo_right' =>'Banner Sản Phẩm Theo Danh Mục - Phải',
+                                                'new_products_cashback_banner' => 'Banner Sản Phẩm Mới',
+                                                'new_products_promo_left' => 'Banner Sản Phẩm Mới (Trái)',
+                                                'new_products_promo_right' => 'Banner Sản Phẩm Mới (Phải)',
+                                                'last_page_promo_banner' => 'Banner Cuối Trang (Quảng Cáo)',
+                                            ];
+                                        @endphp
                                         @forelse ($banners as $banner)
                                             <tr>
                                                 <td>
@@ -49,15 +78,18 @@
                                                         value="{{ $banner->id }}">
                                                 </td>
                                                 <td>{{ $banner->id }}</td>
-                                                <td>{{ $banner->title }}</td>
                                                 <td>
                                                     <img src="{{ asset('storage/' . $banner->image) }}"
                                                         alt="{{ $banner->title }}" class="w-20 h-20 object-cover"
                                                         width="100px">
                                                 </td>
+                                                <td>{{ $locationNames[$banner->location] ?? ($banner->location ?? 'N/A') }}
+                                                </td>
                                                 <td>{{ $banner->link }}</td>
                                                 <td>{{ $banner->active ? 'Có' : 'Không' }}</td>
-                                                <td>{{ $banner->display_at }}</td>
+                                                <td>{{ $banner->display_at ? $banner->display_at->format('d-m-Y H:i:s') : 'N/A' }}</td>
+                                                <td>{{ $banner->display_end_at ? $banner->display_end_at->format('d-m-Y H:i:s') : 'N/A' }}
+                                                </td>
                                                 <td>
                                                     <ul>
                                                         <li>
@@ -81,16 +113,12 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="8" class="py-4 px-4 text-center">Không có banner nào.</td>
+                                                <td colspan="10" class="py-4 px-4 text-center">Không có banner nào.</td>
                                             </tr>
                                         @endforelse
                                     </tbody>
                                 </table>
                                 <form class="d-inline-flex">
-                                    <a href="{{ route('admin.banners.trashed') }}"
-                                        class="align-items-center btn btn-warning d-flex me-2">
-                                        <i data-feather="trash-2"></i> Thùng rác
-                                    </a>
                                     <button type="button" id="bulk-delete-btn"
                                         class="align-items-center btn btn-danger d-flex ms-2" style="display: none;">
                                         <i data-feather="trash"></i> Xóa đã chọn
@@ -123,7 +151,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <form id="deleteForm" method="POST" style="display: inline;">
+                    <form id="deleteForm" method="POST" action="" style="display: inline;">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-danger">Xóa mềm</button>
@@ -153,6 +181,42 @@
         </div>
     </div>
 
+    {{-- Success Message Modal --}}
+    <div class="modal fade" id="successMessageModal" tabindex="-1" aria-labelledby="successMessageModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="successMessageModalLabel">Thành công!</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="successMessageContent">
+                    <!-- Message will be inserted here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Error Message Modal --}}
+    <div class="modal fade" id="errorMessageModal" tabindex="-1" aria-labelledby="errorMessageModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="errorMessageModalLabel">Lỗi!</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="errorMessageContent">
+                    <!-- Message will be inserted here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     @includeIf('backend.footer')
 @endsection
 
@@ -174,12 +238,22 @@
                 }
             });
 
-            // Xử lý sự kiện click nút xóa mềm
-            $('.delete-btn').click(function() {
+            // Xử lý sự kiện click nút xóa mềm (sử dụng event delegation)
+            $(document).on('click', '.delete-btn', function(e) {
                 var id = $(this).data('id');
                 var title = $(this).data('title');
-                $('#bannerTitleDelete').text(title);
-                $('#deleteForm').attr('action', '{{ url('admin/banners/') }}' + '/' + id + '/soft');
+
+                if (id) {
+                    var formAction = '{{ url('admin/banners/') }}' + '/' + id + '/soft';
+                    $('#bannerTitleDelete').text(title);
+                    $('#deleteForm').attr('action', formAction);
+                    console.log('Delete form action set to:', formAction);
+                } else {
+                    e.preventDefault();
+                    $('#errorMessageContent').text('Không thể xóa banner này do thiếu thông tin ID.');
+                    $('#errorMessageModal').modal('show');
+                    console.error('Error: data-id is missing for delete button:', this);
+                }
             });
 
             // Logic cho chức năng chọn tất cả và xóa hàng loạt
@@ -207,21 +281,66 @@
                 });
 
                 if (selectedIds.length > 0) {
-                    // Mở modal xác nhận xóa hàng loạt
                     $('#selectedBannerCount').text(selectedIds.length);
                     $('#bulkDeleteModal').modal('show');
 
-                    // Gán sự kiện cho nút xác nhận trong modal
                     $('#confirm-bulk-delete-btn').off('click').on('click', function() {
-                        $('#bulk-delete-ids').val(selectedIds.join(','));
-                        $('#bulk-delete-form').submit();
-                        $('#bulkDeleteModal').modal('hide');
+                        $.ajax({
+                            url: '{{ route('admin.banners.bulkDelete') }}',
+                            method: 'DELETE',
+                            data: {
+                                _token: '{{ csrf_token() }}',
+                                ids: selectedIds
+                            },
+                            success: function(response) {
+                                $('#bulkDeleteModal').modal('hide');
+                                if (response.status === 'success') {
+                                    $('#successMessageContent').text(response.message || 'Xóa banner đã chọn thành công!');
+                                    $('#successMessageModal').modal('show');
+                                } else if (response.status === 'warning') {
+                                    $('#errorMessageContent').text(response.message || 'Có một số banner không thể xóa.');
+                                    $('#errorMessageModal').modal('show');
+                                } else {
+                                    $('#errorMessageContent').text(response.message || 'Lỗi khi xóa banner đã chọn.');
+                                    $('#errorMessageModal').modal('show');
+                                }
+                                $('#successMessageModal').on('hidden.bs.modal', function () {
+                                    window.location.reload();
+                                });
+                                $('#errorMessageModal').on('hidden.bs.modal', function () {
+                                    window.location.reload();
+                                });
+                            },
+                            error: function(xhr) {
+                                $('#bulkDeleteModal').modal('hide');
+                                let errorMessage = 'Lỗi khi xóa banner đã chọn';
+                                if (xhr.responseJSON && xhr.responseJSON.message) {
+                                    errorMessage = xhr.responseJSON.message;
+                                } else if (xhr.responseText) {
+                                    errorMessage = 'Lỗi server: ' + xhr.responseText.substring(0, 100) + '...';
+                                } else {
+                                    errorMessage = 'Lỗi không xác định';
+                                }
+                                $('#errorMessageContent').text(errorMessage);
+                                $('#errorMessageModal').modal('show');
+                                $('#errorMessageModal').on('hidden.bs.modal', function () {
+                                    window.location.reload();
+                                });
+                            }
+                        });
                     });
                 } else {
-                    alert('Vui lòng chọn ít nhất một banner để xóa.');
+                    $('#errorMessageContent').text('Vui lòng chọn ít nhất một banner để xóa.');
+                    $('#errorMessageModal').modal('show');
                 }
             });
 
+            // Hiển thị modal lỗi nếu có session error từ server (đối với xóa mềm cá nhân)
+            @if(session('error'))
+                var errorMessage = "{{ session('error') }}";
+                $('#errorMessageContent').text(errorMessage);
+                $('#errorMessageModal').modal('show');
+            @endif
         });
     </script>
 @endpush

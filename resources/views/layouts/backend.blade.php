@@ -119,8 +119,6 @@
     <script src="{{ asset('backend/assets/js/sidebar-menu.js') }}"></script>
     <script src="{{ asset('backend/assets/js/script.js') }}"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="{{ asset('backend/assets/js/ckeditor.js') }}"></script>
-    <script src="{{ asset('backend/assets/js/ckeditor-custom.js') }}"></script>
     <script src="{{ asset('backend/assets/js/select2.min.js') }}"></script>
     <script src="{{ asset('backend/assets/js/select2-custom.js') }}"></script>
     <script src="{{ asset('backend/assets/js/bootstrap-tagsinput.min.js') }}"></script>
@@ -204,6 +202,22 @@ document.querySelectorAll('.status-select').forEach(function(select) {
             alert(data.message || 'Cập nhật trạng thái thành công');
             select.setAttribute('data-current-status', newStatus);
 
+            // ✅ Cập nhật trạng thái thanh toán (payment_status) trên giao diện
+            if (data.payment_status) {
+                const paymentStatusTd = document.getElementById('payment-status-' + orderId);
+                if (paymentStatusTd) {
+                    let paymentText = '';
+                    switch (data.payment_status) {
+                        case 'paid': paymentText = 'Đã thanh toán'; break;
+                        case 'unpaid': paymentText = 'Chưa thanh toán'; break;
+                        case 'failed': paymentText = 'Thất bại'; break;
+                        default: paymentText = data.payment_status;
+                    }
+                    paymentStatusTd.textContent = paymentText;
+                }
+            }
+
+            // ✅ Hiển thị nút xóa nếu đơn hàng đã hoàn tất hoặc không thành công
             if (['delivered', 'cancelled', 'failed_delivery'].includes(newStatus)) {
                 const tr = form.closest('tr');
                 const optionsTd = tr.querySelector('td:last-child');
@@ -233,8 +247,8 @@ document.querySelectorAll('.status-select').forEach(function(select) {
         });
     });
 });
-
 </script>
+
 
 </body>
 

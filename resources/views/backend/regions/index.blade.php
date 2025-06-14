@@ -84,10 +84,6 @@
                             </table>
                             <form class="d-inline-flex">
                                 {{-- Link to Trashed regions --}}
-                                <a href="{{ route('admin.regions.trashed') }}"
-                                    class="align-items-center btn btn-warning d-flex me-2">
-                                    <i data-feather="trash-2"></i> Thùng rác
-                                </a>
                                 <button type="button" id="bulk-delete-btn" class="align-items-center btn btn-danger d-flex ms-2" style="display: none;">
                                     <i data-feather="trash"></i> Xóa đã chọn
                                 </button>
@@ -256,8 +252,8 @@
             }
         });
 
-        // Xử lý sự kiện click nút xóa
-        $('.delete-btn').click(function() {
+        // Xử lý sự kiện click nút xóa (sử dụng event delegation)
+        $(document).on('click', '.delete-btn', function() {
             var id = $(this).data('id');
             var name = $(this).data('name');
             $('#regionName').text(name);
