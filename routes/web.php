@@ -29,6 +29,7 @@ use App\Http\Controllers\Admin\SupportTicketController;
 
 
 use App\Http\Controllers\Client\ClientHomeController;
+use App\Http\Controllers\Client\BlogController as ClientBlogController;
 use Illuminate\Support\Facades\Route;
 // use App\Http\Controllers\ProductController as GlobalProductController; // Nếu cần dùng controller gốc ngoài admin/client
 
@@ -109,6 +110,9 @@ Route::view('/products/category', 'frontend.products.category');
 Route::view('/seller/become-seller', 'frontend.seller.become-seller');
 Route::view('/seller/seller-dashboard', 'frontend.seller.seller-dashboard');
 
+// Blog
+Route::get('/blog', [ClientBlogController::class, 'index'])->name('blog');
+Route::get('/blog-detail/{id}', [ClientBlogController::class, 'show'])->name('blogs-detail');
 
 
 
