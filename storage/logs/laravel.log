@@ -29989,3 +29989,36 @@
 >>>>>>> c7b6008e370b1a7d3b8bde75f8c53754cfdeb7ed
 >>>>>>> b42e700c7e2fc1f0ff37ccb9176e9e83536e2888
 "} 
+[2025-06-14 03:43:50] local.ERROR: syntax error, unexpected token "<<" {"exception":"[object] (ParseError(code: 0): syntax error, unexpected token \"<<\" at D:\\programs\\laragon\\www\\DATN_QuaQue\\routes\\web.php:121)
+[stacktrace]
+#0 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(512): Illuminate\\Routing\\RouteFileRegistrar->register('D:\\\\programs\\\\lar...')
+#1 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(466): Illuminate\\Routing\\Router->loadRoutes('D:\\\\programs\\\\lar...')
+#2 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\RouteRegistrar.php(206): Illuminate\\Routing\\Router->group(Array, 'D:\\\\programs\\\\lar...')
+#3 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Configuration\\ApplicationBuilder.php(248): Illuminate\\Routing\\RouteRegistrar->group('D:\\\\programs\\\\lar...')
+#4 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(36): Illuminate\\Foundation\\Configuration\\ApplicationBuilder->Illuminate\\Foundation\\Configuration\\{closure}()
+#5 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Util.php(43): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#6 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(84): Illuminate\\Container\\Util::unwrapIfClosure(Object(Closure))
+#7 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod(Object(Illuminate\\Foundation\\Application), Object(Closure), Object(Closure))
+#8 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(754): Illuminate\\Container\\BoundMethod::call(Object(Illuminate\\Foundation\\Application), Object(Closure), Array, NULL)
+#9 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Support\\Providers\\RouteServiceProvider.php(162): Illuminate\\Container\\Container->call(Object(Closure))
+#10 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Support\\Providers\\RouteServiceProvider.php(59): Illuminate\\Foundation\\Support\\Providers\\RouteServiceProvider->loadRoutes()
+#11 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(36): Illuminate\\Foundation\\Support\\Providers\\RouteServiceProvider->Illuminate\\Foundation\\Support\\Providers\\{closure}()
+#12 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Util.php(43): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#13 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(84): Illuminate\\Container\\Util::unwrapIfClosure(Object(Closure))
+#14 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod(Object(Illuminate\\Foundation\\Application), Object(Closure), Object(Closure))
+#15 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(754): Illuminate\\Container\\BoundMethod::call(Object(Illuminate\\Foundation\\Application), Object(Closure), Array, NULL)
+#16 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Support\\ServiceProvider.php(143): Illuminate\\Container\\Container->call(Object(Closure))
+#17 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1153): Illuminate\\Support\\ServiceProvider->callBootedCallbacks()
+#18 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1131): Illuminate\\Foundation\\Application->bootProvider(Object(Illuminate\\Foundation\\Support\\Providers\\RouteServiceProvider))
+#19 [internal function]: Illuminate\\Foundation\\Application->Illuminate\\Foundation\\{closure}(Object(Illuminate\\Foundation\\Support\\Providers\\RouteServiceProvider), 'Illuminate\\\\Foun...')
+#20 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1130): array_walk(Array, Object(Closure))
+#21 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Bootstrap\\BootProviders.php(17): Illuminate\\Foundation\\Application->boot()
+#22 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(341): Illuminate\\Foundation\\Bootstrap\\BootProviders->bootstrap(Object(Illuminate\\Foundation\\Application))
+#23 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(186): Illuminate\\Foundation\\Application->bootstrapWith(Array)
+#24 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(170): Illuminate\\Foundation\\Http\\Kernel->bootstrap()
+#25 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#26 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1219): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#27 D:\\programs\\laragon\\www\\DATN_QuaQue\\public\\index.php(20): Illuminate\\Foundation\\Application->handleRequest(Object(Illuminate\\Http\\Request))
+#28 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php(23): require_once('D:\\\\programs\\\\lar...')
+#29 {main}
+"} 
