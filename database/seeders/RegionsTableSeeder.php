@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\admin\Region; // Hoặc đổi lại BE nếu đúng với project bạn
+use App\Models\admin\Region;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
@@ -11,11 +11,8 @@ class RegionsTableSeeder extends Seeder
 {
     public function run()
     {
-        // Đặt lại AUTO_INCREMENT nếu cần
-        DB::statement('ALTER TABLE regions AUTO_INCREMENT = 1');
-
-        // Xóa dữ liệu cũ (dùng delete thay vì truncate để tránh lỗi khóa ngoại)
-        Region::query()->delete();
+        // ⚠ Tuyệt đối không dùng truncate ở đây!
+        DB::table('regions')->delete(); // An toàn, không lỗi khóa ngoại
 
         $regions = [
             'Miền Bắc',
@@ -25,10 +22,10 @@ class RegionsTableSeeder extends Seeder
         ];
 
         foreach ($regions as $name) {
-            Region::create([
-                'name' => $name,
-                'slug' => Str::slug($name),
-            ]);
+            Region::updateOrCreate(
+                ['slug' => Str::slug($name)],
+                ['name' => $name]
+            );
         }
     }
 }

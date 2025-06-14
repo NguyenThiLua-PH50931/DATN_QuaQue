@@ -20,10 +20,10 @@ class SupportTicketController extends Controller
         if ($request->filled('search')) {
             $search = $request->input('search');
             $query->where('title', 'like', "%{$search}%")
-                  ->orWhere('content', 'like', "%{$search}%")
-                  ->orWhereHas('user', function ($q) use ($search) {
-                      $q->where('name', 'like', "%{$search}%");
-                  });
+                ->orWhere('content', 'like', "%{$search}%")
+                ->orWhereHas('user', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                });
         }
 
         if ($request->filled('status')) {
@@ -81,24 +81,24 @@ class SupportTicketController extends Controller
         return redirect()->route('admin.support-ticket.index')->with('success', 'Yêu cầu hỗ trợ đã được xóa!');
     }
     public function create()
-{
-    return view('frontend.support-ticket.create');
-}
+    {
+        return view('frontend.support-ticket.create');
+    }
 
-public function store(Request $request)
-{
-    $request->validate([
-        'title' => ['required', 'string', 'max:255'],
-        'content' => ['required', 'string', 'max:2000'],
-    ]);
+    public function store(Request $request)
+    {
+        $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'content' => ['required', 'string', 'max:2000'],
+        ]);
 
-    SupportTicket::create([
-        'user_id' => auth()->id(),
-        'title' => $request->title,
-        'content' => $request->content,
-        'status' => 'pending',
-    ]);
+        SupportTicket::create([
+            'user_id' => auth()->id(),
+            'title' => $request->title,
+            'content' => $request->content,
+            'status' => 'pending',
+        ]);
 
-    return redirect()->route('client.home')->with('success', 'Yêu cầu hỗ trợ đã được gửi!');
-}
+        return redirect()->route('client.home')->with('success', 'Yêu cầu hỗ trợ đã được gửi!');
+    }
 }

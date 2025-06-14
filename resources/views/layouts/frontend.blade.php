@@ -52,6 +52,44 @@
 </head>
 
 <body class="bg-effect">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedThemeColor = localStorage.getItem('theme-color');
+            if (savedThemeColor) {
+                document.body.style.setProperty('--theme-color', savedThemeColor);
+                document.body.style.setProperty('--theme-color-rgb', savedThemeColor);
+                document.getElementById('colorPick').value = savedThemeColor;
+            }
+
+            const savedThemeMode = localStorage.getItem('theme-mode');
+            if (savedThemeMode) {
+                if (savedThemeMode === 'dark') {
+                    document.body.classList.add('dark');
+                    document.body.classList.remove('light');
+                    document.getElementById('color-link').setAttribute('href', '/frontend/assets/css/dark.css');
+                } else {
+                    document.body.classList.add('light');
+                    document.body.classList.remove('dark');
+                    document.getElementById('color-link').setAttribute('href', '/frontend/assets/css/style.css');
+                }
+            }
+
+            const savedThemeDirection = localStorage.getItem('theme-direction');
+            if (savedThemeDirection) {
+                if (savedThemeDirection === 'rtl') {
+                    document.documentElement.setAttribute('dir', 'rtl');
+                    document.body.classList.add('rtl');
+                    document.body.classList.remove('ltr');
+                    document.getElementById('rtl-link').setAttribute('href', '/frontend/assets/css/vendors/bootstrap.rtl.css');
+                } else {
+                    document.documentElement.setAttribute('dir', '');
+                    document.body.classList.add('ltr');
+                    document.body.classList.remove('rtl');
+                    document.getElementById('rtl-link').setAttribute('href', '/frontend/assets/css/vendors/bootstrap.css');
+                }
+            }
+        });
+    </script>
 
     <!-- Loader Start -->
     <!-- <div class="fullpage-loader">
@@ -110,7 +148,7 @@
                                             <img src="../frontend/assets/images/country/united-states.png"
                                                 class="img-fluid blur-up lazyload" alt="">
                                             <span>Tiếng Anh</span>
-                                
+
                                         </button>
                                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="select-language">
                                             <li>
@@ -118,7 +156,7 @@
                                                     <img src="../frontend/assets/images/country/united-kingdom.png"
                                                         class="img-fluid blur-up lazyload" alt="">
                                                     <span>Tiếng Anh</span>
-                                                
+
                                                 </a>
                                             </li>
                                             <li>
@@ -126,7 +164,7 @@
                                                     <img src="../frontend/assets/images/country/germany.png"
                                                         class="img-fluid blur-up lazyload" alt="">
                                                     <span>Tiếng Đức</span>
-                                              
+
                                                 </a>
                                             </li>
                                             <li>
@@ -134,7 +172,7 @@
                                                     <img src="../frontend/assets/images/country/turkish.png"
                                                         class="img-fluid blur-up lazyload" alt="">
                                                     <span>Tiếng Thổ Nhĩ Kì</span>
-                                              
+
                                                 </a>
                                             </li>
                                         </ul>
@@ -145,7 +183,7 @@
                                         <button class="btn dropdown-toggle" type="button" id="select-dollar"
                                             data-bs-toggle="dropdown" aria-expanded="false">
                                             <span>VNĐ</span>
-                             
+
                                         </button>
                                         <ul class="dropdown-menu dropdown-menu-end sm-dropdown-menu"
                                             aria-labelledby="select-dollar">
@@ -228,7 +266,7 @@
                                             </div>
                                         </li>
                                         <li class="right-side">
-                                            <a href="{{ url('/contact') }}" class="delivery-login-box">
+                                         <a href="{{ route('client.contact-us') }}" class="delivery-login-box">
                                                 <div class="delivery-icon">
                                                     <i data-feather="phone-call"></i>
                                                 </div>

@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('product_variants', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        Schema::table('banners', function (Blueprint $table) {
+            $table->dateTime('display_end_at')->nullable()->after('display_at');
         });
     }
 
@@ -22,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('product_variants');
+        Schema::table('banners', function (Blueprint $table) {
+            $table->dropColumn('display_end_at');
+        });
     }
 };

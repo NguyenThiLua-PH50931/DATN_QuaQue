@@ -21,26 +21,48 @@
                                     </ul>
                                 </div>
                             </div>
+
+                            {{--  Form lọc --}}
+                            <form method="GET" action="{{ route('admin.coupon.index') }}" class="mb-4">
+                                <div class="row g-3">
+                                    <!-- Lọc theo trạng thái -->
+                                    <div class="col-md-2">
+                                        <select name="active" class="form-control">
+                                            <option value="">--Trạng thái--</option>
+                                            <option value="1" {{ $filterActive === '1' ? 'selected' : '' }}>Hiện
+                                            </option>
+                                            <option value="0" {{ $filterActive === '0' ? 'selected' : '' }}>
+                                                Không hiện</option>
+                                        </select>
+                                    </div>
+                                    <!-- Lọc từ ngày -->
+                                    <div class="col-md-2">
+                                        <input type="date" name="date_from" class="form-control"
+                                             value="{{ $filterDateFrom }}">
+                                    </div>
+                                    <!-- Lọc đến ngày -->
+                                    <div class="col-md-2">
+                                        <input type="date" name="date_to" class="form-control"
+                                            value="{{ $filterDateTo }}">
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <button type="submit" class="btn btn-primary w-100">Lọc</button>
+                                    </div>
+                                </div>
+                            </form>
+
                             <div>
-                                <div class="table-responsive">
-                                    <table class="table all-package coupon-list-table table-hover theme-table"
-                                        id="table_id">
+                                <div class="table-responsive overflow-hidden">
+                                    <table class="table table-hover w-100 coupon-list-table theme-table" id="table_id">
                                         <thead>
                                             <tr>
-                                                <th>ID</th>
                                                 <th>Mã giảm giá</th>
-                                                <th>Mô tả</th>
                                                 <th>Loại giảm giá</th>
                                                 <th>Giá trị giảm</th>
-                                                <th>Giá trị đơn tối thiểu</th>
-                                                <th>Giảm tối đa</th>
                                                 <th>Ngày bắt đầu</th>
                                                 <th>Ngày kết thúc</th>
-                                                <th>Giới hạn sử dụng</th>
-                                                <th>Đã sử dụng</th>
                                                 <th>Trạng thái</th>
-                                                <th>Ngày tạo</th>
-                                                <th>Ngày cập nhật</th>
                                                 <th>Tùy chọn</th>
                                             </tr>
                                         </thead>
@@ -48,20 +70,14 @@
                                         <tbody>
                                             @foreach ($coupons as $coupon)
                                                 <tr>
-                                                    <td>{{ $coupon->id }}</td>
                                                     <td>{{ $coupon->code }}</td>
-                                                    <td>{{ $coupon->description }}</td>
                                                     <td>{{ ucfirst($coupon->discount_type) }}</td>
                                                     <td>{{ $coupon->discount_value }}{{ $coupon->discount_type == 'Phần trăm' ? '%' : ' đ' }}
                                                     </td>
-                                                    <td>{{ number_format($coupon->min_order_amount) }} đ</td>
-                                                    <td>{{ number_format($coupon->max_discount_amount) }} đ</td>
                                                     <td>{{ \Carbon\Carbon::parse($coupon->start_date)->format('d/m/Y') }}
                                                     </td>
                                                     <td>{{ \Carbon\Carbon::parse($coupon->end_date)->format('d/m/Y') }}
                                                     </td>
-                                                    <td>{{ $coupon->usage_limit }}</td>
-                                                    <td>{{ $coupon->used_count }}</td>
                                                     <td>
                                                         @if ($coupon->active)
                                                             <span class="success">Hiện</span>
@@ -69,13 +85,10 @@
                                                             <span class="danger">Không hiện</span>
                                                         @endif
                                                     </td>
-                                                    <td>{{ $coupon->created_at->format('d/m/Y H:i') }}</td>
-                                                    <td>{{ $coupon->updated_at->format('d/m/Y H:i') }}</td>
                                                     <td>
                                                         <ul>
                                                             <li>
-                                                                <a
-                                                                    href="{{ route('admin.coupon.edit',$coupon->id)}}">
+                                                                <a href="{{ route('admin.coupon.edit', $coupon->id) }}">
                                                                     <i class="ri-pencil-line"></i>
                                                                 </a>
                                                             </li>
@@ -85,24 +98,32 @@
                                                                     <i class="ri-delete-bin-line"></i>
                                                                 </a>
                                                                 <!-- Delete Modal -->
+                                                                <!-- Modal -->
                                                                 <div class="modal fade" id="deleteModal{{ $coupon->id }}"
-                                                                    tabindex="-1" aria-hidden="true">
+                                                                    tabindex="-1"
+                                                                    aria-labelledby="deleteModalLabel{{ $coupon->id }}"
+                                                                    aria-hidden="true">
                                                                     <div class="modal-dialog modal-dialog-centered">
-                                                                        <form method="POST"
-                                                                            action="{{ route('admin.coupon.destroy', $coupon->id) }}">
-                                                                            @csrf
-                                                                            @method('DELETE')
-                                                                            <div class="modal-content">
+                                                                        <div class="modal-content">
+                                                                            <form method="POST"
+                                                                                action="{{ route('admin.coupon.destroy', $coupon->id) }}">
+                                                                                @csrf
+                                                                                @method('DELETE')
+
                                                                                 <div class="modal-header">
-                                                                                    <h5 class="modal-title">Xác nhận xóa
-                                                                                    </h5>
+                                                                                    <h5 class="modal-title"
+                                                                                        id="deleteModalLabel{{ $coupon->id }}">
+                                                                                        Xác nhận xóa</h5>
                                                                                     <button type="button" class="btn-close"
-                                                                                        data-bs-dismiss="modal"></button>
+                                                                                        data-bs-dismiss="modal"
+                                                                                        aria-label="Đóng"></button>
                                                                                 </div>
+
                                                                                 <div class="modal-body">
                                                                                     Bạn có chắc chắn muốn xóa mã
                                                                                     <strong>{{ $coupon->code }}</strong>?
                                                                                 </div>
+
                                                                                 <div class="modal-footer">
                                                                                     <button type="button"
                                                                                         class="btn btn-secondary"
@@ -110,10 +131,11 @@
                                                                                     <button type="submit"
                                                                                         class="btn btn-danger">Xóa</button>
                                                                                 </div>
-                                                                            </div>
-                                                                        </form>
+                                                                            </form>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
+
                                                             </li>
                                                         </ul>
                                                     </td>
@@ -133,23 +155,3 @@
         @includeIf('backend.footer')
     </div>
 @endsection
-@push('scripts')
-    <script>
-        $(document).ready(function() {
-            $('#table_id').DataTable({
-                language: {
-                    search: "Tìm kiếm:",
-                    lengthMenu: "Hiển thị _MENU_ phiếu giảm giá",
-                    info: "Hiển thị _START_ đến _END_ trong tổng _TOTAL_ phiếu giảm giá",
-                    paginate: {
-                        first: "Đầu",
-                        last: "Cuối",
-                        next: "Sau",
-                        previous: "Trước"
-                    },
-                    zeroRecords: "Không tìm thấy phiếu giảm giá nào.",
-                }
-            });
-        });
-    </script>
-@endpush
