@@ -19,24 +19,23 @@
                                 </ul>
                             </div>
                         </div>
-                          <form method="GET" action="{{ route('admin.blog.index') }}" class="mb-4">
-                                <div class="row g-3">
-                                    <!-- Lọc từ ngày -->
-                                    <div class="col-md-2">
-                                        <input type="date" name="date_from" class="form-control"
-                                            value="{{ request('date_from') }}">
-                                    </div>
-                                    <!-- Lọc đến ngày -->
-                                    <div class="col-md-2">
-                                        <input type="date" name="date_to" class="form-control"
-                                            value="{{ request('date_to') }}">
-                                    </div>
-                                    <div class="col-md-2">
-                                        <button type="submit" class="btn btn-primary w-100">Lọc</button>
-                                    </div>
-                                </div>
-                            </form>
-
+                        {{-- Date Filter Form --}}
+                        <form class="row g-3 mb-3" method="GET" action="{{ route('admin.blog.index') }}">
+                            <div class="col-md-4">
+                                <label for="start_date" class="form-label">Ngày bắt đầu hiển thị:</label>
+                                <input type="date" class="form-control" id="start_date" name="start_date"
+                                    value="{{ request('start_date') }}">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="end_date" class="form-label">Ngày dừng hiển thị:</label>
+                                <input type="date" class="form-control" id="end_date" name="end_date"
+                                    value="{{ request('end_date') }}">
+                            </div>
+                            <div class="col-md-4 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary me-2">Lọc</button>
+                                <a href="{{ route('admin.blog.index') }}" class="btn btn-secondary">Đặt lại</a>
+                            </div>
+                        </form>
                         <div>
                             <div class="table-responsive overflow-hidden">
                                 <table class="table table-hover w-90 coupon-list-table theme-table" id="table_id">
@@ -44,9 +43,10 @@
                                         <tr>
                                             <th>Ảnh</th>
                                             <th>Tiêu đề</th>
-                                            <th>Đường Link</th>
-                                            <th>Ngày tạo</th>
-                                            <th>Hàng động</th>
+                                            <th>Đường link</th>
+                                            <th style="color: black; background-color: #f8f9fa;">Ngày hiển thị</th>
+                                            <th style="color: black; background-color: #f8f9fa;">Ngày dừng hiển thị</th>
+                                            <th>Hành động</th>
                                         </tr>
                                     </thead>
 
@@ -63,7 +63,8 @@
 
                                             <td>{{ $item->title }}</td>
                                             <td>{{ $item->slug }}</td>
-                                            <td>{{ $item->created_at->format('d/m/Y') }}</td>
+                                            <td>{{ $item->start_date ? $item->start_date->format('m/d/Y') : '' }}</td>
+                                            <td>{{ $item->end_date ? $item->end_date->format('m/d/Y') : '' }}</td>
 
                                             <td>
                                                 <ul>
