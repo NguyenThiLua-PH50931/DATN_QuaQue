@@ -11,10 +11,19 @@ class Blog extends Model
 
     protected $table = 'blogs';
 
+    protected $dates = ['deleted_at'];
+
+    protected $casts = [
+        'start_date' => 'date',
+        'end_date' => 'date',
+    ];
+
     protected $fillable = [
         'title',
         'slug',
         'content',
         'thumbnail',
+        'start_date',
+        'end_date',
     ];
 }
