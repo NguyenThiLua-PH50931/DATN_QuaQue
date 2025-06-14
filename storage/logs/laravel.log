@@ -32356,3 +32356,513 @@ Content-Transfer-Encoding: quoted-printable
 #29 {main}
 "} 
 >>>>>>> 381b3b2cba72bba6a84d53f04500befd07327500
+[2025-06-14 07:38:36] local.ERROR: Cannot declare class UpdateOrderItemsAddVariantColumns, because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot declare class UpdateOrderItemsAddVariantColumns, because the name is already in use at D:\\programs\\laragon\\www\\DATN_QuaQue\\database\\migrations\\2025_06_09_130438_add_variant_columns_to_order_items_table.php:7)
+[stacktrace]
+#0 {main}
+"} 
+[2025-06-14 07:46:20] local.ERROR: Cannot declare class UpdateOrderItemsAddVariantColumns, because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot declare class UpdateOrderItemsAddVariantColumns, because the name is already in use at D:\\programs\\laragon\\www\\DATN_QuaQue\\database\\migrations\\2025_06_09_130438_add_variant_columns_to_order_items_table.php:7)
+[stacktrace]
+#0 {main}
+"} 
+[2025-06-14 07:53:59] local.ERROR: SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it (Connection: mysql, SQL: select * from `sessions` where `id` = zyRrq158Q7arNXPFSlzTzZIf4WGMPULYQtDKyfWQ limit 1) {"exception":"[object] (Illuminate\\Database\\QueryException(code: 2002): SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it (Connection: mysql, SQL: select * from `sessions` where `id` = zyRrq158Q7arNXPFSlzTzZIf4WGMPULYQtDKyfWQ limit 1) at D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php:822)
+[stacktrace]
+#0 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(976): Illuminate\\Database\\Connection->runQueryCallback('select * from `...', Array, Object(Closure))
+#1 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(955): Illuminate\\Database\\Connection->tryAgainIfCausedByLostConnection(Object(Illuminate\\Database\\QueryException), 'select * from `...', Array, Object(Closure))
+#2 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(778): Illuminate\\Database\\Connection->handleQueryException(Object(Illuminate\\Database\\QueryException), 'select * from `...', Array, Object(Closure))
+#3 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(395): Illuminate\\Database\\Connection->run('select * from `...', Array, Object(Closure))
+#4 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php(3120): Illuminate\\Database\\Connection->select('select * from `...', Array, false)
+#5 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php(3105): Illuminate\\Database\\Query\\Builder->runSelect()
+#6 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php(3695): Illuminate\\Database\\Query\\Builder->Illuminate\\Database\\Query\\{closure}()
+#7 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php(3104): Illuminate\\Database\\Query\\Builder->onceWithColumns(Array, Object(Closure))
+#8 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Concerns\\BuildsQueries.php(366): Illuminate\\Database\\Query\\Builder->get(Array)
+#9 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php(3027): Illuminate\\Database\\Query\\Builder->first(Array)
+#10 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\DatabaseSessionHandler.php(96): Illuminate\\Database\\Query\\Builder->find('zyRrq158Q7arNXP...')
+#11 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Store.php(116): Illuminate\\Session\\DatabaseSessionHandler->read('zyRrq158Q7arNXP...')
+#12 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Store.php(104): Illuminate\\Session\\Store->readFromHandler()
+#13 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Store.php(88): Illuminate\\Session\\Store->loadSession()
+#14 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\StartSession.php(146): Illuminate\\Session\\Store->start()
+#15 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Support\\helpers.php(399): Illuminate\\Session\\Middleware\\StartSession->Illuminate\\Session\\Middleware\\{closure}(Object(Illuminate\\Session\\Store))
+#16 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\StartSession.php(143): tap(Object(Illuminate\\Session\\Store), Object(Closure))
+#17 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\StartSession.php(115): Illuminate\\Session\\Middleware\\StartSession->startSession(Object(Illuminate\\Http\\Request), Object(Illuminate\\Session\\Store))
+#18 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\StartSession.php(63): Illuminate\\Session\\Middleware\\StartSession->handleStatefulRequest(Object(Illuminate\\Http\\Request), Object(Illuminate\\Session\\Store), Object(Closure))
+#19 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(208): Illuminate\\Session\\Middleware\\StartSession->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#20 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse.php(36): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#21 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(208): Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#22 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Cookie\\Middleware\\EncryptCookies.php(74): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#23 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(208): Illuminate\\Cookie\\Middleware\\EncryptCookies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#24 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(126): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#25 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(807): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#26 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(786): Illuminate\\Routing\\Router->runRouteWithinStack(Object(Illuminate\\Routing\\Route), Object(Illuminate\\Http\\Request))
+#27 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(750): Illuminate\\Routing\\Router->runRoute(Object(Illuminate\\Http\\Request), Object(Illuminate\\Routing\\Route))
+#28 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(739): Illuminate\\Routing\\Router->dispatchToRoute(Object(Illuminate\\Http\\Request))
+#29 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(200): Illuminate\\Routing\\Router->dispatch(Object(Illuminate\\Http\\Request))
+#30 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(169): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}(Object(Illuminate\\Http\\Request))
+#31 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#32 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#33 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(208): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#34 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#35 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php(51): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#36 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(208): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#37 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#38 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(208): Illuminate\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#39 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php(109): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#40 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(208): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#41 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\HandleCors.php(48): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#42 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(208): Illuminate\\Http\\Middleware\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#43 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\TrustProxies.php(58): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#44 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(208): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#45 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\InvokeDeferredCallbacks.php(22): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#46 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(208): Illuminate\\Foundation\\Http\\Middleware\\InvokeDeferredCallbacks->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#47 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\ValidatePathEncoding.php(26): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#48 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(208): Illuminate\\Http\\Middleware\\ValidatePathEncoding->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#49 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(126): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#50 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(175): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#51 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#52 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1219): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#53 D:\\programs\\laragon\\www\\DATN_QuaQue\\public\\index.php(20): Illuminate\\Foundation\\Application->handleRequest(Object(Illuminate\\Http\\Request))
+#54 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php(23): require_once('D:\\\\programs\\\\lar...')
+#55 {main}
+
+[previous exception] [object] (PDOException(code: 2002): SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it at D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connectors\\Connector.php:66)
+[stacktrace]
+#0 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connectors\\Connector.php(66): PDO->__construct('mysql:host=127....', 'root', Object(SensitiveParameterValue), Array)
+#1 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connectors\\Connector.php(85): Illuminate\\Database\\Connectors\\Connector->createPdoConnection('mysql:host=127....', 'root', Object(SensitiveParameterValue), Array)
+#2 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connectors\\Connector.php(48): Illuminate\\Database\\Connectors\\Connector->tryAgainIfCausedByLostConnection(Object(PDOException), 'mysql:host=127....', 'root', Object(SensitiveParameterValue), Array)
+#3 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connectors\\MySqlConnector.php(24): Illuminate\\Database\\Connectors\\Connector->createConnection('mysql:host=127....', Array, Array)
+#4 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connectors\\ConnectionFactory.php(184): Illuminate\\Database\\Connectors\\MySqlConnector->connect(Array)
+#5 [internal function]: Illuminate\\Database\\Connectors\\ConnectionFactory->Illuminate\\Database\\Connectors\\{closure}()
+#6 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(1228): call_user_func(Object(Closure))
+#7 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(509): Illuminate\\Database\\Connection->getPdo()
+#8 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(404): Illuminate\\Database\\Connection->getPdoForSelect(false)
+#9 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(809): Illuminate\\Database\\Connection->Illuminate\\Database\\{closure}('select * from `...', Array)
+#10 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(976): Illuminate\\Database\\Connection->runQueryCallback('select * from `...', Array, Object(Closure))
+#11 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(955): Illuminate\\Database\\Connection->tryAgainIfCausedByLostConnection(Object(Illuminate\\Database\\QueryException), 'select * from `...', Array, Object(Closure))
+#12 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(778): Illuminate\\Database\\Connection->handleQueryException(Object(Illuminate\\Database\\QueryException), 'select * from `...', Array, Object(Closure))
+#13 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(395): Illuminate\\Database\\Connection->run('select * from `...', Array, Object(Closure))
+#14 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php(3120): Illuminate\\Database\\Connection->select('select * from `...', Array, false)
+#15 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php(3105): Illuminate\\Database\\Query\\Builder->runSelect()
+#16 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php(3695): Illuminate\\Database\\Query\\Builder->Illuminate\\Database\\Query\\{closure}()
+#17 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php(3104): Illuminate\\Database\\Query\\Builder->onceWithColumns(Array, Object(Closure))
+#18 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Concerns\\BuildsQueries.php(366): Illuminate\\Database\\Query\\Builder->get(Array)
+#19 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php(3027): Illuminate\\Database\\Query\\Builder->first(Array)
+#20 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\DatabaseSessionHandler.php(96): Illuminate\\Database\\Query\\Builder->find('zyRrq158Q7arNXP...')
+#21 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Store.php(116): Illuminate\\Session\\DatabaseSessionHandler->read('zyRrq158Q7arNXP...')
+#22 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Store.php(104): Illuminate\\Session\\Store->readFromHandler()
+#23 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Store.php(88): Illuminate\\Session\\Store->loadSession()
+#24 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\StartSession.php(146): Illuminate\\Session\\Store->start()
+#25 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Support\\helpers.php(399): Illuminate\\Session\\Middleware\\StartSession->Illuminate\\Session\\Middleware\\{closure}(Object(Illuminate\\Session\\Store))
+#26 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\StartSession.php(143): tap(Object(Illuminate\\Session\\Store), Object(Closure))
+#27 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\StartSession.php(115): Illuminate\\Session\\Middleware\\StartSession->startSession(Object(Illuminate\\Http\\Request), Object(Illuminate\\Session\\Store))
+#28 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\StartSession.php(63): Illuminate\\Session\\Middleware\\StartSession->handleStatefulRequest(Object(Illuminate\\Http\\Request), Object(Illuminate\\Session\\Store), Object(Closure))
+#29 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(208): Illuminate\\Session\\Middleware\\StartSession->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#30 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse.php(36): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#31 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(208): Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#32 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Cookie\\Middleware\\EncryptCookies.php(74): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#33 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(208): Illuminate\\Cookie\\Middleware\\EncryptCookies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#34 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(126): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#35 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(807): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#36 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(786): Illuminate\\Routing\\Router->runRouteWithinStack(Object(Illuminate\\Routing\\Route), Object(Illuminate\\Http\\Request))
+#37 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(750): Illuminate\\Routing\\Router->runRoute(Object(Illuminate\\Http\\Request), Object(Illuminate\\Routing\\Route))
+#38 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(739): Illuminate\\Routing\\Router->dispatchToRoute(Object(Illuminate\\Http\\Request))
+#39 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(200): Illuminate\\Routing\\Router->dispatch(Object(Illuminate\\Http\\Request))
+#40 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(169): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}(Object(Illuminate\\Http\\Request))
+#41 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#42 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#43 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(208): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#44 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#45 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php(51): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#46 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(208): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#47 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#48 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(208): Illuminate\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#49 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php(109): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#50 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(208): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#51 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\HandleCors.php(48): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#52 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(208): Illuminate\\Http\\Middleware\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#53 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\TrustProxies.php(58): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#54 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(208): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#55 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\InvokeDeferredCallbacks.php(22): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#56 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(208): Illuminate\\Foundation\\Http\\Middleware\\InvokeDeferredCallbacks->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#57 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\ValidatePathEncoding.php(26): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#58 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(208): Illuminate\\Http\\Middleware\\ValidatePathEncoding->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#59 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(126): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#60 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(175): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#61 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#62 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1219): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#63 D:\\programs\\laragon\\www\\DATN_QuaQue\\public\\index.php(20): Illuminate\\Foundation\\Application->handleRequest(Object(Illuminate\\Http\\Request))
+#64 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php(23): require_once('D:\\\\programs\\\\lar...')
+#65 {main}
+"} 
+[2025-06-14 07:57:59] local.DEBUG: From: Laravel <hello@example.com>
+To: bienlapfb@gmail.com
+Subject: =?utf-8?Q?Tr=E1=BA=A1ng_th=C3=A1i_=C4=91=C6=A1n_h=C3=A0ng?=
+ #xcxzczxcx =?utf-8?Q?=C4=91=C3=A3?= thay =?utf-8?Q?=C4=91=E1=BB=95i?=
+MIME-Version: 1.0
+Date: Sat, 14 Jun 2025 07:57:59 +0000
+Message-ID: <ca06f46c08061372deb66be3a75aed21@example.com>
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Thông báo cập nhật trạng thái đơn hàng</title>
+</head>
+<body style="font-family: Arial, sans-serif; color: #333;">
+    <div style="max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd;">
+        <h2 style="color: #2d3748;">Xin chào DANG BAO BIEN,</h2>
+
+        <p>Chúng tôi xin thông báo rằng đơn hàng <strong>#xcxzczxcx</strong> của bạn đã được cập nhật trạng thái mới.</p>
+
+        
+        <p><strong>Trạng thái mới:</strong>
+            <span style="color: #1a73e8;">Đã xác nhận</span>
+        </p>
+
+        <p>Bạn có thể truy cập vào hệ thống để theo dõi đơn hàng và biết thêm chi tiết.</p>
+
+        <div style="margin: 20px 0;">
+            <a href="http://127.0.0.1:8000/admin/orders/3/tracking" style="display: inline-block; background-color: #1a73e8; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Xem trạng thái đơn hàng</a>
+        </div>
+
+        <hr>
+
+        <p style="font-size: 14px; color: #666;">Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi để được hỗ trợ sớm nhất.</p>
+
+        <p>Trân trọng,<br><strong>Đội ngũ Quà Quê</strong></p>
+    </div>
+</body>
+</html>
+  
+[2025-06-14 07:58:41] local.DEBUG: From: Laravel <hello@example.com>
+To: bienlapfb@gmail.com
+Subject: =?utf-8?Q?Tr=E1=BA=A1ng_th=C3=A1i_=C4=91=C6=A1n_h=C3=A0ng?= #abcde
+ =?utf-8?Q?=C4=91=C3=A3?= thay =?utf-8?Q?=C4=91=E1=BB=95i?=
+MIME-Version: 1.0
+Date: Sat, 14 Jun 2025 07:58:41 +0000
+Message-ID: <5b49d6fe3fde64b9c21916052eec4a5e@example.com>
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Thông báo cập nhật trạng thái đơn hàng</title>
+</head>
+<body style="font-family: Arial, sans-serif; color: #333;">
+    <div style="max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd;">
+        <h2 style="color: #2d3748;">Xin chào DANG BAO BIEN,</h2>
+
+        <p>Chúng tôi xin thông báo rằng đơn hàng <strong>#abcde</strong> của bạn đã được cập nhật trạng thái mới.</p>
+
+        
+        <p><strong>Trạng thái mới:</strong>
+            <span style="color: #1a73e8;">Đã xác nhận</span>
+        </p>
+
+        <p>Bạn có thể truy cập vào hệ thống để theo dõi đơn hàng và biết thêm chi tiết.</p>
+
+        <div style="margin: 20px 0;">
+            <a href="http://127.0.0.1:8000/admin/orders/5/tracking" style="display: inline-block; background-color: #1a73e8; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Xem trạng thái đơn hàng</a>
+        </div>
+
+        <hr>
+
+        <p style="font-size: 14px; color: #666;">Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi để được hỗ trợ sớm nhất.</p>
+
+        <p>Trân trọng,<br><strong>Đội ngũ Quà Quê</strong></p>
+    </div>
+</body>
+</html>
+  
+[2025-06-14 07:58:45] local.DEBUG: From: Laravel <hello@example.com>
+To: bienlapfb@gmail.com
+Subject: =?utf-8?Q?Tr=E1=BA=A1ng_th=C3=A1i_=C4=91=C6=A1n_h=C3=A0ng?= #abcde
+ =?utf-8?Q?=C4=91=C3=A3?= thay =?utf-8?Q?=C4=91=E1=BB=95i?=
+MIME-Version: 1.0
+Date: Sat, 14 Jun 2025 07:58:45 +0000
+Message-ID: <f36131ffa5db2f1cc5d76464b6f12b56@example.com>
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Thông báo cập nhật trạng thái đơn hàng</title>
+</head>
+<body style="font-family: Arial, sans-serif; color: #333;">
+    <div style="max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd;">
+        <h2 style="color: #2d3748;">Xin chào DANG BAO BIEN,</h2>
+
+        <p>Chúng tôi xin thông báo rằng đơn hàng <strong>#abcde</strong> của bạn đã được cập nhật trạng thái mới.</p>
+
+        
+        <p><strong>Trạng thái mới:</strong>
+            <span style="color: #1a73e8;">Đang chuẩn bị hàng</span>
+        </p>
+
+        <p>Bạn có thể truy cập vào hệ thống để theo dõi đơn hàng và biết thêm chi tiết.</p>
+
+        <div style="margin: 20px 0;">
+            <a href="http://127.0.0.1:8000/admin/orders/5/tracking" style="display: inline-block; background-color: #1a73e8; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Xem trạng thái đơn hàng</a>
+        </div>
+
+        <hr>
+
+        <p style="font-size: 14px; color: #666;">Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi để được hỗ trợ sớm nhất.</p>
+
+        <p>Trân trọng,<br><strong>Đội ngũ Quà Quê</strong></p>
+    </div>
+</body>
+</html>
+  
+[2025-06-14 07:58:47] local.DEBUG: From: Laravel <hello@example.com>
+To: bienlapfb@gmail.com
+Subject: =?utf-8?Q?Tr=E1=BA=A1ng_th=C3=A1i_=C4=91=C6=A1n_h=C3=A0ng?= #abcde
+ =?utf-8?Q?=C4=91=C3=A3?= thay =?utf-8?Q?=C4=91=E1=BB=95i?=
+MIME-Version: 1.0
+Date: Sat, 14 Jun 2025 07:58:47 +0000
+Message-ID: <416f03ad839c38c9d55f9554023a3f21@example.com>
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Thông báo cập nhật trạng thái đơn hàng</title>
+</head>
+<body style="font-family: Arial, sans-serif; color: #333;">
+    <div style="max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd;">
+        <h2 style="color: #2d3748;">Xin chào DANG BAO BIEN,</h2>
+
+        <p>Chúng tôi xin thông báo rằng đơn hàng <strong>#abcde</strong> của bạn đã được cập nhật trạng thái mới.</p>
+
+        
+        <p><strong>Trạng thái mới:</strong>
+            <span style="color: #1a73e8;">Đã gửi hàng</span>
+        </p>
+
+        <p>Bạn có thể truy cập vào hệ thống để theo dõi đơn hàng và biết thêm chi tiết.</p>
+
+        <div style="margin: 20px 0;">
+            <a href="http://127.0.0.1:8000/admin/orders/5/tracking" style="display: inline-block; background-color: #1a73e8; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Xem trạng thái đơn hàng</a>
+        </div>
+
+        <hr>
+
+        <p style="font-size: 14px; color: #666;">Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi để được hỗ trợ sớm nhất.</p>
+
+        <p>Trân trọng,<br><strong>Đội ngũ Quà Quê</strong></p>
+    </div>
+</body>
+</html>
+  
+[2025-06-14 07:58:50] local.DEBUG: From: Laravel <hello@example.com>
+To: bienlapfb@gmail.com
+Subject: =?utf-8?Q?Tr=E1=BA=A1ng_th=C3=A1i_=C4=91=C6=A1n_h=C3=A0ng?= #abcde
+ =?utf-8?Q?=C4=91=C3=A3?= thay =?utf-8?Q?=C4=91=E1=BB=95i?=
+MIME-Version: 1.0
+Date: Sat, 14 Jun 2025 07:58:50 +0000
+Message-ID: <295a3ac8bad79b68ba5274d09bc8299f@example.com>
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Thông báo cập nhật trạng thái đơn hàng</title>
+</head>
+<body style="font-family: Arial, sans-serif; color: #333;">
+    <div style="max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd;">
+        <h2 style="color: #2d3748;">Xin chào DANG BAO BIEN,</h2>
+
+        <p>Chúng tôi xin thông báo rằng đơn hàng <strong>#abcde</strong> của bạn đã được cập nhật trạng thái mới.</p>
+
+        
+        <p><strong>Trạng thái mới:</strong>
+            <span style="color: #1a73e8;">Đang vận chuyển</span>
+        </p>
+
+        <p>Bạn có thể truy cập vào hệ thống để theo dõi đơn hàng và biết thêm chi tiết.</p>
+
+        <div style="margin: 20px 0;">
+            <a href="http://127.0.0.1:8000/admin/orders/5/tracking" style="display: inline-block; background-color: #1a73e8; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Xem trạng thái đơn hàng</a>
+        </div>
+
+        <hr>
+
+        <p style="font-size: 14px; color: #666;">Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi để được hỗ trợ sớm nhất.</p>
+
+        <p>Trân trọng,<br><strong>Đội ngũ Quà Quê</strong></p>
+    </div>
+</body>
+</html>
+  
+[2025-06-14 07:58:52] local.DEBUG: From: Laravel <hello@example.com>
+To: bienlapfb@gmail.com
+Subject: =?utf-8?Q?Tr=E1=BA=A1ng_th=C3=A1i_=C4=91=C6=A1n_h=C3=A0ng?= #abcde
+ =?utf-8?Q?=C4=91=C3=A3?= thay =?utf-8?Q?=C4=91=E1=BB=95i?=
+MIME-Version: 1.0
+Date: Sat, 14 Jun 2025 07:58:52 +0000
+Message-ID: <fe59878a469cd6676379c2d48cba600e@example.com>
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Thông báo cập nhật trạng thái đơn hàng</title>
+</head>
+<body style="font-family: Arial, sans-serif; color: #333;">
+    <div style="max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd;">
+        <h2 style="color: #2d3748;">Xin chào DANG BAO BIEN,</h2>
+
+        <p>Chúng tôi xin thông báo rằng đơn hàng <strong>#abcde</strong> của bạn đã được cập nhật trạng thái mới.</p>
+
+        
+        <p><strong>Trạng thái mới:</strong>
+            <span style="color: #1a73e8;">Đã giao hàng</span>
+        </p>
+
+        <p>Bạn có thể truy cập vào hệ thống để theo dõi đơn hàng và biết thêm chi tiết.</p>
+
+        <div style="margin: 20px 0;">
+            <a href="http://127.0.0.1:8000/admin/orders/5/tracking" style="display: inline-block; background-color: #1a73e8; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Xem trạng thái đơn hàng</a>
+        </div>
+
+        <hr>
+
+        <p style="font-size: 14px; color: #666;">Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi để được hỗ trợ sớm nhất.</p>
+
+        <p>Trân trọng,<br><strong>Đội ngũ Quà Quê</strong></p>
+    </div>
+</body>
+</html>
+  
+[2025-06-14 07:58:56] local.DEBUG: From: Laravel <hello@example.com>
+To: bienlapfb@gmail.com
+Subject: =?utf-8?Q?Tr=E1=BA=A1ng_th=C3=A1i_=C4=91=C6=A1n_h=C3=A0ng?= #abcde
+ =?utf-8?Q?=C4=91=C3=A3?= thay =?utf-8?Q?=C4=91=E1=BB=95i?=
+MIME-Version: 1.0
+Date: Sat, 14 Jun 2025 07:58:56 +0000
+Message-ID: <6be9f57d597fb06d09b4a59a08590cf3@example.com>
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Thông báo cập nhật trạng thái đơn hàng</title>
+</head>
+<body style="font-family: Arial, sans-serif; color: #333;">
+    <div style="max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd;">
+        <h2 style="color: #2d3748;">Xin chào DANG BAO BIEN,</h2>
+
+        <p>Chúng tôi xin thông báo rằng đơn hàng <strong>#abcde</strong> của bạn đã được cập nhật trạng thái mới.</p>
+
+        
+        <p><strong>Trạng thái mới:</strong>
+            <span style="color: #1a73e8;">Đã hủy</span>
+        </p>
+
+        <p>Bạn có thể truy cập vào hệ thống để theo dõi đơn hàng và biết thêm chi tiết.</p>
+
+        <div style="margin: 20px 0;">
+            <a href="http://127.0.0.1:8000/admin/orders/5/tracking" style="display: inline-block; background-color: #1a73e8; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Xem trạng thái đơn hàng</a>
+        </div>
+
+        <hr>
+
+        <p style="font-size: 14px; color: #666;">Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi để được hỗ trợ sớm nhất.</p>
+
+        <p>Trân trọng,<br><strong>Đội ngũ Quà Quê</strong></p>
+    </div>
+</body>
+</html>
+  
+[2025-06-14 07:58:59] local.DEBUG: From: Laravel <hello@example.com>
+To: bienlapfb@gmail.com
+Subject: =?utf-8?Q?Tr=E1=BA=A1ng_th=C3=A1i_=C4=91=C6=A1n_h=C3=A0ng?= #abcde
+ =?utf-8?Q?=C4=91=C3=A3?= thay =?utf-8?Q?=C4=91=E1=BB=95i?=
+MIME-Version: 1.0
+Date: Sat, 14 Jun 2025 07:58:59 +0000
+Message-ID: <82c5fc2b6df94d78fa318803c78a67b7@example.com>
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Thông báo cập nhật trạng thái đơn hàng</title>
+</head>
+<body style="font-family: Arial, sans-serif; color: #333;">
+    <div style="max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd;">
+        <h2 style="color: #2d3748;">Xin chào DANG BAO BIEN,</h2>
+
+        <p>Chúng tôi xin thông báo rằng đơn hàng <strong>#abcde</strong> của bạn đã được cập nhật trạng thái mới.</p>
+
+        
+        <p><strong>Trạng thái mới:</strong>
+            <span style="color: #1a73e8;">Giao hàng thất bại</span>
+        </p>
+
+        <p>Bạn có thể truy cập vào hệ thống để theo dõi đơn hàng và biết thêm chi tiết.</p>
+
+        <div style="margin: 20px 0;">
+            <a href="http://127.0.0.1:8000/admin/orders/5/tracking" style="display: inline-block; background-color: #1a73e8; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Xem trạng thái đơn hàng</a>
+        </div>
+
+        <hr>
+
+        <p style="font-size: 14px; color: #666;">Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi để được hỗ trợ sớm nhất.</p>
+
+        <p>Trân trọng,<br><strong>Đội ngũ Quà Quê</strong></p>
+    </div>
+</body>
+</html>
+  
+[2025-06-14 08:12:28] local.ERROR: syntax error, unexpected token "<<" {"exception":"[object] (ParseError(code: 0): syntax error, unexpected token \"<<\" at D:\\programs\\laragon\\www\\DATN_QuaQue\\app\\Http\\Controllers\\Admin\\AttributeController.php:51)
+[stacktrace]
+#0 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\composer\\ClassLoader.php(427): Composer\\Autoload\\{closure}('D:\\\\programs\\\\lar...')
+#1 [internal function]: Composer\\Autoload\\ClassLoader->loadClass('App\\\\Http\\\\Contro...')
+#2 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(1119): is_a('App\\\\Http\\\\Contro...', 'Illuminate\\\\Rout...', true)
+#3 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(1056): Illuminate\\Routing\\Route->controllerMiddleware()
+#4 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(820): Illuminate\\Routing\\Route->gatherMiddleware()
+#5 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(802): Illuminate\\Routing\\Router->gatherRouteMiddleware(Object(Illuminate\\Routing\\Route))
+#6 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(786): Illuminate\\Routing\\Router->runRouteWithinStack(Object(Illuminate\\Routing\\Route), Object(Illuminate\\Http\\Request))
+#7 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(750): Illuminate\\Routing\\Router->runRoute(Object(Illuminate\\Http\\Request), Object(Illuminate\\Routing\\Route))
+#8 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(739): Illuminate\\Routing\\Router->dispatchToRoute(Object(Illuminate\\Http\\Request))
+#9 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(200): Illuminate\\Routing\\Router->dispatch(Object(Illuminate\\Http\\Request))
+#10 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(169): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}(Object(Illuminate\\Http\\Request))
+#11 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#12 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#13 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(208): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#14 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#15 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php(51): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#16 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(208): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#17 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#18 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(208): Illuminate\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#19 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php(109): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#20 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(208): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#21 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\HandleCors.php(48): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#22 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(208): Illuminate\\Http\\Middleware\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#23 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\TrustProxies.php(58): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#24 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(208): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#25 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\InvokeDeferredCallbacks.php(22): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#26 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(208): Illuminate\\Foundation\\Http\\Middleware\\InvokeDeferredCallbacks->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#27 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\ValidatePathEncoding.php(26): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#28 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(208): Illuminate\\Http\\Middleware\\ValidatePathEncoding->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#29 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(126): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#30 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(175): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#31 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#32 D:\\programs\\laragon\\www\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1219): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#33 D:\\programs\\laragon\\www\\DATN_QuaQue\\public\\index.php(20): Illuminate\\Foundation\\Application->handleRequest(Object(Illuminate\\Http\\Request))
+#34 {main}
+"} 
