@@ -118,6 +118,7 @@
                         </a>
                         <ul class="sidebar-submenu">
                             <li><a href="{{ url('/admin/blog/index') }}"> Danh sách tin tức</a></li>
+                            <li><a href="{{ url('/admin/blog/trashed') }}">Thùng rác</a></li>
                         </ul>
                     </li>
                     <li class="sidebar-list">
