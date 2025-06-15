@@ -30,9 +30,11 @@
                         <div class="mb-4 row align-items-start">
                             <label class="form-label-title col-sm-3 mb-0">Nội dung</label>
                             <div class="col-sm-9">
-                                <div class="border rounded p-3 bg-white" style="min-height: 200px;">
-                                    {!! $blog->content !!}
-                                </div>
+                                <div class="border rounded p-3 bg-white" style="min-height: 200px; overflow-wrap: break-word; word-wrap: break-word;">
+                                    <div style="max-width: 100%; overflow-x: auto;">
+                                        {!! str_replace('<img', '<img style="max-width: 100%; height: auto; display: block;"', $blog->content) !!}
+                                    </div>
+                                </div>                                
                             </div>
                         </div>
 
