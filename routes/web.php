@@ -29,9 +29,13 @@ use App\Http\Controllers\Admin\SupportTicketController;
 
 
 use App\Http\Controllers\Client\ClientHomeController;
+
 use App\Http\Controllers\Client\BlogController as ClientBlogController;
+use App\Http\Controllers\Client\ClientSupportTicketController;
+
 use Illuminate\Support\Facades\Route;
 // use App\Http\Controllers\ProductController as GlobalProductController; // Nếu cần dùng controller gốc ngoài admin/client
+
 
 // CLIENT
 Route::get('/', function () {
@@ -52,9 +56,12 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
     });
 
     // Liên hệ
-    Route::get('/contact', function () {
-        return view('frontend.pages.contact');
-    });
+   Route::prefix('support-ticket')->middleware('auth')->name('support-ticket.')->group(function () {
+    Route::get('/', [ClientSupportTicketController::class, 'index'])->name('index');
+    Route::get('/create', [ClientSupportTicketController::class, 'create'])->name('create');
+    Route::post('/', [ClientSupportTicketController::class, 'store'])->name('store');
+    Route::get('/{id}', [ClientSupportTicketController::class, 'show'])->name('show');
+});
 
     // giỏ hàng
     Route::get('/cart', function () {
@@ -83,10 +90,7 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
     //     Route::get('support-ticket/create', [SupportTicketController::class, 'create'])->name('support-ticket.create');
     //     Route::post('support-ticket', [SupportTicketController::class, 'store'])->name('support-ticket.store');
     // });
-    Route::get('/contact-us', function () {
-        return view('frontend.pages.contact');
-    })->name('contact-us');
-    Route::post('/support-ticket', [SupportTicketController::class, 'store'])->name('support-ticket.store');
+
 });
 
 //----------------------------------------------------------
