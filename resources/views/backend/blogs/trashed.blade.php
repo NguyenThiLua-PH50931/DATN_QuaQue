@@ -1,6 +1,6 @@
 @extends('layouts.backend')
 
-@section('title', 'Blog đã xóa mềm')
+@section('title', 'Tin tức đã xóa')
 
 @section('content')
     <div class="page-body">
@@ -11,7 +11,7 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <div class="title-header option-title">
-                                    <h5>Blog đã xóa mềm</h5>
+                                    <h5>Tin tức đã xóa</h5>
                                 </div>
                                 <form class="d-inline-flex">
                                     <a href="{{ route('admin.blog.index') }}"
@@ -250,7 +250,7 @@
             $('#blog_table_id').DataTable({
                 language: {
                     search: "Tìm kiếm:",
-                    lengthMenu: "Hiển thị _MENU_ blog",
+                    lengthMenu: "",
                     info: "Hiển thị _START_ đến _END_ trong tổng _TOTAL_ blog",
                     paginate: {
                         first: "Đầu",
@@ -258,8 +258,8 @@
                         next: "Sau",
                         previous: "Trước"
                     },
-                    zeroRecords: "Không tìm thấy blog nào đã bị xóa mềm.",
-                    emptyTable: "Không có blog nào đã bị xóa mềm.",
+                    zeroRecords: "Không tìm thấy blog nào đã bị xóa.",
+                    emptyTable: "Không có blog nào đã bị xóa.",
                 }
             });
 
