@@ -30,7 +30,7 @@
                         <div class="mb-4 row align-items-start">
                             <label class="form-label-title col-sm-3 mb-0">Nội dung</label>
                             <div class="col-sm-9">
-                                <div class="border rounded p-3 bg-white ck-content" style="min-height: 200px;">
+                                <div class="border rounded p-3 bg-white" style="min-height: 200px;">
                                     {!! $blog->content !!}
                                 </div>
                             </div>
@@ -44,6 +44,20 @@
                                 @else
                                     <p class="text-muted mb-0">Không có ảnh</p>
                                 @endif
+                            </div>
+                        </div>
+
+                        <div class="mb-4 row align-items-center">
+                            <label class="form-label-title col-sm-3 mb-0">Ngày bắt đầu hiển thị</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" value="{{ $blog->start_date ? $blog->start_date->format('m/d/Y') : '' }}" disabled>
+                            </div>
+                        </div>
+
+                        <div class="mb-4 row align-items-center">
+                            <label class="form-label-title col-sm-3 mb-0">Ngày dừng hiển thị</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" value="{{ $blog->end_date ? $blog->end_date->format('m/d/Y') : '' }}" disabled>
                             </div>
                         </div>
 
