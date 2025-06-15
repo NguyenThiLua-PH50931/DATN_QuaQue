@@ -45,15 +45,16 @@
 
                                     <div class="blog-contain">
                                         <div class="blog-label">
-                                            <span class="time"><i data-feather="clock"></i> <span><span>{{ $blog->created_at->format('F d, Y') }}</span></span></span>
+                                            <span class="time"><i data-feather="clock"></i> <span>{{ $item->created_at ? $item->created_at->format('F d, Y') : 'Chưa có ngày tạo' }}</span></span>
                                             {{-- <span class="super"><i data-feather="user"></i> <span>Mark J.
                                                     Speight</span></span> --}}
                                         </div>
                                         <a href="{{ route('blogs-detail', ['id' => $item->id]) }}">
                                             <h3>{{ $item->title }}</h3>
                                         </a>
-                                        <button onclick="location.href = {{ route('blogs-detail', ['id' => $item->id]) }};" class="blog-button">Read More
-                                            <i class="fa-solid fa-right-long"></i></button>
+                                        <button onclick="location.href='{{ route('blogs-detail', ['id' => $item->id]) }}'" class="blog-button">
+                                            Read More <i class="fa-solid fa-right-long"></i>
+                                        </button>                                        
                                     </div>
                                 </div>
                             </div>
@@ -119,7 +120,8 @@
                                                         <a href="#">
                                                             <h5 class="recent-name">{{ $item->title }}</h5>
                                                         </a>
-                                                        <h6><span>{{ $blog->created_at->format('F d, Y') }}</span> <i data-feather="thumbs-up"></i></h6>
+                                                        <h6><span>{{ $item->created_at ? $item->created_at->format('F d, Y') : 'Chưa có ngày tạo' }}</span>
+                                                            <i data-feather="thumbs-up"></i></h6>
                                                     </div>
                                                 </div>
                                             @endforeach

@@ -65,7 +65,8 @@
                                                             <a href="#">
                                                                 <h5 class="recent-name">{{ $item->title }}</h5>
                                                             </a>
-                                                            <h6><span>{{ $blog->created_at->format('F d, Y') }}</span> <i data-feather="thumbs-up"></i></h6>
+                                                            <h6><span>{{ $blog->created_at ? $blog->created_at->format('F d, Y') : 'Chưa có ngày tạo' }}</span>
+                                                                <i data-feather="thumbs-up"></i></h6>
                                                         </div>
                                                     </div>
                                                 @endforeach
@@ -290,7 +291,7 @@
                                 <li>
                                     <div class="user-list">
                                         <i data-feather="calendar"></i>
-                                        <span>{{ $blog->created_at->format('F d, Y') }}</span>
+                                        <span>{{ $blog->created_at ? $blog->created_at->format('F d, Y') : 'Chưa có ngày tạo' }}</span>
                                     </div>
                                 </li>
 
@@ -305,7 +306,9 @@
                     </div>
 
                     <div class="blog-detail-contain">
-                        {!! $blog->content !!}
+                        <div style="max-width: 100%; overflow-x: auto;">
+                            {!! str_replace('<img', '<img style="max-width: 100%; height: auto; display: block;"', $blog->content) !!}
+                        </div>
                     </div>
 
                     {{-- <div class="comment-box overflow-hidden">
