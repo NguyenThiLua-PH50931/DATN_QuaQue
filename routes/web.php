@@ -29,7 +29,10 @@ use App\Http\Controllers\Admin\SupportTicketController;
 
 
 use App\Http\Controllers\Client\ClientHomeController;
+
+use App\Http\Controllers\Client\BlogController as ClientBlogController;
 use App\Http\Controllers\Client\ClientSupportTicketController;
+
 use Illuminate\Support\Facades\Route;
 // use App\Http\Controllers\ProductController as GlobalProductController; // Nếu cần dùng controller gốc ngoài admin/client
 
@@ -111,6 +114,9 @@ Route::view('/products/category', 'frontend.products.category');
 Route::view('/seller/become-seller', 'frontend.seller.become-seller');
 Route::view('/seller/seller-dashboard', 'frontend.seller.seller-dashboard');
 
+// Blog
+Route::get('/blog', [ClientBlogController::class, 'index'])->name('blog');
+Route::get('/blog-detail/{id}', [ClientBlogController::class, 'show'])->name('blogs-detail');
 
 
 
@@ -283,7 +289,14 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         Route::get('show/{blog}', [BlogController::class, 'show'])->name('show');
         Route::get('edit/{blog}', [BlogController::class, 'edit'])->name('edit');
         Route::put('update/{blog}', [BlogController::class, 'update'])->name('update');
-        Route::delete('destroy/{blog}', [BlogController::class, 'destroy'])->name('destroy');
+        Route::delete('destroy/{blog}', [BlogController::class, 'softDelete'])->name('softDelete');
+        Route::delete('{id}/force', [BlogController::class, 'forceDelete'])->name('forceDelete');
+        Route::post('{id}/restore', [BlogController::class, 'restore'])->name('restore');
+        Route::get('trashed', [BlogController::class, 'trashed'])->name('trashed');
+        Route::get('{id}', [BlogController::class, 'show'])->name('show');
+        Route::delete('bulk-delete', [BlogController::class, 'bulkDelete'])->name('bulkDelete');
+        Route::delete('bulk-force-delete', [BlogController::class, 'bulkForceDelete'])->name('bulkForceDelete');
+        Route::post('bulk-restore', [BlogController::class, 'bulkRestore'])->name('bulkRestore');
     });
 
     // Quản lý đánh giá
