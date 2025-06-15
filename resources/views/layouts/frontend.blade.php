@@ -8,88 +8,85 @@
     <meta name="description" content="Fastkart">
     <meta name="keywords" content="Fastkart">
     <meta name="author" content="Fastkart">
-    <link rel="icon" href="../frontend/assets/images/favicon/1.png" type="image/x-icon">
-    <title>@yield('title')</title>
-   <link href="../frontend/assets/css/style.css" rel="stylesheet">
 
-    <!-- Google font -->
+    <!-- Favicon -->
+    <link rel="icon" href="{{ asset('frontend/assets/images/favicon/1.png') }}" type="image/x-icon">
+
+    <!-- Title -->
+    <title>@yield('title')</title>
+
+    <!-- Base URL để tránh lỗi 404 khi có prefix route như /client/... -->
+    <base href="{{ url('/') }}/" />
+
+    <!-- Main style -->
+    <link href="{{ asset('frontend/assets/css/style.css') }}" rel="stylesheet">
+
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800;900&display=swap"
-        rel="stylesheet">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 
+    <!-- Vendor CSS -->
+    <link id="rtl-link" rel="stylesheet" href="{{ asset('frontend/assets/css/vendors/bootstrap.css') }}">
+    <link rel="stylesheet" href="{{ asset('frontend/assets/css/aa.css') }}">
+    <link rel="stylesheet" href="{{ asset('frontend/assets/css/animate.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('frontend/assets/css/vendors/font-awesome.css') }}">
+    <link rel="stylesheet" href="{{ asset('frontend/assets/css/vendors/feather-icon.css') }}">
+    <link rel="stylesheet" href="{{ asset('frontend/assets/css/vendors/slick/slick.css') }}">
+    <link rel="stylesheet" href="{{ asset('frontend/assets/css/vendors/slick/slick-theme.css') }}">
+    <link rel="stylesheet" href="{{ asset('frontend/assets/css/bulk-style.css') }}">
+    <link rel="stylesheet" href="{{ asset('frontend/assets/css/vendors/animate.css') }}">
 
-    <!-- bootstrap css -->
-    <link id="rtl-link" rel="stylesheet" type="text/css" href="../frontend/assets/css/vendors/bootstrap.css">
-    <link rel="stylesheet" href="../frontend/assets/css/aa.css">
-
-
-    <!-- wow css -->
-    <link rel="stylesheet" href="../frontend/assets/css/animate.min.css" />
-
-    <!-- font-awesome css -->
-    <link rel="stylesheet" type="text/css" href="../frontend/assets/css/vendors/font-awesome.css">
-
-    <!-- feather icon css -->
-    <link rel="stylesheet" type="text/css" href="../frontend/assets/css/vendors/feather-icon.css">
-
-    <!-- slick css -->
-    <link rel="stylesheet" type="text/css" href="../frontend/assets/css/vendors/slick/slick.css">
-    <link rel="stylesheet" type="text/css" href="../frontend/assets/css/vendors/slick/slick-theme.css">
-
-    <!-- Iconly css -->
-    <link rel="stylesheet" type="text/css" href="../frontend/assets/css/bulk-style.css">
-    <link rel="stylesheet" type="text/css" href="../frontend/assets/css/vendors/animate.css">
-
-    <!-- Template css -->
-    <link id="color-link" rel="stylesheet" type="text/css" href="../frontend/assets/css/style.css">
-
+    <!-- Template Style -->
+    <link id="color-link" rel="stylesheet" href="{{ asset('frontend/assets/css/style.css') }}">
 </head>
+
 
 <body class="bg-effect">
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const savedThemeColor = localStorage.getItem('theme-color');
-            if (savedThemeColor) {
-                document.body.style.setProperty('--theme-color', savedThemeColor);
-                document.body.style.setProperty('--theme-color-rgb', savedThemeColor);
-                document.getElementById('colorPick').value = savedThemeColor;
-            }
+    document.addEventListener('DOMContentLoaded', function () {
+        const savedThemeColor = localStorage.getItem('theme-color');
+        if (savedThemeColor) {
+            document.body.style.setProperty('--theme-color', savedThemeColor);
+            document.body.style.setProperty('--theme-color-rgb', savedThemeColor);
+            const colorPick = document.getElementById('colorPick');
+            if (colorPick) colorPick.value = savedThemeColor;
+        }
 
-            const savedThemeMode = localStorage.getItem('theme-mode');
-            if (savedThemeMode) {
-                if (savedThemeMode === 'dark') {
-                    document.body.classList.add('dark');
-                    document.body.classList.remove('light');
-                    document.getElementById('color-link').setAttribute('href', '/frontend/assets/css/dark.css');
-                } else {
-                    document.body.classList.add('light');
-                    document.body.classList.remove('dark');
-                    document.getElementById('color-link').setAttribute('href', '/frontend/assets/css/style.css');
-                }
+        const savedThemeMode = localStorage.getItem('theme-mode');
+        if (savedThemeMode) {
+            const colorLink = document.getElementById('color-link');
+            if (savedThemeMode === 'dark') {
+                document.body.classList.add('dark');
+                document.body.classList.remove('light');
+                if (colorLink) colorLink.setAttribute('href', "{{ asset('frontend/assets/css/dark.css') }}");
+            } else {
+                document.body.classList.add('light');
+                document.body.classList.remove('dark');
+                if (colorLink) colorLink.setAttribute('href', "{{ asset('frontend/assets/css/style.css') }}");
             }
+        }
 
-            const savedThemeDirection = localStorage.getItem('theme-direction');
-            if (savedThemeDirection) {
-                if (savedThemeDirection === 'rtl') {
-                    document.documentElement.setAttribute('dir', 'rtl');
-                    document.body.classList.add('rtl');
-                    document.body.classList.remove('ltr');
-                    document.getElementById('rtl-link').setAttribute('href', '/frontend/assets/css/vendors/bootstrap.rtl.css');
-                } else {
-                    document.documentElement.setAttribute('dir', '');
-                    document.body.classList.add('ltr');
-                    document.body.classList.remove('rtl');
-                    document.getElementById('rtl-link').setAttribute('href', '/frontend/assets/css/vendors/bootstrap.css');
-                }
+        const savedThemeDirection = localStorage.getItem('theme-direction');
+        if (savedThemeDirection) {
+            const rtlLink = document.getElementById('rtl-link');
+            if (savedThemeDirection === 'rtl') {
+                document.documentElement.setAttribute('dir', 'rtl');
+                document.body.classList.add('rtl');
+                document.body.classList.remove('ltr');
+                if (rtlLink) rtlLink.setAttribute('href', "{{ asset('frontend/assets/css/vendors/bootstrap.rtl.css') }}");
+            } else {
+                document.documentElement.setAttribute('dir', '');
+                document.body.classList.add('ltr');
+                document.body.classList.remove('rtl');
+                if (rtlLink) rtlLink.setAttribute('href', "{{ asset('frontend/assets/css/vendors/bootstrap.css') }}");
             }
-        });
-    </script>
+        }
+    });
+</script>
 
     <!-- Loader Start -->
     <!-- <div class="fullpage-loader">
@@ -266,7 +263,7 @@
                                             </div>
                                         </li>
                                         <li class="right-side">
-                                         <a href="{{ route('client.contact-us') }}" class="delivery-login-box">
+                                         <a href="{{ route('client.support-ticket.index') }}" class="delivery-login-box">
                                                 <div class="delivery-icon">
                                                     <i data-feather="phone-call"></i>
                                                 </div>
@@ -1794,49 +1791,49 @@
     <div class="bg-overlay"></div>
     <!-- Bg overlay End -->
 
-    <!-- latest jquery-->
-    <script src="../frontend/assets/js/jquery-3.6.0.min.js"></script>
+   <!-- latest jquery-->
+<script src="{{ asset('frontend/assets/js/jquery-3.6.0.min.js') }}"></script>
 
-    <!-- jquery ui-->
-    <script src="../frontend/assets/js/jquery-ui.min.js"></script>
+<!-- jquery ui-->
+<script src="{{ asset('frontend/assets/js/jquery-ui.min.js') }}"></script>
 
-    <!-- Bootstrap js-->
-    <script src="../frontend/assets/js/bootstrap/bootstrap.bundle.min.js"></script>
-    <script src="../frontend/assets/js/bootstrap/bootstrap-notify.min.js"></script>
-    <script src="../frontend/assets/js/bootstrap/popper.min.js"></script>
+<!-- Bootstrap js-->
+<script src="{{ asset('frontend/assets/js/bootstrap/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ asset('frontend/assets/js/bootstrap/bootstrap-notify.min.js') }}"></script>
+<script src="{{ asset('frontend/assets/js/bootstrap/popper.min.js') }}"></script>
 
-    <!-- feather icon js-->
-    <script src="../frontend/assets/js/feather/feather.min.js"></script>
-    <script src="../frontend/assets/js/feather/feather-icon.js"></script>
+<!-- feather icon js-->
+<script src="{{ asset('frontend/assets/js/feather/feather.min.js') }}"></script>
+<script src="{{ asset('frontend/assets/js/feather/feather-icon.js') }}"></script>
 
-    <!-- Lazyload Js -->
-    <script src="../frontend/assets/js/lazysizes.min.js"></script>
+<!-- Lazyload Js -->
+<script src="{{ asset('frontend/assets/js/lazysizes.min.js') }}"></script>
 
-    <!-- Slick js-->
-    <script src="../frontend/assets/js/slick/slick.js"></script>
-    <script src="../frontend/assets/js/slick/slick-animation.min.js"></script>
-    <script src="../frontend/assets/js/slick/custom_slick.js"></script>
+<!-- Slick js-->
+<script src="{{ asset('frontend/assets/js/slick/slick.js') }}"></script>
+<script src="{{ asset('frontend/assets/js/slick/slick-animation.min.js') }}"></script>
+<script src="{{ asset('frontend/assets/js/slick/custom_slick.js') }}"></script>
 
-    <!-- Auto Height Js -->
-    <script src="../frontend/assets/js/auto-height.js"></script>
+<!-- Auto Height Js -->
+<script src="{{ asset('frontend/assets/js/auto-height.js') }}"></script>
 
-    <!-- Timer Js -->
-    <script src="../frontend/assets/js/timer1.js"></script>
+<!-- Timer Js -->
+<script src="{{ asset('frontend/assets/js/timer1.js') }}"></script>
 
-    <!-- Fly Cart Js -->
-    <script src="../frontend/assets/js/fly-cart.js"></script>
+<!-- Fly Cart Js -->
+<script src="{{ asset('frontend/assets/js/fly-cart.js') }}"></script>
 
-    <!-- Quantity js -->
-    <script src="../frontend/assets/js/quantity-2.js"></script>
+<!-- Quantity js -->
+<script src="{{ asset('frontend/assets/js/quantity-2.js') }}"></script>
 
-    <!-- WOW js -->
-    <script src="../frontend/assets/js/wow.min.js"></script>
-    <script src="../frontend/assets/js/custom-wow.js"></script>
+<!-- WOW js -->
+<script src="{{ asset('frontend/assets/js/wow.min.js') }}"></script>
+<script src="{{ asset('frontend/assets/js/custom-wow.js') }}"></script>
 
-    <!-- script js -->
-    <script src="../frontend/assets/js/script.js"></script>
+<!-- script js -->
+<script src="{{ asset('frontend/assets/js/script.js') }}"></script>
 
-    <!-- theme setting js -->
-    <script src="../frontend/assets/js/theme-setting.js"></script>
+<!-- theme setting js -->
+<script src="{{ asset('frontend/assets/js/theme-setting.js') }}"></script>
 </body>
 </html>
