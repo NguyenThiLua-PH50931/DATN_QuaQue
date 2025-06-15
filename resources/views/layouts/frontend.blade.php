@@ -987,8 +987,8 @@
                                                     </div>
                                                 </li>
 
-                                                <li class="nav-item">
-                                                    <a href="{{ route('blog') }}">Tin tức</a>
+                                                <li class="nav-item dropdown new-nav-item">
+                                                    <a class="nav-link dropdown-toggle" href="{{ route('blog') }}">Tin tức</a>
                                                 </li>
 
                                                 <li class="nav-item dropdown new-nav-item">
