@@ -8,13 +8,12 @@ use App\Http\Controllers\Auth\RegisterController;
 // use App\Http\Controllers\Admin\RegionController;
 // use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
-use App\Http\Controllers\Admin\AttributeController as AdminAttributeController;
 use App\Http\Controllers\Admin\AttributeValueController as AdminAttributeValueController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\ProductVariantController as AdminProductVariantController;
 use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\Admin\CommentController;
-
+use App\Http\Controllers\Admin\AttributeController;
 use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\User\UserController;
 
@@ -144,23 +143,28 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
     // Quản lý sản phẩm
     Route::post('/categories/store-quick', [AdminCategoryController::class, 'storeQuick'])->name('categories.storeQuick');
     Route::post('/regions/store-quick', [AdminRegionController::class, 'storeQuick'])->name('regions.storeQuick');
-    Route::post('/attributes/store-quick', action: [AdminAttributeController::class, 'storeQuick'])->name('attributes.storeQuick');
+    Route::post('/attributes/store-quick', action: [AttributeController::class, 'storeQuick'])->name('attributes.storeQuick');
     Route::post('/attribute-values/quick-store', [AdminAttributeValueController::class, 'storeQuick'])->name('attribute_values.storeQuick');
 
     Route::prefix('products')->name('products.')->group(function () {
         Route::get('/', [AdminProductController::class, 'index'])->name('index');
         Route::get('/create', [AdminProductController::class, 'create'])->name('create');
         Route::post('/store', [AdminProductController::class, 'store'])->name('store');
-        Route::get('/{slug}', [AdminProductController::class, 'show'])->name('show');
         Route::post('/{id}/toggle', [AdminProductController::class, 'toggleStatus'])->name('toggle');
         Route::post('/bulk-delete', [AdminProductController::class, 'bulkDelete'])->name('bulkDelete');
         Route::delete('/{id}', [AdminProductController::class, 'destroy'])->name('destroy');
         Route::get('/{slug}/edit', [AdminProductController::class, 'edit'])->name('edit');
         Route::post('/{slug}/update', [AdminProductController::class, 'update'])->name('update');
-        Route::post('/delete-image', [AdminProductController::class, 'deleteImage'])->name('deleteImage');
+        Route::delete('/image/{id}', [AdminProductController::class, 'deleteImage'])->name('image.delete');
         Route::get('/{id}/description', [AdminProductController::class, 'getDescription'])->name('description');
         Route::get('/variant/{id}/description', [AdminProductController::class, 'getVariantDescription'])->name('variant.description');
         Route::post('/variant/{id}/toggle-status', [AdminProductController::class, 'toggleVariantStatus'])->name('variant.toggleStatus');
+        Route::get('/trashed', [AdminProductController::class, 'trashed'])->name('trashed');
+        Route::get('/{slug}', [AdminProductController::class, 'show'])->name('show');
+        Route::post('/bulk-restore', [AdminProductController::class, 'bulkRestore'])->name('bulkRestore');
+        Route::post('/bulk-force-delete', [AdminProductController::class, 'bulkForceDelete'])->name('bulkForceDelete');
+        Route::post('/{id}/restore', [AdminProductController::class, 'restore'])->name('restore');
+        Route::delete('/{id}/force', [AdminProductController::class, 'forceDelete'])->name('forceDelete');
     });
 
     // bien the
@@ -174,19 +178,22 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         Route::delete('/delete/{id}', [AdminProductVariantController::class, 'destroy'])->name('destroy');
         Route::post('/bulk-delete', [AdminProductVariantController::class, 'bulkDelete'])->name('bulkDelete');
     });
-    // thuoc tinh
-    Route::prefix('attributes')->name('attributes.')->group(function () {
-        Route::get('/', [AdminAttributeController::class, 'index'])->name('index');               // Danh sách thuộc tính
-        Route::get('/create', [AdminAttributeController::class, 'create'])->name('create');       // Form tạo mới
-        Route::post('/store', [AdminAttributeController::class, 'store'])->name('store');         // Lưu mới
-        Route::get('/{slug}', [AdminAttributeController::class, 'show'])->name('show');           // Xem chi tiết
-        Route::get('/{slug}/edit', [AdminAttributeController::class, 'edit'])->name('edit');      // Form chỉnh sửa
-        Route::post('/{slug}/update', [AdminAttributeController::class, 'update'])->name('update'); // Cập nhật
-        Route::delete('/{id}', [AdminAttributeController::class, 'destroy'])->name('destroy');    // Xóa
-        Route::post('/bulk-delete', [AdminAttributeController::class, 'bulkDelete'])->name('bulkDelete'); // Xóa nhiều
-        Route::post('/{id}/toggle', [AdminAttributeController::class, 'toggleStatus'])->name('toggle'); // Toggle trạng thái (nếu dùng)
-        Route::post('/variant/{id}/toggle', [AdminAttributeController::class, 'toggleVariantStatus'])->name('variant.toggle'); // Toggle variant status
+    // Attibute
+    Route::group(['prefix' => 'attributes', 'as' => 'attributes.'], function () {
+        Route::get('/', [AttributeController::class, 'index'])->name('index');                  // danh sách thuộc tính
+        Route::post('/', [AttributeController::class, 'store'])->name('store');                 // thêm mới
+        Route::get('create', [AttributeController::class, 'create'])->name('create');           // form tạo
+        Route::get('/{slug}/edit', [AttributeController::class, 'edit'])->name('edit');            // Form chỉnh sửa
+        Route::put('/{id}', [AttributeController::class, 'update'])->name('update'); // Cập nhật (dùng PUT để nhất quán với REST)
+        Route::delete('/{id}', [AttributeController::class, 'destroy'])->name('destroy');       // Xóa mềm một thuộc tính (sử dụng destroy)
+        Route::post('/bulk-delete', [AttributeController::class, 'bulkDelete'])->name('bulkDelete'); // Xóa mềm nhiều thuộc tính
+        Route::get('/trashed', [AttributeController::class, 'trashed'])->name('trashed');        // Danh sách thuộc tính đã xóa mềm
+        Route::post('/{id}/restore', [AttributeController::class, 'restore'])->name('restore');  // Khôi phục một thuộc tính
+        Route::post('/bulk-restore', [AttributeController::class, 'bulkRestore'])->name('bulkRestore'); // Khôi phục nhiều thuộc tính
+        Route::delete('/{id}/force', [AttributeController::class, 'forceDelete'])->name('forceDelete');  // Xóa vĩnh viễn một thuộc tính
+        Route::post('/bulk-force-delete', [AttributeController::class, 'bulkForceDelete'])->name('bulkForceDelete'); // Xóa vĩnh viễn nhiều thuộc tính
     });
+
     // Categories
     Route::group(['prefix' => 'categories', 'as' => 'categories.'], function () {
         Route::get('/', [AdminCategoryController::class, 'index'])->name('index');                  // danh sách categories (trang admin)
@@ -316,7 +323,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
     // Quản lý sản phẩm
     Route::post('/categories/store-quick', [AdminCategoryController::class, 'storeQuick'])->name('categories.storeQuick');
     Route::post('/regions/store-quick', [AdminRegionController::class, 'storeQuick'])->name('regions.storeQuick');
-    Route::post('/attributes/store-quick', [AdminAttributeController::class, 'storeQuick'])->name('attributes.storeQuick');
+    //Route::post('/attributes/store-quick', [AdminAttributeController::class, 'storeQuick'])->name('attributes.storeQuick');
 
     Route::prefix('products')->name('products.')->group(function () {
         Route::get('/', [AdminProductController::class, 'index'])->name('index');
@@ -329,7 +336,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         Route::delete('/{id}', [AdminProductController::class, 'destroy'])->name('destroy');
         Route::get('/{slug}/edit', [AdminProductController::class, 'edit'])->name('edit');
         Route::post('/{slug}/update', [AdminProductController::class, 'update'])->name('update');
-        Route::post('/delete-image', [AdminProductController::class, 'deleteImage'])->name('deleteImage');
+        Route::delete('/image/{id}', [AdminProductController::class, 'deleteImage'])->name('image.delete');
     });
 
     // Chỉnh sửa hồ sơ:

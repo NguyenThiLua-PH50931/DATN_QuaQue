@@ -36,9 +36,12 @@ class DatabaseSeeder extends Seeder
             CouponSeeder::class,
             BlogsTableSeeder::class,
 
+<<<<<<< HEAD
+=======
 
             
 
+>>>>>>> e6fdc2233284ba9ed3610ca8e95e4ac0e93b8de3
         ]);
     }
 }

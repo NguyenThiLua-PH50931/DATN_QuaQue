@@ -147,8 +147,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    Bạn có chắc chắn muốn xóa mềm banner "<span id="bannerTitleDelete"></span>" không?
-                </div>
+                    Bạn có chắc chắn muốn xóa banner không? Banner này sẽ được xóa mềm và có thể khôi phục sau này.
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
                     <form id="deleteForm" method="POST" action="" style="display: inline;">
