@@ -59,7 +59,7 @@
                         if ($product->image) $gallery[] = asset('storage/' . $product->image);
                         if ($product->product_images && $product->product_images->count()) {
                         foreach ($product->product_images as $img) {
-                        $gallery[] = asset('storage/' . $img->image_url);
+                                $gallery[] = $img->image_url;
                         }
                         }
                         if ($product->variants && $product->variants->count()) {
@@ -72,7 +72,6 @@
                         @endphp
 
                         <div class="product-gallery" style="max-width:350px; margin:auto;">
-
                             <!-- Ảnh lớn hiển thị chính -->
                             <div class="main-image-wrapper" style="border:1px solid #ddd; border-radius:10px; padding:10px; background:#fafafa;">
                                 <img id="mainImage" src="{{ $gallery[0] ?? '' }}" alt="Ảnh sản phẩm" style="width:100%; height:auto; border-radius:10px; object-fit:contain;">
@@ -87,7 +86,6 @@
                                     style="width:60px; height:60px; object-fit:cover; border-radius:6px; border:2px solid transparent; cursor:pointer;">
                                 @endforeach
                             </div>
-
                         </div>
                     </div>
                     <div class="col-md-7">

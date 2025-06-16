@@ -7,7 +7,7 @@ use App\Models\admin\Attribute as AdminAttribute;
 use App\Models\admin\Category as AdminCategory;
 use App\Models\admin\Product as AdminProduct;
 use App\Models\admin\Region as AdminRegion;
-use App\Models\admin\Variant as AdminVariant;
+use App\Models\admin\ProductVariant as AdminProductVariant;
 use App\Models\admin\ProductImage;
 use App\Models\admin\AttributeValue;
 use Illuminate\Http\Request;
@@ -18,55 +18,211 @@ use Illuminate\Support\Facades\Storage;
 class ProductController extends Controller
 {
     // Trang danh sách sản phẩm (sơ lược)
-    public function index()
+    public function index(Request $request)
     {
-        // Lấy danh sách sản phẩm, gắn category và variant đầu tiên (active)
-        $products = AdminProduct::with([
+        $query = AdminProduct::with([
             'category',
+            'region',
+            'product_images',
             'variants' => function ($q) {
                 $q->where('active', 1)->orderBy('id');
             }
-        ])->orderByDesc('id')->paginate(10);
+        ]);
 
-        return view('backend.products.index', compact('products'));
+        // Lọc theo trạng thái (bao gồm cả sản phẩm đã xóa mềm)
+        if ($request->has('trashed') && $request->trashed == 'true') {
+            $query->onlyTrashed();
+        } else {
+            $query->withoutTrashed(); // Chỉ lấy các sản phẩm không bị xóa mềm
+        }
+
+        // Áp dụng các bộ lọc khác (đã có từ trước nếu có)
+        if ($request->filled('category')) {
+            $query->where('category_id', $request->category);
+        }
+        if ($request->filled('region')) {
+            $query->where('region_id', $request->region);
+        }
+        if ($request->filled('status')) {
+            $query->where('active', $request->status);
+        }
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%')
+                    ->orWhere('origin', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        $products = $query->orderByDesc('id')->paginate(10);
+
+        $categories = AdminCategory::all();
+        $regions = AdminRegion::all();
+
+        return view('backend.products.index', compact('products', 'categories', 'regions'));
     }
 
     // Trang chi tiết sản phẩm theo slug
     public function show($slug)
     {
         $product = AdminProduct::where('slug', $slug)
-            ->with(['category', 'variants', 'reviews.user'])
+            ->with(['category', 'region', 'product_images', 'variants.attributeValues', 'reviews.user', 'comments'])
             ->firstOrFail();
 
         return view('backend.products.show', compact('product'));
     }
+
+    // Chuyển đổi trạng thái biến thể
     public function toggleVariantStatus($id)
     {
-        $variant = AdminVariant::findOrFail($id);
+        $variant = AdminProductVariant::findOrFail($id);
         $variant->active = $variant->active ? 0 : 1;
         $variant->save();
 
-        return back()->with('success', 'Đã cập nhật trạng thái biến thể!');
+        return back()->with('success_modal', 'Đã cập nhật trạng thái biến thể!');
     }
+
+    // Chuyển đổi trạng thái sản phẩm
     public function toggleStatus($id)
     {
         $product = AdminProduct::findOrFail($id);
         $product->active = !$product->active;
         $product->save();
 
-        return back()->with('success', 'Đã cập nhật trạng thái sản phẩm!');
+        return back()->with('success_modal', 'Đã cập nhật trạng thái sản phẩm!');
     }
-    public function bulkDelete(Request $request)
-    {
-        AdminProduct::whereIn('id', $request->ids)->delete();
-        return back()->with('success', 'Đã xóa các sản phẩm đã chọn!');
-    }
+
+    // Xóa mềm một sản phẩm
     public function destroy($id)
     {
         $product = AdminProduct::findOrFail($id);
-        $product->delete(); // Nếu muốn soft delete thì thêm SoftDeletes ở model Product
-        return back()->with('success', 'Đã xóa sản phẩm "' . $product->name . '"!');
+        $product->delete(); // Soft delete
+        return back()->with('success_modal', 'Đã xóa mềm sản phẩm "' . $product->name . '"!');
     }
+
+    // Xóa mềm nhiều sản phẩm
+    public function bulkDelete(Request $request)
+    {
+        $ids = explode(',', $request->ids);
+        AdminProduct::whereIn('id', $ids)->delete();
+        return back()->with('success_modal', 'Đã xóa mềm ' . count($ids) . ' sản phẩm đã chọn!');
+    }
+
+    // Khôi phục một sản phẩm đã xóa mềm
+    public function restore($id)
+    {
+        $product = AdminProduct::withTrashed()->findOrFail($id);
+        $product->restore();
+        return back()->with('success_modal', 'Đã khôi phục sản phẩm "' . $product->name . '"!');
+    }
+
+    // Khôi phục nhiều sản phẩm đã xóa mềm
+    public function bulkRestore(Request $request)
+    {
+        $ids = explode(',', $request->ids);
+        AdminProduct::withTrashed()->whereIn('id', $ids)->restore();
+        return back()->with('success_modal', 'Đã khôi phục ' . count($ids) . ' sản phẩm đã chọn!');
+    }
+
+    // Xóa cứng một sản phẩm
+    public function forceDelete($id)
+    {
+        DB::beginTransaction();
+        try {
+            $product = AdminProduct::withTrashed()->findOrFail($id);
+
+            // Xóa tất cả ảnh mô tả liên quan
+            foreach ($product->product_images as $image) {
+                if (Storage::disk('public')->exists($image->image_url)) {
+                    Storage::disk('public')->delete($image->image_url);
+                }
+                $image->delete();
+            }
+
+            // Xóa tất cả biến thể và ảnh biến thể liên quan (bao gồm cả đã xóa mềm)
+            foreach (AdminProductVariant::where('product_id', $product->id)->withTrashed()->get() as $variant) {
+                if ($variant->image && Storage::disk('public')->exists($variant->image)) {
+                    Storage::disk('public')->delete($variant->image);
+                }
+                $variant->attributeValues()->detach(); // Ngắt liên kết với attribute_values
+                $variant->forceDelete(); // Xóa cứng biến thể
+            }
+
+            // Xóa ảnh đại diện sản phẩm
+            if ($product->image && Storage::disk('public')->exists($product->image)) {
+                Storage::disk('public')->delete($product->image);
+            }
+
+            $product->forceDelete(); // Xóa cứng sản phẩm chính
+
+            DB::commit();
+            return back()->with('success', 'Đã xóa vĩnh viễn sản phẩm "' . $product->name . '"!');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Lỗi xóa vĩnh viễn sản phẩm: ' . $e->getMessage());
+        }
+    }
+
+    // Xóa cứng nhiều sản phẩm
+    public function bulkForceDelete(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $ids = explode(',', $request->ids);
+            // Đảm bảo $ids là một mảng các số nguyên hợp lệ
+            $ids = array_filter($ids, 'is_numeric');
+
+            if (empty($ids)) {
+                return back()->with('error', 'Không có sản phẩm nào được chọn hoặc ID không hợp lệ.');
+            }
+
+            $products = AdminProduct::withTrashed()->whereIn('id', $ids)->get();
+
+            if ($products->isEmpty()) {
+                return back()->with('error', 'Không tìm thấy sản phẩm nào trong thùng rác với các ID đã chọn.');
+            }
+
+            foreach ($products as $product) {
+                // Xóa tất cả ảnh mô tả liên quan
+                foreach ($product->product_images as $image) {
+                    if (Storage::disk('public')->exists($image->image_url)) {
+                        Storage::disk('public')->delete($image->image_url);
+                    }
+                    $image->delete();
+                }
+
+                // Xóa tất cả biến thể và ảnh biến thể liên quan (bao gồm cả đã xóa mềm)
+                foreach (AdminProductVariant::where('product_id', $product->id)->withTrashed()->get() as $variant) {
+                    if ($variant->image && Storage::disk('public')->exists($variant->image)) {
+                        Storage::disk('public')->delete($variant->image);
+                    }
+                    $variant->attributeValues()->detach(); // Ngắt liên kết với attribute_values
+                    $variant->forceDelete(); // Xóa cứng biến thể
+                }
+
+                // Xóa ảnh đại diện sản phẩm
+                if ($product->image && Storage::disk('public')->exists($product->image)) {
+                    Storage::disk('public')->delete($product->image);
+                }
+                $product->forceDelete(); // Xóa cứng sản phẩm chính
+            }
+
+            DB::commit();
+            return back()->with('success', 'Đã xóa vĩnh viễn ' . count($ids) . ' sản phẩm đã chọn!');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Lỗi xóa vĩnh viễn hàng loạt: ' . $e->getMessage());
+        }
+    }
+
+    // Trang thùng rác sản phẩm
+    public function trashed()
+    {
+        $products = AdminProduct::onlyTrashed()->orderByDesc('deleted_at')->paginate(10);
+        return view('backend.products.trashed', compact('products'));
+    }
+
     public function create()
     {
         $categories = AdminCategory::all();
@@ -85,16 +241,7 @@ class ProductController extends Controller
             'image' => 'required|image|max:2048',
             'origin' => 'required|string|max:255',
             'description' => 'nullable|string',
-
-            'variants' => 'required|array|min:1',
-            'variants.*.price' => 'required|numeric|min:0',
-            'variants.*.stock' => 'required|integer|min:0',
-            'variants.*.sku' => 'nullable|string|max:255',
-            'variants.*.image' => 'nullable|image|max:2048',
-            'variants.*.description' => 'nullable|string',
-
-            'variants.*.attribute_value_ids' => 'required|array|min:1',
-            'variants.*.attribute_value_ids.*' => 'required|integer|exists:attribute_values,id',
+            'has_variants' => 'required|boolean',
         ];
 
         $messages = [
@@ -103,11 +250,33 @@ class ProductController extends Controller
             'category_id.required' => 'Vui lòng chọn danh mục',
             'region_id.required' => 'Vui lòng chọn vùng miền',
             'image.required' => 'Vui lòng chọn ảnh đại diện',
-            'variants.required' => 'Cần ít nhất 1 biến thể',
-            'variants.*.price.required' => 'Giá biến thể bắt buộc',
-            'variants.*.stock.required' => 'Tồn kho biến thể bắt buộc',
-            'variants.*.attribute_value_ids.required' => 'Phải chọn giá trị thuộc tính cho biến thể',
+            'has_variants.required' => 'Vui lòng chọn loại sản phẩm',
         ];
+
+        // Thêm validation rules cho biến thể nếu sản phẩm có biến thể
+        if ($request->has_variants) {
+            $rules['variants'] = 'required|array|min:1';
+            $rules['variants.*.price'] = 'required|numeric|min:0';
+            $rules['variants.*.stock'] = 'required|integer|min:0';
+            $rules['variants.*.sku'] = 'nullable|string|max:255';
+            $rules['variants.*.image'] = 'nullable|image|max:2048';
+            $rules['variants.*.description'] = 'nullable|string';
+            $rules['variants.*.attribute_value_ids'] = 'required|array|min:1';
+            $rules['variants.*.attribute_value_ids.*'] = 'required|integer|exists:attribute_values,id';
+
+            $messages['variants.required'] = 'Cần ít nhất 1 biến thể';
+            $messages['variants.*.price.required'] = 'Giá biến thể bắt buộc';
+            $messages['variants.*.stock.required'] = 'Tồn kho biến thể bắt buộc';
+            $messages['variants.*.attribute_value_ids.required'] = 'Phải chọn giá trị thuộc tính cho biến thể';
+        } else {
+            // Validation cho sản phẩm không có biến thể
+            $rules['price'] = 'required|numeric|min:0';
+            $rules['stock'] = 'required|integer|min:0';
+            $rules['sku'] = 'nullable|string|max:255';
+
+            $messages['price.required'] = 'Giá sản phẩm bắt buộc';
+            $messages['stock.required'] = 'Tồn kho sản phẩm bắt buộc';
+        }
 
         $request->validate($rules, $messages);
 
@@ -147,61 +316,72 @@ class ProductController extends Controller
                 }
             }
 
-            // Lưu biến thể và liên kết attribute_values
-            foreach ($request->variants as $variantData) {
-                $variantImagePath = null;
-                if (!empty($variantData['image']) && $variantData['image'] instanceof \Illuminate\Http\UploadedFile) {
-                    $variantImgFile = $variantData['image'];
-                    $variantImgName = Str::slug('variant') . '-' . time() . '-' . uniqid() . '.' . $variantImgFile->getClientOriginalExtension();
-                    $variantImagePath = $variantImgFile->storeAs('products/variants', $variantImgName, 'public');
+            if ($request->has_variants) {
+                // Xử lý biến thể
+                foreach ($request->variants as $variantData) {
+                    $variantImagePath = null;
+                    if (!empty($variantData['image']) && $variantData['image'] instanceof \Illuminate\Http\UploadedFile) {
+                        $variantImgFile = $variantData['image'];
+                        $variantImgName = Str::slug('variant') . '-' . time() . '-' . uniqid() . '.' . $variantImgFile->getClientOriginalExtension();
+                        $variantImagePath = $variantImgFile->storeAs('products/variants', $variantImgName, 'public');
+                    }
+
+                    $attributeValues = AttributeValue::whereIn('id', $variantData['attribute_value_ids'])->get();
+                    $variantName = $attributeValues->pluck('value')->implode(' - ');
+
+                    $variant = AdminProductVariant::create([
+                        'product_id' => $product->id,
+                        'sku' => $variantData['sku'] ?? Str::upper('SKU-' . uniqid()),
+                        'price' => $variantData['price'],
+                        'stock' => $variantData['stock'],
+                        'name' => $variantName,
+                        'description' => $variantData['description'] ?? null,
+                        'image' => $variantImagePath,
+                        'active' => 1,
+                    ]);
+
+                    $pivotData = [];
+                    foreach ($attributeValues as $attrVal) {
+                        $pivotData[$attrVal->id] = ['attribute_id' => $attrVal->attribute_id];
+                    }
+
+                    $variant->attributeValues()->sync($pivotData);
                 }
-
-                // Lấy tên biến thể (chuỗi nối các giá trị thuộc tính)
-                $attributeValues = AttributeValue::whereIn('id', $variantData['attribute_value_ids'])->get();
-                $variantName = $attributeValues->pluck('value')->implode(' - ');
-
-                // Tạo biến thể
-                $variant = AdminVariant::create([
+            } else {
+                // Tạo một biến thể mặc định cho sản phẩm không có biến thể
+                AdminProductVariant::create([
                     'product_id' => $product->id,
-                    'sku' => $variantData['sku'] ?? Str::upper('SKU-' . uniqid()),
-                    'price' => $variantData['price'],
-                    'stock' => $variantData['stock'],
-                    'name' => $variantName,
-                    'description' => $variantData['description'] ?? null,
-                    'image' => $variantImagePath,
+                    'sku' => $request->sku ?? Str::upper('SKU-' . uniqid()),
+                    'price' => $request->price,
+                    'stock' => $request->stock,
+                    'name' => 'Mặc định',
+                    'description' => null,
+                    'image' => null,
                     'active' => 1,
                 ]);
-
-                // Tạo mảng pivot [attribute_value_id => ['attribute_id' => xxx]]
-                $pivotData = [];
-                foreach ($attributeValues as $attrVal) {
-                    $pivotData[$attrVal->id] = ['attribute_id' => $attrVal->attribute_id];
-                }
-
-                // Sync pivot liên kết biến thể với các giá trị thuộc tính
-                $variant->attributeValues()->sync($pivotData);
             }
 
             DB::commit();
 
-            return redirect()->route('admin.products.create')->with('success', 'Thêm sản phẩm thành công!');
+            return redirect()->route('admin.products.index')->with('success', 'Thêm sản phẩm thành công!');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->withInput()->with('error', 'Lỗi: ' . $e->getMessage());
         }
     }
 
-    public function deleteImage(Request $request)
+    public function deleteImage($id)
     {
-        $img = ProductImage::find($request->id);
+        $img = ProductImage::find($id);
         if (!$img) return response()->json(['success' => false, 'message' => 'Không tìm thấy ảnh']);
         // Xóa file vật lý nếu có
         if (Storage::disk('public')->exists($img->image_url)) {
             Storage::disk('public')->delete($img->image_url);
         }
         $img->delete();
-        return response()->json(['success' => true]);
+        return response()->json(['success' => true, 'message' => 'Đã xóa ảnh thành công!']);
     }
+
     public function edit($slug)
     {
         $product = AdminProduct::where('slug', $slug)
@@ -226,17 +406,7 @@ class ProductController extends Controller
             'image' => 'nullable|image|max:2048',
             'origin' => 'required|string|max:255',
             'description' => 'nullable|string',
-
-            'variants' => 'required|array|min:1',
-            'variants.*.price' => 'required|numeric|min:0',
-            'variants.*.stock' => 'required|integer|min:0',
-            'variants.*.sku' => 'nullable|string|max:255',
-            'variants.*.image' => 'nullable|image|max:2048',
-            'variants.*.old_image' => 'nullable|string',
-            'variants.*.description' => 'nullable|string',
-
-            'variants.*.attribute_value_ids' => 'required|array|min:1',
-            'variants.*.attribute_value_ids.*' => 'required|integer|exists:attribute_values,id',
+            'has_variants' => 'required|boolean',
         ];
 
         $messages = [
@@ -244,11 +414,34 @@ class ProductController extends Controller
             'origin.required' => 'Xuất xứ sản phẩm bắt buộc',
             'category_id.required' => 'Vui lòng chọn danh mục',
             'region_id.required' => 'Vui lòng chọn vùng miền',
-            'variants.required' => 'Cần ít nhất 1 biến thể',
-            'variants.*.price.required' => 'Giá biến thể bắt buộc',
-            'variants.*.stock.required' => 'Tồn kho biến thể bắt buộc',
-            'variants.*.attribute_value_ids.required' => 'Phải chọn giá trị thuộc tính cho biến thể',
+            'has_variants.required' => 'Vui lòng chọn loại sản phẩm',
         ];
+
+        // Thêm validation rules cho biến thể nếu sản phẩm có biến thể
+        if ($request->has_variants) {
+            $rules['variants'] = 'required|array|min:1';
+            $rules['variants.*.price'] = 'required|numeric|min:0';
+            $rules['variants.*.stock'] = 'required|integer|min:0';
+            $rules['variants.*.sku'] = 'nullable|string|max:255';
+            $rules['variants.*.image'] = 'nullable|image|max:2048';
+            $rules['variants.*.old_image'] = 'nullable|string';
+            $rules['variants.*.description'] = 'nullable|string';
+            $rules['variants.*.attribute_value_ids'] = 'required|array|min:1';
+            $rules['variants.*.attribute_value_ids.*'] = 'required|integer|exists:attribute_values,id';
+
+            $messages['variants.required'] = 'Cần ít nhất 1 biến thể';
+            $messages['variants.*.price.required'] = 'Giá biến thể bắt buộc';
+            $messages['variants.*.stock.required'] = 'Tồn kho biến thể bắt buộc';
+            $messages['variants.*.attribute_value_ids.required'] = 'Phải chọn giá trị thuộc tính cho biến thể';
+        } else {
+            // Validation cho sản phẩm không có biến thể
+            $rules['price'] = 'required|numeric|min:0';
+            $rules['stock'] = 'required|integer|min:0';
+            $rules['sku'] = 'nullable|string|max:255';
+
+            $messages['price.required'] = 'Giá sản phẩm bắt buộc';
+            $messages['stock.required'] = 'Tồn kho sản phẩm bắt buộc';
+        }
 
         $request->validate($rules, $messages);
 
@@ -257,7 +450,7 @@ class ProductController extends Controller
         try {
             // 1. Cập nhật ảnh đại diện nếu upload mới
             if ($request->hasFile('image')) {
-                if ($product->image) {
+                if ($product->image && Storage::disk('public')->exists($product->image)) {
                     Storage::disk('public')->delete($product->image);
                 }
                 $file = $request->file('image');
@@ -269,7 +462,6 @@ class ProductController extends Controller
 
             // 2. Cập nhật các trường sản phẩm khác
             $product->name = $request->name;
-            $product->slug = Str::slug($request->name) . '-' . time();
             $product->category_id = $request->category_id;
             $product->region_id = $request->region_id;
             $product->description = $request->description;
@@ -278,7 +470,7 @@ class ProductController extends Controller
 
             $product->save();
 
-            // 3. Thêm ảnh mô tả mới nếu có (ảnh cũ giữ nguyên)
+            // 3. Thêm ảnh mô tả mới nếu có
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $img) {
                     $imgName = Str::slug(pathinfo($img->getClientOriginalName(), PATHINFO_FILENAME))
@@ -291,76 +483,98 @@ class ProductController extends Controller
                 }
             }
 
-            // 4. Xóa biến thể cũ cùng ảnh cũ nếu có
-            foreach ($product->variants as $oldVariant) {
-                if ($oldVariant->image) {
-                    Storage::disk('public')->delete($oldVariant->image);
+            // 4. Thêm ảnh mô tả mới nếu có
+            if ($request->hasFile('description_images')) {
+                foreach ($request->file('description_images') as $img) {
+                    $imgName = Str::slug(pathinfo($img->getClientOriginalName(), PATHINFO_FILENAME))
+                        . '-' . time() . rand(10, 99) . '.' . $img->getClientOriginalExtension();
+                    $imgPathDetail = $img->storeAs('products', $imgName, 'public');
+                    ProductImage::create([
+                        'product_id' => $product->id,
+                        'image_url' => $imgPathDetail,
+                    ]);
                 }
-                $oldVariant->attributeValues()->detach();
-                $oldVariant->delete();
             }
 
-            // 5. Tạo lại biến thể mới, giữ ảnh cũ nếu không upload ảnh mới
-            foreach ($request->variants as $variantData) {
-                $variantImagePath = null;
-
-                if (!empty($variantData['image']) && $variantData['image'] instanceof \Illuminate\Http\UploadedFile) {
-                    // Upload ảnh mới
-                    $variantImgFile = $variantData['image'];
-                    $variantImgName = Str::slug('variant') . '-' . time() . '-' . uniqid() . '.' . $variantImgFile->getClientOriginalExtension();
-                    $variantImagePath = $variantImgFile->storeAs('products/variants', $variantImgName, 'public');
-                } else if (!empty($variantData['old_image'])) {
-                    // Giữ lại ảnh cũ nếu không upload ảnh mới
-                    $variantImagePath = $variantData['old_image'];
+            // 5. Xử lý biến thể
+            // Xóa tất cả biến thể cũ
+            foreach ($product->variants as $variant) {
+                if ($variant->image && Storage::disk('public')->exists($variant->image)) {
+                    Storage::disk('public')->delete($variant->image);
                 }
+                $variant->attributeValues()->detach();
+                $variant->forceDelete();
+            }
 
-                // Lấy tên biến thể (chuỗi nối các giá trị thuộc tính)
-                $attributeValues = AttributeValue::whereIn('id', $variantData['attribute_value_ids'])->get();
-                $variantName = $attributeValues->pluck('value')->implode(' - ');
+            if ($request->has_variants) {
+                // Thêm biến thể mới
+                foreach ($request->variants as $variantData) {
+                    $variantImagePath = null;
+                    if (!empty($variantData['image']) && $variantData['image'] instanceof \Illuminate\Http\UploadedFile) {
+                        $variantImgFile = $variantData['image'];
+                        $variantImgName = Str::slug('variant') . '-' . time() . '-' . uniqid() . '.' . $variantImgFile->getClientOriginalExtension();
+                        $variantImagePath = $variantImgFile->storeAs('products/variants', $variantImgName, 'public');
+                    } else if (!empty($variantData['old_image'])) {
+                        $variantImagePath = $variantData['old_image'];
+                    }
 
-                // Tạo biến thể mới
-                $variant = AdminVariant::create([
+                    $attributeValues = AttributeValue::whereIn('id', $variantData['attribute_value_ids'])->get();
+                    $variantName = $attributeValues->pluck('value')->implode(' - ');
+
+                    $variant = AdminProductVariant::create([
+                        'product_id' => $product->id,
+                        'sku' => $variantData['sku'] ?? Str::upper('SKU-' . uniqid()),
+                        'price' => $variantData['price'],
+                        'stock' => $variantData['stock'],
+                        'name' => $variantName,
+                        'description' => $variantData['description'] ?? null,
+                        'image' => $variantImagePath,
+                        'active' => 1,
+                    ]);
+
+                    $pivotData = [];
+                    foreach ($attributeValues as $attrVal) {
+                        $pivotData[$attrVal->id] = ['attribute_id' => $attrVal->attribute_id];
+                    }
+
+                    $variant->attributeValues()->sync($pivotData);
+                }
+            } else {
+                // Tạo một biến thể mặc định cho sản phẩm không có biến thể
+                AdminProductVariant::create([
                     'product_id' => $product->id,
-                    'sku' => $variantData['sku'] ?? Str::upper('SKU-' . uniqid()),
-                    'price' => $variantData['price'],
-                    'stock' => $variantData['stock'],
-                    'name' => $variantName,
-                    'description' => $variantData['description'] ?? null,
-                    'image' => $variantImagePath,
+                    'sku' => $request->sku ?? Str::upper('SKU-' . uniqid()),
+                    'price' => $request->price,
+                    'stock' => $request->stock,
+                    'name' => 'Mặc định',
+                    'description' => null,
+                    'image' => null,
                     'active' => 1,
                 ]);
-
-                // Tạo mảng pivot [attribute_value_id => ['attribute_id' => xxx]]
-                $pivotData = [];
-                foreach ($attributeValues as $attrVal) {
-                    $pivotData[$attrVal->id] = ['attribute_id' => $attrVal->attribute_id];
-                }
-
-                // Sync pivot liên kết biến thể với các giá trị thuộc tính
-                $variant->attributeValues()->sync($pivotData);
             }
 
             DB::commit();
 
-            return redirect()->route('admin.products.edit', $product->slug)->with('success', 'Cập nhật sản phẩm thành công!');
+            return redirect()->route('admin.products.edit', $product->slug)->with('success_modal', 'Cập nhật sản phẩm thành công!');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withInput()->with('error', 'Lỗi: ' . $e->getMessage());
+            return back()->withInput()->with('error_modal', 'Lỗi: ' . $e->getMessage());
         }
     }
+
     public function getDescription($id)
     {
         $product = AdminProduct::findOrFail($id);
         return response($product->description);
     }
+
     public function getVariantDescription($id)
     {
-        $variant = AdminVariant::find($id);
+        $variant = AdminProductVariant::find($id);
         if (!$variant) {
             return response('Không tìm thấy biến thể', 404);
         }
 
-        // Trả về mô tả (HTML) của biến thể
         return response($variant->description ?? '<em>Chưa có mô tả</em>');
     }
 }
