@@ -44,13 +44,19 @@
 
     // Hàm khôi phục hiển thị nội dung
     function restorePageContent() {
-        $('body').removeClass('offcanvas');
-        $('.search-full').removeClass('open');
-        // Xóa triệt để overlay và backdrop
-        $('.modal-backdrop, .overlay').removeClass('show').remove();
-        pageWrapper.css({ 'display': 'block', 'visibility': 'visible', 'opacity': '1' });
-        pageBodyWrapper.css({ 'display': 'block', 'visibility': 'visible', 'opacity': '1' });
-        console.log('Restored page content visibility');
+        // Chỉ khôi phục nội dung trang nếu không có modal nào đang mở
+        if ($('.modal.show').length === 0 && $('.modal.d-block').length === 0) {
+            $('body').removeClass('offcanvas');
+            $('.search-full').removeClass('open');
+            // Xóa triệt để overlay và backdrop chỉ khi không có modal (chỉ xóa overlay của search nếu có)
+            $('.overlay').removeClass('show').remove(); // Chỉ remove overlay của search
+            // Loại bỏ các dòng CSS thao tác trực tiếp với pageWrapper và pageBodyWrapper
+            // pageWrapper.css({ 'display': 'block', 'visibility': 'visible', 'opacity': '1' });
+            // pageBodyWrapper.css({ 'display': 'block', 'visibility': 'visible', 'opacity': '1' });
+            console.log('Restored page content visibility (no modal open)');
+        } else {
+            console.log('Skipping page content restoration: a modal is currently open.');
+        }
     }
 
     // Ngăn chặn submit mặc định
