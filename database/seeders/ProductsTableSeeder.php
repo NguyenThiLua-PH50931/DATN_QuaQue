@@ -63,6 +63,21 @@ class ProductsTableSeeder extends Seeder
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
+            [
+                'category_id' => 2,
+                'region_id' => 2,
+                'name' => 'Bánh đậu xanh',
+                'slug' => Str::slug('Bánh đậu xanh'),
+                'description' => 'Bánh đậu xanh mềm mịn, thơm ngon đặc trưng Hải Dương.',
+                'image' => 'products/banh-dau-xanh-hai-duong.jpg',
+                'origin' => 'Hải Dương',
+                'view_total' => 200,
+                'view_day' => 15,
+                'view_week' => 60,
+                'view_month' => 180,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
         ];
 
         foreach ($products as $product) {
