@@ -22,8 +22,8 @@
                                     <img src="{{ $item->product_image ?? asset('assets/images/default-product.png') }}" alt="{{ $item->product_name }}" style="width: 70px; height: 70px; object-fit: cover;" class="rounded">
                                     <div class="flex-grow-1">
                                         <h6 class="mb-1">{{ $item->product_name }}</h6>
-                                        @if ($item->variant_name)
-                                            <small class="text-muted d-block mb-1">Biến thể: {{ $item->variant_name }}</small>
+                                        @if ($item->productVariant)
+                                            <small class="text-muted d-block mb-1">Loại: {{ $item->productVariant->name }}</small>
                                         @endif
                                         <small>Số lượng: {{ $item->quantity }}</small>
                                     </div>
