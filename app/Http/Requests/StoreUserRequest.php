@@ -25,7 +25,7 @@ class StoreUserRequest extends FormRequest
             'name'       => 'required|string|max:255',
             'email'      => 'required|email|unique:users,email',
             'phone'      => 'required|digits_between:10,12',
-            'role'       => 'required|in:admin,member', // tuỳ vào hệ thống
+            'role'       => 'in:admin,member', // tuỳ vào hệ thống
             'password'   => 'required|min:6|confirmed',
             'avatar'     => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
