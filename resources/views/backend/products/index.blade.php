@@ -1,462 +1,384 @@
 @extends('layouts.backend')
+
 @section('title', 'Quản lý sản phẩm')
+
 @section('content')
-@push('styles')
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-@endpush
-<style>
-    .product-table-wrapper {
-        background: #f8fafd;
-        border-radius: 12px;
-        box-shadow: 0 2px 14px #dbeafe40;
-        padding: 16px;
-    }
-
-    .product-table thead tr,
-    .product-table tfoot tr {
-        background: #f1f5f9;
-    }
-
-    .product-row {
-        background: #fff;
-        border-radius: 10px;
-        border-bottom: 1px solid #e5e7eb;
-        transition: box-shadow .2s;
-    }
-
-    .product-row:hover {
-        background: #eef6ff;
-        box-shadow: 0 2px 8px #93c5fd22;
-    }
-
-    .action-link {
-        color: #7c3aed !important;
-        font-weight: 500;
-    }
-
-    .bg-purple {
-        background: #a78bfa;
-        color: #fff;
-    }
-
-    .bulk-delete-btn[disabled] {
-        background: #e1e8f3 !important;
-        color: #66708a !important;
-        border: none !important;
-        cursor: not-allowed !important;
-        opacity: 1 !important;
-    }
-
-    .bulk-delete-btn[disabled] .delete-bulk-icon {
-        color: #66708a !important;
-    }
-
-    .bulk-delete-btn:not([disabled]) {
-        background: #becde4 !important;
-        color: #495057 !important;
-        border: none !important;
-        cursor: pointer !important;
-        box-shadow: 0 2px 8px #becde480;
-        transition: background .5s, color .5s;
-    }
-
-    .bulk-delete-btn:not([disabled]) .delete-bulk-icon {
-        color: #495057 !important;
-    }
-
-    .bulk-delete-btn:not([disabled]):hover {
-        background: #aac4e7 !important;
-    }
-
-    /* Base style */
-    .dataTables_paginate .pagination .page-item .page-link {
-        min-width: 36px;
-        height: 36px;
-        font-size: 16px;
-        border-radius: 8px;
-        margin: 0 1.5px;
-        color: #495057;
-        background: none;
-        border: none !important;
-        font-weight: 500;
-        box-shadow: none;
-        transition: background 0.15s, color 0.15s;
-        cursor: pointer;
-        padding: 0;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .dataTables_paginate .pagination .page-item.active .page-link,
-    .dataTables_paginate .pagination .page-item.active .page-link:hover,
-    .dataTables_paginate .pagination .page-item.active .page-link:focus,
-    .dataTables_wrapper .dataTables_paginate .paginate_button.active,
-    .dataTables_wrapper .dataTables_paginate .paginate_button.active:hover,
-    .dataTables_wrapper .dataTables_paginate .paginate_button.active:focus {
-        background: #0da487 !important;
-        border-radius: 7px;
-        color: #fff !important;
-        background-image: none !important;
-        box-shadow: 0 2px 8px #0da48725 !important;
-        border: none !important;
-        outline: none !important;
-    }
-
-
-    .dataTables_paginate .pagination .page-item .page-link {
-        min-width: 28px;
-        /* hoặc 24px nếu muốn nhỏ nữa */
-        height: 28px;
-        font-size: 14px;
-        /* chữ nhỏ hơn */
-        border-radius: 6px;
-        margin: 0 1px;
-        padding: 0;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    /* Hover các nút KHÔNG phải active hoặc disabled */
-    .dataTables_paginate .pagination .page-item:not(.active):not(.disabled) .page-link:hover {
-        background: #fff !important;
-        color: #0da487 !important;
-        box-shadow: 0 2px 8px #0da48725;
-        border: none !important;
-    }
-
-    /* Nút disabled */
-    .dataTables_paginate .pagination .page-item.disabled .page-link {
-        color: #e5e7eb !important;
-        background: none !important;
-        pointer-events: none;
-    }
-
-    /* Nút ellipsis (dấu ...) */
-    .dataTables_paginate .pagination .page-item .ellipsis {
-        pointer-events: none;
-        color: #b1bacf !important;
-        background: none !important;
-        font-size: 16px;
-        border: none !important;
-    }
-
-    .dataTables_paginate .pagination .page-item.active .page-link:hover,
-    .dataTables_paginate .pagination .page-item.active .page-link:focus {
-        background: #0da487 !important;
-        color: #fff !important;
-        box-shadow: 0 2px 8px #0da48725 !important;
-        border: none !important;
-        outline: none !important;
-        pointer-events: none;
-    }
-</style>
-<div class="page-body">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="card card-table">
-                    <div class="card-body">
-                        <div class="title-header option-title d-sm-flex d-block">
-                            <h5>Danh sách sản phẩm</h5>
-                            <div class="right-options">
-                                <ul>
-                                    <li><a href="#">Nhập file</a></li>
-                                    <li><a href="#">Xuất file</a></li>
-                                    <li>
-                                        <a class="btn btn-solid" href="{{ route('admin.products.create') }}">Thêm sản phẩm</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        @if(session('success'))
-                        <div class="alert alert-success">{{ session('success') }}</div>
-                        @endif
-                        @if(session('error'))
-                        <div class="alert alert-danger">{{ session('error') }}</div>
-                        @endif
-                        <div>
-                            <div class="table-responsive">
-                                <div class="product-table-wrapper">
-                                    <form id="bulk-delete-form" method="POST" action="{{ route('admin.products.bulkDelete') }}">
-                                        @csrf
-                                        <table class="table product-table align-middle" id="productTable">
-                                            <thead>
-                                                <tr>
-                                                    <th><input type="checkbox" id="select-all"></th>
-                                                    <th>Thông tin</th>
-                                                    <th>Ảnh</th>
-                                                    <th>Danh mục</th>
-                                                    <th>Vùng miền</th>
-                                                    <th>Cập nhật lúc</th>
-                                                    <th>Trạng thái</th>
-                                                    <th>Actions</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach ($products as $product)
-                                                <tr class="product-row">
-                                                    <td>
-                                                        <input type="checkbox" class="row-checkbox" name="ids[]" value="{{ $product->id }}">
-                                                    </td>
-                                                    <td>
-                                                        <div>
-                                                            <a href="{{ route('admin.products.show', $product->slug) }}" class="fw-bold text-primary" style="font-size:16px;">
-                                                                {{ $product->name }}
-                                                            </a>
-                                                            <div class="small text-muted mt-1">
-                                                                {{ $product->short_desc ?? '' }}
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <img src="{{ asset('storage/' . $product->image) }}" class="product-thumb" alt="" style="width:64px;height:64px;object-fit:cover;border-radius:8px;">
-                                                    </td>
-                                                    <td>{{ $product->category->name ?? '' }}</td>
-                                                    <td>{{ $product->region->name ?? '' }}</td>
-                                                    <td>{{ $product->updated_at->format('d/m/Y H:i:s') }}</td>
-                                                    <td>
-                                                        <span class="badge {{ $product->active ? 'bg-success' : 'bg-danger' }} status-badge"
-                                                            style="cursor:pointer"
-                                                            data-id="{{ $product->id }}"
-                                                            data-name="{{ $product->name ?? '' }}"
-                                                            data-status="{{ $product->active }}">
-                                                            {{ $product->active ? 'Đang bán' : 'Ngừng bán' }}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <a href="{{ route('admin.products.show', $product->slug) }}" class="action-link text-decoration-none me-2">
-                                                            <i class="ri-eye-line"></i>
-                                                        </a>
-                                                        <a href="{{ route('admin.products.edit', $product->slug) }}" class="action-link text-decoration-none me-2">
-                                                            <i class="ri-pencil-line"></i>
-                                                        </a>
-                                                        <a href="#" class="action-link text-decoration-none text-danger" data-bs-toggle="modal"
-                                                            data-bs-target="#deleteOneModal"
-                                                            data-id="{{ $product->id }}"
-                                                            data-name="{{ $product->name }}">
-                                                            <i class="ri-delete-bin-line"></i>
-                                                        </a>
-                                                    </td>
-                                                </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                        <button type="button"
-                                            id="delete-selected"
-                                            class="btn bulk-delete-btn btn-sm mt-2 d-inline-flex align-items-center gap-2"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#deleteBulkModal"
-                                            disabled>
-                                            <i class="ri-delete-bin-line delete-bulk-icon"></i> Xóa
-                                        </button>
-
-                                    </form>
-                                    <div class="mt-2">
-                                        {!! $products->links('pagination::bootstrap-5') !!}
-                                    </div>
+    <div class="page-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card card-table">
+                        <div class="card-body">
+                            <div class="title-header option-title d-sm-flex d-block">
+                                <h5>Danh sách sản phẩm</h5>
+                                <div class="right-options">
+                                    <ul>
+                                        <li>
+                                            <a class="btn btn-solid" href="{{ route('admin.products.create') }}">Thêm sản phẩm</a>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
+
+                            @if (session('success'))
+                                <div class="alert alert-success">
+                                    {{ session('success') }}
+                                </div>
+                            @endif
+
+                            @if (session('error'))
+                                <div class="alert alert-danger">
+                                    {{ session('error') }}
+                                </div>
+                            @endif
+
+                            {{-- Filter Form --}}
+                            <form class="row g-3 mb-3" method="GET" action="{{ route('admin.products.index') }}">
+                                <div class="col-md-3">
+                                    <label for="category" class="form-label">Danh mục:</label>
+                                    <select class="form-select" id="category" name="category">
+                                        <option value="">Tất cả danh mục</option>
+                                        @foreach($categories as $category)
+                                            <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
+                                                {{ $category->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="region" class="form-label">Vùng miền:</label>
+                                    <select class="form-select" id="region" name="region">
+                                        <option value="">Tất cả vùng miền</option>
+                                        @foreach($regions as $region)
+                                            <option value="{{ $region->id }}" {{ request('region') == $region->id ? 'selected' : '' }}>
+                                                {{ $region->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="status" class="form-label">Trạng thái:</label>
+                                    <select class="form-select" id="status" name="status">
+                                        <option value="">Tất cả trạng thái</option>
+                                        <option value="1" {{ request('status') == '1' ? 'selected' : '' }}>Đang bán</option>
+                                        <option value="0" {{ request('status') == '0' ? 'selected' : '' }}>Ngừng bán</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-primary me-2">Lọc</button>
+                                    <a href="{{ route('admin.products.index') }}" class="btn btn-secondary">Đặt lại</a>
+                                </div>
+                            </form>
+
+                            <div class="table-responsive">
+                                <table class="table all-package theme-table" id="productTable">
+                                    <thead>
+                                        <tr>
+                                            <th style="color: black; background-color: #f8f9fa; width: 30px;">
+                                                <input type="checkbox" id="select-all-checkbox">
+                                            </th>
+                                            <th style="color: black; background-color: #f8f9fa;">Tên sản phẩm</th>
+                                            <th style="color: black; background-color: #f8f9fa;">Ảnh</th>
+                                            <th style="color: black; background-color: #f8f9fa;">Danh mục</th>
+                                            <th style="color: black; background-color: #f8f9fa;">Vùng miền</th>
+                                            <th style="color: black; background-color: #f8f9fa;">Cập nhật lúc</th>
+                                            <th style="color: black; background-color: #f8f9fa;">Trạng thái</th>
+                                            <th style="color: black; background-color: #f8f9fa;">Hành động</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse ($products as $product)
+                                            <tr>
+                                                <td>
+                                                    <input type="checkbox" class="row-checkbox" name="selected_ids[]" value="{{ $product->id }}">
+                                                </td>
+                                                <td>
+                                                    <div>
+                                                        <a href="{{ route('admin.products.show', $product->slug) }}" class="fw-bold text-primary" style="font-size:16px;">
+                                                            {{ $product->name }}
+                                                        </a>
+                                                        <div class="small text-muted mt-1">
+                                                            {{ $product->short_desc ?? '' }}
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
+                                                         class="w-20 h-20 object-cover" width="100px">
+                                                </td>
+                                                <td>{{ $product->category->name ?? '' }}</td>
+                                                <td>{{ $product->region->name ?? '' }}</td>
+                                                <td>{{ $product->updated_at->format('d-m-Y H:i:s') }}</td>
+                                                <td>
+                                                    <span class="badge {{ $product->active ? 'bg-success' : 'bg-danger' }} status-badge"
+                                                          style="cursor:pointer"
+                                                          data-id="{{ $product->id }}"
+                                                          data-name="{{ $product->name }}"
+                                                          data-status="{{ $product->active }}">
+                                                        {{ $product->active ? 'Đang bán' : 'Ngừng bán' }}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <ul>
+                                                        <li>
+                                                            <a href="{{ route('admin.products.show', $product->slug) }}">
+                                                                <i class="ri-eye-line"></i>
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="{{ route('admin.products.edit', $product->slug) }}">
+                                                                <i class="ri-pencil-line"></i>
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="javascript:void(0)" class="delete-btn"
+                                                               data-bs-toggle="modal"
+                                                               data-bs-target="#deleteModal"
+                                                               data-id="{{ $product->id }}"
+                                                               data-name="{{ $product->name }}">
+                                                                <i class="ri-delete-bin-line"></i>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="8" class="py-4 px-4 text-center">Không có sản phẩm nào.</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                                <form class="d-inline-flex">
+                                    <button type="button" id="bulk-delete-btn"
+                                            class="align-items-center btn btn-danger d-flex ms-2" style="display: none;">
+                                        <i data-feather="trash"></i> Xóa đã chọn
+                                    </button>
+                                </form>
+                            </div>
+                            <form id="bulk-delete-form" action="{{ route('admin.products.bulkDelete') }}" method="POST" style="display: none;">
+                                @csrf
+                                <input type="hidden" name="ids" id="bulk-delete-ids">
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    @includeIf('backend.footer')
-</div>
 
-<!-- Modal đổi trạng thái sản phẩm -->
-<div class="modal fade" id="statusModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="statusModalLabel" aria-hidden="true">
-    <div class="modal-dialog  modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-body">
-                <h5 class="modal-title mb-3" id="statusModalLabel">Đổi trạng thái sản phẩm</h5>
-                <p id="modal-status-text"></p>
-                <button type="button" class="btn-close position-absolute top-0 end-0 m-2" data-bs-dismiss="modal" aria-label="Close"></button>
-                <div class="button-box text-end mt-4">
-                    <button type="button" class="btn btn--no btn-secondary me-2" data-bs-dismiss="modal">Không</button>
-                    <form id="status-toggle-form" method="POST" style="display:inline;">
+    {{-- Delete Modal --}}
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Xác nhận xóa sản phẩm</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Bạn có chắc chắn muốn xóa sản phẩm này không? Sản phẩm sẽ được xóa mềm và có thể khôi phục sau này.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <form id="deleteForm" method="POST" action="" style="display: inline;">
                         @csrf
-                        <button type="submit" class="btn btn--yes btn-primary">Đồng ý</button>
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger">Xóa mềm</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<!-- Modal Xác Nhận Xóa Nhiều -->
-<div class="modal fade" id="deleteBulkModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="deleteBulkModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-body text-center">
-                <h5 class="modal-title mb-2">Xóa sản phẩm đã chọn?</h5>
-                <p>Bạn chắc chắn muốn xóa các sản phẩm đã chọn?</p>
-                <div class="button-box mt-4">
-                    <button type="button" class="btn btn--no btn-secondary" data-bs-dismiss="modal">No</button>
-                    <button type="button" id="confirm-bulk-delete" class="btn btn--yes btn-danger">Yes</button>
+
+    {{-- Bulk Delete Modal --}}
+    <div class="modal fade" id="bulkDeleteModal" tabindex="-1" aria-labelledby="bulkDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="bulkDeleteModalLabel">Xác nhận xóa hàng loạt</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Bạn có chắc chắn muốn xóa mềm <span id="selectedProductCount"></span> sản phẩm đã chọn không?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-danger" id="confirm-bulk-delete-btn">Xóa hàng loạt</button>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<!-- Modal Xác Nhận Xóa Một -->
-<div class="modal fade" id="deleteOneModal" data-bs-toggle="modal" tabindex="-1" aria-labelledby="deleteOneModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <form id="delete-one-form" method="POST">
-                @csrf
-                @method('DELETE')
-                <div class="modal-body text-center">
-                    <h5 class="modal-title mb-2">Xóa sản phẩm?</h5>
-                    <p id="delete-one-message">Bạn chắc chắn muốn xóa sản phẩm này?</p>
-                    <div class="button-box mt-4">
-                        <button type="button" class="btn btn--no btn-secondary" data-bs-dismiss="modal">No</button>
-                        <button type="submit" class="btn btn--yes btn-danger">Yes</button>
-                    </div>
+
+    {{-- Success Message Modal --}}
+    <div class="modal fade" id="successMessageModal" tabindex="-1" aria-labelledby="successMessageModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="successMessageModalLabel">Thành công!</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-            </form>
+                <div class="modal-body" id="successMessageContent">
+                    <!-- Message will be inserted here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
+    {{-- Error Message Modal --}}
+    <div class="modal fade" id="errorMessageModal" tabindex="-1" aria-labelledby="errorMessageModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="errorMessageModalLabel">Lỗi!</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="errorMessageContent">
+                    <!-- Message will be inserted here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-
-@push('styles')
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-@endpush
+    @includeIf('backend.footer')
+    <script src="{{ asset('backend/js/product.js') }}"></script>
+@endsection
 
 @push('scripts')
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-<script>
-    function removeVietnameseTones(str) {
-        if (!str) return '';
-        str = str.toLowerCase();
-        str = str.replace(/á|à|ả|ã|ạ|ă|ắ|ằ|ẳ|ẵ|ặ|â|ấ|ầ|ẩ|ẫ|ậ/g, "a");
-        str = str.replace(/é|è|ẻ|ẽ|ẹ|ê|ế|ề|ể|ễ|ệ/g, "e");
-        str = str.replace(/i|í|ì|ỉ|ĩ|ị/g, "i");
-        str = str.replace(/ó|ò|ỏ|õ|ọ|ô|ố|ồ|ổ|ỗ|ộ|ơ|ớ|ờ|ở|ỡ|ợ/g, "o");
-        str = str.replace(/ú|ù|ủ|ũ|ụ|ư|ứ|ừ|ử|ữ|ự/g, "u");
-        str = str.replace(/ý|ỳ|ỷ|ỹ|ỵ/g, "y");
-        str = str.replace(/đ/g, "d");
-        str = str.replace(/\u0300|\u0301|\u0303|\u0309|\u0323/g, "");
-        str = str.replace(/\u02C6|\u0306|\u031B/g, "");
-        str = str.replace(/[^a-z0-9\s]/g, "");
-        return str;
-    }
+    <script>
+        $(document).ready(function() {
+            $('#productTable').DataTable({
+                language: {
+                    search: "Tìm kiếm:",
+                    lengthMenu: "Hiển thị _MENU_ sản phẩm",
+                    info: "Hiển thị _START_ đến _END_ trong tổng _TOTAL_ sản phẩm",
+                    paginate: {
+                        first: "Đầu",
+                        last: "Cuối",
+                        next: "Sau",
+                        previous: "Trước"
+                    },
+                    zeroRecords: "Không tìm thấy sản phẩm nào.",
+                }
+            });
 
-    // Custom search để hỗ trợ tìm không dấu
-    $.fn.dataTable.ext.type.search.string = function(data) {
-        return !data ? '' : removeVietnameseTones(data);
-    };
-    $('#productTable').DataTable({
-        "pagingType": "full_numbers",
-        "lengthMenu": [10, 25, 50, 100],
-        "language": {
-            "lengthMenu": "Hiển thị _MENU_ dòng/trang",
-            "zeroRecords": "Không tìm thấy dữ liệu",
-            "info": "Hiển thị _START_ đến _END_ của _TOTAL_ dòng",
-            "infoEmpty": "Không có dữ liệu",
-            "infoFiltered": "(lọc từ _MAX_ dòng)",
-            "search": "Tìm kiếm:",
-            "paginate": {
-                "first": "1",
-                "last": "", // Không để _MAX_ nữa
-                "next": ">",
-                "previous": "<"
+            // Xử lý sự kiện click nút xóa mềm
+            $(document).on('click', '.delete-btn', function(e) {
+                var id = $(this).data('id');
+                var name = $(this).data('name');
+
+                if (id) {
+                    var formAction = '{{ url('admin/products/') }}' + '/' + id;
+                    $('#deleteForm').attr('action', formAction);
+                } else {
+                    e.preventDefault();
+                    $('#errorMessageContent').text('Không thể xóa sản phẩm này do thiếu thông tin ID.');
+                    $('#errorMessageModal').modal('show');
+                }
+            });
+
+            // Logic cho chức năng chọn tất cả và xóa hàng loạt
+            $('#select-all-checkbox').change(function() {
+                $('.row-checkbox').prop('checked', $(this).prop('checked'));
+                toggleBulkDeleteButton();
+            });
+
+            $('.row-checkbox').change(function() {
+                toggleBulkDeleteButton();
+            });
+
+            function toggleBulkDeleteButton() {
+                if ($('.row-checkbox:checked').length > 0) {
+                    $('#bulk-delete-btn').show();
+                } else {
+                    $('#bulk-delete-btn').hide();
+                }
             }
-        },
-        "columnDefs": [{
-            "orderable": false,
-            "targets": [0,2, 7]
-        }]
-    });
 
-    function removeVietnameseTones(str) {
-        str = str.toLowerCase();
-        str = str.replace(/á|à|ả|ã|ạ|ă|ắ|ằ|ẳ|ẵ|ặ|â|ấ|ầ|ẩ|ẫ|ậ/g, "a");
-        str = str.replace(/é|è|ẻ|ẽ|ẹ|ê|ế|ề|ể|ễ|ệ/g, "e");
-        str = str.replace(/i|í|ì|ỉ|ĩ|ị/g, "i");
-        str = str.replace(/ó|ò|ỏ|õ|ọ|ô|ố|ồ|ổ|ỗ|ộ|ơ|ớ|ờ|ở|ỡ|ợ/g, "o");
-        str = str.replace(/ú|ù|ủ|ũ|ụ|ư|ứ|ừ|ử|ữ|ự/g, "u");
-        str = str.replace(/ý|ỳ|ỷ|ỹ|ỵ/g, "y");
-        str = str.replace(/đ/g, "d");
-        // Loại bỏ ký tự đặc biệt
-        str = str.replace(/\u0300|\u0301|\u0303|\u0309|\u0323/g, "");
-        str = str.replace(/\u02C6|\u0306|\u031B/g, "");
-        str = str.replace(/[^a-z0-9\s]/g, "");
-        return str;
-    }
-    // Fix nhãn "last" thành số cuối, ẩn khi chỉ 1 trang
-    $('#productTable').on('draw.dt', function() {
-        var table = $('#productTable').DataTable();
-        var totalPages = table.page.info().pages;
+            $('#bulk-delete-btn').click(function() {
+                var selectedIds = [];
+                $('.row-checkbox:checked').each(function() {
+                    selectedIds.push($(this).val());
+                });
 
-        if (totalPages === 1) {
-            // Chỉ hiện nút active và trái/phải (nếu muốn), ẩn hết số khác và "last"
-            $('.paginate_button').not('.previous,.active,.next').hide();
-            $('.paginate_button.last').hide();
-        } else {
-            $('.paginate_button').show();
-            $('.paginate_button.last a').text(totalPages);
-            $('.paginate_button.first a').text(1);
-        }
-    });
+                if (selectedIds.length > 0) {
+                    $('#selectedProductCount').text(selectedIds.length);
+                    $('#bulkDeleteModal').modal('show');
 
-    $('.status-badge').click(function() {
-        var id = $(this).data('id');
-        var name = $(this).data('name');
-        var status = $(this).data('status');
+                    $('#confirm-bulk-delete-btn').off('click').on('click', function() {
+                        $.ajax({
+                            url: '{{ route('admin.products.bulkDelete') }}',
+                            method: 'DELETE',
+                            data: {
+                                _token: '{{ csrf_token() }}',
+                                ids: selectedIds
+                            },
+                            success: function(response) {
+                                $('#bulkDeleteModal').modal('hide');
+                                if (response.status === 'success') {
+                                    $('#successMessageContent').text(response.message || 'Xóa sản phẩm đã chọn thành công!');
+                                    $('#successMessageModal').modal('show');
+                                } else if (response.status === 'warning') {
+                                    $('#errorMessageContent').text(response.message || 'Có một số sản phẩm không thể xóa.');
+                                    $('#errorMessageModal').modal('show');
+                                } else {
+                                    $('#errorMessageContent').text(response.message || 'Lỗi khi xóa sản phẩm đã chọn.');
+                                    $('#errorMessageModal').modal('show');
+                                }
+                                $('#successMessageModal').on('hidden.bs.modal', function () {
+                                    window.location.reload();
+                                });
+                                $('#errorMessageModal').on('hidden.bs.modal', function () {
+                                    window.location.reload();
+                                });
+                            },
+                            error: function(xhr) {
+                                $('#bulkDeleteModal').modal('hide');
+                                let errorMessage = 'Lỗi khi xóa sản phẩm đã chọn';
+                                if (xhr.responseJSON && xhr.responseJSON.message) {
+                                    errorMessage = xhr.responseJSON.message;
+                                } else if (xhr.responseText) {
+                                    errorMessage = 'Lỗi server: ' + xhr.responseText.substring(0, 100) + '...';
+                                } else {
+                                    errorMessage = 'Lỗi không xác định';
+                                }
+                                $('#errorMessageContent').text(errorMessage);
+                                $('#errorMessageModal').modal('show');
+                                $('#errorMessageModal').on('hidden.bs.modal', function () {
+                                    window.location.reload();
+                                });
+                            }
+                        });
+                    });
+                } else {
+                    $('#errorMessageContent').text('Vui lòng chọn ít nhất một sản phẩm để xóa.');
+                    $('#errorMessageModal').modal('show');
+                }
+            });
 
-        let nextStatus = (status == 1) ? 'Ngừng bán' : 'Đang bán';
-        // Nếu name rỗng (undefined/null), show id cho dễ debug
-        if (!name) name = '(ID ' + id + ')';
-        $('#modal-status-text').html('Bạn muốn chuyển trạng thái sản phẩm <b>' + name + '</b> sang <span class="text-primary">' + nextStatus + '</span>?');
+            // Xử lý đổi trạng thái sản phẩm
+            $('.status-badge').click(function() {
+                var id = $(this).data('id');
+                var name = $(this).data('name');
+                var status = $(this).data('status');
+                var nextStatus = status == 1 ? 'Ngừng bán' : 'Đang bán';
 
-        // Set action cho form
-        let url = '{{ route("admin.products.toggle", ":id") }}';
-        url = url.replace(':id', id);
-        $('#status-toggle-form').attr('action', url);
+                $('#modal-status-text').html('Bạn muốn chuyển trạng thái sản phẩm <b>' + name + '</b> sang <span class="text-primary">' + nextStatus + '</span>?');
+                $('#status-toggle-form').attr('action', '{{ url('admin/products/toggle') }}/' + id);
+                $('#statusModal').modal('show');
+            });
 
-        // Show modal
-        var modal = new bootstrap.Modal(document.getElementById('statusModal'));
-        modal.show();
-    });
-
-    $(function() {
-        // Select all
-        $('#select-all').on('change', function() {
-            $('.row-checkbox').prop('checked', $(this).is(':checked'));
-            updateBulkDeleteBtn();
+            // Hiển thị modal lỗi nếu có session error
+            @if(session('error'))
+                var errorMessage = "{{ session('error') }}";
+                $('#errorMessageContent').text(errorMessage);
+                $('#errorMessageModal').modal('show');
+            @endif
         });
-        $('.row-checkbox').on('change', function() {
-            updateBulkDeleteBtn();
-        });
-
-        function updateBulkDeleteBtn() {
-            $('#delete-selected').prop('disabled', $('.row-checkbox:checked').length === 0);
-        }
-
-        // Modal xóa 1
-        $('#deleteOneModal').on('show.bs.modal', function(e) {
-            var button = $(e.relatedTarget);
-            var id = button.data('id');
-            var name = button.data('name');
-            $('#delete-one-form').attr('action', '/admin/products/' + id);
-            $('#delete-one-message').text('Bạn chắc chắn muốn xóa sản phẩm "' + name + '"?');
-        });
-
-        // Xác nhận xóa nhiều
-        $('#confirm-bulk-delete').on('click', function() {
-            $('#bulk-delete-form').submit();
-        });
-    });
-</script>
+    </script>
 @endpush
-
-
-@endsection
