@@ -488,6 +488,51 @@
 <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+        // Thêm xử lý form submit
+        const mainForm = document.getElementById('main-form');
+        if (mainForm) {
+            mainForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                
+                fetch(this.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => Promise.reject(err));
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        toastr.success('Cập nhật sản phẩm thành công!');
+                        setTimeout(() => {
+                            window.location.href = '{{ route("admin.products.index") }}';
+                        }, 1500);
+                    } else {
+                        toastr.error(data.message || 'Có lỗi xảy ra khi cập nhật sản phẩm!');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    if (error.errors) {
+                        // Xử lý validation errors
+                        Object.keys(error.errors).forEach(key => {
+                            toastr.error(error.errors[key][0]);
+                        });
+                    } else {
+                        toastr.error(error.message || 'Có lỗi xảy ra khi cập nhật sản phẩm!');
+                    }
+                });
+            });
+        }
 
         // ================== Khởi tạo CKEditor cho mô tả chính ==================
         function initMainEditor() {
