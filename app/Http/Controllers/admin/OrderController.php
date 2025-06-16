@@ -25,7 +25,6 @@ public function index(Request $request)
     if ($request->filled('payment_status')) {
         $query->where('payment_status', $request->payment_status);
     }
-
     // Lọc phương thức thanh toán
     if ($request->filled('payment_method')) {
         $query->where('payment_method', $request->payment_method);
@@ -62,13 +61,16 @@ public function index(Request $request)
 
     // Hiển thị chi tiết đơn hàng
     public function show(Order $order)
-    {
-        // Load các thông tin liên quan đến đơn hàng, như các sản phẩm và người dùng
-        $order->load(['items', 'user', 'address']);
+        {
+            $order->load([
+                'items.productVariant.attributeValues.attribute',
+                'user',
+                'address'
+            ]);
 
-        // Trả về view 'backend.orders.show' với dữ liệu đơn hàng
-        return view('backend.orders.show', compact('order'));
-    }
+            return view('backend.orders.show', compact('order'));
+        }
+
 
     // Hiển thị trang tracking (nếu cần)
     public function tracking(Order $order)
@@ -159,9 +161,6 @@ public function index(Request $request)
         'payment_status' => $order->payment_status,
     ]);
 }
-
-
-
     public function destroy(Order $order)
     {
         // Kiểm tra trạng thái hợp lệ trước khi xóa
