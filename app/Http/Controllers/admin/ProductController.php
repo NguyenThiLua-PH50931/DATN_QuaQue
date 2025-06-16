@@ -555,10 +555,10 @@ class ProductController extends Controller
 
             DB::commit();
 
-            return redirect()->route('admin.products.edit', $product->slug)->with('success_modal', 'Cập nhật sản phẩm thành công!');
+            return response()->json(['success' => true, 'message' => 'Cập nhật sản phẩm thành công!']);
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withInput()->with('error_modal', 'Lỗi: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Lỗi: ' . $e->getMessage()]);
         }
     }
 
