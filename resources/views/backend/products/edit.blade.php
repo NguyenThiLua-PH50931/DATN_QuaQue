@@ -66,31 +66,35 @@
                                     </div>
 
                                     {{-- Ảnh đại diện hiện tại --}}
-                                    <div class="mb-3">
-                                        <label class="form-label">Ảnh đại diện hiện tại</label>
+                                    <div class="form-group">
+                                        <label for="image">Ảnh đại diện</label>
+                                        <input type="file" class="form-control" id="image" name="image">
                                         @if($product->image)
-                                        <div class="mb-2">
-                                            <img src="{{ asset('storage/'.$product->image) }}" alt="Ảnh đại diện" style="max-width: 150px;">
-                                        </div>
+                                            <div class="mt-2">
+                                                <img src="{{ asset('storage/' . $product->image) }}" alt="Ảnh hiện tại" style="max-width: 200px;">
+                                            </div>
                                         @endif
-                                        <label class="form-label">Thay đổi ảnh đại diện</label>
-                                        <input type="file" name="image" class="form-control" accept="image/*">
-                                        @error('image')<small class="text-danger">{{ $message }}</small>@enderror
                                     </div>
 
                                     {{-- Ảnh mô tả hiện tại --}}
-                                    <div class="mb-3">
-                                        <label class="form-label">Ảnh mô tả hiện tại</label>
-                                        <div class="d-flex flex-wrap gap-2 mb-2">
-                                            @foreach($product->product_images as $img)
-                                            <div style="position: relative;">
-                                                <img src="{{ asset('storage/'.$img->image_url) }}" alt="Ảnh mô tả" style="max-width: 100px; max-height: 100px; object-fit: cover;">
-                                                {{-- Có thể thêm nút xóa ajax sau --}}
-                                            </div>
+                                    <div class="form-group mt-4">
+                                        <label class="form-label">Ảnh mô tả sản phẩm</label>
+                                        <div class="description-images-container d-flex flex-wrap gap-2">
+                                            @foreach($product->product_images as $image)
+                                                <div class="image-item position-relative border rounded" style="width: 100px; height: 100px;">
+                                                    <img src="{{ $image->image_url }}" class="w-100 h-100 object-fit-cover" alt="Ảnh mô tả">
+                                                    <button type="button" class="btn btn-danger btn-sm product-image-delete-btn position-absolute rounded-circle p-1 delete-image-x-btn" 
+                                                            data-id="{{ $image->id }}"
+                                                            data-url="{{ route('admin.products.image.delete', $image->id) }}">
+                                                        &times;
+                                                    </button>
+                                                </div>
                                             @endforeach
+                                            <div class="w-100 mt-2"> {{-- This div takes full width for the file input --}}
+                                                <input type="file" class="form-control" id="description_images" name="description_images[]" multiple>
+                                                <small class="text-muted">Có thể chọn nhiều ảnh cùng lúc</small>
+                                            </div>
                                         </div>
-                                        <label class="form-label">Thêm ảnh mô tả (nhiều ảnh)</label>
-                                        <input type="file" name="images[]" class="form-control" multiple accept="image/*">
                                     </div>
 
                                     {{-- Xuất xứ --}}
@@ -107,139 +111,186 @@
                                         @error('description')<small class="text-danger">{{ $message }}</small>@enderror
                                     </div>
 
-                                    {{-- Chọn thuộc tính và giá trị --}}
-                                    <div class="card mb-3">
-                                        <div class="card-body">
-                                            <h6 class="fw-bold mb-3">Chọn thuộc tính và giá trị cho biến thể</h6>
-                                            <input type="text" class="form-control mb-3" id="filter-attributes" placeholder="Tìm thuộc tính...">
+                                    {{-- Chọn loại sản phẩm: Có biến thể hay không --}}
+                                    <div class="mb-3">
+                                        <label class="form-label">Loại sản phẩm</label>
+                                        <div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="has_variants" id="editHasVariantsYes" value="1" {{ old('has_variants', $product->variants->where('name', '!=', 'Mặc định')->count() > 0 ? 1 : 0) == 1 ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="editHasVariantsYes">Có biến thể</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="has_variants" id="editHasVariantsNo" value="0" {{ old('has_variants', $product->variants->where('name', '!=', 'Mặc định')->count() > 0 ? 1 : 0) == 0 ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="editHasVariantsNo">Không có biến thể</label>
+                                            </div>
+                                        </div>
+                                        @error('has_variants')<small class="text-danger">{{ $message }}</small>@enderror
+                                    </div>
 
-                                            <div class="attribute-filters" style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">
-                                                @foreach($attributes as $attr)
-                                                <div class="attribute-group mb-3" data-attr-name="{{ strtolower($attr->name) }}">
-                                                    <button class="btn btn-link p-0 mb-1" type="button" data-bs-toggle="collapse" data-bs-target="#attr-{{ $attr->id }}" aria-expanded="true" aria-controls="attr-{{ $attr->id }}">
-                                                        {{ $attr->name }} ({{ count($attr->values) }})
-                                                    </button>
-                                                    <div class="collapse show" id="attr-{{ $attr->id }}">
-                                                        <div class="values-list" style="max-height: 150px; overflow-y:auto; border:1px solid #ddd; padding:8px; border-radius:4px;">
-                                                            @foreach($attr->values as $val)
-                                                            <label class="form-check form-check-inline d-block">
-                                                                @php
-                                                                $checked = false;
-                                                                foreach ($product->variants as $variant) {
-                                                                $valIds = $variant->attributeValues->pluck('id')->toArray();
-                                                                if (in_array($val->id, $valIds)) {
-                                                                $checked = true;
-                                                                break;
-                                                                }
-                                                                }
-                                                                @endphp
-                                                                <input
-                                                                    class="form-check-input attribute-value-checkbox"
-                                                                    type="checkbox"
-                                                                    data-attrid="{{ $attr->id }}"
-                                                                    value="{{ $val->id }}"
-                                                                    name="attribute_values_checkbox[{{ $attr->id }}][]"
-                                                                    {{ old("attribute_values_checkbox.$attr->id") && in_array($val->id, old("attribute_values_checkbox.$attr->id")) ? 'checked' : ($checked ? 'checked' : '') }}>
-                                                                <span class="form-check-label">{{ $val->value }}</span>
-                                                            </label>
-                                                            @endforeach
-                                                        </div>
+                                    {{-- BLOCK: THÔNG TIN CHO SẢN PHẨM KHÔNG CÓ BIẾN THỂ --}}
+                                    <div id="edit-single-product-fields" style="display: {{ old('has_variants', $product->variants->where('name', '!=', 'Mặc định')->count() > 0 ? 1 : 0) == 0 ? 'block' : 'none' }};">
+                                        <div class="card mb-3">
+                                            <div class="card-body">
+                                                <h6 class="fw-bold mb-3">Thông tin sản phẩm đơn</h6>
+                                                <div class="row gx-2 gy-2">
+                                                    <div class="col-md-4">
+                                                        <label class="form-label">Giá bán</label>
+                                                        <input type="number" name="price" min="0" step="0.01" class="form-control" value="{{ old('price', $product->variants->first()->price ?? '') }}">
+                                                        @error('price')<small class="text-danger">{{ $message }}</small>@enderror
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label">Tồn kho</label>
+                                                        <input type="number" name="stock" min="0" class="form-control" value="{{ old('stock', $product->variants->first()->stock ?? '') }}">
+                                                        @error('stock')<small class="text-danger">{{ $message }}</small>@enderror
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label">SKU (Mã kho)</label>
+                                                        <input type="text" name="sku" class="form-control" value="{{ old('sku', $product->variants->first()->sku ?? '') }}" placeholder="Tự động nếu để trống">
+                                                        @error('sku')<small class="text-danger">{{ $message }}</small>@enderror
                                                     </div>
                                                 </div>
-                                                @endforeach
-                                            </div>
-
-                                            <div class="mt-2 d-flex gap-3">
-                                                <a href="#" class="btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#addAttributeModal">+ Thêm thuộc tính</a>
-                                                <a href="#" class="btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#addAttributeValueModal">+ Thêm giá trị thuộc tính</a>
                                             </div>
                                         </div>
                                     </div>
 
-                                    {{-- Biến thể sản phẩm --}}
-                                    <div class="card mb-4">
-                                        <div class="card-body">
-                                            <h5 class="mb-3">Biến thể sản phẩm</h5>
-                                            <p class="text-muted small">Biến thể được sinh tự động khi chọn các giá trị thuộc tính.</p>
+                                    {{-- BLOCK: CHỌN THUỘC TÍNH VÀ GIÁ TRỊ DÙNG CHECKBOX --}}
+                                    <div id="edit-variant-attribute-selection" style="display: {{ old('has_variants', $product->variants->where('name', '!=', 'Mặc định')->count() > 0 ? 1 : 0) == 1 ? 'block' : 'none' }};">
+                                        <div class="card mb-3">
+                                            <div class="card-body">
+                                                <h6 class="fw-bold mb-3">Chọn thuộc tính và giá trị cho biến thể</h6>
+                                                <input type="text" class="form-control mb-3" id="filter-attributes" placeholder="Tìm thuộc tính...">
 
-                                            <div id="variants-list">
-                                                @php
-                                                $oldVariants = old('variants', $product->variants->toArray());
-                                                @endphp
-                                                @foreach($oldVariants as $i => $variant)
-                                                <div class="variant-row border rounded p-3 mb-3 bg-white position-relative">
+                                                <div class="attribute-filters" style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">
+                                                    @foreach($attributes as $attr)
+                                                    <div class="attribute-group mb-3" data-attr-name="{{ strtolower($attr->name) }}">
+                                                        <button class="btn btn-link p-0 mb-1" type="button" data-bs-toggle="collapse" data-bs-target="#attr-{{ $attr->id }}" aria-expanded="true" aria-controls="attr-{{ $attr->id }}">
+                                                            {{ $attr->name }} ({{ count($attr->values) }})
+                                                        </button>
+                                                        <div class="collapse show" id="attr-{{ $attr->id }}">
+                                                            <div class="values-list" style="max-height: 150px; overflow-y:auto; border:1px solid #ddd; padding:8px; border-radius:4px;">
+                                                                @foreach($attr->values as $val)
+                                                                <label class="form-check form-check-inline d-block">
+                                                                    @php
+                                                                    $checked = false;
+                                                                    if (old('attribute_values_checkbox.'.$attr->id) && is_array(old('attribute_values_checkbox.'.$attr->id)) && in_array($val->id, old('attribute_values_checkbox.'.$attr->id))) {
+                                                                        $checked = true;
+                                                                    } else if (!old('has_variants') || old('has_variants') == 1) { // Nếu có biến thể hoặc chưa chọn thì giữ checked cũ
+                                                                        foreach ($product->variants->where('name', '!=', 'Mặc định') as $variant) {
+                                                                            $valIds = $variant->attributeValues->pluck('id')->toArray();
+                                                                            if (in_array($val->id, $valIds)) {
+                                                                                $checked = true;
+                                                                                break;
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                    @endphp
+                                                                    <input
+                                                                        class="form-check-input attribute-value-checkbox"
+                                                                        type="checkbox"
+                                                                        data-attrid="{{ $attr->id }}"
+                                                                        value="{{ $val->id }}"
+                                                                        name="attribute_values_checkbox[{{ $attr->id }}][]"
+                                                                        {{ $checked ? 'checked' : '' }}
+                                                                    >
+                                                                    <span class="form-check-label">{{ $val->value }}</span>
+                                                                </label>
+                                                                @endforeach
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    @endforeach
+                                                </div>
+
+                                                <div class="mt-2 d-flex gap-3">
+                                                    <a href="#" class="btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#addAttributeModal">+ Thêm thuộc tính</a>
+                                                    <a href="#" class="btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#addAttributeValueModal">+ Thêm giá trị thuộc tính</a>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {{-- BIẾN THỂ SẢN PHẨM --}}
+                                        <div class="card mb-4">
+                                            <div class="card-body">
+                                                <h5 class="mb-3">Biến thể sản phẩm</h5>
+                                                <p class="text-muted small">Biến thể được sinh tự động khi chọn các giá trị thuộc tính.</p>
+
+                                                <div id="variants-list">
                                                     @php
-                                                    $valIds = [];
-                                                    if (isset($variant['attribute_value_ids'])) {
-                                                    $valIds = $variant['attribute_value_ids'];
-                                                    } elseif (isset($variant['attribute_value_id'])) {
-                                                    $valIds = [$variant['attribute_value_id']];
-                                                    } elseif (is_object($variant) && $variant->relationLoaded('attributeValues')) {
-                                                    $valIds = $variant->attributeValues->pluck('id')->toArray();
-                                                    } elseif (isset($variant['attributeValues']) && is_array($variant['attributeValues'])) {
-                                                    $valIds = array_column($variant['attributeValues'], 'id');
+                                                    $currentVariants = old('variants', null); // Lấy từ old() trước
+                                                    if (is_null($currentVariants)) {
+                                                        $currentVariants = [];
+                                                        foreach($product->variants->where('name', '!=', 'Mặc định') as $variant) {
+                                                            $variantData = $variant->toArray();
+                                                            $variantData['attribute_value_ids'] = $variant->attributeValues->pluck('id')->toArray();
+                                                            $currentVariants[] = $variantData;
+                                                        }
                                                     }
                                                     @endphp
 
-                                                    @foreach($valIds as $valId)
-                                                    <input type="hidden" name="variants[{{$i}}][attribute_value_ids][]" value="{{ $valId }}">
-                                                    @endforeach
+                                                    @foreach($currentVariants as $i => $variant)
+                                                    <div class="variant-row border rounded p-3 mb-3 bg-white position-relative">
+                                                        {{-- Ẩn attribute_value_ids --}}
+                                                        @foreach($variant['attribute_value_ids'] ?? [] as $valId)
+                                                        <input type="hidden" name="variants[{{$i}}][attribute_value_ids][]" value="{{ $valId }}">
+                                                        @endforeach
 
-                                                    <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 btn-remove-variant" title="Xóa biến thể">&times;</button>
+                                                        <input type="hidden" name="variants[{{$i}}][id]" value="{{ $variant['id'] ?? '' }}">
+                                                        <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 btn-remove-variant" title="Xóa biến thể">&times;</button>
 
-                                                    <div class="mb-2 fw-semibold">
-                                                        Giá trị thuộc tính:
-                                                        <span>
-                                                            @php
-                                                            $names = [];
-                                                            foreach ($valIds as $vid) {
-                                                            $attrVal = \App\Models\admin\AttributeValue::find($vid);
-                                                            if ($attrVal) $names[] = $attrVal->value;
-                                                            }
-                                                            echo implode(' - ', $names);
-                                                            @endphp
-                                                        </span>
-                                                        @if(empty($names))
-                                                        <em>(biến thể thủ công)</em>
-                                                        @endif
-                                                    </div>
-
-                                                    <div class="row gx-2 gy-2">
-                                                        <div class="col-6 col-md-3">
-                                                            <label class="form-label">Giá bán</label>
-                                                            <input type="number" name="variants[{{$i}}][price]" min="0" step="0.01" class="form-control" value="{{ old("variants.$i.price", $variant['price'] ?? '') }}" required>
-                                                            @error("variants.$i.price")<small class="text-danger">{{ $message }}</small>@enderror
-                                                        </div>
-                                                        <div class="col-6 col-md-3">
-                                                            <label class="form-label">Tồn kho</label>
-                                                            <input type="number" name="variants[{{$i}}][stock]" min="0" class="form-control" value="{{ old("variants.$i.stock", $variant['stock'] ?? '') }}" required>
-                                                            @error("variants.$i.stock")<small class="text-danger">{{ $message }}</small>@enderror
-                                                        </div>
-                                                        <div class="col-6 col-md-3">
-                                                            <label class="form-label">SKU</label>
-                                                            <input type="text" name="variants[{{$i}}][sku]" class="form-control sku-auto" readonly value="{{ old("variants.$i.sku", $variant['sku'] ?? '') }}">
-                                                            @error("variants.$i.sku")<small class="text-danger">{{ $message }}</small>@enderror
-                                                        </div>
-                                                        <div class="col-6 col-md-3">
-                                                            <label class="form-label">Ảnh biến thể hiện tại</label>
-                                                            @if(!empty($variant['image'] ?? $variant['image_url'] ?? ''))
-                                                            <div class="mb-2">
-                                                                <img src="{{ asset('storage/' . ($variant['image'] ?? $variant['image_url'])) }}" alt="Ảnh biến thể" style="max-width: 100px;">
-                                                            </div>
+                                                        <div class="mb-2 fw-semibold">
+                                                            Giá trị thuộc tính:
+                                                            <span>
+                                                                @php
+                                                                $names = [];
+                                                                foreach (($variant['attribute_value_ids'] ?? []) as $vid) {
+                                                                    $attrVal = \App\Models\admin\AttributeValue::find($vid);
+                                                                    if ($attrVal) $names[] = $attrVal->value;
+                                                                }
+                                                                echo implode(' - ', $names);
+                                                                @endphp
+                                                            </span>
+                                                            @if(empty($names))
+                                                            <em>(biến thể thủ công)</em>
                                                             @endif
-                                                            <input type="hidden" name="variants[{{$i}}][old_image]" value="{{ old("variants.$i.old_image", $variant['image'] ?? '') }}">
-                                                            <label class="form-label">Thay đổi ảnh biến thể</label>
-                                                            <input type="file" name="variants[{{$i}}][image]" class="form-control" accept="image/*">
-                                                            @error("variants.$i.image")<small class="text-danger">{{ $message }}</small>@enderror
                                                         </div>
-                                                        <div class="col-12">
-                                                            <label class="form-label">Mô tả biến thể</label>
-                                                            <textarea name="variants[{{$i}}][description]" rows="2" class="form-control variant-description-editor">{{ old("variants.$i.description", $variant['description'] ?? '') }}</textarea>
-                                                            @error("variants.$i.description")<small class="text-danger">{{ $message }}</small>@enderror
+
+                                                        <div class="row gx-2 gy-2">
+                                                            <div class="col-6 col-md-3">
+                                                                <label class="form-label">Giá bán</label>
+                                                                <input type="number" name="variants[{{$i}}][price]" min="0" step="0.01" class="form-control" value="{{ old("variants.$i.price", $variant['price'] ?? '') }}" required>
+                                                                @error("variants.$i.price")<small class="text-danger">{{ $message }}</small>@enderror
+                                                            </div>
+                                                            <div class="col-6 col-md-3">
+                                                                <label class="form-label">Tồn kho</label>
+                                                                <input type="number" name="variants[{{$i}}][stock]" min="0" class="form-control" value="{{ old("variants.$i.stock", $variant['stock'] ?? '') }}" required>
+                                                                @error("variants.$i.stock")<small class="text-danger">{{ $message }}</small>@enderror
+                                                            </div>
+                                                            <div class="col-6 col-md-3">
+                                                                <label class="form-label">SKU</label>
+                                                                <input type="text" name="variants[{{$i}}][sku]" class="form-control sku-auto" readonly value="{{ old("variants.$i.sku", $variant['sku'] ?? '') }}">
+                                                                @error("variants.$i.sku")<small class="text-danger">{{ $message }}</small>@enderror
+                                                            </div>
+                                                            <div class="col-6 col-md-3">
+                                                                <label class="form-label">Ảnh biến thể hiện tại</label>
+                                                                @if(!empty($variant['image'] ?? ''))
+                                                                <div class="mb-2">
+                                                                    <img src="{{ asset('storage/' . ($variant['image'])) }}" alt="Ảnh biến thể" style="max-width: 100px;">
+                                                                </div>
+                                                                @endif
+                                                                <input type="hidden" name="variants[{{$i}}][old_image]" value="{{ old("variants.$i.old_image", $variant['image'] ?? '') }}">
+                                                                <label class="form-label">Thay đổi ảnh biến thể</label>
+                                                                <input type="file" name="variants[{{$i}}][image]" class="form-control" accept="image/*">
+                                                                @error("variants.$i.image")<small class="text-danger">{{ $message }}</small>@enderror
+                                                            </div>
+                                                            <div class="col-12">
+                                                                <label class="form-label">Mô tả biến thể</label>
+                                                                <textarea name="variants[{{$i}}][description]" rows="2" class="form-control variant-description-editor">{{ old("variants.$i.description", $variant['description'] ?? '') }}</textarea>
+                                                                @error("variants.$i.description")<small class="text-danger">{{ $message }}</small>@enderror
+                                                            </div>
                                                         </div>
                                                     </div>
+                                                    @endforeach
                                                 </div>
-                                                @endforeach
                                             </div>
                                         </div>
                                     </div>
@@ -252,8 +303,6 @@
                                             <option value="0" {{ old('active', $product->active) == 0 ? 'selected' : '' }}>Không</option>
                                         </select>
                                     </div>
-                                    <input type="hidden" name="variants[{{$i}}][old_image]" value="{{ old("variants.$i.old_image", $variant['image'] ?? '') }}">
-
                                     <button type="submit" class="btn btn-primary mt-2">Cập nhật sản phẩm</button>
                                 </form>
                             </div>
@@ -418,10 +467,72 @@
     .bulk-delete-btn:not([disabled]):hover {
         background: #aac4e7 !important;
     }
+
+    .delete-image-x-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 20px;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        top: -18px;
+        right: -18px;
+        z-index: 999999;
+        cursor: pointer;
+        box-shadow: 0 0 10px rgba(0,0,0,0.7);
+        background-color: rgba(255, 0, 0, 0.9);
+        pointer-events: auto;
+    }
 </style>
 <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+        // Thêm xử lý form submit
+        const mainForm = document.getElementById('main-form');
+        if (mainForm) {
+            mainForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                
+                fetch(this.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => Promise.reject(err));
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        toastr.success('Cập nhật sản phẩm thành công!');
+                        setTimeout(() => {
+                            window.location.href = '{{ route("admin.products.index") }}';
+                        }, 1500);
+                    } else {
+                        toastr.error(data.message || 'Có lỗi xảy ra khi cập nhật sản phẩm!');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    if (error.errors) {
+                        // Xử lý validation errors
+                        Object.keys(error.errors).forEach(key => {
+                            toastr.error(error.errors[key][0]);
+                        });
+                    } else {
+                        toastr.error(error.message || 'Có lỗi xảy ra khi cập nhật sản phẩm!');
+                    }
+                });
+            });
+        }
 
         // ================== Khởi tạo CKEditor cho mô tả chính ==================
         function initMainEditor() {
@@ -505,7 +616,7 @@
         // ================== Cập nhật sự kiện change checkbox để sinh biến thể ==================
         function registerCheckboxListeners() {
             document.querySelectorAll('.attribute-value-checkbox').forEach(cb => {
-                cb.removeEventListener('change', generateVariants);
+                cb.removeEventListener('change', generateVariants); // Tránh trùng lặp listener
                 cb.addEventListener('change', generateVariants);
             });
         }
@@ -567,13 +678,52 @@
             const variantArea = document.getElementById('variants-list');
             if (!variantArea) return;
 
-            // Xóa biến thể thủ công (nếu muốn giữ thì nâng cấp sau)
-            variantArea.innerHTML = '';
+            destroyVariantEditors(); // Hủy các instance CKEditor cũ
+            variantArea.innerHTML = ''; // Xóa tất cả biến thể hiện có
 
             const attrArrays = Object.values(attrMap);
             if (attrArrays.length === 0) {
+                // Nếu không có thuộc tính nào được chọn, hiển thị lại biến thể mặc định nếu có hoặc tạo rỗng
+                // Lấy biến thể mặc định từ product nếu có và old input không có biến thể
+                const defaultVariant = {!! $product->variants->where('name', 'Mặc định')->first() ? json_encode($product->variants->where('name', 'Mặc định')->first()->toArray()) : 'null' !!};
+                const oldHasVariants = '{{ old('has_variants', $product->variants->where('name', '!=', 'Mặc định')->count() > 0 ? 1 : 0) }}';
+
+                if (defaultVariant && oldHasVariants == 0) {
+                    const html = `
+                    <div class="variant-row border rounded p-3 mb-3 bg-white position-relative">
+                      <input type="hidden" name="variants[0][id]" value="${defaultVariant.id}">
+                      <div class="mb-2 fw-semibold">Giá trị thuộc tính: <span>Mặc định</span></div>
+                      <div class="row gx-2 gy-2">
+                        <div class="col-6 col-md-3">
+                          <label class="form-label">Giá bán</label>
+                          <input type="number" name="variants[0][price]" min="0" step="0.01" class="form-control" value="${defaultVariant.price}" required>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <label class="form-label">Tồn kho</label>
+                          <input type="number" name="variants[0][stock]" min="0" class="form-control" value="${defaultVariant.stock}" required>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <label class="form-label">SKU</label>
+                          <input type="text" name="variants[0][sku]" class="form-control sku-auto" readonly value="${defaultVariant.sku}">
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <label class="form-label">Ảnh biến thể hiện tại</label>
+                          ${defaultVariant.image ? `<div class="mb-2"><img src="{{ asset('storage/') }}/${defaultVariant.image}" alt="Ảnh biến thể" style="max-width: 100px;"></div>` : ''}
+                          <input type="hidden" name="variants[0][old_image]" value="${defaultVariant.image || ''}">
+                          <label class="form-label">Thay đổi ảnh biến thể</label>
+                          <input type="file" name="variants[0][image]" class="form-control" accept="image/*">
+                        </div>
+                        <div class="col-12">
+                          <label class="form-label">Mô tả biến thể</label>
+                          <textarea name="variants[0][description]" rows="2" class="form-control variant-description-editor">${defaultVariant.description || ''}</textarea>
+                        </div>
+                      </div>
+                    </div>
+                    `;
+                    variantArea.insertAdjacentHTML('beforeend', html);
+                }
                 showRemoveButtons();
-                initVariantEditors();
+                initVariantEditors(); // Khởi tạo lại nếu có biến thể mặc định
                 updateSkuAll();
                 return;
             }
@@ -584,44 +734,130 @@
                 const ids = combo.map(c => c.id);
                 const names = combo.map(c => c.text);
 
+                // Cố gắng tìm biến thể cũ khớp để giữ lại dữ liệu
+                const existingVariant = {!! json_encode($product->variants->where('name', '!=', 'Mặc định')->values()->toArray()) !!}.find(v => {
+                    const existingIds = (v.attribute_values || []).map(av => av.id.toString());
+                    return existingIds.sort().join('-') === ids.sort().join('-');
+                });
+
+                let oldPrice = existingVariant ? existingVariant.price : '';
+                let oldStock = existingVariant ? existingVariant.stock : '';
+                let oldSku = existingVariant ? existingVariant.sku : '';
+                let oldImage = existingVariant ? (existingVariant.image || '') : '';
+                let oldDescription = existingVariant ? (existingVariant.description || '') : '';
+                let oldVariantId = existingVariant ? existingVariant.id : '';
+
+                // Ưu tiên dữ liệu từ old() nếu có lỗi validation
+                @php
+                    $oldVariantsInput = old('variants', []);
+                @endphp
+                if (Object.keys({!! json_encode($oldVariantsInput) !!}).length > 0) {
+                    const oldInputVariant = {!! json_encode($oldVariantsInput) !!}.find(v => {
+                        const oldInputIds = (v.attribute_value_ids || []).map(id => id.toString());
+                        return oldInputIds.sort().join('-') === ids.sort().join('-');
+                    });
+                    if (oldInputVariant) {
+                        oldPrice = oldInputVariant.price || oldPrice;
+                        oldStock = oldInputVariant.stock || oldStock;
+                        oldSku = oldInputVariant.sku || oldSku;
+                        oldImage = oldInputVariant.old_image || oldInputVariant.image || oldImage; // old_image cho file, image cho URL mới
+                        oldDescription = oldInputVariant.description || oldDescription;
+                        oldVariantId = oldInputVariant.id || oldVariantId;
+                    }
+                }
+
                 const html = `
-        <div class="variant-row border rounded p-3 mb-3 bg-white position-relative">
-          ${ids.map(id => `<input type="hidden" name="variants[${idx}][attribute_value_ids][]" value="${id}">`).join('')}
-          <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 btn-remove-variant" title="Xóa biến thể">&times;</button>
-          <div class="mb-2 fw-semibold">Giá trị thuộc tính: <span>${names.join(' - ')}</span></div>
-          <div class="row gx-2 gy-2">
-            <div class="col-6 col-md-3">
-              <label class="form-label">Giá bán</label>
-              <input type="number" name="variants[${idx}][price]" min="0" step="0.01" class="form-control" required>
-            </div>
-            <div class="col-6 col-md-3">
-              <label class="form-label">Tồn kho</label>
-              <input type="number" name="variants[${idx}][stock]" min="0" class="form-control" required>
-            </div>
-            <div class="col-6 col-md-3">
-              <label class="form-label">SKU</label>
-              <input type="text" name="variants[${idx}][sku]" class="form-control sku-auto" readonly>
-            </div>
-            <div class="col-6 col-md-3">
-              <label class="form-label">Ảnh biến thể</label>
-              <input type="file" name="variants[${idx}][image]" class="form-control" accept="image/*">
-            </div>
-            <div class="col-12">
-              <label class="form-label">Mô tả biến thể</label>
-              <textarea name="variants[${idx}][description]" rows="2" class="form-control variant-description-editor"></textarea>
-            </div>
-          </div>
-        </div>
-        `;
+                <div class="variant-row border rounded p-3 mb-3 bg-white position-relative">
+                  ${ids.map(id => `<input type="hidden" name="variants[${idx}][attribute_value_ids][]" value="${id}">`).join('')}
+                  <input type="hidden" name="variants[${idx}][id]" value="${oldVariantId}">
+                  <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 btn-remove-variant" title="Xóa biến thể">&times;</button>
+                  <div class="mb-2 fw-semibold">Giá trị thuộc tính: <span>${names.join(' - ')}</span></div>
+                  <div class="row gx-2 gy-2">
+                    <div class="col-6 col-md-3">
+                      <label class="form-label">Giá bán</label>
+                      <input type="number" name="variants[${idx}][price]" min="0" step="0.01" class="form-control" value="${oldPrice}" required>
+                    </div>
+                    <div class="col-6 col-md-3">
+                      <label class="form-label">Tồn kho</label>
+                      <input type="number" name="variants[${idx}][stock]" min="0" class="form-control" value="${oldStock}" required>
+                    </div>
+                    <div class="col-6 col-md-3">
+                      <label class="form-label">SKU</label>
+                      <input type="text" name="variants[${idx}][sku]" class="form-control sku-auto" readonly value="${oldSku}">
+                    </div>
+                    <div class="col-6 col-md-3">
+                      <label class="form-label">Ảnh biến thể hiện tại</label>
+                      ${oldImage ? `<div class="mb-2"><img src="{{ asset('storage/') }}/${oldImage}" alt="Ảnh biến thể" style="max-width: 100px;"></div>` : ''}
+                      <input type="hidden" name="variants[${idx}][old_image]" value="${oldImage}">
+                      <label class="form-label">Thay đổi ảnh biến thể</label>
+                      <input type="file" name="variants[${idx}][image]" class="form-control" accept="image/*">
+                    </div>
+                    <div class="col-12">
+                      <label class="form-label">Mô tả biến thể</label>
+                      <textarea name="variants[${idx}][description]" rows="2" class="form-control variant-description-editor">${oldDescription}</textarea>
+                    </div>
+                  </div>
+                </div>
+                `;
                 variantArea.insertAdjacentHTML('beforeend', html);
             });
 
             showRemoveButtons();
-            initVariantEditors();
+            initVariantEditors(); // Khởi tạo CKEditor cho các biến thể mới
             updateSkuAll();
         }
 
-        // ================== Ajax submit form modal chung ==================
+        // ================== Toggle hiển thị các phần dựa trên lựa chọn biến thể (cho trang EDIT) ==================
+        function toggleEditProductTypeFields() {
+            const hasVariantsYesRadio = document.getElementById('editHasVariantsYes');
+            const hasVariantsNoRadio = document.getElementById('editHasVariantsNo');
+            const hasVariants = hasVariantsYesRadio.checked;
+
+            const singleProductFields = document.getElementById('edit-single-product-fields');
+            const variantAttributeSelection = document.getElementById('edit-variant-attribute-selection');
+
+            if (hasVariants) {
+                singleProductFields.style.display = 'none';
+                singleProductFields.querySelectorAll('input, select, textarea').forEach(el => {
+                    el.setAttribute('disabled', 'true');
+                    el.removeAttribute('required'); // Loại bỏ required cho các trường bị ẩn
+                });
+
+                variantAttributeSelection.style.display = 'block';
+                variantAttributeSelection.querySelectorAll('input, select, textarea').forEach(el => {
+                    el.removeAttribute('disabled');
+                    // Cẩn thận với required ở đây, DataTables có thể thêm required
+                });
+
+                initVariantEditors();
+                registerCheckboxListeners();
+                generateVariants(); // Sinh lại biến thể khi chuyển sang có biến thể
+
+            } else {
+                singleProductFields.style.display = 'block';
+                singleProductFields.querySelectorAll('input, select, textarea').forEach(el => {
+                    el.removeAttribute('disabled');
+                    // Thêm lại required cho các trường của sản phẩm đơn khi hiển thị
+                    if (el.name === 'price' || el.name === 'stock') {
+                        el.setAttribute('required', 'true');
+                    }
+                });
+
+                variantAttributeSelection.style.display = 'none';
+                variantAttributeSelection.querySelectorAll('input, select, textarea').forEach(el => {
+                    el.setAttribute('disabled', 'true');
+                    el.removeAttribute('required'); // Loại bỏ required cho các trường bị ẩn
+                });
+
+                destroyVariantEditors(); // Hủy CKEditor khi chuyển sang không có biến thể
+
+                // Nếu chuyển từ có biến thể sang không có, clear các checkbox và input ẩn
+                document.querySelectorAll('.attribute-value-checkbox').forEach(cb => cb.checked = false);
+                document.getElementById('variants-list').innerHTML = ''; // Xóa tất cả HTML biến thể
+            }
+        }
+
+        // ================== Đăng ký ajax submit cho các form modal ==================
         function ajaxFormSubmit(formId, modalId, selectName, optionKeyName, errorElementId, onSuccessCallback) {
             const form = document.getElementById(formId);
             if (!form) return;
@@ -740,6 +976,31 @@
                         errorDiv.innerText = messages.join(', ');
                         errorDiv.style.display = 'block';
                     }
+                } else { // Xử lý lỗi cho các trường con như variants[i].price
+                    const parts = field.split('.');
+                    if (parts.length > 1 && parts[0] === 'variants') {
+                        const index = parts[1];
+                        const subField = parts.slice(2).join('.');
+                        const variantRow = document.querySelectorAll('.variant-row')[index];
+                        if (variantRow) {
+                            const variantInput = variantRow.querySelector(`[name^="variants[${index}][${subField}]"]`);
+                            if (variantInput) {
+                                variantInput.classList.add('is-invalid');
+                                let errorDiv = variantInput.nextElementSibling && variantInput.nextElementSibling.classList.contains('invalid-feedback') ?
+                                    variantInput.nextElementSibling : null;
+                                if (!errorDiv) {
+                                    // Thêm một div feedback nếu chưa có
+                                    errorDiv = document.createElement('small');
+                                    errorDiv.classList.add('text-danger', 'invalid-feedback');
+                                    variantInput.parentNode.appendChild(errorDiv);
+                                }
+                                if (errorDiv) {
+                                    errorDiv.innerText = messages.join(', ');
+                                    errorDiv.style.display = 'block';
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -780,7 +1041,7 @@
 
             container.appendChild(attrGroup);
             registerCheckboxListeners();
-            generateVariants();
+            toggleEditProductTypeFields(); // Gọi lại để đảm bảo trạng thái hiển thị đúng
         }
 
         // ================== Cập nhật UI thêm giá trị thuộc tính mới ==================
@@ -788,39 +1049,41 @@
             const container = document.querySelector('.attribute-filters');
             if (!container) return;
 
-            const valuesHtml = attributeValues.map(val => `
-            <label class="form-check form-check-inline d-block">
-                <input
-                    class="form-check-input attribute-value-checkbox"
-                    type="checkbox"
-                    data-attrid="${attributeId}"
-                    value="${val.id}"
-                    name="attribute_values_checkbox[${attributeId}][]"
-                    checked
-                >
-                <span class="form-check-label">${val.value}</span>
-            </label>
-        `).join('');
-
             const attrNameLower = attributeName.toLowerCase();
             let attrGroup = container.querySelector(`.attribute-group[data-attr-name="${attrNameLower}"]`);
 
             if (!attrGroup) {
+                // Nếu chưa có nhóm, tạo mới và append
                 attrGroup = document.createElement('div');
                 attrGroup.className = 'attribute-group mb-3';
                 attrGroup.dataset.attrName = attrNameLower;
+
+                // Tạo HTML nhóm với tất cả giá trị mới
                 attrGroup.innerHTML = `
-                <button class="btn btn-link p-0 mb-1" type="button" data-bs-toggle="collapse" data-bs-target="#attr-${attributeId}" aria-expanded="true" aria-controls="attr-${attributeId}">
-                    ${attributeName} (${attributeValues.length})
-                </button>
-                <div class="collapse show" id="attr-${attributeId}">
-                    <div class="values-list" style="max-height: 150px; overflow-y:auto; border:1px solid #ddd; padding:8px; border-radius:4px;">
-                        ${valuesHtml}
-                    </div>
-                </div>
-            `;
+        <button class="btn btn-link p-0 mb-1" type="button" data-bs-toggle="collapse" data-bs-target="#attr-${attributeId}" aria-expanded="true" aria-controls="attr-${attributeId}">
+            ${attributeName} (${attributeValues.length})
+        </button>
+        <div class="collapse show" id="attr-${attributeId}">
+            <div class="values-list" style="max-height: 150px; overflow-y:auto; border:1px solid #ddd; padding:8px; border-radius:4px;">
+                ${attributeValues.map(val => `
+                    <label class="form-check form-check-inline d-block">
+                        <input
+                            class="form-check-input attribute-value-checkbox"
+                            type="checkbox"
+                            data-attrid="${attributeId}"
+                            value="${val.id}"
+                            name="attribute_values_checkbox[${attributeId}][]"
+                            checked
+                        >
+                        <span class="form-check-label">${val.value}</span>
+                    </label>
+                `).join('')}
+            </div>
+        </div>
+    `;
                 container.appendChild(attrGroup);
             } else {
+                // Nếu nhóm đã có, chỉ thêm giá trị mới vào container con 'values-list'
                 const valuesList = attrGroup.querySelector('.values-list');
                 if (valuesList) {
                     const existingIds = new Set(Array.from(valuesList.querySelectorAll('input.attribute-value-checkbox')).map(input => input.value));
@@ -851,23 +1114,57 @@
             }
 
             registerCheckboxListeners();
-            generateVariants();
+            toggleEditProductTypeFields(); // Gọi lại để đảm bảo trạng thái hiển thị đúng
         }
-
-        // ================== Đăng ký ajax submit cho các form modal ==================
-        ajaxFormSubmit('quickCategoryForm', 'addCategoryModal', 'category_id', 'category', 'cat-error');
-        ajaxFormSubmit('quickRegionForm', 'addRegionModal', 'region_id', 'region');
-        ajaxFormSubmit('quickAttributeForm', 'addAttributeModal', null, null, null);
-        ajaxFormSubmit('quickAttributeValueForm', 'addAttributeValueModal', null, null, 'attr-value-error');
 
         // ================== Khởi tạo ban đầu ==================
         initMainEditor();
-        initVariantEditors();
+        toggleEditProductTypeFields(); // Gọi lần đầu để thiết lập trạng thái ban đầu
         showRemoveButtons();
         updateSkuAll();
-        registerCheckboxListeners();
-
     });
+</script>
+
+<script>
+$(document).ready(function() {
+    // DIAGNOSTIC SCRIPT: Attempt to re-bind click event directly after a small delay
+    setTimeout(function() {
+        $('.product-image-delete-btn').each(function() {
+            var button = $(this);
+            // First, ensure no previous handlers are interfering if possible (though .on() should handle this)
+            button.off('click').on('click', function(e) {
+                e.preventDefault();
+                console.log('DIAGNOSTIC: Direct button click detected!', button.data('id')); // This MUST show if clickable
+                
+                var imageId = button.data('id');
+                var url = button.data('url');
+                
+                if(confirm('Bạn có chắc muốn xóa ảnh này?')) {
+                    $.ajax({
+                        url: url,
+                        type: 'DELETE',
+                        data: {
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            if(response.success) {
+                                button.closest('.image-item').remove();
+                                alert('Xóa ảnh thành công!');
+                            } else {
+                                alert('Có lỗi xảy ra khi xóa ảnh!');
+                            }
+                        },
+                        error: function(xhr) {
+                            console.error("Error deleting image (DIAGNOSTIC): ", xhr);
+                            alert('Có lỗi xảy ra khi xóa ảnh. Vui lòng thử lại!');
+                        }
+                    });
+                }
+            });
+        });
+        console.log('DIAGNOSTIC: Direct click handlers re-attached.');
+    }, 1000); // 1-second delay to allow other scripts to initialize
+});
 </script>
 
 @endsection
