@@ -56090,37 +56090,50 @@ html[dir="rtl"] .grow svg {
         display: none !important
     }
 }
+
 /* Style for CKEditor in dark mode */
 body.dark .ck-editor__editable {
-    background-color: #2b2b2b !important; /* Màu nền tối */
-    color: #ffffff !important; /* Màu chữ trắng */
+    background-color: #2b2b2b !important;
+    /* Màu nền tối */
+    color: #ffffff !important;
+    /* Màu chữ trắng */
 }
 
 body.dark .ck-editor__main .ck-content {
-     color: #ffffff !important; /* Đảm bảo màu chữ trắng cho nội dung */
+    color: #ffffff !important;
+    /* Đảm bảo màu chữ trắng cho nội dung */
 }
 
 /* Optional: Style for placeholder text in dark mode */
 body.dark .ck-editor__editable::placeholder {
-    color: #cccccc !important; /* Màu xám nhạt cho placeholder */
+    color: #cccccc !important;
+    /* Màu xám nhạt cho placeholder */
 }
+
 /* Ensure text and background are visible in Product Inventory table in dark mode */
 body.dark .variation-table th {
-    color: #ffffff !important; /* Màu chữ trắng cho header */
-    background-color: #343a40 !important; /* Màu nền tối cho header (hoặc màu phù hợp) */
+    color: #ffffff !important;
+    /* Màu chữ trắng cho header */
+    background-color: #343a40 !important;
+    /* Màu nền tối cho header (hoặc màu phù hợp) */
 }
 
 body.dark .variation-table td {
-    color: #ffffff !important; /* Màu chữ trắng cho ô dữ liệu */
-    background-color: #212529 !important; /* Màu nền tối cho ô dữ liệu (hoặc màu phù hợp) */
+    color: #ffffff !important;
+    /* Màu chữ trắng cho ô dữ liệu */
+    background-color: #212529 !important;
+    /* Màu nền tối cho ô dữ liệu (hoặc màu phù hợp) */
 }
 
 
 body.dark .variation-table tbody tr td input.form-control[type="number"],
 body.dark .variation-table tbody tr td input.form-control[type="text"] {
-    color: #ffffff !important; /* Đặt màu chữ trắng cho input */
-    background-color: #3a3a3a !important; /* Đặt màu nền tối cho input */
-    border-color: #555 !important; /* Đặt màu viền tối cho input */
+    color: #ffffff !important;
+    /* Đặt màu chữ trắng cho input */
+    background-color: #3a3a3a !important;
+    /* Đặt màu nền tối cho input */
+    border-color: #555 !important;
+    /* Đặt màu viền tối cho input */
 }
 
 /* Đảm bảo placeholder cũng hiển thị rõ */
@@ -56137,8 +56150,10 @@ body.dark .card-body .theme-form .row select {
 }
 
 body.dark .card-body .theme-form .row select option {
-     background-color: #3a3a3a !important; /* Màu nền cho option trong select */
-     color: #ffffff !important; /* Màu chữ cho option trong select */
+    background-color: #3a3a3a !important;
+    /* Màu nền cho option trong select */
+    color: #ffffff !important;
+    /* Màu chữ cho option trong select */
 }
 
 /* Nếu dùng Select2 cho Stock Status dropdown */
@@ -56174,17 +56189,26 @@ body.dark .select2-search__field {
     color: #ffffff !important;
     border-color: #555 !important;
 }
+
 /* CUSTOM BUTTON STYLES FOR OVERRIDE */
 .btn.btn-warning {
-    background-color: #ffc107 !important; /* Màu vàng */
+    background-color: #ffc107 !important;
+    /* Màu vàng */
     border-color: #ffc107 !important;
-    color: #212529 !important; /* Màu chữ đen */
+    color: #212529 !important;
+    /* Màu chữ đen */
 }
 
 .btn.btn-danger {
-    background-color: #191970   !important; /* Màu đỏ */
-    border-color: #191970   !important;
-    color: #fff !important; /* Màu chữ trắng */
+    background-color: #191970 !important;
+    /* Màu đỏ */
+    border-color: #191970 !important;
+    color: #fff !important;
+    /* Màu chữ trắng */
 }
 
-/*# sourceMappingURL=style.css.map */
+   .sidebar-main {
+    height: calc(100vh - 200px) !important; /* Buộc nó chiếm không gian còn lại sau logo */
+    min-height: 0 !important; /* Đảm bảo nó không bị thu gọn */
+    overflow-y: auto !important; /* Đảm bảo thanh cuộn nếu nội dung dài hơn */
+}

@@ -11,8 +11,9 @@ class RegionsTableSeeder extends Seeder
 {
     public function run()
     {
-        // ⚠ Tuyệt đối không dùng truncate ở đây!
+        // Xóa dữ liệu trong bảng
         DB::table('regions')->delete(); // An toàn, không lỗi khóa ngoại
+        DB::statement('ALTER TABLE regions AUTO_INCREMENT = 1;'); // Reset ID về 1
 
         $regions = [
             'Miền Bắc',

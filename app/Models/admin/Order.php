@@ -3,9 +3,12 @@
 namespace App\Models\admin;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Order extends Model
 {
+    use SoftDeletes;
+
     protected $table = 'orders';
 
     // Quan hệ với User (đơn hàng thuộc về 1 user)

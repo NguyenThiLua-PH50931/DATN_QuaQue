@@ -133,7 +133,6 @@
                 </div>
             </div>
         </div>
-        <!-- Container-fluid Ends-->
 
         @includeIf('backend.footer')
 @endsection

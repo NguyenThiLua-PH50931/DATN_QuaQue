@@ -246,8 +246,6 @@
 
 @push('scripts')
     <script>
-        $(document).ready(function() {
-
             // Xử lý sự kiện click nút khôi phục
             $('.restore-btn').click(function() {
                 var id = $(this).data('id');
@@ -383,6 +381,6 @@
                     $('#errorMessageModal').modal('show');
                 }
             });
-        });
+
     </script>
 @endpush

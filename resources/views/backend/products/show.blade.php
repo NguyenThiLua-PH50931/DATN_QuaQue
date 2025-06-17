@@ -56,26 +56,29 @@
 
                         @php
                         $gallery = [];
-                        if ($product->image) $gallery[] = asset('storage/' . $product->image);
+                        if (!empty($product->main_image) && \Storage::disk('public')->exists(str_replace(asset('storage/'), '', $product->main_image))) {
+                            $gallery[] = $product->main_image;
+                        }
                         if ($product->product_images && $product->product_images->count()) {
                         foreach ($product->product_images as $img) {
-                        $gallery[] = asset('storage/' . $img->image_url);
+                                if (!empty($img->image_url) && \Storage::disk('public')->exists(str_replace(asset('storage/'), '', $img->image_url))) {
+                                    $gallery[] = $img->image_url;
+                                }
                         }
                         }
                         if ($product->variants && $product->variants->count()) {
                         foreach ($product->variants as $variant) {
-                        if (!empty($variant->image)) {
-                        $gallery[] = asset('storage/' . $variant->image);
+                        if (!empty($variant->image_url) && \Storage::disk('public')->exists(str_replace(asset('storage/'), '', $variant->image_url))) {
+                        $gallery[] = $variant->image_url;
                         }
                         }
                         }
                         @endphp
 
                         <div class="product-gallery" style="max-width:350px; margin:auto;">
-
                             <!-- Ảnh lớn hiển thị chính -->
                             <div class="main-image-wrapper" style="border:1px solid #ddd; border-radius:10px; padding:10px; background:#fafafa;">
-                                <img id="mainImage" src="{{ $gallery[0] ?? '' }}" alt="Ảnh sản phẩm" style="width:100%; height:auto; border-radius:10px; object-fit:contain;">
+                                <img id="mainImage" src="{{ $gallery[0] ?? asset('backend/assets/images/placeholder.webp') }}" alt="Ảnh sản phẩm" style="width:100%; height:auto; border-radius:10px; object-fit:contain;">
                             </div>
 
                             <!-- Ảnh thumbnail -->
@@ -86,8 +89,10 @@
                                     data-index="{{ $index }}"
                                     style="width:60px; height:60px; object-fit:cover; border-radius:6px; border:2px solid transparent; cursor:pointer;">
                                 @endforeach
+                                @if(empty($gallery))
+                                    <img src="{{ asset('backend/assets/images/placeholder.webp') }}" alt="Không có ảnh" style="width:60px; height:60px; object-fit:cover; border-radius:6px; border:2px solid transparent; cursor:default;">
+                                @endif
                             </div>
-
                         </div>
                     </div>
                     <div class="col-md-7">
@@ -538,11 +543,12 @@
         // =======================
         // 5. Xử lý thay đổi ảnh chính khi click thumbnail ảnh sản phẩm
         // =======================
-        const gallery = @json($gallery); // Biến gallery từ server qua blade (array các url ảnh)
         const mainImage = document.getElementById('mainImage');
         const thumbnails = document.querySelectorAll('.thumbnail-image');
+        const gallery = @json($gallery); // Đảm bảo biến gallery được định nghĩa và nhận dữ liệu từ Blade
 
         function setActiveThumbnail(index) {
+            console.log('Setting active thumbnail for index:', index);
             thumbnails.forEach((thumb, i) => {
                 if (i === index) {
                     thumb.classList.add('selected'); // Highlight thumbnail đang chọn
@@ -555,6 +561,7 @@
         thumbnails.forEach(thumb => {
             thumb.addEventListener('click', () => {
                 const idx = parseInt(thumb.getAttribute('data-index'));
+                console.log('Thumbnail clicked, index:', idx);
                 if (gallery[idx]) {
                     mainImage.src = gallery[idx]; // Thay ảnh chính theo thumbnail chọn
                     setActiveThumbnail(idx);
@@ -563,7 +570,16 @@
         });
 
         // Mặc định chọn thumbnail đầu tiên
-        setActiveThumbnail(0);
+        if (gallery.length > 0) {
+            setActiveThumbnail(0); // Highlight thumbnail đầu tiên
+            if (mainImage && gallery[0]) {
+                mainImage.src = gallery[0]; // Đảm bảo ảnh chính được đặt từ phần tử đầu tiên của gallery
+            }
+        } else {
+            // Nếu không có ảnh nào trong gallery, đặt ảnh chính thành placeholder
+            mainImage.src = '{{ asset('backend/assets/images/placeholder.webp') }}';
+            console.log('Gallery is empty, displaying placeholder for main image.');
+        }
 
         // =======================
         // 6. Modal đổi trạng thái biến thể
