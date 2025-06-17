@@ -1,6 +1,6 @@
-@extends('layouts.backend')
+@extends('layouts.backend') 
 
-@section('title', 'Quản lý tin tức')
+@section('title', 'Quản lý tin tức') 
 
 @section('content')
 <div class="page-body">
@@ -42,16 +42,16 @@
                             </div>
                         </form>
                         <div>
-                            <div class="table-responsive">
-                                <table class="table table-hover coupon-list-table theme-table" id="table_id">
+                            <div class="table-responsive overflow-hidden">
+                                <table class="table table-hover w-90 coupon-list-table theme-table" id="table_id">
                                     <thead>
                                         <tr>
-                                            <th style="color: black; background-color: #f8f9fa;">Ảnh</th>
-                                            <th style="color: black; background-color: #f8f9fa;">Tiêu đề</th>
-                                            <th style="color: black; background-color: #f8f9fa;">Đường link</th>
-                                            <th style="color: black; background-color: #f8f9fa;">Ngày hiển thị</th>
-                                            <th style="color: black; background-color: #f8f9fa;">Ngày dừng hiển thị</th>
-                                            <th style="color: black; background-color: #f8f9fa;">Hành động</th>
+                                            <th>Ảnh</th>
+                                            <th>Tiêu đề</th>
+                                            <th>Đường link</th>
+                                            <th>Ngày hiển thị</th>
+                                            <th>Ngày dừng hiển thị</th>
+                                            <th>Hành động</th>
                                         </tr>
                                     </thead>
 
@@ -131,24 +131,24 @@
 
 @includeIf('backend.footer')
 @endsection
-@push('scripts')
+{{-- @push('scripts')
 <script>
-           $(document).ready(function() {
-            $('#table_id').DataTable({
-                language: {
-                    search: "Tìm kiếm:",
-                    lengthMenu: "Hiển thị _MENU_ banner",
-                    info: "Hiển thị _START_ đến _END_ trong tổng _TOTAL_ banner",
-                    paginate: {
-                        first: "Đầu",
-                        last: "Cuối",
-                        next: "Sau",
-                        previous: "Trước"
-                    },
-                    zeroRecords: "Không tìm thấy banner nào.",
-                }
-            });zeroRecords: "Không tìm thấy tin tức nào.",
-        });
+    $(document).ready(function () {
+    $('#table_id').DataTable({
+        language: {
+            // search: "Search:",
+            lengthMenu: "",
+            info: "Showing _START_ to _END_ of _TOTAL_ entries",
+            paginate: {
+                first: "First",
+                last: "Last",
+                next: "Next",
+                previous: "Previous"
+            },
+            zeroRecords: "Không tìm thấy tin tức nào.",
+        }
+    });
+});
 </script>
-@endpush
+@endpush --}}
 
