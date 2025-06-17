@@ -10,7 +10,7 @@
     <meta name="author" content="Fastkart">
 
     <!-- Favicon -->
-    <link rel="icon" href="{{ asset('frontend/assets/images/favicon/1.png') }}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('frontend/assets/images/favicon/icon.png') }}" type="image/x-icon">
 
     <!-- Title -->
     <title>@yield('title')</title>
