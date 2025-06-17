@@ -10,8 +10,8 @@
     <meta name="keywords"
         content="admin template, Fastkart admin template, dashboard template, flat admin template, responsive admin template, web app">
     <meta name="author" content="pixelstrap">
-    <link rel="icon" href="{{ asset('backend/assets/images/favicon.png') }}" type="image/x-icon">
-    <link rel="shortcut icon" href="{{ asset('backend/assets/images/favicon.png') }}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('backend/assets/images/icon.png') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('backend/assets/images/icon.png') }}" type="image/x-icon">
     <title>@yield('title', 'Admin Panel')</title>
 
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
