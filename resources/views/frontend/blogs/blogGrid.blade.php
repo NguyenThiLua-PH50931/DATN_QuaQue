@@ -1,7 +1,22 @@
 @extends('layouts.frontend')
 @section('title', 'Blog')
 @section('contents')
+<style>
+    .blog-image {
+    width: 100%;
+    aspect-ratio: 4 / 3; /* Tỷ lệ khung hình */
+    overflow: hidden;
+    border-radius: 10px; /* Tuỳ chọn bo góc */
+}
 
+.blog-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Cắt ảnh vừa khung */
+    display: block;
+}
+
+</style>
 
  <section class="breadscrumb-section pt-0">
         <div class="container-fluid-lg">
@@ -32,34 +47,36 @@
             <div class="row g-4">
                 <div class="col-xxl-9 col-xl-8 col-lg-7 order-lg-2">
                     <div class="row g-4 ratio_65">
-                        @foreach($blog as $item)
-                            <div class="col-xxl-4 col-sm-6">
-                                <div class="blog-box wow fadeInUp">
-                                    <div class="blog-image">
-                                        <a href="{{ route('blogs-detail', ['id' => $item->id]) }}">
-                                            @if($item->thumbnail)
-                                                <img src="{{ asset($item->thumbnail) }}" alt="{{ $item->title }}">
-                                            @endif
-                                        </a>
-                                    </div>
+    @foreach($blog as $item)
+        <div class="col-xxl-4 col-sm-6">
+            <div class="blog-box wow fadeInUp">
+                <div class="blog-image">
+                    <a href="{{ route('blogs-detail', ['id' => $item->id]) }}">
+                        @if($item->thumbnail)
+                            <img src="{{ asset($item->thumbnail) }}" alt="{{ $item->title }}">
+                        @endif
+                    </a>
+                </div>
 
-                                    <div class="blog-contain">
-                                        <div class="blog-label">
-                                            <span class="time"><i data-feather="clock"></i> <span>{{ $item->created_at ? $item->created_at->format('F d, Y') : 'Chưa có ngày tạo' }}</span></span>
-                                            {{-- <span class="super"><i data-feather="user"></i> <span>Mark J.
-                                                    Speight</span></span> --}}
-                                        </div>
-                                        <a href="{{ route('blogs-detail', ['id' => $item->id]) }}">
-                                            <h3>{{ $item->title }}</h3>
-                                        </a>
-                                        <button onclick="location.href='{{ route('blogs-detail', ['id' => $item->id]) }}'" class="blog-button">
-                                            Read More <i class="fa-solid fa-right-long"></i>
-                                        </button>                                        
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
+                <div class="blog-contain">
+                    <div class="blog-label">
+                        <span class="time">
+                            <i data-feather="clock"></i>
+                            <span>{{ $item->created_at ? $item->created_at->format('F d, Y') : 'Chưa có ngày tạo' }}</span>
+                        </span>
                     </div>
+                    <a href="{{ route('blogs-detail', ['id' => $item->id]) }}">
+                        <h3>{{ $item->title }}</h3>
+                    </a>
+                    <button onclick="location.href='{{ route('blogs-detail', ['id' => $item->id]) }}'" class="blog-button">
+                        Read More <i class="fa-solid fa-right-long"></i>
+                    </button>                                        
+                </div>
+            </div>
+        </div>
+    @endforeach
+</div>
+
 
                     <nav class="custome-pagination">
                         <ul class="pagination justify-content-center">

@@ -663,71 +663,25 @@
                             <p>A virtual assistant collects the products from your list</p>
                         </div>
 
-                        <div class="slider-3-blog ratio_65 no-arrow product-wrapper">
-                            <div>
-                                <div class="blog-box">
-                                    <div class="blog-box-image">
-                                        <a href="blog-detail.html" class="blog-image">
-                                        <img src="../frontend/assets/images/vegetable/blog/1.jpg"
-                                            class="bg-img blur-up lazyload" alt="">
-                                        </a>
-                                    </div>
+                       <div class="slider-3-blog ratio_65 no-arrow product-wrapper">
+    @foreach($blogs as $item)
+        <div>
+            <div class="blog-box">
+                <div class="blog-box-image">
+                    <a href="{{ route('blogs-detail', ['id' => $item->id]) }}" class="blog-image">
+                        <img src="{{ asset($item->thumbnail) }}"
+                             class="bg-img blur-up lazyload" alt="{{ $item->title }}">
+                    </a>
+                </div>
+                <a href="{{ route('blogs-detail', ['id' => $item->id]) }}" class="blog-detail">
+                    <h6>{{ $item->created_at->format('d M, Y') }}</h6>
+                    <h5>{{ $item->title }}</h5>
+                </a>
+            </div>
+        </div>
+    @endforeach
+</div>
 
-                                    <a href="blog-detail.html" class="blog-detail">
-                                        <h6>20 March, 2022</h6>
-                                        <h5>Fresh Vegetable Online</h5>
-                                    </a>
-                                </div>
-                            </div>
-
-                            <div>
-                                <div class="blog-box">
-                                    <div class="blog-box-image">
-                                        <a href="blog-detail.html" class="blog-image">
-                                        <img src="../frontend/assets/images/vegetable/blog/2.jpg"
-                                            class="bg-img blur-up lazyload" alt="">
-                                        </a>
-                                    </div>
-
-                                    <a href="blog-detail.html" class="blog-detail">
-                                        <h6>10 April, 2022</h6>
-                                        <h5>Fresh Combo Fruit</h5>
-                                    </a>
-                                </div>
-                            </div>
-
-                            <div>
-                                <div class="blog-box">
-                                    <div class="blog-box-image">
-                                        <a href="blog-detail.html" class="blog-image">
-                                        <img src="../frontend/assets/images/vegetable/blog/3.jpg"
-                                            class="bg-img blur-up lazyload" alt="">
-                                        </a>
-                                    </div>
-
-                                    <a href="blog-detail.html" class="blog-detail">
-                                        <h6>10 April, 2022</h6>
-                                        <h5>Nuts to Eat for Better Health</h5>
-                                    </a>
-                                </div>
-                            </div>
-
-                            <div>
-                                <div class="blog-box">
-                                    <div class="blog-box-image">
-                                        <a href="blog-detail.html" class="blog-image">
-                                        <img src="../frontend/assets/images/vegetable/blog/1.jpg"
-                                            class="bg-img blur-up lazyload" alt="">
-                                        </a>
-                                    </div>
-
-                                    <a href="blog-detail.html" class="blog-detail">
-                                        <h6>20 March, 2022</h6>
-                                        <h5>Fresh Vegetable Online</h5>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
