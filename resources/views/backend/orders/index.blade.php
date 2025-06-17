@@ -359,24 +359,25 @@ ul {
                                             {{-- Trạng thái đơn hàng --}}
                                             <td>
                                                 <form id="status-form-{{ $order->id }}"
-                                                    action="{{ route('admin.orders.updateStatus', $order->id) }}"
-                                                    method="POST" class="status-form">
-                                                    @csrf
-                                                    @method('PUT')
-                                                    <select name="status"
-                                                            class="form-select status-select status-{{ $order->status }}"
-                                                            data-order-id="{{ $order->id }}"
-                                                            data-current-status="{{ $order->status }}">
-                                                        <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>Chờ xác nhận</option>
-                                                        <option value="confirmed" {{ $order->status == 'confirmed' ? 'selected' : '' }}>Đã xác nhận</option>
-                                                        <option value="processing" {{ $order->status == 'processing' ? 'selected' : '' }}>Đang chuẩn bị</option>
-                                                        <option value="shipped" {{ $order->status == 'shipped' ? 'selected' : '' }}>Đã gửi hàng</option>
-                                                        <option value="in_transit" {{ $order->status == 'in_transit' ? 'selected' : '' }}>Đang vận chuyển</option>
-                                                        <option value="delivered" {{ $order->status == 'delivered' ? 'selected' : '' }}>Đã giao hàng</option>
-                                                        <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>Đã hủy</option>
-                                                        <option value="failed_delivery" {{ $order->status == 'failed_delivery' ? 'selected' : '' }}>Giao thất bại</option>
-                                                    </select>
-                                                </form>
+      action="{{ route('admin.orders.updateStatus', $order->id) }}"
+      method="POST" class="status-form">
+    @csrf
+    @method('PUT')
+    <select name="status"
+            class="form-select status-select status-{{ $order->status }}"
+            data-order-id="{{ $order->id }}"
+            data-current-status="{{ $order->status }}">
+        <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>Chờ xác nhận</option>
+        <option value="confirmed" {{ $order->status == 'confirmed' ? 'selected' : '' }}>Đã xác nhận</option>
+        <option value="processing" {{ $order->status == 'processing' ? 'selected' : '' }}>Đang chuẩn bị</option>
+        <option value="shipped" {{ $order->status == 'shipped' ? 'selected' : '' }}>Đã gửi hàng</option>
+        <option value="in_transit" {{ $order->status == 'in_transit' ? 'selected' : '' }}>Đang vận chuyển</option>
+        <option value="delivered" {{ $order->status == 'delivered' ? 'selected' : '' }}>Đã giao hàng</option>
+        <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>Đã hủy</option>
+        <option value="failed_delivery" {{ $order->status == 'failed_delivery' ? 'selected' : '' }}>Giao thất bại</option>
+    </select>
+</form>
+
                                             </td>
 
                                             {{-- Tuỳ chọn --}}
