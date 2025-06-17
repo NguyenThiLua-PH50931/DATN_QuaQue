@@ -11,7 +11,11 @@
                     <div class="col-sm-10 m-auto">
 
                         @if(session('success'))
-                        <div class="alert alert-success">{{ session('success') }}</div>
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="ri-check-double-line me-1 align-middle"></i>
+                            {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
                         @endif
                         @if(session('error'))
                         <div class="alert alert-danger">{{ session('error') }}</div>
@@ -25,7 +29,7 @@
                                     <div class="right-options">
                                         <ul>
                                             <li>
-                                                <a class="btn btn-solid" href="{{ route('admin.products.index') }}">Quay lại</a>
+                                                <a class="btn btn-solid" href="{{ route('admin.products.index') }}">Quay lại trang danh sách</a>
                                             </li>
                                         </ul>
                                     </div>
@@ -92,109 +96,152 @@
                                         @error('description')<small class="text-danger">{{ $message }}</small>@enderror
                                     </div>
 
-                                    {{-- CHỌN THUỘC TÍNH VÀ GIÁ TRỊ DÙNG CHECKBOX --}}
-                                    <div class="card mb-3">
-                                        <div class="card-body">
-                                            <h6 class="fw-bold mb-3">Chọn thuộc tính và giá trị cho biến thể</h6>
+                                    {{-- Chọn loại sản phẩm: Có biến thể hay không --}}
+                                    <div class="mb-3">
+                                        <label class="form-label">Loại sản phẩm</label>
+                                        <div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="has_variants" id="hasVariantsYes" value="1" {{ old('has_variants', 1) == 1 ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="hasVariantsYes">Có biến thể</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="has_variants" id="hasVariantsNo" value="0" {{ old('has_variants', 1) == 0 ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="hasVariantsNo">Không có biến thể</label>
+                                            </div>
+                                        </div>
+                                        @error('has_variants')<small class="text-danger">{{ $message }}</small>@enderror
+                                    </div>
 
-                                            {{-- Tìm thuộc tính --}}
-                                            <input type="text" class="form-control mb-3" id="filter-attributes" placeholder="Tìm thuộc tính...">
-
-                                            <div class="attribute-filters" style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">
-                                                @foreach($attributes as $attr)
-                                                <div class="attribute-group mb-3" data-attr-name="{{ strtolower($attr->name) }}">
-                                                    <button class="btn btn-link p-0 mb-1" type="button" data-bs-toggle="collapse" data-bs-target="#attr-{{ $attr->id }}" aria-expanded="true" aria-controls="attr-{{ $attr->id }}">
-                                                        {{ $attr->name }} ({{ count($attr->values) }})
-                                                    </button>
-                                                    <div class="collapse show" id="attr-{{ $attr->id }}">
-                                                        <div class="values-list" style="max-height: 150px; overflow-y:auto; border:1px solid #ddd; padding:8px; border-radius:4px;">
-                                                            @foreach($attr->values as $val)
-                                                            <label class="form-check form-check-inline d-block">
-                                                                <input
-                                                                    class="form-check-input attribute-value-checkbox"
-                                                                    type="checkbox"
-                                                                    data-attrid="{{ $attr->id }}"
-                                                                    value="{{ $val->id }}"
-                                                                    name="attribute_values_checkbox[{{ $attr->id }}][]"
-                                                                    @if(old('attribute_values_checkbox.'.$attr->id) && in_array($val->id, old('attribute_values_checkbox.'.$attr->id))) checked @endif
-                                                                >
-                                                                <span class="form-check-label">{{ $val->value }}</span>
-                                                            </label>
-                                                            @endforeach
-                                                        </div>
+                                    {{-- BLOCK: THÔNG TIN CHO SẢN PHẨM KHÔNG CÓ BIẾN THỂ --}}
+                                    <div id="single-product-fields" style="display: {{ old('has_variants', 1) == 0 ? 'block' : 'none' }};">
+                                        <div class="card mb-3">
+                                            <div class="card-body">
+                                                <h6 class="fw-bold mb-3">Thông tin sản phẩm đơn</h6>
+                                                <div class="row gx-2 gy-2">
+                                                    <div class="col-md-4">
+                                                        <label class="form-label">Giá bán</label>
+                                                        <input type="number" name="price" min="0" step="0.01" class="form-control" value="{{ old('price') }}">
+                                                        @error('price')<small class="text-danger">{{ $message }}</small>@enderror
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label">Tồn kho</label>
+                                                        <input type="number" name="stock" min="0" class="form-control" value="{{ old('stock') }}">
+                                                        @error('stock')<small class="text-danger">{{ $message }}</small>@enderror
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label">SKU (Mã kho)</label>
+                                                        <input type="text" name="sku" class="form-control" value="{{ old('sku') }}" placeholder="Tự động nếu để trống">
+                                                        @error('sku')<small class="text-danger">{{ $message }}</small>@enderror
                                                     </div>
                                                 </div>
-                                                @endforeach
-                                            </div>
-
-                                            <div class="mt-2 d-flex gap-3">
-                                                <a href="#" class="btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#addAttributeModal">+ Thêm thuộc tính</a>
-                                                <a href="#" class="btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#addAttributeValueModal">+ Thêm giá trị thuộc tính</a>
                                             </div>
                                         </div>
                                     </div>
 
-                                    {{-- BIẾN THỂ SẢN PHẨM --}}
-                                    <div class="card mb-4">
-                                        <div class="card-body">
-                                            <h5 class="mb-3">Biến thể sản phẩm</h5>
-                                            <p class="text-muted small">
-                                                Biến thể được sinh tự động khi chọn các giá trị thuộc tính.
-                                            </p>
+                                    {{-- BLOCK: CHỌN THUỘC TÍNH VÀ GIÁ TRỊ DÙNG CHECKBOX --}}
+                                    <div id="variant-attribute-selection" style="display: {{ old('has_variants', 1) == 1 ? 'block' : 'none' }};">
+                                        <div class="card mb-3">
+                                            <div class="card-body">
+                                                <h6 class="fw-bold mb-3">Chọn thuộc tính và giá trị cho biến thể</h6>
 
-                                            <div id="variants-list">
-                                                {{-- Hiển thị lại biến thể nếu submit lỗi --}}
-                                                @php $oldVariants = old('variants', []); @endphp
-                                                @foreach($oldVariants as $i => $variant)
-                                                <div class="variant-row border rounded p-3 mb-3 bg-white position-relative">
-                                                    {{-- Ẩn attribute_value_ids --}}
-                                                    @foreach($variant['attribute_value_ids'] ?? [] as $valId)
-                                                    <input type="hidden" name="variants[{{$i}}][attribute_value_ids][]" value="{{ $valId }}">
+                                                {{-- Tìm thuộc tính --}}
+                                                <input type="text" class="form-control mb-3" id="filter-attributes" placeholder="Tìm thuộc tính...">
+
+                                                <div class="attribute-filters" style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">
+                                                    @foreach($attributes as $attr)
+                                                    <div class="attribute-group mb-3" data-attr-name="{{ strtolower($attr->name) }}">
+                                                        <button class="btn btn-link p-0 mb-1" type="button" data-bs-toggle="collapse" data-bs-target="#attr-{{ $attr->id }}" aria-expanded="true" aria-controls="attr-{{ $attr->id }}">
+                                                            {{ $attr->name }} ({{ count($attr->values) }})
+                                                        </button>
+                                                        <div class="collapse show" id="attr-{{ $attr->id }}">
+                                                            <div class="values-list" style="max-height: 150px; overflow-y:auto; border:1px solid #ddd; padding:8px; border-radius:4px;">
+                                                                @foreach($attr->values as $val)
+                                                                <label class="form-check form-check-inline d-block">
+                                                                    <input
+                                                                        class="form-check-input attribute-value-checkbox"
+                                                                        type="checkbox"
+                                                                        data-attrid="{{ $attr->id }}"
+                                                                        value="{{ $val->id }}"
+                                                                        name="attribute_values_checkbox[{{ $attr->id }}][]"
+                                                                        @if(old('attribute_values_checkbox.'.$attr->id) && in_array($val->id, old('attribute_values_checkbox.'.$attr->id))) checked @endif
+                                                                    >
+                                                                    <span class="form-check-label">{{ $val->value }}</span>
+                                                                </label>
+                                                                @endforeach
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                     @endforeach
-
-                                                    <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 btn-remove-variant" title="Xóa biến thể">&times;</button>
-
-                                                    <div class="mb-2 fw-semibold">
-                                                        Giá trị thuộc tính:
-                                                        <span>{{ implode(' - ', $variant['attribute_value_names'] ?? []) }}</span>
-                                                        @if(empty($variant['attribute_value_names']))
-                                                        <em>(biến thể thủ công)</em>
-                                                        @endif
-                                                    </div>
-
-                                                    <div class="row gx-2 gy-2">
-                                                        <div class="col-6 col-md-3">
-                                                            <label class="form-label">Giá bán</label>
-                                                            <input type="number" name="variants[{{$i}}][price]" min="0" step="0.01" class="form-control" value="{{ $variant['price'] ?? '' }}" required>
-                                                            @error("variants.$i.price")<small class="text-danger">{{ $message }}</small>@enderror
-                                                        </div>
-                                                        <div class="col-6 col-md-3">
-                                                            <label class="form-label">Tồn kho</label>
-                                                            <input type="number" name="variants[{{$i}}][stock]" min="0" class="form-control" value="{{ $variant['stock'] ?? '' }}" required>
-                                                            @error("variants.$i.stock")<small class="text-danger">{{ $message }}</small>@enderror
-                                                        </div>
-                                                        <div class="col-6 col-md-3">
-                                                            <label class="form-label">SKU</label>
-                                                            <input type="text" name="variants[{{$i}}][sku]" class="form-control sku-auto" readonly value="{{ $variant['sku'] ?? '' }}">
-                                                            @error("variants.$i.sku")<small class="text-danger">{{ $message }}</small>@enderror
-                                                        </div>
-                                                        <div class="col-6 col-md-3">
-                                                            <label class="form-label">Ảnh biến thể</label>
-                                                            <input type="file" name="variants[{{$i}}][image]" class="form-control" accept="image/*">
-                                                            @error("variants.$i.image")<small class="text-danger">{{ $message }}</small>@enderror
-                                                        </div>
-                                                        <div class="col-12">
-                                                            <label class="form-label">Mô tả biến thể</label>
-                                                            <textarea name="variants[{{$i}}][description]" rows="2" class="form-control variant-description-editor">{{ $variant['description'] ?? '' }}</textarea>
-                                                            @error("variants.$i.description")<small class="text-danger">{{ $message }}</small>@enderror
-                                                        </div>
-                                                    </div>
                                                 </div>
-                                                @endforeach
+
+                                                <div class="mt-2 d-flex gap-3">
+                                                    <a href="#" class="btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#addAttributeModal">+ Thêm thuộc tính</a>
+                                                    <a href="#" class="btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#addAttributeValueModal">+ Thêm giá trị thuộc tính</a>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {{-- BIẾN THỂ SẢN PHẨM --}}
+                                        <div class="card mb-4">
+                                            <div class="card-body">
+                                                <h5 class="mb-3">Biến thể sản phẩm</h5>
+                                                <p class="text-muted small">
+                                                    Biến thể được sinh tự động khi chọn các giá trị thuộc tính.
+                                                </p>
+
+                                                <div id="variants-list">
+                                                    {{-- Hiển thị lại biến thể nếu submit lỗi --}}
+                                                    @php $oldVariants = old('variants', []); @endphp
+                                                    @foreach($oldVariants as $i => $variant)
+                                                    <div class="variant-row border rounded p-3 mb-3 bg-white position-relative">
+                                                        {{-- Ẩn attribute_value_ids --}}
+                                                        @foreach($variant['attribute_value_ids'] ?? [] as $valId)
+                                                        <input type="hidden" name="variants[{{$i}}][attribute_value_ids][]" value="{{ $valId }}">
+                                                        @endforeach
+
+                                                        <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 btn-remove-variant" title="Xóa biến thể">&times;</button>
+
+                                                        <div class="mb-2 fw-semibold">
+                                                            Giá trị thuộc tính:
+                                                            <span>{{ implode(' - ', $variant['attribute_value_names'] ?? []) }}</span>
+                                                            @if(empty($variant['attribute_value_names']))
+                                                            <em>(biến thể thủ công)</em>
+                                                            @endif
+                                                        </div>
+
+                                                        <div class="row gx-2 gy-2">
+                                                            <div class="col-6 col-md-3">
+                                                                <label class="form-label">Giá bán</label>
+                                                                <input type="number" name="variants[{{$i}}][price]" min="0" step="0.01" class="form-control" value="{{ $variant['price'] ?? '' }}" required>
+                                                                @error("variants.$i.price")<small class="text-danger">{{ $message }}</small>@enderror
+                                                            </div>
+                                                            <div class="col-6 col-md-3">
+                                                                <label class="form-label">Tồn kho</label>
+                                                                <input type="number" name="variants[{{$i}}][stock]" min="0" class="form-control" value="{{ $variant['stock'] ?? '' }}" required>
+                                                                @error("variants.$i.stock")<small class="text-danger">{{ $message }}</small>@enderror
+                                                            </div>
+                                                            <div class="col-6 col-md-3">
+                                                                <label class="form-label">SKU</label>
+                                                                <input type="text" name="variants[{{$i}}][sku]" class="form-control sku-auto" readonly value="{{ $variant['sku'] ?? '' }}">
+                                                                @error("variants.$i.sku")<small class="text-danger">{{ $message }}</small>@enderror
+                                                            </div>
+                                                            <div class="col-6 col-md-3">
+                                                                <label class="form-label">Ảnh biến thể</label>
+                                                                <input type="file" name="variants[{{$i}}][image]" class="form-control" accept="image/*">
+                                                                @error("variants.$i.image")<small class="text-danger">{{ $message }}</small>@enderror
+                                                            </div>
+                                                            <div class="col-12">
+                                                                <label class="form-label">Mô tả biến thể</label>
+                                                                <textarea name="variants[{{$i}}][description]" rows="2" class="form-control variant-description-editor">{{ $variant['description'] ?? '' }}</textarea>
+                                                                @error("variants.$i.description")<small class="text-danger">{{ $message }}</small>@enderror
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    @endforeach
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-
 
                                     {{-- Trạng thái --}}
                                     <div class="mb-3">
@@ -494,12 +541,9 @@
         <div class="variant-row border rounded p-3 mb-3 bg-white position-relative">
           ${ids.map(id => `<input type="hidden" name="variants[${idx}][attribute_value_ids][]" value="${id}">`).join('')}
             <button type="button"
-                id="delete-selected"
-                class="btn-remove-variant btn bulk-delete-btn btn-sm mt-2 d-inline-flex align-items-center gap-2"
-                data-bs-toggle="modal"
-                data-bs-target="#deleteBulkModal"
-            >
-                <i class="ri-delete-bin-line delete-bulk-icon"></i> Xóa
+                class="btn-remove-variant btn btn-sm btn-danger position-absolute top-0 end-0 m-2"
+                title="Xóa biến thể">
+                 &times;
             </button>
 
           <div class="mb-2 fw-semibold">Giá trị thuộc tính: <span>${names.join(' - ')}</span></div>
@@ -581,10 +625,47 @@
         }
     });
 
-    // =================== Khởi tạo CKEditor, hiển thị nút xóa và cập nhật SKU khi tải trang ===================
+    // =================== Toggle hiển thị các phần dựa trên lựa chọn biến thể ===================
+    function toggleProductTypeFields() {
+        const hasVariants = document.getElementById('hasVariantsYes').checked;
+        const singleProductFields = document.getElementById('single-product-fields');
+        const variantAttributeSelection = document.getElementById('variant-attribute-selection');
+
+        if (hasVariants) {
+            singleProductFields.style.display = 'none';
+            variantAttributeSelection.style.display = 'block';
+            // Đảm bảo các trường của biến thể không bị disabled
+            singleProductFields.querySelectorAll('input, select, textarea').forEach(el => el.setAttribute('disabled', 'true'));
+            variantAttributeSelection.querySelectorAll('input, select, textarea').forEach(el => el.removeAttribute('disabled'));
+
+            // Khởi tạo lại CKEditor cho biến thể khi hiển thị
+            initVariantEditors();
+
+        } else {
+            singleProductFields.style.display = 'block';
+            variantAttributeSelection.style.display = 'none';
+             // Đảm bảo các trường của sản phẩm đơn không bị disabled
+            singleProductFields.querySelectorAll('input, select, textarea').forEach(el => el.removeAttribute('disabled'));
+            variantAttributeSelection.querySelectorAll('input, select, textarea').forEach(el => el.setAttribute('disabled', 'true'));
+
+            // Hủy CKEditor cho biến thể khi ẩn
+            variantEditors.forEach(editor => editor.destroy());
+            variantEditors = [];
+            document.querySelectorAll('.variant-description-editor').forEach(textarea => {
+                textarea.classList.remove('ck-editor-initialized');
+            });
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
+        // Bắt sự kiện thay đổi radio button
+        document.querySelectorAll('input[name="has_variants"]').forEach(radio => {
+            radio.addEventListener('change', toggleProductTypeFields);
+        });
+
+        // Khởi tạo ban đầu
         initMainEditor();
-        initVariantEditors();
+        toggleProductTypeFields(); // Gọi lần đầu để thiết lập trạng thái ban đầu
         showRemoveButtons();
         updateSkuAll();
     });
@@ -791,7 +872,7 @@
                 }
 
                 registerCheckboxListeners();
-                generateVariants();
+                // generateVariants(); // Chỉ gọi khi has_variants là true
             }
         });
         ajaxFormSubmit(
@@ -908,17 +989,12 @@
                     }
 
                     registerCheckboxListeners();
-                    generateVariants();
+                    // generateVariants(); // Chỉ gọi khi has_variants là true
                 }
             }
         );
         // Đăng ký sự kiện checkbox để gọi generateVariants khi checkbox thay đổi
-        function registerCheckboxListeners() {
-            document.querySelectorAll('.attribute-value-checkbox').forEach(cb => {
-                cb.removeEventListener('change', generateVariants);
-                cb.addEventListener('change', generateVariants);
-            });
-        }
+        // đã chuyển vào toggleProductTypeFields
 
         // Hàm sinh biến thể (bạn cần viết hoặc dùng logic riêng)
         function generateVariants() {
@@ -927,7 +1003,7 @@
         }
 
         // Khởi tạo sự kiện checkbox khi load trang
-        registerCheckboxListeners();
+        registerCheckboxListeners(); // Giữ lại để đăng ký listener cho các checkbox hiện có
     });
 </script>
 

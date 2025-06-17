@@ -283,12 +283,19 @@ ul {
                                 <option value="bank" {{ request('payment_method') == 'bank' ? 'selected' : '' }}>Chuyển khoản</option>
                                 <option value="wallet" {{ request('payment_method') == 'wallet' ? 'selected' : '' }}>Ví điện tử</option>
                             </select>
+                            
 
                             <input type="date" name="date_from" class="form-control form-control-sm" style="width: 130px;" value="{{ request('date_from') }}" placeholder="Từ ngày">
 
                             <input type="date" name="date_to" class="form-control form-control-sm" style="width: 130px;" value="{{ request('date_to') }}" placeholder="Đến ngày">
 
                             <input type="text" name="keyword" class="form-control form-control-sm" style="width: 160px;" value="{{ request('keyword') }}" placeholder="Mã đơn / Người đặt">
+                            <select name="is_hidden" class="form-select form-select-sm" style="width: 140px;">
+                                <option value="0" {{ request('is_hidden') === '0' ? 'selected' : '' }}>-- Hiển thị --</option>
+                                <option value="1" {{ request('is_hidden') === '1' ? 'selected' : '' }}>-- Đã ẩn --</option>
+                            </select>
+
+
 
                             <button type="submit" class="btn btn-primary btn-sm">Lọc</button>
                         </form>
@@ -385,18 +392,33 @@ ul {
                                                             <i class="ri-map-pin-line"></i>
                                                         </a>
                                                     </li>
-                                                    @if (in_array($order->status, ['delivered', 'cancelled', 'failed_delivery']))
+                                                    {{-- Đơn chưa ẩn → hiện nút ẩn --}}
+                                                    @if ($order->is_hidden == false && in_array($order->status, ['delivered', 'cancelled', 'failed_delivery']))
                                                         <li>
-                                                            <form action="{{ route('admin.orders.destroy', ['order' => $order->id]) }}" method="POST"
-                                                                onsubmit="return confirm('Bạn có chắc chắn muốn xóa đơn hàng này không?');">
+                                                            <form action="{{ route('admin.orders.hide', $order->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn ẩn đơn hàng này không?');">
+                                                                @csrf
+                                                                @method('PATCH')
+                                                                <button type="submit" class="border-0 bg-transparent" title="Ẩn">
+                                                                    <i class="ri-eye-off-line text-warning"></i>
+                                                                </button>
+                                                            </form>
+                                                        </li>
+                                                    @endif
+
+                                                    {{-- Đơn đã bị ẩn → hiện nút xóa cứng --}}
+                                                    @if ($order->is_hidden == true)
+                                                        <li>
+                                                            <form action="{{ route('admin.orders.destroy', $order->id) }}" method="POST" onsubmit="return confirm('Xóa vĩnh viễn đơn hàng này?');">
                                                                 @csrf
                                                                 @method('DELETE')
-                                                                <button type="submit" class="border-0 bg-transparent">
+                                                                <button type="submit" class="border-0 bg-transparent" title="Xóa vĩnh viễn">
                                                                     <i class="ri-delete-bin-line text-danger"></i>
                                                                 </button>
                                                             </form>
                                                         </li>
                                                     @endif
+
+
                                                 </ul>
                                             </td>
                                         </tr>
