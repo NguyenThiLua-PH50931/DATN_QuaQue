@@ -76,11 +76,11 @@
                     </ul>
                 </li> --}}
 
-                {{-- <li>
+                <li>
                     <div class="mode">
                         <i class="ri-moon-line"></i>
                     </div>
-                </li> --}}
+                </li>
 
                 <li class="profile-nav onhover-dropdown pe-0 me-0">
                     @auth
