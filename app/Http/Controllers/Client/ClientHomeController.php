@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Banner;
+use App\Models\admin\Blog;
 use App\Models\Admin\Category;
 use App\Models\Admin\Product;
 use Carbon\Carbon;
@@ -14,6 +15,7 @@ class ClientHomeController extends Controller
     public function home()
     {
         $now = Carbon::now();
+ $blogs = Blog::latest()->take(6)->get();
 
         // Lấy banner chính
         $mainHeroBanner = Banner::where('location', 'main_hero_banner')
@@ -156,7 +158,8 @@ class ClientHomeController extends Controller
             'newProductsCashbackBanner',
             'newProductsPromoLeft',
             'newProductsPromoRight',
-            'lastPagePromoBanner'
+            'lastPagePromoBanner',
+            'blogs'
         ));
     }
 
