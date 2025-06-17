@@ -14,19 +14,26 @@ class SupportTicketReplied extends Mailable
     public $ticket;
     public $reply;
 
-    public function __construct(SupportTicket $ticket, $reply)
+    /**
+     * Create a new message instance.
+     *
+     * @param SupportTicket $ticket
+     * @param string|null $reply
+     */
+    public function __construct(SupportTicket $ticket, $reply = null)
     {
         $this->ticket = $ticket;
         $this->reply = $reply;
     }
 
+    /**
+     * Build the message.
+     *
+     * @return $this
+     */
     public function build()
     {
-        return $this->subject('Phản hồi yêu cầu hỗ trợ #' . $this->ticket->id)
-                    ->view('emails.support_ticket_replied')
-                    ->with([
-                        'ticket' => $this->ticket,
-                        'reply' => $this->reply,
-                    ]);
+        return $this->subject('Yêu cầu hỗ trợ #' . $this->ticket->id)
+                    ->view('emails.support_ticket_replied');
     }
 }

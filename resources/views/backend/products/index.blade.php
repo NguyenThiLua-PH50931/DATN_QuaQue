@@ -1,437 +1,893 @@
 @extends('layouts.backend')
+
 @section('title', 'Quản lý sản phẩm')
+
 @section('content')
-    @push('styles')
-        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-    @endpush
-    <style>
-        .product-table-wrapper {
-            background: #f8fafd;
-            border-radius: 12px;
-            box-shadow: 0 2px 14px #dbeafe40;
-            padding: 16px;
-        }
-
-        .product-table thead tr,
-        .product-table tfoot tr {
-            background: #f1f5f9;
-        }
-
-        .product-row {
-            background: #fff;
-            border-radius: 10px;
-            border-bottom: 1px solid #e5e7eb;
-            transition: box-shadow .2s;
-        }
-
-        .product-row:hover {
-            background: #eef6ff;
-            box-shadow: 0 2px 8px #93c5fd22;
-        }
-
-        .action-link {
-            color: #7c3aed !important;
-            font-weight: 500;
-        }
-
-        .bg-purple {
-            background: #a78bfa;
-            color: #fff;
-        }
-
-        .bulk-delete-btn[disabled] {
-            background: #e1e8f3 !important;
-            color: #66708a !important;
-            border: none !important;
-            cursor: not-allowed !important;
-            opacity: 1 !important;
-        }
-
-        .bulk-delete-btn[disabled] .delete-bulk-icon {
-            color: #66708a !important;
-        }
-
-        .bulk-delete-btn:not([disabled]) {
-            background: #becde4 !important;
-            color: #495057 !important;
-            border: none !important;
-            cursor: pointer !important;
-            box-shadow: 0 2px 8px #becde480;
-            transition: background .5s, color .5s;
-        }
-
-        .bulk-delete-btn:not([disabled]) .delete-bulk-icon {
-            color: #495057 !important;
-        }
-
-        .bulk-delete-btn:not([disabled]):hover {
-            background: #aac4e7 !important;
-        }
-
-        /* Base style */
-        .dataTables_paginate .pagination .page-item .page-link {
-            min-width: 36px;
-            height: 36px;
-            font-size: 16px;
-            border-radius: 8px;
-            margin: 0 1.5px;
-            color: #495057;
-            background: none;
-            border: none !important;
-            font-weight: 500;
-            box-shadow: none;
-            transition: background 0.15s, color 0.15s;
-            cursor: pointer;
-            padding: 0;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .dataTables_paginate .pagination .page-item.active .page-link,
-        .dataTables_paginate .pagination .page-item.active .page-link:hover,
-        .dataTables_paginate .pagination .page-item.active .page-link:focus,
-        .dataTables_wrapper .dataTables_paginate .paginate_button.active,
-        .dataTables_wrapper .dataTables_paginate .paginate_button.active:hover,
-        .dataTables_wrapper .dataTables_paginate .paginate_button.active:focus {
-            background: #0da487 !important;
-            border-radius: 7px;
-            color: #fff !important;
-            background-image: none !important;
-            box-shadow: 0 2px 8px #0da48725 !important;
-            border: none !important;
-            outline: none !important;
-        }
-
-
-        .dataTables_paginate .pagination .page-item .page-link {
-            min-width: 28px;
-            /* hoặc 24px nếu muốn nhỏ nữa */
-            height: 28px;
-            font-size: 14px;
-            /* chữ nhỏ hơn */
-            border-radius: 6px;
-            margin: 0 1px;
-            padding: 0;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Hover các nút KHÔNG phải active hoặc disabled */
-        .dataTables_paginate .pagination .page-item:not(.active):not(.disabled) .page-link:hover {
-            background: #fff !important;
-            color: #0da487 !important;
-            box-shadow: 0 2px 8px #0da48725;
-            border: none !important;
-        }
-
-        /* Nút disabled */
-        .dataTables_paginate .pagination .page-item.disabled .page-link {
-            color: #e5e7eb !important;
-            background: none !important;
-            pointer-events: none;
-        }
-
-        /* Nút ellipsis (dấu ...) */
-        .dataTables_paginate .pagination .page-item .ellipsis {
-            pointer-events: none;
-            color: #b1bacf !important;
-            background: none !important;
-            font-size: 16px;
-            border: none !important;
-        }
-
-        .dataTables_paginate .pagination .page-item.active .page-link:hover,
-        .dataTables_paginate .pagination .page-item.active .page-link:focus {
-            background: #0da487 !important;
-            color: #fff !important;
-            box-shadow: 0 2px 8px #0da48725 !important;
-            border: none !important;
-            outline: none !important;
-            pointer-events: none;
-        }
-    </style>
-    <div class="page-body">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="card card-table">
-                        <div class="card-body">
-                            <div class="title-header option-title d-sm-flex d-block">
-                                <h5>Danh sách sản phẩm</h5>
-                                <div class="right-options">
-                                    <ul>
-                                        <li><a href="#">Nhập file</a></li>
-                                        <li><a href="#">Xuất file</a></li>
-                                        <li>
-                                            <a class="btn btn-solid" href="{{ route('admin.products.create') }}">Thêm sản
-                                                phẩm</a>
-                                        </li>
-                                    </ul>
-                                </div>
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card card-table">
+                    <div class="card-body">
+                        <div class="title-header option-title d-sm-flex d-block">
+                            <h5>Danh sách sản phẩm</h5>
+                            <div class="right-options">
+                                <ul>
+                                    <li>
+                                        <a class="btn btn-solid" href="{{ route('admin.products.create') }}">Thêm sản phẩm</a>
+                                    </li>
+                                </ul>
                             </div>
-                            <div>
+                        </div>
 
-                                <div class="table-responsive overflow-hidden">
-                                    <div class="product-table-wrapper">
-                                        <form id="bulk-delete-form" method="POST"
-                                            action="{{ route('admin.products.bulkDelete') }}">
-                                            @csrf
-                                            <table class="table table-hover w-100 coupon-list-table theme-table"
-                                                id="productTable">
-                                                <thead>
-                                                    <tr>
-                                                        <th><input type="checkbox" id="select-all"></th>
-                                                        <th>Thông tin</th>
-                                                        <th>Ảnh</th>
-                                                        <th>Danh mục</th>
-                                                        <th>Vùng miền</th>
-                                                        <th>Cập nhật lúc</th>
-                                                        <th>Trạng thái</th>
-                                                        <th>Actions</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach ($products as $product)
-                                                        <tr class="product-row">
-                                                            <td>
-                                                                <input type="checkbox" class="row-checkbox" name="ids[]"
-                                                                    value="{{ $product->id }}">
-                                                            </td>
-                                                            <td>
-                                                                <div>
-                                                                    <a href="{{ route('admin.products.show', $product->slug) }}"
-                                                                        class="fw-bold text-primary"
-                                                                        style="font-size:16px;">
-                                                                        {{-- Chèn <wbr> sau mỗi khoảng trắng để được ngắt dòng tự nhiên --}}
-                                                                        {!! str_replace(' ', ' <wbr>', e($product->name)) !!}
-                                                                    </a>
-                                                                    <div class="small text-muted mt-1">
-                                                                        {{-- Chèn <wbr> sau dấu cách tương tự cho phần mô tả --}}
-                                                                        {!! str_replace(' ', ' <wbr>', e($product->short_desc ?? '')) !!}
-                                                                    </div>
-                                                                </div>
-                                                            </td>
+                        @if (session('success'))
+                        <div class="alert alert-success">
+                            {{ session('success') }}
+                        </div>
+                        @endif
 
-                                                            <td>
-                                                                <img src="{{ asset('storage/' . $product->image) }}"
-                                                                    class="product-thumb" alt=""
-                                                                    style="width:64px;height:64px;object-fit:cover;border-radius:8px;">
-                                                            </td>
-                                                            <td>{{ $product->category->name ?? '' }}</td>
-                                                            <td>{{ $product->region->name ?? '' }}</td>
-                                                            <td>{{ $product->updated_at->format('d/m/Y H:i:s') }}</td>
-                                                            <td>
-                                                                <span
-                                                                    class="badge {{ $product->active ? 'bg-success' : 'bg-danger' }} status-badge"
-                                                                    style="cursor:pointer" data-id="{{ $product->id }}"
-                                                                    data-name="{{ $product->name ?? '' }}"
-                                                                    data-status="{{ $product->active }}">
-                                                                    {{ $product->active ? 'Đang bán' : 'Ngừng bán' }}
-                                                                </span>
-                                                            </td>
-                                                            <td>
-                                                                <a href="{{ route('admin.products.show', $product->slug) }}"
-                                                                    class="action-link text-decoration-none me-2">
-                                                                    <i class="ri-eye-line"></i>
-                                                                </a>
-                                                                <a href="{{ route('admin.products.edit', $product->slug) }}"
-                                                                    class="action-link text-decoration-none me-2">
-                                                                    <i class="ri-pencil-line"></i>
-                                                                </a>
-                                                                <a href="#"
-                                                                    class="action-link text-decoration-none text-danger"
-                                                                    data-bs-toggle="modal" data-bs-target="#deleteOneModal"
-                                                                    data-id="{{ $product->id }}"
-                                                                    data-name="{{ $product->name }}">
-                                                                    <i class="ri-delete-bin-line"></i>
-                                                                </a>
-                                                            </td>
-                                                        </tr>
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
-                                            <button type="button" id="delete-selected"
-                                                class="btn bulk-delete-btn btn-sm mt-2 d-inline-flex align-items-center gap-2"
-                                                data-bs-toggle="modal" data-bs-target="#deleteBulkModal" disabled>
-                                                <i class="ri-delete-bin-line delete-bulk-icon"></i> Xóa
-                                            </button>
+                        @if (session('error'))
+                        <div class="alert alert-danger">
+                            {{ session('error') }}
+                        </div>
+                        @endif
 
-                                        </form>
-                                        <div class="mt-2">
-                                            {!! $products->links('pagination::bootstrap-5') !!}
+                        <nav class="navbar navbar-expand-lg navbar-filters mb-3">
+                            <ul class="navbar-nav align-items-center">
+                                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/line-awesome/1.3.0/line-awesome/css/line-awesome.min.css">
+
+                                <li class="nav-item me-3 d-none d-lg-block">
+                                    <a class="nav-link" style="color:#8ca0b3; font-size:20px; cursor:pointer;">
+                                        <span class="la la-filter"></span>
+                                        {{-- Hoặc dùng Font Awesome: <i class="fa fa-filter"></i> --}}
+                                    </a>
+                                    {{-- Filter: Danh mục --}}
+                                <li class="nav-item me-3">
+                                    <div class="filter-dropdown" id="filterCategoryDropdown">
+                                        <div class="filter-dropdown-toggle btn btn-outline-primary d-flex align-items-center" tabindex="0" role="button" aria-haspopup="true" aria-expanded="false">
+                                            Danh mục
+                                            <span class="arrow ms-2"></span>
+                                        </div>
+                                        <div class="filter-dropdown-menu bg-white border rounded shadow p-3">
+                                            <div class="filter-selected-items mb-2" tabindex="0" aria-live="polite" aria-atomic="true"></div>
+                                            <input type="text" class="filter-search-input form-control form-control-sm mb-2" placeholder="Tìm kiếm danh mục..." aria-label="Tìm kiếm danh mục" />
+                                            <div class="filter-options-list">
+                                                @foreach($categories as $category)
+                                                <label class="d-block mb-1" style="cursor: pointer;">
+                                                    <input type="radio" name="category" value="{{ $category->id }}" class="me-1 d-none" />
+                                                    <span>{{ $category->name }}</span>
+                                                </label>
+                                                @endforeach
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        @includeIf('backend.footer')
-    </div>
+                                </li>
 
-    <!-- Modal đổi trạng thái sản phẩm -->
-    <div class="modal fade" id="statusModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="statusModalLabel" aria-hidden="true">
-        <div class="modal-dialog  modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <h5 class="modal-title mb-3" id="statusModalLabel">Đổi trạng thái sản phẩm</h5>
-                    <p id="modal-status-text"></p>
-                    <button type="button" class="btn-close position-absolute top-0 end-0 m-2" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                    <div class="button-box text-end mt-4">
-                        <button type="button" class="btn btn--no btn-secondary me-2" data-bs-dismiss="modal">Không</button>
-                        <form id="status-toggle-form" method="POST" style="display:inline;">
+                                {{-- Filter: Vùng miền --}}
+                                <li class="nav-item me-3">
+                                    <div class="filter-dropdown" id="filterRegionDropdown">
+                                        <div class="filter-dropdown-toggle btn btn-outline-primary d-flex align-items-center" tabindex="0" role="button" aria-haspopup="true" aria-expanded="false">
+                                            Vùng miền
+                                            <span class="arrow ms-2"></span>
+                                        </div>
+                                        <div class="filter-dropdown-menu bg-white border rounded shadow p-3">
+                                            <div class="filter-selected-items mb-2" tabindex="0" aria-live="polite" aria-atomic="true"></div>
+                                            <input type="text" class="filter-search-input form-control form-control-sm mb-2" placeholder="Tìm kiếm vùng miền..." aria-label="Tìm kiếm vùng miền" />
+                                            <div class="filter-options-list">
+                                                @foreach($regions as $region)
+                                                <label class="d-block mb-1" style="cursor: pointer;">
+                                                    <input type="radio" name="region" value="{{ $region->id }}" class="me-1 d-none" />
+                                                    <span>{{ $region->name }}</span>
+                                                </label>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+
+                                {{-- Filter: Trạng thái --}}
+                                <li class="nav-item me-3">
+                                    <div class="filter-dropdown" id="filterStatusDropdown">
+                                        <div class="filter-dropdown-toggle btn btn-outline-primary d-flex align-items-center" tabindex="0" role="button" aria-haspopup="true" aria-expanded="false">
+                                            Trạng thái
+                                            <span class="arrow ms-2"></span>
+                                        </div>
+                                        <div class="filter-dropdown-menu bg-white border rounded shadow p-3">
+                                            <div class="filter-selected-items mb-2" tabindex="0" aria-live="polite" aria-atomic="true"></div>
+                                            <input type="text" class="filter-search-input form-control form-control-sm mb-2" placeholder="Tìm kiếm trạng thái..." aria-label="Tìm kiếm trạng thái" />
+                                            <div class="filter-options-list">
+                                                <label class="d-block mb-1" style="cursor: pointer;">
+                                                    <input type="radio" name="status" value="1" class="me-1 d-none" />
+                                                    <span>Đang bán</span>
+                                                </label>
+                                                <label class="d-block mb-1" style="cursor: pointer;">
+                                                    <input type="radio" name="status" value="0" class="me-1 d-none" />
+                                                    <span>Ngừng bán</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+
+                                {{-- Remove Filters --}}
+                                <li class="nav-item ms-3">
+                                    <a href="#" id="removeFilters" class="nav-link text-danger d-none" title="Remove filters">
+                                        <i class="fa fa-eraser"></i> Remove filters
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </nav>
+
+
+                        <div class="table-responsive" style="overflow-x:unset;"> {{-- bỏ thuộc tính max-width nếu có --}}
+                            <table class="table w-100" id="productTable" style="min-width: 100%;">
+                                <thead>
+                                    <tr>
+                                        <th style="color: black; background-color: #f8f9fa; width: 30px;">
+                                            <input type="checkbox" id="select-all-checkbox">
+                                        </th>
+                                        <th style="color: black; background-color: #f8f9fa;">Tên sản phẩm</th>
+                                        <th style="color: black; background-color: #f8f9fa;">Ảnh</th>
+                                        <th style="color: black; background-color: #f8f9fa;">Danh mục</th>
+                                        <th style="color: black; background-color: #f8f9fa;">Vùng miền</th>
+                                        <th style="color: black; background-color: #f8f9fa;">Cập nhật lúc</th>
+                                        <th style="color: black; background-color: #f8f9fa;">Trạng thái</th>
+                                        <th style="color: black; background-color: #f8f9fa;">Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($products as $product)
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" class="row-checkbox" name="selected_ids[]" value="{{ $product->id }}">
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <a href="{{ route('admin.products.show', $product->slug) }}" class="fw-bold text-primary" style="font-size:16px;">
+                                                    {{ $product->name }}
+                                                </a>
+                                                <div class="small text-muted mt-1">
+                                                    {{ $product->short_desc ?? '' }}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
+                                                class="w-20 h-20 object-cover" width="100px">
+                                        </td>
+                                        <td>{{ $product->category->name ?? '' }}</td>
+                                        <td>{{ $product->region->name ?? '' }}</td>
+                                        <td>{{ $product->updated_at->format('d-m-Y H:i:s') }}</td>
+                                        <td class="{{ $product->active ? 'status-close' : 'status-danger' }}">
+                                            <span class="badge status-badge"
+                                                style="cursor:pointer"
+                                                data-id="{{ $product->id }}"
+                                                data-name="{{ $product->name }}"
+                                                data-status="{{ $product->active }}">
+                                                {{ $product->active ? 'Đang bán' : 'Ngừng bán' }}
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            <div class="d-flex align-items-center justify-content-center gap-2 action-icons">
+                                                <a href="{{ route('admin.products.show', $product->slug) }}" class="text-secondary" title="Xem">
+                                                    <i class="ri-eye-line"></i>
+                                                </a>
+                                                <a href="{{ route('admin.products.edit', $product->slug) }}" class="text-primary" title="Sửa">
+                                                    <i class="ri-pencil-line"></i>
+                                                </a>
+                                                <a href="javascript:void(0)" class="delete-btn text-danger"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#deleteModal"
+                                                    data-id="{{ $product->id }}"
+                                                    data-name="{{ $product->name }}"
+                                                    title="Xóa">
+                                                    <i class="ri-delete-bin-line"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    @empty
+                                    <tr>
+                                        <td colspan="8" class="py-4 px-4 text-center">Không có sản phẩm nào.</td>
+                                    </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                            <button type="button"
+                                id="delete-selected-variants"
+                                class="btn bulk-delete-btn btn-sm mt-2 d-inline-flex align-items-center gap-2"
+                                data-bs-toggle="modal"
+                                data-bs-target="#bulkDeleteModal"
+                                disabled>
+                                <i class="ri-delete-bin-line delete-bulk-icon"></i> Xóa chọn
+                            </button>
+                        </div>
+                        <form id="bulk-delete-form" action="{{ route('admin.products.bulkDelete') }}" method="POST" style="display: none;">
                             @csrf
-                            <button type="submit" class="btn btn--yes btn-primary">Đồng ý</button>
+                            <input type="hidden" name="ids" id="bulk-delete-ids">
                         </form>
                     </div>
+                    </li>
+
                 </div>
             </div>
         </div>
     </div>
-    <!-- Modal Xác Nhận Xóa Nhiều -->
-    <div class="modal fade" id="deleteBulkModal" data-bs-backdrop="static" tabindex="-1"
-        aria-labelledby="deleteBulkModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+</div>
+<div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="status-toggle-form" method="POST" action="">
+            @csrf
             <div class="modal-content">
-                <div class="modal-body text-center">
-                    <h5 class="modal-title mb-2">Xóa sản phẩm đã chọn?</h5>
-                    <p>Bạn chắc chắn muốn xóa các sản phẩm đã chọn?</p>
-                    <div class="button-box mt-4">
-                        <button type="button" class="btn btn--no btn-secondary" data-bs-dismiss="modal">No</button>
-                        <button type="button" id="confirm-bulk-delete" class="btn btn--yes btn-danger">Yes</button>
-                    </div>
+                <div class="modal-header">
+                    <h5 class="modal-title" id="statusModalLabel">Đổi trạng thái sản phẩm</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="modal-status-text">Bạn có chắc chắn muốn đổi trạng thái không?</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Xác nhận</button>
                 </div>
             </div>
-        </div>
+        </form>
     </div>
-    <!-- Modal Xác Nhận Xóa Một -->
-    <div class="modal fade" id="deleteOneModal" data-bs-toggle="modal" tabindex="-1"
-        aria-labelledby="deleteOneModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form id="delete-one-form" method="POST">
+</div>
+{{-- Delete Modal --}}
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Xác nhận xóa sản phẩm</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc chắn muốn xóa sản phẩm này không? Sản phẩm sẽ được xóa mềm và có thể khôi phục sau này.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <form id="deleteForm" method="POST" action="" style="display: inline;">
                     @csrf
                     @method('DELETE')
-                    <div class="modal-body text-center">
-                        <h5 class="modal-title mb-2">Xóa sản phẩm?</h5>
-                        <p id="delete-one-message">Bạn chắc chắn muốn xóa sản phẩm này?</p>
-                        <div class="button-box mt-4">
-                            <button type="button" class="btn btn--no btn-secondary" data-bs-dismiss="modal">No</button>
-                            <button type="submit" class="btn btn--yes btn-danger">Yes</button>
-                        </div>
-                    </div>
+                    <button type="submit" class="btn btn-danger">Xóa mềm</button>
                 </form>
             </div>
         </div>
     </div>
+</div>
 
+{{-- Bulk Delete Modal --}}
+<div class="modal fade" id="bulkDeleteModal" tabindex="-1" aria-labelledby="bulkDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="bulkDeleteModalLabel">Xác nhận xóa hàng loạt</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc chắn muốn xóa mềm <span id="selectedProductCount"></span> sản phẩm đã chọn không?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-danger" id="confirm-bulk-delete-btn">Xóa hàng loạt</button>
+            </div>
+        </div>
+    </div>
+</div>
 
+{{-- Success Message Modal --}}
+<div class="modal fade" id="successMessageModal" tabindex="-1" aria-labelledby="successMessageModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="successMessageModalLabel">Thành công!</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="successMessageContent">
+                <!-- Message will be inserted here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-    @push('styles')
-        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-    @endpush
+{{-- Error Message Modal --}}
+<div class="modal fade" id="errorMessageModal" tabindex="-1" aria-labelledby="errorMessageModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="errorMessageModalLabel">Lỗi!</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="errorMessageContent">
+                <!-- Message will be inserted here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-    @push('scripts')
-        <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-        <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-        <script>
-            $('#productTable').DataTable({
-                "pagingType": "full_numbers",
-                "lengthMenu": [10, 25, 50, 100],
-                "language": {
-                    "lengthMenu": "Hiển thị _MENU_ dòng/trang",
-                    "zeroRecords": "Không tìm thấy dữ liệu",
-                    "info": "Hiển thị _START_ đến _END_ của _TOTAL_ dòng",
-                    "infoEmpty": "Không có dữ liệu",
-                    "infoFiltered": "(lọc từ _MAX_ dòng)",
-                    "search": "Tìm kiếm:",
-                    "paginate": {
-                        "first": "1",
-                        "last": "", // Không để _MAX_ nữa
-                        "next": ">",
-                        "previous": "<"
-                    }
-                },
-                "columnDefs": [{
-                    "orderable": false,
-                    "targets": [0, 7]
-                }]
-            });
+@includeIf('backend.footer')
+<script src="{{ asset('backend/js/product.js') }}"></script>
+<style>
+    /* Container dropdown filter */
+    .filter-dropdown {
+        position: relative;
+    }
 
-            // Fix nhãn "last" thành số cuối, ẩn khi chỉ 1 trang
-            $('#productTable').on('draw.dt', function() {
-                var table = $('#productTable').DataTable();
-                var totalPages = table.page.info().pages;
+    /* Toggle button */
+    .filter-dropdown-toggle {
+        min-width: 130px;
+        cursor: pointer;
+        font-weight: 600;
+        user-select: none;
+        transition: color 0.2s ease;
+        padding: 0.3rem 0.6rem;
+    }
 
-                if (totalPages === 1) {
-                    // Chỉ hiện nút active và trái/phải (nếu muốn), ẩn hết số khác và "last"
-                    $('.paginate_button').not('.previous,.active,.next').hide();
-                    $('.paginate_button.last').hide();
-                } else {
-                    $('.paginate_button').show();
-                    $('.paginate_button.last a').text(totalPages);
-                    $('.paginate_button.first a').text(1);
-                }
-            });
+    .filter-dropdown-toggle.btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: space-between;
+    }
 
-            $('.status-badge').click(function() {
-                var id = $(this).data('id');
-                var name = $(this).data('name'); // phải có data-name ở trên
-                var status = $(this).data('status');
+    /* Arrow icon */
+    .filter-dropdown-toggle .arrow {
+        border: solid #0d6efd;
+        border-width: 0 2px 2px 0;
+        display: inline-block;
+        padding: 3px;
+        transform: rotate(45deg);
+        transition: transform 0.2s ease;
+        margin-left: 0.5rem;
+    }
 
-                let nextStatus = (status == 1) ? 'Ngừng bán' : 'Đang bán';
-                // Nếu name rỗng (undefined/null), show id cho dễ debug
-                if (!name) name = '(ID ' + id + ')';
-                $('#modal-status-text').html('Bạn muốn chuyển trạng thái sản phẩm <b>' + name +
-                    '</b> sang <span class="text-primary">' + nextStatus + '</span>?');
+    /* Arrow rotated when open */
+    .filter-dropdown.open .filter-dropdown-toggle .arrow {
+        transform: rotate(-135deg);
+    }
 
-                // Set action cho form
-                let url = '{{ route('admin.products.toggle', ':id') }}';
-                url = url.replace(':id', id);
-                $('#status-toggle-form').attr('action', url);
+    /* Dropdown menu */
+    .filter-dropdown-menu {
+        position: absolute;
+        top: calc(100% + 6px);
+        left: 0;
+        width: 250px;
+        max-height: 350px;
+        overflow: hidden;
+        z-index: 1050;
+        border: 1px solid #ddd;
+        background: #fff;
+        border-radius: 0.25rem;
+        box-shadow: 0 2px 8px rgb(0 0 0 / 0.15);
+        padding: 0.75rem 1rem;
+        display: none;
+    }
 
-                // Show modal
-                var modal = new bootstrap.Modal(document.getElementById('statusModal'));
-                modal.show();
-            });
+    /* Selected items container */
+    .filter-selected-items {
+        min-height: 30px;
+        font-weight: 600;
+        color: #212529;
+        user-select: none;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: nowrap;
+    }
 
-            $(function() {
-                // Select all
-                $('#select-all').on('change', function() {
-                    $('.row-checkbox').prop('checked', $(this).is(':checked'));
-                    updateBulkDeleteBtn();
-                });
-                $('.row-checkbox').on('change', function() {
-                    updateBulkDeleteBtn();
-                });
+    /* Selected item styling */
+    .filter-selected-items .selected-item {
+        background-color: #0d6efd;
+        color: white;
+        padding: 2px 8px;
+        border-radius: 12px;
+        cursor: default;
+        user-select: none;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
 
-                function updateBulkDeleteBtn() {
-                    $('#delete-selected').prop('disabled', $('.row-checkbox:checked').length === 0);
-                }
+    /* Remove button inside selected item */
+    .filter-selected-items .selected-item .remove-btn {
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 1.1em;
+        line-height: 1;
+        user-select: none;
+    }
 
-                // Modal xóa 1
-                $('#deleteOneModal').on('show.bs.modal', function(e) {
-                    var button = $(e.relatedTarget);
-                    var id = button.data('id');
-                    var name = button.data('name');
-                    $('#delete-one-form').attr('action', '/admin/products/' + id);
-                    $('#delete-one-message').text('Bạn chắc chắn muốn xóa sản phẩm "' + name + '"?');
-                });
+    /* Search input */
+    .filter-search-input {
+        width: 100%;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+        border: 1px solid #ccc;
+        border-radius: 0.25rem;
+        margin-bottom: 0.5rem;
+    }
 
-                // Xác nhận xóa nhiều
-                $('#confirm-bulk-delete').on('click', function() {
-                    $('#bulk-delete-form').submit();
-                });
-            });
-        </script>
-    @endpush
+    /* Options list */
+    .filter-options-list {
+        max-height: 150px;
+        overflow-y: auto;
+    }
 
+    /* Option label */
+    .filter-options-list label {
+        display: block;
+        padding: 0.25rem 0.5rem;
+        cursor: pointer;
+        user-select: none;
+        border-radius: 0.25rem;
+        transition: background-color 0.2s ease;
+    }
 
+    /* Hover and selected option styling */
+    .filter-options-list label:hover,
+    .filter-options-list label.selected {
+        background-color: #e9f1ff;
+        color: #0d6efd;
+        font-weight: 600;
+    }
+
+    /* Hide default radio inputs */
+    .filter-options-list input[type="radio"] {
+        display: none;
+    }
+
+    /* Remove Filters link */
+    #removeFilters {
+        cursor: pointer;
+        font-weight: 600;
+        user-select: none;
+    }
+
+    #removeFilters i {
+        margin-right: 4px;
+    }
+
+    .filter-dropdown-toggle.active-filter {
+        background: #e7f5ea !important;
+        /* Xanh nhạt */
+        color: #188041 !important;
+        /* Xanh chủ đạo */
+        font-weight: 700;
+        border-color: #3ba55d;
+    }
+
+    .bulk-delete-btn[disabled] {
+        background: #e1e8f3 !important;
+        color: #66708a !important;
+        border: none !important;
+        cursor: not-allowed !important;
+        opacity: 1 !important;
+    }
+
+    .bulk-delete-btn[disabled] .delete-bulk-icon {
+        color: #66708a !important;
+    }
+
+    .bulk-delete-btn:not([disabled]) {
+        background: #becde4 !important;
+        color: #495057 !important;
+        border: none !important;
+        cursor: pointer !important;
+        box-shadow: 0 2px 8px #becde480;
+        transition: background .5s, color .5s;
+    }
+
+    .bulk-delete-btn:not([disabled]) .delete-bulk-icon {
+        color: #495057 !important;
+    }
+
+    .bulk-delete-btn:not([disabled]):hover {
+        background: #aac4e7 !important;
+    }
+
+    .action-icons a i {
+        font-size: 20px;
+        transition: color 0.2s;
+    }
+
+    .action-icons a.text-primary:hover {
+        color: #006f3c !important;
+    }
+
+    .action-icons a.text-danger:hover {
+        color: #d7263d !important;
+    }
+
+    .action-icons a.text-secondary:hover {
+        color: #3ba55d !important;
+    }
+</style>
 @endsection
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        // Hàm xóa dấu tiếng Việt
+        function removeVietnameseTones(str) {
+            if (!str) return '';
+            return str.normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/đ/g, 'd').replace(/Đ/g, 'D');
+        }
+
+        // Ghi đè search DataTable (không dấu)
+        $.fn.dataTable.ext.type.search.string = function(data) {
+            return !data ? '' : removeVietnameseTones(data.toString().toLowerCase());
+        };
+        $.fn.dataTable.ext.type.search.html = function(data) {
+            return !data ? '' : removeVietnameseTones($('<div>').html(data).text().toLowerCase());
+        };
+
+        // --- Khởi tạo Select2 ---
+        $('.select2').select2({
+            width: '100%',
+            placeholder: 'Chọn...',
+            allowClear: true,
+            dropdownParent: $('.dropdown-menu'),
+            minimumResultsForSearch: Infinity
+        });
+
+        function updateFilterActiveClass() {
+            $('.filter-dropdown').each(function() {
+                var $toggle = $(this).find('.filter-dropdown-toggle');
+                if ($(this).find('input[type=radio]:checked').length > 0) {
+                    $toggle.addClass('active-filter');
+                } else {
+                    $toggle.removeClass('active-filter');
+                }
+            });
+        }
+        var openDropdownId = null;
+
+        // Bắt sự kiện click dropdown toggle của select2
+        $('.nav-item.dropdown > .nav-link.dropdown-toggle').on('click', function(e) {
+            e.preventDefault();
+            var $dropdown = $(this).parent();
+            var id = $dropdown.find('select.select2').attr('id');
+
+            if (openDropdownId && openDropdownId !== id) {
+                $('#' + openDropdownId).select2('close');
+                $('[aria-labelledby="' + openDropdownId + '"]').parent('.dropdown-menu').removeClass('show');
+                $('[aria-labelledby="' + openDropdownId + '"]').removeClass('show');
+                openDropdownId = null;
+            }
+
+            if (openDropdownId === id) {
+                $('#' + id).select2('close');
+                openDropdownId = null;
+                $dropdown.find('.dropdown-menu').removeClass('show');
+            } else {
+                openDropdownId = id;
+                $dropdown.find('.dropdown-menu').addClass('show');
+                $('#' + id).select2('open');
+            }
+        });
+
+        // Khi chọn hoặc bỏ chọn option trong select2 -> tự đóng dropdown và apply filter
+        $('.select2').on('select2:select select2:unselect', function() {
+            var id = $(this).attr('id');
+            openDropdownId = null;
+            $(this).select2('close');
+            $(this).closest('.dropdown-menu').removeClass('show');
+            applyFilter();
+        });
+
+        // --- XỬ LÝ CUSTOM DROPDOWN FILTER ---
+        $('.filter-dropdown-toggle').on('click', function(e) {
+            e.preventDefault();
+            var $dropdown = $(this).closest('.filter-dropdown');
+            var isOpen = $dropdown.hasClass('open');
+            $('.filter-dropdown').not($dropdown).removeClass('open').find('.filter-dropdown-menu').hide();
+            if (isOpen) {
+                $dropdown.removeClass('open');
+                $dropdown.find('.filter-dropdown-menu').hide();
+            } else {
+                $dropdown.addClass('open');
+                $dropdown.find('.filter-dropdown-menu').show();
+                $dropdown.find('.filter-search-input').val('').trigger('input').focus();
+            }
+        });
+
+        // Lọc option trong dropdown custom khi nhập search (KHÔNG lọc cho Trạng thái)
+        $('.filter-dropdown').on('input', '.filter-search-input', function() {
+            if ($(this).closest('#filterStatusDropdown').length) return;
+
+            var val = removeVietnameseTones($(this).val().toLowerCase());
+            var $dropdown = $(this).closest('.filter-dropdown');
+            $dropdown.find('.filter-options-list label').each(function() {
+                var labelText = removeVietnameseTones($(this).text().toLowerCase());
+                $(this).toggle(labelText.indexOf(val) > -1);
+            });
+        });
+
+        // Chọn radio trong dropdown custom
+        $('.filter-options-list input[type=radio]').on('change', function() {
+            var $dropdown = $(this).closest('.filter-dropdown');
+            var selectedText = $(this).next('span').text();
+            var $selectedContainer = $dropdown.find('.filter-selected-items');
+            $selectedContainer.html('<div class="selected-item">' + selectedText + '<span class="remove-btn" title="Bỏ chọn" style="cursor:pointer;">×</span></div>');
+            $dropdown.removeClass('open').find('.filter-dropdown-menu').hide();
+
+            toggleRemoveFilters();
+            applyFilter();
+            updateFilterActiveClass();
+        });
+
+        // Xử lý click nút xóa trong selected item
+        $('.filter-selected-items').on('click', '.remove-btn', function(e) {
+            e.stopPropagation();
+            var $dropdown = $(this).closest('.filter-dropdown');
+            var $radio = $dropdown.find('input[type=radio]:checked');
+            $radio.prop('checked', false);
+            $dropdown.find('.filter-selected-items').text('Chưa chọn').css('color', '#6c757d');
+            toggleRemoveFilters();
+            applyFilter();
+            updateFilterActiveClass();
+        });
+
+        // Đóng dropdown khi click ra ngoài (cho cả custom dropdown và select2)
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('.filter-dropdown, .nav-item.dropdown').length) {
+                $('.filter-dropdown').removeClass('open').find('.filter-dropdown-menu').hide();
+                if (openDropdownId) {
+                    $('#' + openDropdownId).select2('close');
+                    openDropdownId = null;
+                }
+                $('.dropdown-menu.show').removeClass('show');
+            }
+        });
+
+        // Ẩn/hiện nút Remove filters
+        function toggleRemoveFilters() {
+            var hasFilter = false;
+            $('.filter-dropdown').each(function() {
+                if ($(this).find('input[type=radio]:checked').length) {
+                    hasFilter = true;
+                    return false;
+                }
+            });
+            $('.select2').each(function() {
+                if ($(this).val() && $(this).val().length > 0) {
+                    hasFilter = true;
+                    return false;
+                }
+            });
+
+            if (hasFilter) {
+                $('#removeFilters').removeClass('d-none');
+            } else {
+                $('#removeFilters').addClass('d-none');
+            }
+        }
+
+        // Nút Remove filters click
+        $('#removeFilters').on('click', function(e) {
+            e.preventDefault();
+
+            $('.filter-dropdown input[type=radio]').prop('checked', false);
+            $('.filter-selected-items').text('Chưa chọn').css('color', '#6c757d');
+            $('.select2').val(null).trigger('change');
+
+            toggleRemoveFilters();
+            applyFilter();
+            updateFilterActiveClass();
+        });
+
+        // --- Khởi tạo DataTable ---
+        var table = $('#productTable').DataTable({
+            paging: true,
+            ordering: true,
+            info: true,
+            lengthChange: true,
+            pageLength: 10,
+            autoWidth: true,
+            responsive: true,
+            pagingType: "full_numbers",
+            language: {
+                "sProcessing": "Đang xử lý...",
+                "sLengthMenu": "Hiển thị _MENU_ mục",
+                "sZeroRecords": "Không tìm thấy dòng nào phù hợp",
+                "sInfo": "Hiển thị _START_ đến _END_ trong tổng _TOTAL_ mục",
+                "sInfoEmpty": "Hiển thị 0 đến 0 của 0 mục",
+                "sInfoFiltered": "(lọc từ _MAX_ mục)",
+                "sSearch": "Tìm kiếm:",
+                "oPaginate": {
+                    "sFirst": "Đầu",
+                    "sPrevious": "<",
+                    "sNext": ">",
+                    "sLast": "Cuối"
+                }
+            },
+            columnDefs: [{
+                orderable: false,
+                targets: [0, 2, 7]
+            }]
+        });
+
+        // --- KHÔNG cần đoạn này nữa vì đã ghi đè search type ở trên! ---
+        // $('#productTable_filter input[type="search"]').on('input', function() {
+        //     table.search(removeVietnameseTones(this.value)).draw();
+        // });
+
+        // Hàm apply filter lọc DataTable
+        function applyFilter() {
+            table.column(3).search('');
+            table.column(4).search('');
+            table.column(6).search('');
+
+            var categoryText = $('#filterCategoryDropdown input[type=radio]:checked').next('span').text().trim();
+            if (categoryText) {
+                table.column(3).search(categoryText, true, false);
+            }
+
+            var regionText = $('#filterRegionDropdown input[type=radio]:checked').next('span').text().trim();
+            if (regionText) {
+                table.column(4).search(regionText, true, false);
+            }
+
+            var statusText = $('#filterStatusDropdown input[type=radio]:checked').next('span').text().trim();
+            if (statusText) {
+                table.column(6).search(statusText, true, false);
+            }
+
+            table.draw();
+            toggleRemoveFilters();
+        }
+
+        // --- Checkbox chọn tất cả và từng dòng ---
+        function toggleBulkDeleteButton() {
+            if ($('.row-checkbox:checked').length > 0) {
+                $('#delete-selected-variants').prop('disabled', false);
+            } else {
+                $('#delete-selected-variants').prop('disabled', true);
+            }
+        }
+        $('#select-all-checkbox').on('click', function() {
+            var checked = $(this).prop('checked');
+            $('.row-checkbox').prop('checked', checked);
+            toggleBulkDeleteButton();
+        });
+        $('.row-checkbox').on('change', function() {
+            toggleBulkDeleteButton();
+            if ($('.row-checkbox:checked').length !== $('.row-checkbox').length) {
+                $('#select-all-checkbox').prop('checked', false);
+            } else {
+                $('#select-all-checkbox').prop('checked', true);
+            }
+        });
+
+
+
+        // Xử lý xóa hàng loạt
+        // --- Checkbox chọn tất cả và từng dòng ---
+        function toggleBulkDeleteButton() {
+            if ($('.row-checkbox:checked').length > 0) {
+                $('#delete-selected-variants').prop('disabled', false);
+            } else {
+                $('#delete-selected-variants').prop('disabled', true);
+            }
+        }
+
+        $('#select-all-checkbox').on('click', function() {
+            var checked = $(this).prop('checked');
+            $('.row-checkbox').prop('checked', checked);
+            toggleBulkDeleteButton();
+        });
+
+        $('.row-checkbox').on('change', function() {
+            toggleBulkDeleteButton();
+            if ($('.row-checkbox:checked').length !== $('.row-checkbox').length) {
+                $('#select-all-checkbox').prop('checked', false);
+            } else {
+                $('#select-all-checkbox').prop('checked', true);
+            }
+        });
+
+        // Xử lý xóa hàng loạt (Bulk Delete)
+        $('#delete-selected-variants').on('click', function(e) {
+            var selectedIds = [];
+            $('.row-checkbox:checked').each(function() {
+                selectedIds.push($(this).val());
+            });
+
+            if (selectedIds.length === 0) {
+                // Không có gì được chọn thì chặn mở modal, show modal báo lỗi
+                e.preventDefault();
+                $('#errorMessageContent').text('Vui lòng chọn ít nhất một sản phẩm để xóa.');
+                $('#errorMessageModal').modal('show');
+                return false;
+            } else {
+                // Có chọn, show modal xác nhận xóa hàng loạt
+                $('#selectedProductCount').text(selectedIds.length);
+                $('#bulk-delete-ids').val(selectedIds.join(',')); // nếu cần submit id sang backend
+                // Modal sẽ tự hiện vì đã có data-bs-toggle/data-bs-target trên button
+            }
+        });
+
+        // Xác nhận xóa hàng loạt trong modal
+        $('#confirm-bulk-delete-btn').off('click').on('click', function() {
+            var selectedIds = $('#bulk-delete-ids').val();
+            $.ajax({
+                url: '', // API xóa hàng loạt của bạn
+                method: 'DELETE',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    ids: selectedIds
+                },
+                success: function(response) {
+                    $('#bulkDeleteModal').modal('hide');
+                    if (response.status === 'success') {
+                        $('#successMessageContent').text(response.message || 'Xóa sản phẩm đã chọn thành công!');
+                        $('#successMessageModal').modal('show');
+                    } else {
+                        $('#errorMessageContent').text(response.message || 'Lỗi khi xóa sản phẩm đã chọn.');
+                        $('#errorMessageModal').modal('show');
+                    }
+                    $('#successMessageModal, #errorMessageModal').on('hidden.bs.modal', function() {
+                        window.location.reload();
+                    });
+                },
+                error: function(xhr) {
+                    $('#bulkDeleteModal').modal('hide');
+                    let errorMessage = 'Lỗi khi xóa sản phẩm đã chọn';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
+                    $('#errorMessageContent').text(errorMessage);
+                    $('#errorMessageModal').modal('show');
+                    $('#errorMessageModal').on('hidden.bs.modal', function() {
+                        window.location.reload();
+                    });
+                }
+            });
+        });
+
+        // Xử lý xóa từng sản phẩm
+        $(document).on('click', '.delete-btn', function() {
+            var id = $(this).data('id');
+            var name = $(this).data('name');
+
+            if (id) {
+                var formAction = '{{ url("admin/products") }}' + '/' + id;
+                $('#deleteForm').attr('action', formAction);
+            } else {
+                $('#errorMessageContent').text('Không thể xóa sản phẩm này do thiếu thông tin ID.');
+                $('#errorMessageModal').modal('show');
+            }
+        });
+
+        // Xử lý đổi trạng thái sản phẩm
+        $('.status-badge').on('click', function() {
+            var id = $(this).data('id');
+            var name = $(this).data('name');
+            var status = $(this).data('status');
+            var nextStatus = status == 1 ? 'Ngừng bán' : 'Đang bán';
+
+            $('#modal-status-text').html('Bạn muốn chuyển trạng thái sản phẩm <b>' + name + '</b> sang <span class="text-primary">' + nextStatus + '</span>?');
+            $('#status-toggle-form').attr('action', '{{ url("admin/products") }}/' + id + '/toggle');
+            $('#statusModal').modal('show');
+        });
+
+        // Hiển thị modal lỗi nếu có session error
+        @if(session('error'))
+        $('#errorMessageContent').text("{{ session('error') }}");
+        $('#errorMessageModal').modal('show');
+        @endif
+
+    });
+</script>
+
+
+@endpush

@@ -275,7 +275,7 @@
     </div>
 
     <!-- Thống kê đơn hàng -->
-    <div class="card">
+    {{-- <div class="card">
         <div class="card-header">
             <h4 class="mb-0">Thống kê đơn hàng</h4>
         </div>
@@ -286,7 +286,7 @@
                 <span class="badge bg-danger">Bị hủy: {{ $canceled ?? 0 }}</span>
             </div>
         </div>
-    </div>
+    </div> --}}
 
     <!-- Thư viện Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

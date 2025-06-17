@@ -32,7 +32,9 @@ class DatabaseSeeder extends Seeder
             OrderItemsTableSeeder::class,           // Tạo chi tiết đơn hàng, cần orders, products
             CommentSeeder::class,// Thêm comment (nếu có)
 
+            ReviewSeeder::class,
             CouponSeeder::class,
+            BlogsTableSeeder::class,
         ]);
     }
 }

@@ -209,15 +209,33 @@ class CategoryController extends Controller
 
     public function storeQuick(Request $request)
     {
-        $request->validate([
+        // Tạo validator
+        $validator = Validator::make($request->all(), [
             'name' => 'required|max:100|unique:categories,name',
+        ], [
+            'name.required' => 'Tên danh mục bắt buộc',
+            'name.unique' => 'Tên danh mục đã tồn tại, vui lòng chọn tên khác',
+            'name.max' => 'Tên danh mục không được vượt quá 100 ký tự',
         ]);
 
+        // Nếu lỗi validate, trả về JSON lỗi khi AJAX, hoặc redirect với lỗi khi không AJAX
+        if ($validator->fails()) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $validator->errors(),
+                ], 422);
+            }
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        // Tạo danh mục mới
         $category = Category::create([
             'name' => $request->name,
             'slug' => Str::slug($request->name),
         ]);
 
+        // Trả về JSON thành công nếu AJAX
         if ($request->ajax()) {
             return response()->json([
                 'success' => true,
@@ -225,6 +243,7 @@ class CategoryController extends Controller
             ]);
         }
 
+        // Nếu không phải AJAX thì redirect lại với thông báo thành công
         return redirect()->back()->with('success', 'Đã thêm danh mục mới!');
     }
 }
