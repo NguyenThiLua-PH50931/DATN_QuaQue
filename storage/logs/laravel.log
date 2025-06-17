@@ -172,7 +172,6 @@ Content-Transfer-Encoding: quoted-printable
 </body>
 </html>
   
-<<<<<<< HEAD
 [2025-06-14 07:58:56] local.DEBUG: From: Laravel <hello@example.com>
 To: bienlapfb@gmail.com
 Subject: =?utf-8?Q?Tr=E1=BA=A1ng_th=C3=A1i_=C4=91=C6=A1n_h=C3=A0ng?= #abcde
@@ -2265,8 +2264,6 @@ Content-Transfer-Encoding: quoted-printable
 #58 C:\\laragon\\www\\DATN_QuaQue\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php(23): require_once('C:\\\\laragon\\\\www\\\\...')
 #59 {main}
 "} 
-=======
->>>>>>> origin/main
 [2025-06-17 06:00:55] local.ERROR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'products.deleted_at' in 'where clause' (Connection: mysql, SQL: select * from `products` where `products`.`deleted_at` is null order by `view_total` desc limit 8) {"userId":4,"exception":"[object] (Illuminate\\Database\\QueryException(code: 42S22): SQLSTATE[42S22]: Column not found: 1054 Unknown column 'products.deleted_at' in 'where clause' (Connection: mysql, SQL: select * from `products` where `products`.`deleted_at` is null order by `view_total` desc limit 8) at C:\\laragon\\www\\DATN_QuaQue\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php:822)
 [stacktrace]
 #0 C:\\laragon\\www\\DATN_QuaQue\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(776): Illuminate\\Database\\Connection->runQueryCallback('select * from `...', Array, Object(Closure))
