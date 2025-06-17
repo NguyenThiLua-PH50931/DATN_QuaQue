@@ -10,8 +10,8 @@
     <meta name="keywords"
         content="admin template, Fastkart admin template, dashboard template, flat admin template, responsive admin template, web app">
     <meta name="author" content="pixelstrap">
-    <link rel="icon" href="{{ asset('backend/assets/images/favicon.png') }}" type="image/x-icon">
-    <link rel="shortcut icon" href="{{ asset('backend/assets/images/favicon.png') }}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('backend/assets/images/icon.png') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('backend/assets/images/icon.png') }}" type="image/x-icon">
     <title>@yield('title', 'Admin Panel')</title>
 
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
@@ -178,7 +178,7 @@
 
 <script>
 document.querySelectorAll('.status-select').forEach(function(select) {
-    select.addEventListener('change', function() {
+    select.addEventListener('change', function () {
         const orderId = this.getAttribute('data-order-id');
         const newStatus = this.value;
         const form = document.getElementById('status-form-' + orderId);
@@ -202,37 +202,67 @@ document.querySelectorAll('.status-select').forEach(function(select) {
             alert(data.message || 'Cập nhật trạng thái thành công');
             select.setAttribute('data-current-status', newStatus);
 
-            // ✅ Cập nhật trạng thái thanh toán (payment_status) trên giao diện
-            if (data.payment_status) {
-                const paymentStatusTd = document.getElementById('payment-status-' + orderId);
+            // ✅ Cập nhật class màu trạng thái
+            select.classList.remove('status-' + currentStatus);
+            select.classList.add('status-' + newStatus);
+
+            // ✅ Cập nhật thanh toán (nếu có)
+            const paymentStatusTd = document.getElementById('payment-status-' + orderId);
                 if (paymentStatusTd) {
-                    let paymentText = '';
-                    switch (data.payment_status) {
-                        case 'paid': paymentText = 'Đã thanh toán'; break;
-                        case 'unpaid': paymentText = 'Chưa thanh toán'; break;
-                        case 'failed': paymentText = 'Thất bại'; break;
-                        default: paymentText = data.payment_status;
-                    }
+                    let paymentText = {
+                        paid: 'Đã thanh toán',
+                        unpaid: 'Chưa thanh toán',
+                        failed: 'Thất bại'
+                    }[data.payment_status] || data.payment_status;
+
                     paymentStatusTd.textContent = paymentText;
+
+                    // 🔁 Cập nhật class
+                    paymentStatusTd.classList.remove('payment-paid', 'payment-unpaid', 'payment-failed');
+                    switch (data.payment_status) {
+                        case 'paid': paymentStatusTd.classList.add('payment-paid'); break;
+                        case 'unpaid': paymentStatusTd.classList.add('payment-unpaid'); break;
+                        case 'failed': paymentStatusTd.classList.add('payment-failed'); break;
+                    }
+                }
+
+
+            // ✅ Thêm nút "Ẩn"
+            const tr = form.closest('tr');
+            const ul = tr.querySelector('td:last-child ul');
+            const isHidden = tr.classList.contains('order-hidden');
+
+            if (!isHidden && ['delivered', 'cancelled', 'failed_delivery'].includes(newStatus)) {
+                if (ul && !ul.querySelector('form[action*="hide"]')) {
+                    const li = document.createElement('li');
+                    const hideForm = document.createElement('form');
+                    hideForm.action = form.action.replace('updateStatus', 'hide');
+                    hideForm.method = 'POST';
+                    hideForm.onsubmit = () => confirm('Bạn có chắc chắn muốn ẩn đơn hàng này không?');
+                    hideForm.innerHTML = `
+                        <input type="hidden" name="_token" value="${token}">
+                        <input type="hidden" name="_method" value="PATCH">
+                        <button type="submit" class="border-0 bg-transparent" title="Ẩn">
+                            <i class="ri-eye-off-line text-warning"></i>
+                        </button>
+                    `;
+                    li.appendChild(hideForm);
+                    ul.appendChild(li);
                 }
             }
 
-            // ✅ Hiển thị nút xóa nếu đơn hàng đã hoàn tất hoặc không thành công
-            if (['delivered', 'cancelled', 'failed_delivery'].includes(newStatus)) {
-                const tr = form.closest('tr');
-                const optionsTd = tr.querySelector('td:last-child');
-                const ul = optionsTd.querySelector('ul');
-
-                if (ul && !ul.querySelector('form')) {
+            // ✅ Thêm nút "Xoá" nếu đơn đã ẩn
+            if (tr.classList.contains('order-hidden')) {
+                if (ul && !ul.querySelector('form[action*="destroy"]')) {
                     const li = document.createElement('li');
                     const deleteForm = document.createElement('form');
                     deleteForm.action = form.action.replace('updateStatus', 'destroy');
                     deleteForm.method = 'POST';
-                    deleteForm.onsubmit = () => confirm('Bạn có chắc chắn muốn xóa đơn hàng này không?');
+                    deleteForm.onsubmit = () => confirm('Xóa vĩnh viễn đơn hàng này?');
                     deleteForm.innerHTML = `
                         <input type="hidden" name="_token" value="${token}">
                         <input type="hidden" name="_method" value="DELETE">
-                        <button type="submit" class="border-0 bg-transparent">
+                        <button type="submit" class="border-0 bg-transparent" title="Xóa">
                             <i class="ri-delete-bin-line text-danger"></i>
                         </button>
                     `;
@@ -247,6 +277,7 @@ document.querySelectorAll('.status-select').forEach(function(select) {
         });
     });
 });
+
 </script>
 
 

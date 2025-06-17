@@ -63,15 +63,17 @@ public function index(Request $request)
 
     // Hiển thị chi tiết đơn hàng
     public function show(Order $order)
-        {
-            $order->load([
-                'items.productVariant.attributeValues.attribute',
-                'user',
-                'address'
-            ]);
+{
+    $order->load([
+        'items.productVariant.attributeValues.attribute',
+        'items.productVariant.product.firstImage', // THÊM DÒNG NÀY
+        'user',
+        'address'
+    ]);
 
-            return view('backend.orders.show', compact('order'));
-        }
+    return view('backend.orders.show', compact('order'));
+}
+
 
 
     // Hiển thị trang tracking (nếu cần)
