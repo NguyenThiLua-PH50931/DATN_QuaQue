@@ -138,29 +138,6 @@
                             <li><a href="{{ url('/admin/banners/trashed') }}">Thùng rác</a></li>
                         </ul>
                     </li>
-
-                    <li class="sidebar-list">
-                        <a class="sidebar-link sidebar-title" href="javascript:void(0)">
-                            <i class="ri-feedback-line"></i>
-                            <span>Bình luận</span>
-                        </a>
-                        <ul class="sidebar-submenu">
-                            <li>
-                                <a href="{{ route('admin.comments.index') }}">Danh sách bình luận </a>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <li class="sidebar-list">
-                        <a class="sidebar-link sidebar-title" href="javascript:void(0)">
-                            <i class="ri-megaphone-line"></i>
-                            <span>Tin tức</span>
-                        </a>
-                        <ul class="sidebar-submenu">
-                            <li><a href="{{ url('/admin/blog/index') }}"> Danh sách tin tức</a></li>
-                        </ul>
-                    </li>
-
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title link-nav" href="{{ route('admin.reviews.index') }}">
                             <i class="ri-star-line"></i>
@@ -228,13 +205,6 @@
                             <span>Tax</span>
                         </a>
                     </li> --}}
-
-
-
-
-
-
-
                     {{-- <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title link-nav" href="{{ url('/admin/reports') }}">
                             <i class="ri-file-chart-line"></i>
