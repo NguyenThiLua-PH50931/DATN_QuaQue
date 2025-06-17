@@ -31,14 +31,10 @@ class DatabaseSeeder extends Seeder
             OrdersTableSeeder::class,               // Tạo đơn hàng, cần user, address, shipping_method
             OrderItemsTableSeeder::class,           // Tạo chi tiết đơn hàng, cần orders, products
             CommentSeeder::class,// Thêm comment (nếu có)
-
             ReviewSeeder::class,
             CouponSeeder::class,
             BlogsTableSeeder::class,
-
-
-            
-
+            CouponSeeder::class,
         ]);
     }
 }

@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Auth;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreUserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class RegisterController extends Controller
 {
@@ -16,22 +18,19 @@ class RegisterController extends Controller
         return view('auth.register');
     }
 
-    public function register(Request $request)
+    public function register(StoreUserRequest $request)
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-
-        ]);
-
+        $validated = $request->validated();
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-
+            'name'     => $validated['name'],
+            'email'    => $validated['email'],
+            'phone'    => $validated['phone'],
+            'password' => Hash::make($validated['password']),
+            'role'     => 'member', // Gán mặc định member
         ]);
 
-        return redirect()->route('client.home')->with('success', 'Đăng nhập thành công!');
+        Auth::loginUsingId($user->id);
+
+        return redirect()->route('client.home')->with('success', 'Đăng ký thành công!');
     }
 }
