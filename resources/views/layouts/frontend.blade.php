@@ -342,35 +342,52 @@
                                                 </div>
                                             </div>
                                         </li>
-                                        <li class="right-side onhover-dropdown">
-                                            <div class="delivery-login-box">
+                                       <li class="right-side onhover-dropdown">
+                                        <div class="delivery-login-box">
+                                            @if (Auth::check())
                                                 <div class="delivery-icon">
                                                     <i data-feather="user"></i>
+                                                    <strong>Xin chào, {{ Auth::user()->name }}</strong>
+                                                </div>
+                                            @else
+                                                <div class="delivery-icon">
+                                                    <i data-feather="user"></i>
+                                                    <span>Tài khoản</span>
                                                 </div>
                                                 <div class="delivery-detail">
-                                                    <h6>Hello,</h6>
-                                                    <h5>My Account</h5>
+                                                    <h6>Chào mừng!</h6>
+                                                    <h5>Vui lòng đăng nhập</h5>
                                                 </div>
-                                            </div>
+                                            @endif
+                                        </div>
 
-                                            <div class="onhover-div onhover-div-login">
-                                                <ul class="user-box-name">
+                                        <div class="onhover-div onhover-div-login">
+                                            <ul class="user-box-name">
+                                                @if (Auth::check())
                                                     <li class="product-box-contain">
-                                                        <i></i>
-                                                        <a href="{{ route('login') }}">Log In</a>
+                                                        <a href="{{ route('logout') }}"
+                                                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                                            Đăng xuất
+                                                        </a>
                                                     </li>
-
+                                                    <form id="logout-form" action="{{ route('logout') }}"
+                                                        method="POST" style="display: none;">
+                                                        @csrf
+                                                    </form>
+                                                @else
                                                     <li class="product-box-contain">
-                                                        <a href="{{ route('register') }}">Register</a>
-
+                                                        <a href="{{ route('login') }}">Đăng nhập</a>
                                                     </li>
-
                                                     <li class="product-box-contain">
-                                                        <a href="forgot.html">Forgot Password</a>
+                                                        <a href="{{ route('register') }}">Đăng ký</a>
                                                     </li>
-                                                </ul>
-                                            </div>
-                                        </li>
+                                                    <li class="product-box-contain">
+                                                        <a href="forgot.html">Quên mật khẩu</a>
+                                                    </li>
+                                                @endif
+                                            </ul>
+                                        </div>
+                                    </li>
                                     </ul>
                                 </div>
                             </div>
