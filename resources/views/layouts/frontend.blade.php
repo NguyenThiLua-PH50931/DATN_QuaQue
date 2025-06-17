@@ -214,7 +214,7 @@
                                     </span>
                                 </button>
                                 <a href="{{ url('/') }}" class="web-logo nav-logo">
-                                    <img src="../frontend/assets/images/logo/1.png" class="img-fluid blur-up lazyload" alt="">
+                                    <img src="{{ asset('storage/logo/logo.png') }}" class="img-fluid blur-up lazyload" alt="Logo Quà Quê" style="width: 150px; height: auto;">
                                 </a>
 
                                 <div class="middle-box">
@@ -1235,7 +1235,7 @@
                         <div class="footer-logo">
                             <div class="theme-logo">
                                 <a href="index.html">
-                                    <img src="../frontend/assets/images/logo/1.png" class="blur-up lazyload" alt="Logo Quà Quê">
+                                    <img src="{{ asset('storage/logo/logo.png') }}" class="blur-up lazyload" alt="Logo Quà Quê" style="width: 150px; height: auto;">
                                 </a>
                             </div>
 
