@@ -5,15 +5,59 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\admin\Order;
+use App\Mail\OrderStatusUpdated;
+use Illuminate\Support\Facades\Mail;
 
 class OrderController extends Controller
 {
     // Hiển thị danh sách đơn hàng
-    public function index()
+
+public function index(Request $request)
 {
-    $orders = Order::with('user')->latest()->paginate(10);
+    $query = Order::query();
+
+    // Lọc trạng thái đơn hàng
+    if ($request->filled('status')) {
+        $query->where('status', $request->status);
+    }
+
+    // Lọc trạng thái thanh toán
+    if ($request->filled('payment_status')) {
+        $query->where('payment_status', $request->payment_status);
+    }
+
+    // Lọc phương thức thanh toán
+    if ($request->filled('payment_method')) {
+        $query->where('payment_method', $request->payment_method);
+    }
+
+    // Lọc ngày đặt từ
+    if ($request->filled('date_from')) {
+        $query->whereDate('created_at', '>=', $request->date_from);
+    }
+
+    // Lọc ngày đặt đến
+    if ($request->filled('date_to')) {
+        $query->whereDate('created_at', '<=', $request->date_to);
+    }
+
+    // Lọc từ khóa (mã đơn hàng hoặc người đặt)
+    if ($request->filled('keyword')) {
+        $keyword = $request->keyword;
+        $query->where(function ($q) use ($keyword) {
+            $q->where('order_code', 'like', "%{$keyword}%")
+              ->orWhereHas('user', function ($q2) use ($keyword) {
+                  $q2->where('name', 'like', "%{$keyword}%");
+              });
+        });
+    }
+
+    // Lấy danh sách đơn hàng có phân trang
+    $orders = $query->with('user', 'items')->orderBy('created_at', 'desc')->paginate(15);
+
     return view('backend.orders.index', compact('orders'));
 }
+
 
 
     // Hiển thị chi tiết đơn hàng
@@ -59,19 +103,64 @@ class OrderController extends Controller
 
     // Hàm cập nhật trạng thái đơn hàng
     public function updateStatus(Request $request, Order $order)
-    {
-        // Validate dữ liệu đầu vào
-        $request->validate([
-            'status' => 'required|in:pending,confirmed,processing,shipped,in_transit,delivered,cancelled,failed_delivery',
-        ]);
+{
+    // Xác thực trạng thái được gửi lên
+    $request->validate([
+        'status' => 'required|in:pending,confirmed,processing,shipped,in_transit,delivered,cancelled,failed_delivery',
+    ]);
 
-        // Cập nhật trạng thái
-        $order->status = $request->status;
-        $order->save();
+    // Xếp hạng mức độ tiến trình đơn hàng
+    $statusOrder = [
+        'pending' => 1,
+        'confirmed' => 2,
+        'processing' => 3,
+        'shipped' => 4,
+        'in_transit' => 5,
+        'delivered' => 6,
+        'cancelled' => 7,
+        'failed_delivery' => 8,
+    ];
 
-        // Trả về trang trước đó với thông báo thành công
-        return redirect()->back()->with('success', 'Cập nhật trạng thái đơn hàng thành công.');
+    $currentStatusRank = $statusOrder[$order->status];
+    $newStatusRank = $statusOrder[$request->status];
+
+    // Không cho phép lùi trạng thái (trừ khi hủy hoặc giao thất bại)
+    if ($newStatusRank < $currentStatusRank && !in_array($request->status, ['cancelled', 'failed_delivery'])) {
+        return response()->json([
+            'message' => 'Không thể quay lại trạng thái trước đó.',
+        ], 422);
     }
+
+    // Cập nhật trạng thái đơn hàng
+    $order->status = $request->status;
+
+    // Xử lý cập nhật trạng thái thanh toán nếu là COD
+    if ($order->payment_method === 'cod') {
+        if ($request->status === 'delivered') {
+            $order->payment_status = 'paid';
+        } else {
+            $order->payment_status = 'unpaid';
+        }
+    }
+
+    $order->save();
+
+    // Load quan hệ user nếu chưa có
+    $order->loadMissing('user');
+
+    // Gửi email thông báo nếu có email
+    if ($order->user && $order->user->email) {
+        Mail::to($order->user->email)->send(new OrderStatusUpdated($order));
+    }
+
+    return response()->json([
+        'message' => 'Cập nhật trạng thái đơn hàng thành công.',
+        'status' => $order->status,
+        'payment_status' => $order->payment_status,
+    ]);
+}
+
+
 
     public function destroy(Order $order)
     {
@@ -86,3 +175,4 @@ class OrderController extends Controller
         return redirect()->route('admin.orders.index')->with('success', 'Đơn hàng đã được xóa thành công.');
     }
 }
+

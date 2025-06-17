@@ -6,36 +6,36 @@ use App\Http\Controllers\Controller;
 use App\Models\admin\Blog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class BlogController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-  public function index(Request $request)
-{
-    $data = $request->validate([
-        'date_from' => 'nullable|date',
-        'date_to'   => 'nullable|date|after_or_equal:date_from',
-    ]);
+    public function index(Request $request)
+    {
+        $data = $request->validate([
+            'start_date' => 'nullable|date',
+            'end_date'   => 'nullable|date|after_or_equal:start_date',
+        ]);
 
-    $query = Blog::query();
+        $query = Blog::query();
 
-    // Lọc theo ngày
-    if (!empty($data['date_from'])) {
-        $query->whereDate('created_at', '>=', $data['date_from']);
+        // Lọc theo ngày bắt đầu hiển thị
+        if ($request->has('start_date') && $request->input('start_date')) {
+            $query->whereDate('start_date', '>=', $request->input('start_date'));
+        }
+
+        // Lọc theo ngày kết thúc hiển thị
+        if ($request->has('end_date') && $request->input('end_date')) {
+            $query->whereDate('end_date', '<=', $request->input('end_date'));
+        }
+
+        $blog = $query->orderBy('id', 'desc')->get();
+
+        return view('backend.blogs.index', compact('blog'));
     }
-
-    if (!empty($data['date_to'])) {
-        $query->whereDate('created_at', '<=', $data['date_to']);
-    }
-
-    $blog = $query->latest()
-        ->paginate(10)
-        ->appends($request->only(['date_from', 'date_to'])); // Giữ lại dữ liệu lọc trên phân trang
-
-    return view('backend.blogs.index', compact('blog'));
-}
 
     /**
      * Show the form for creating a new resource.
@@ -53,7 +53,9 @@ class BlogController extends Controller
         $request->validate([
             'title' => 'required|string|max:200',
             'content' => 'required|string',
-            'thumbnail' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'thumbnail' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date'
         ]);
 
         // Handle file upload
@@ -68,7 +70,13 @@ class BlogController extends Controller
             'title' => $request->title,
             'slug' => Str::slug($request->title),
             'content' => $request->content,
-            'thumbnail' => $thumbnail
+            'thumbnail' => $thumbnail,
+            'start_date' => $request->start_date
+                ? Carbon::parse($request->start_date)->startOfDay()->format('Y-m-d')
+                : null,
+            'end_date' => $request->end_date
+                ? Carbon::parse($request->end_date)->endOfDay()->format('Y-m-d')
+                : null
         ]);
 
         return redirect()->route('admin.blog.index')
@@ -101,7 +109,9 @@ class BlogController extends Controller
         $request->validate([
             'title' => 'required|string|max:200',
             'content' => 'required|string',
-            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date'
         ]);
 
         $blog = Blog::findOrFail($id);
@@ -122,6 +132,13 @@ class BlogController extends Controller
         $blog->title = $request->title;
         $blog->slug = Str::slug($request->title);
         $blog->content = $request->content;
+        $blog->start_date = $request->start_date
+            ? Carbon::parse($request->start_date)->startOfDay()->format('Y-m-d')
+            : null;
+
+        $blog->end_date = $request->end_date
+            ? Carbon::parse($request->end_date)->endOfDay()->format('Y-m-d')
+            : null;
         $blog->save();
 
         return redirect()->route('admin.blog.index')
@@ -129,20 +146,140 @@ class BlogController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Kiểm tra blog có đang hiển thị để chặn xóa mềm.
      */
-    public function destroy(string $id)
+    protected function isCurrentlyDisplaying(Blog $blog): bool
+    {
+        return $blog->active && $blog->end_date && now()->lessThanOrEqualTo(Carbon::parse($blog->end_date)->endOfDay());
+    }
+
+    /**
+     * Xóa mềm một blog (nếu không còn hiển thị).
+     */
+    public function softDelete(string $id)
     {
         $blog = Blog::findOrFail($id);
-        
-        // Delete thumbnail file
-        if ($blog->thumbnail && file_exists(public_path($blog->thumbnail))) {
-            unlink(public_path($blog->thumbnail));
+
+        if ($this->isCurrentlyDisplaying($blog)) {
+            return redirect()->route('admin.blog.index')->with('error', 'Không thể xóa blog đang trong thời gian hiển thị.');
         }
 
         $blog->delete();
+        return redirect()->route('admin.blog.index')->with('success', 'Blog đã được chuyển vào thùng rác.');
+    }
 
-        return redirect()->route('admin.blog.index')
-            ->with('success', 'Bài viết đã được xóa thành công!');
+    /**
+     * Xóa vĩnh viễn một blog đã bị xóa mềm.
+     */
+    public function forceDelete(string $id)
+    {
+        $blog = Blog::onlyTrashed()->findOrFail($id);
+
+        if ($blog->image) {
+            Storage::disk('public')->delete($blog->image);
+        }
+
+        $blog->forceDelete();
+        return redirect()->route('admin.blog.trashed')->with('success', 'Đã xoá vĩnh viễn blog.');
+    }
+
+    /**
+     * Khôi phục một blog đã bị xóa mềm.
+     */
+    public function restore(string $id)
+    {
+        Blog::onlyTrashed()->findOrFail($id)->restore();
+        return redirect()->route('admin.blog.index')->with('success', 'Blog đã được khôi phục.');
+    }
+
+    /**
+     * Danh sách các blog đã bị xóa mềm.
+     */
+    public function trashed()
+    {
+        $blogs = Blog::onlyTrashed()->get();
+        return view('backend.blogs.trashed', compact('blogs'));
+    }
+
+    /**
+     * Xóa mềm nhiều blog cùng lúc.
+     */
+    public function bulkDelete(Request $request)
+    {
+        $ids = collect($request->input('ids'))->filter()->values();
+
+        $blogs = Blog::whereIn('id', $ids)->get();
+
+        $deletable = [];
+        $blockedTitles = [];
+
+        foreach ($blogs as $blog) {
+            if ($this->isCurrentlyDisplaying($blog)) {
+                $blockedTitles[] = $blog->title;
+            } else {
+                $deletable[] = $blog->id;
+            }
+        }
+
+        Blog::whereIn('id', $deletable)->delete();
+
+        $deletedCount = count($deletable);
+        $blockedCount = count($blockedTitles);
+
+        $messages = [];
+        if ($deletedCount) {
+            $messages[] = "Đã xóa mềm $deletedCount blog.";
+        }
+        if ($blockedCount) {
+            $messages[] = "Không thể xóa $blockedCount blog đang hiển thị: " . implode(', ', $blockedTitles);
+        }
+
+        return response()->json([
+            'message' => implode(' ', $messages),
+            'status' => $deletedCount > 0
+                ? ($blockedCount > 0 ? 'warning' : 'success')
+                : 'error',
+            'deletedCount' => $deletedCount
+        ], 200);
+    }
+
+    /**
+     * Khôi phục nhiều blog đã bị xóa mềm.
+     */
+    public function bulkRestore(Request $request)
+    {
+        $ids = collect($request->input('ids'))->filter()->values();
+        Blog::onlyTrashed()->whereIn('id', $ids)->restore();
+
+        return response()->json([
+            'message' => 'Đã khôi phục các blog đã chọn thành công.',
+            'status' => 'success'
+        ], 200);
+    }
+
+    /**
+     * Xóa vĩnh viễn nhiều blog.
+     */
+    public function bulkForceDelete(Request $request)
+    {
+        $ids = collect($request->input('ids'))->filter()->values();
+
+        $deletedCount = 0;
+
+        $blogs = Blog::onlyTrashed()->whereIn('id', $ids)->get();
+
+        foreach ($blogs as $blog) {
+            if ($blog->image) {
+                Storage::disk('public')->delete($blog->image);
+            }
+            $blog->forceDelete();
+            $deletedCount++;
+        }
+
+        return response()->json([
+            'message' => "Đã xóa vĩnh viễn $deletedCount blog.",
+            'status' => 'success',
+            'deletedCount' => $deletedCount
+        ], 200);
     }
 }

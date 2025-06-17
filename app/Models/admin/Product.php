@@ -6,15 +6,18 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Models\admin\Category;
 use App\Models\admin\Region;
-use App\Models\admin\Variant;
+use App\Models\admin\ProductVariant;
 use App\Models\admin\Review;
 use App\Models\admin\Comment;
 use App\Models\admin\ProductImage;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
-    public $timestamps = true;
+    use SoftDeletes;
 
+    protected $table = 'products';
+    
     protected $fillable = [
         'seller_id',
         'category_id',
@@ -22,18 +25,19 @@ class Product extends Model
         'name',
         'slug',
         'description',
-        'price',
-        'stock',
+        'short_desc',
         'image',
         'origin',
         'view_total',
         'view_day',
         'view_week',
         'view_month',
+        'active',
         'created_at',
         'updated_at'
     ];
 
+    // Relationships
     public function category()
     {
         return $this->belongsTo(Category::class, 'category_id');
@@ -51,7 +55,7 @@ class Product extends Model
 
     public function variants()
     {
-        return $this->hasMany(Variant::class, 'product_id');
+        return $this->hasMany(ProductVariant::class, 'product_id', 'id');
     }
 
     public function reviews()
@@ -59,17 +63,57 @@ class Product extends Model
         return $this->hasMany(Review::class)->latest();
     }
 
-    public function images()
+    public function product_images()
     {
-        return $this->hasMany(ProductImage::class);
+        return $this->hasMany(ProductImage::class, 'product_id', 'id');
     }
 
     public function comments()
     {
         return $this->hasMany(Comment::class);
     }
-    public function coupons()
+
+    // Scopes
+    public function scopeActive($query)
     {
-        return $this->belongsToMany(Coupons::class, 'coupon_product', 'product_id', 'coupon_id');
+        return $query->where('active', 1);
+    }
+
+    public function scopeInactive($query)
+    {
+        return $query->where('active', 0);
+    }
+
+    // Accessors & Mutators
+    public function getStatusTextAttribute()
+    {
+        return $this->active ? 'Đang bán' : 'Ngừng bán';
+    }
+
+    public function getStatusClassAttribute()
+    {
+        return $this->active ? 'success' : 'danger';
+    }
+
+    public function getMainImageAttribute()
+    {
+        return $this->image ? asset('storage/' . $this->image) : asset('images/no-image.png');
+    }
+
+    public function getFirstVariantAttribute()
+    {
+        return $this->variants()->active()->first();
+    }
+
+    public function getPriceAttribute()
+    {
+        $variant = $this->first_variant;
+        return $variant ? $variant->price : 0;
+    }
+
+    public function getStockAttribute()
+    {
+        $variant = $this->first_variant;
+        return $variant ? $variant->stock : 0;
     }
 }
