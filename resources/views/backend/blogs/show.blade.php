@@ -45,14 +45,14 @@
                             </div>
                             <div class="details-list">
                                  <div class="detail-item">
-    <div class="detail-icon">
-        <i class="fas fa-user"></i>
-    </div>
-    <div class="detail-content">
-        <label><strong>Tiêu đề</strong></label>
-        <span>{{ $blog->title }}</span>
-    </div>
-</div>
+                                    <div class="detail-icon">
+                                        <i class="fas fa-name"></i>
+                                    </div>
+                                    <div class="detail-content">
+                                        <label>Tiêu đề</label>
+                                        <span>{{ $blog->title }}</span>
+                                    </div>
+                                </div>
                                 <div class="detail-item">
                                     <div class="detail-icon">
                                         <i class="fas fa-link"></i>
