@@ -116,4 +116,11 @@ class Product extends Model
         $variant = $this->first_variant;
         return $variant ? $variant->stock : 0;
     }
+public function firstImage()
+{
+    return $this->hasOne(ProductImage::class, 'product_id')->inRandomOrder();
+
+}
+
+
 }
