@@ -29,6 +29,7 @@ public function index(Request $request)
         $query->where('payment_status', $request->payment_status);
     }
 
+    // Lọc phương thức thanh toán
     if ($request->filled('payment_method')) {
         $query->where('payment_method', $request->payment_method);
     }

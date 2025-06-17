@@ -246,22 +246,22 @@
 
 @push('scripts')
     <script>
-        $(document).ready(function() {
-            $('#blog_table_id').DataTable({
-                language: {
-                    search: "Tìm kiếm:",
-                    lengthMenu: "",
-                    info: "Hiển thị _START_ đến _END_ trong tổng _TOTAL_ blog",
-                    paginate: {
-                        first: "Đầu",
-                        last: "Cuối",
-                        next: "Sau",
-                        previous: "Trước"
-                    },
-                    zeroRecords: "Không tìm thấy blog nào đã bị xóa.",
-                    emptyTable: "Không có blog nào đã bị xóa.",
-                }
-            });
+        // $(document).ready(function() {
+        //     $('#blog_table_id').DataTable({
+        //         language: {
+        //             search: "Tìm kiếm:",
+        //             lengthMenu: "",
+        //             info: "Hiển thị _START_ đến _END_ trong tổng _TOTAL_ blog",
+        //             paginate: {
+        //                 first: "Đầu",
+        //                 last: "Cuối",
+        //                 next: "Sau",
+        //                 previous: "Trước"
+        //             },
+        //             zeroRecords: "Không tìm thấy blog nào đã bị xóa.",
+        //             emptyTable: "Không có blog nào đã bị xóa.",
+        //         }
+        //     });
 
             // Xử lý sự kiện click nút khôi phục
             $('.restore-btn').click(function() {

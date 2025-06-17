@@ -103,6 +103,10 @@ Route::post('/register', [RegisterController::class, 'register']);
 Route::get('/login', [LoginController::class, 'login'])->name('login');
 Route::post('/login', [LoginController::class, 'checklogin'])->name('checklogin');
 
+// Đăng xuất
+Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+
+
 // Các trang client tĩnh
 Route::view('/wishlist', 'frontend.wishlist.wishlist')->name('wishlist');
 Route::view('/compare', 'frontend.pages.compare')->name('compare');
@@ -124,9 +128,8 @@ Route::get('/blog-detail/{id}', [ClientBlogController::class, 'show'])->name('bl
 // ADMIN:
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin'], function () {
 
-    Route::get('home', [HomeController::class, 'home'])->name('home');
-
-    // Route cho dashboard tổng quan và báo cáo
+    // Route::get('home', [HomeController::class, 'home'])->name('home');
+     // Route cho dashboard tổng quan và báo cáo
     Route::get('/reports', [ReportController::class, 'dashboard'])->name('dashboard');
 
     // Route::group(['prefix' => 'reports', 'as' => 'reports.'], function () {
