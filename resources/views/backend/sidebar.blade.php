@@ -97,37 +97,8 @@
                     </ul>
                 </li>
 
-                <li class="sidebar-list">
-                    <a class="sidebar-link sidebar-title" href="javascript:void(0)">
-                        <i class="ri-user-3-line"></i>
-                        <span>Người dùng</span>
-                    </a>
-                    <ul class="sidebar-submenu">
-                        <li><a href="{{ route('admin.user.index') }}">Tài khoản</a></li>
-                        <li><a href="{{ route('admin.user.hidden') }}">Tài khoản đã ẩn</a></li>
-                    </ul>
-                </li>
-                <li class="sidebar-list">
-                    <a class="sidebar-link sidebar-title" href="javascript:void(0)">
-                        <i class="ri-feedback-line"></i>
-                        <span>Bình luận</span>
-                    </a>
-                    <ul class="sidebar-submenu">
-                        <li>
-                            <a href="{{ route('admin.comments.index') }}">Danh sách bình luận </a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="sidebar-list">
-                    <a class="sidebar-link sidebar-title" href="javascript:void(0)">
-                        <i class="ri-megaphone-line"></i>
-                        <span>Tin tức</span>
-                    </a>
-                    <ul class="sidebar-submenu">
-                        <li><a href="{{ url('/admin/blog/index') }}"> Danh sách tin tức</a></li>
-                        <li><a href="{{ url('/admin/blog/trashed') }}">Thùng rác</a></li>
-                    </ul>
-                </li>
+               
+               
                 <li class="sidebar-list">
                     <a class="sidebar-link" href="{{ url('/admin/orders') }}">
                         <i class="ri-list-check-2"></i>
