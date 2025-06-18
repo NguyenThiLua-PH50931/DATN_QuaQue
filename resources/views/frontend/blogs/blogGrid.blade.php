@@ -134,7 +134,7 @@
                                                     </a>
 
                                                     <div class="recent-detail">
-                                                        <a href="#">
+                                                        <a href="{{ route('blogs-detail', ['id' => $item->id]) }}">
                                                             <h5 class="recent-name">{{ $item->title }}</h5>
                                                         </a>
                                                         <h6><span>{{ $item->created_at ? $item->created_at->format('F d, Y') : 'Chưa có ngày tạo' }}</span>

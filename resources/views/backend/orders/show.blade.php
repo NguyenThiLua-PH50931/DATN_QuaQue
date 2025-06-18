@@ -246,11 +246,13 @@ ul {
                                         <tbody>
                                             @foreach ($order->items as $item)
                                                 <tr>
-                                                    <td style="width: 60px">
-                                                        <img src="{{ asset('backend/assets/images/profile/' . $item->product_image) }}"
-                                                            class="img-thumbnail" style="width: 60px; height: 60px"
+                                                    <td style="width: 80px">
+                                                        <img src="{{ asset('storage/' . $item->product_image) }}" 
+                                                            class="img-thumbnail" 
+                                                            style="width:80px; height:80px; object-fit:cover;" 
                                                             alt="{{ $item->product_name }}">
                                                     </td>
+
                                                     <td>
                                                         {{ $item->product_name }}
                                                        @if ($item->productVariant)
