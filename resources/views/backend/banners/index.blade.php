@@ -47,10 +47,10 @@
                                             <th style="color: black; background-color: #f8f9fa;">ID</th>
                                             <th style="color: black; background-color: #f8f9fa;">Ảnh</th>
                                             <th style="color: black; background-color: #f8f9fa;">Vị trí</th>
-                                            <th style="color: black; background-color: #f8f9fa;">Link</th>
+                                            {{-- <th style="color: black; background-color: #f8f9fa;">Link</th>
                                             <th style="color: black; background-color: #f8f9fa;">Hoạt động</th>
                                             <th style="color: black; background-color: #f8f9fa;">Ngày hiển thị </th>
-                                            <th style="color: black; background-color: #f8f9fa;">Ngày dừng hiển thị</th>
+                                            <th style="color: black; background-color: #f8f9fa;">Ngày dừng hiển thị</th> --}}
                                             <th style="color: black; background-color: #f8f9fa;">Hành động</th>
                                         </tr>
                                     </thead>
@@ -85,11 +85,11 @@
                                                 </td>
                                                 <td>{{ $locationNames[$banner->location] ?? ($banner->location ?? 'N/A') }}
                                                 </td>
-                                                <td>{{ $banner->link }}</td>
+                                                {{-- <td>{{ $banner->link }}</td>
                                                 <td>{{ $banner->active ? 'Có' : 'Không' }}</td>
                                                 <td>{{ $banner->display_at ? $banner->display_at->format('d-m-Y H:i:s') : 'N/A' }}</td>
                                                 <td>{{ $banner->display_end_at ? $banner->display_end_at->format('d-m-Y H:i:s') : 'N/A' }}
-                                                </td>
+                                                </td> --}}
                                                 <td>
                                                     <ul>
                                                         <li>
