@@ -44,14 +44,14 @@
                                             <th style="color: black; background-color: #f8f9fa; width: 5%;">
                                                 <input type="checkbox" id="select-all-checkbox">
                                             </th>
-                                            <th style="color: black; background-color: #f8f9fa; width: 5%;">ID</th>
-                                            <th style="color: black; background-color: #f8f9fa; width: 20%;">Ảnh</th>
-                                            <th style="color: black; background-color: #f8f9fa; width: 35%;">Vị trí</th>
-                                            <th style="color: black; background-color: #f8f9fa; width: 15%;">Hoạt động</th>
+                                            <th style="color: black; background-color: #f8f9fa;">ID</th>
+                                            <th style="color: black; background-color: #f8f9fa;">Ảnh</th>
+                                            <th style="color: black; background-color: #f8f9fa;">Vị trí</th>
                                             {{-- <th style="color: black; background-color: #f8f9fa;">Link</th>
+                                            <th style="color: black; background-color: #f8f9fa;">Hoạt động</th>
                                             <th style="color: black; background-color: #f8f9fa;">Ngày hiển thị </th>
                                             <th style="color: black; background-color: #f8f9fa;">Ngày dừng hiển thị</th> --}}
-                                            <th style="color: black; background-color: #f8f9fa; width: 20%;">Hành động</th>
+                                            <th style="color: black; background-color: #f8f9fa;">Hành động</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -89,6 +89,10 @@
                                                 {{-- <td>{{ $banner->link }}</td>
                                                 <td>{{ $banner->display_at ? $banner->display_at->format('d-m-Y H:i:s') : 'N/A' }}
                                                 </td>
+
+                                                {{-- <td>{{ $banner->link }}</td>
+                                                <td>{{ $banner->active ? 'Có' : 'Không' }}</td>
+                                                <td>{{ $banner->display_at ? $banner->display_at->format('d-m-Y H:i:s') : 'N/A' }}</td>
                                                 <td>{{ $banner->display_end_at ? $banner->display_end_at->format('d-m-Y H:i:s') : 'N/A' }}
                                                 </td> --}}
                                                 <td>
