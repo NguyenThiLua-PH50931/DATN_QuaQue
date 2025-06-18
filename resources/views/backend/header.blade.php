@@ -98,32 +98,8 @@
                             </div>
                         </div>
 
+                        <!-- Phần dropdown menu chỉ chứa nút kích hoạt modal và các link -->
                         <ul class="profile-dropdown onhover-show-div">
-                            <!-- Modal -->
-                            <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel"
-                                aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="logoutModalLabel">Xác nhận đăng xuất</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Đóng"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            Bạn có chắc muốn đăng xuất không?
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary"
-                                                data-bs-dismiss="modal">Hủy</button>
-                                            <button type="button" class="btn btn-primary"
-                                                onclick="document.getElementById('logout-form').submit();">Đăng
-                                                xuất</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Nút logout kích hoạt modal -->
                             <li>
                                 <a href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">
                                     <i data-feather="log-out"></i>
@@ -131,15 +107,45 @@
                                 </a>
                             </li>
 
-                            <!-- Form logout ẩn -->
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                                @csrf
-                            </form>
-                            </ul>
-                        @else
-                            {{-- Tùy chọn: Hiển thị liên kết đăng nhập hoặc nội dung khác khi chưa đăng nhập --}}
-                            {{-- <li><a href="{{ route('login') }}">Đăng nhập</a></li> --}}
-                        @endauth
+                            <li>
+                                <a href="{{ route('client.home') }}">
+                                    <i data-feather="home"></i>
+                                    <span>Quay lại trang chủ</span>
+                                </a>
+                            </li>
+                        </ul>
+
+                        <!-- Modal đặt ngoài ul, ví dụ đặt ngay dưới div .page-header -->
+                        <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="logoutModalLabel">Xác nhận đăng xuất</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Đóng"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Bạn có chắc muốn đăng xuất không?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Hủy</button>
+                                        <button type="button" class="btn btn-primary"
+                                            onclick="document.getElementById('logout-form').submit();">Đăng xuất</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form logout ẩn -->
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            @csrf
+                        </form>
+                    @else
+                        {{-- Tùy chọn: Hiển thị liên kết đăng nhập hoặc nội dung khác khi chưa đăng nhập --}}
+                        {{-- <li><a href="{{ route('login') }}">Đăng nhập</a></li> --}}
+                    @endauth
                 </li>
             </ul>
         </div>

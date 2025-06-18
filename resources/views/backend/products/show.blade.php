@@ -446,7 +446,7 @@
             },
             "columnDefs": [{
                 "orderable": false,
-                "targets": [0]
+                "targets": [0] // Cột checkbox và actions không cho sắp xếp
             }]
         });
 

@@ -22,18 +22,18 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call([
-            UsersTableSeeder::class,                // Tạo user trước
-            AddressSeeder::class,                   // Tạo địa chỉ, cần user_id
-            ShippingMethodsTableSeeder::class,      // Tạo phương thức giao hàng, cần trước orders
-            CategoriesTableSeeder::class,           // Tạo danh mục sản phẩm
-            RegionsTableSeeder::class,              // Tạo vùng miền (nếu dùng)
-            ProductsTableSeeder::class,             // Tạo sản phẩm, cần categories, regions
-            OrdersWithItemsSeeder::class,         // Tạo chi tiết đơn hàng, cần orders, products
-            CommentSeeder::class,// Thêm comment (nếu có)
-            ReviewSeeder::class,
-            CouponSeeder::class,
-            BlogsTableSeeder::class,
-            CouponSeeder::class,
+            // UsersTableSeeder::class,                // Tạo user trước
+            // AddressSeeder::class,                   // Tạo địa chỉ, cần user_id
+            // ShippingMethodsTableSeeder::class,      // Tạo phương thức giao hàng, cần trước orders
+            // CategoriesTableSeeder::class,           // Tạo danh mục sản phẩm
+            // RegionsTableSeeder::class,              // Tạo vùng miền (nếu dùng)
+            // ProductsTableSeeder::class,             // Tạo sản phẩm, cần categories, regions
+            // OrdersWithItemsSeeder::class,         // Tạo chi tiết đơn hàng, cần orders, products
+            // CommentSeeder::class,// Thêm comment (nếu có)
+            // ReviewSeeder::class,
+            // CouponSeeder::class,
+            // BlogsTableSeeder::class,
+            // CouponSeeder::class,
         ]);
     }
 }
