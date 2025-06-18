@@ -132,22 +132,22 @@
                         <table id="variantTable" class="table product-table align-middle">
                             <thead>
                                 <tr>
-                                    <th><input type="checkbox" id="select-all-variants"></th>
+                                    {{-- <th><input type="checkbox" id="select-all-variants"></th> --}}
                                     <th>Tên biến thể</th>
                                     <th>Mô tả</th>
                                     <th>Giá</th>
                                     <th>Số lượng</th>
                                     <th>SKU</th>
                                     <th>Trạng thái</th>
-                                    <th>Actions</th>
+                                    {{-- <th>Actions</th> --}}
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($product->variants as $variant)
                                 <tr class="product-row">
-                                    <td>
+                                    {{-- <td>
                                         <input type="checkbox" class="variant-checkbox row-checkbox" name="variant_ids[]" value="{{ $variant->id }}">
-                                    </td>
+                                    </td> --}}
                                     <td>
                                         <a href="{{ route('admin.products.variant.show', $variant->id) }}" class="fw-bold text-primary" style="font-size:16px;">
                                             {{ $variant->name }}
@@ -172,7 +172,7 @@
                                             {{ $variant->active ? 'Đang bán' : 'Ngừng bán' }}
                                         </span>
                                     </td>
-                                    <td>
+                                    {{-- <td>
                                         <a href="{{ route('admin.products.variant.show', $variant->id) }}" class="action-link text-decoration-none me-2">
                                             <i class="ri-eye-line"></i>
                                         </a>
@@ -184,7 +184,7 @@
                                             data-id="{{ $variant->id }}" data-name="{{ $variant->name }}">
                                             <i class="ri-delete-bin-line"></i>
                                         </a>
-                                    </td>
+                                    </td> --}}
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -302,7 +302,7 @@
 @push('styles')
 <link rel="stylesheet" href="//cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
 <style>
-    .gallery-container {
+    /* .gallery-container {
         display: flex;
         gap: 12px;
         max-width: 465px;
@@ -320,7 +320,7 @@
         object-fit: cover;
         border-radius: 7px;
         border: 2px solid #ccc;
-    }
+    } */
 
     .main-image-wrapper {
         flex: 1;
@@ -364,7 +364,7 @@
         text-decoration: none;
     }
 
-    .variant-name:hover {
+    /* .variant-name:hover {
         text-decoration: underline;
     }
 
@@ -396,6 +396,7 @@
         color: #7c3aed !important;
         font-weight: 500;
     }
+        */
 </style>
 @endpush
 
@@ -445,7 +446,7 @@
             },
             "columnDefs": [{
                 "orderable": false,
-                "targets": [0, 7] // Cột checkbox và actions không cho sắp xếp
+                "targets": [0]
             }]
         });
 
