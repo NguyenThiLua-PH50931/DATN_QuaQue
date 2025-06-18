@@ -509,6 +509,45 @@
     .action-icons a.text-secondary:hover {
         color: #3ba55d !important;
     }
+
+    body.dark .filter-dropdown-menu {
+        background-color: #2c2c2c !important; /* Đảm bảo nền tối hơn */
+        color: #007bff !important; /* Màu chữ xanh dương sáng hơn */
+    }
+
+    body.dark .filter-dropdown-menu .filter-search-input {
+        background-color: #3a3a3a !important;
+        color: #007bff !important;
+        border-color: #555 !important;
+    }
+
+    body.dark .filter-dropdown-menu .filter-search-input::placeholder {
+        color: #888 !important; /* Thay đổi màu placeholder cho phù hợp */
+    }
+
+    body.dark .filter-dropdown-menu label {
+        color: #007bff !important; /* Đảm bảo màu chữ hiển thị rõ */
+    }
+
+    body.dark .filter-dropdown-menu label span {
+        color: #007bff !important; /* Đảm bảo màu chữ hiển thị rõ */
+    }
+
+    body.dark .filter-dropdown-menu .filter-selected-items {
+        color: #007bff !important;
+    }
+
+    body.dark .filter-dropdown-toggle {
+        color: #007bff !important; /* Đảm bảo nút filter hiển thị rõ chữ */
+        border-color: #555 !important;
+        background-color: #3a3a3a !important;
+    }
+
+    body.dark .filter-dropdown-toggle:hover {
+        background-color: #4a4a4a !important;
+    }
+
+    /* Các quy tắc CSS cho bảng và phân trang sẽ được bỏ qua */
 </style>
 @endsection
 @push('scripts')

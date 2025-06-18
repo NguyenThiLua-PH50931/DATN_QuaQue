@@ -14,53 +14,80 @@
                         </div>
 
                         <div class="p-6 rounded-lg shadow-md">
-                            <div class="mb-3">
-                                <label class="form-label">ID:</label>
-                                <p class="form-control-plaintext">{{ $banner->id }}</p>
+                            <div class="mb-3 row">
+                                <div class="col-md-3">
+                                    <label class="form-label fw-bold">ID:</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <p class="form-control-plaintext">{{ $banner->id }}</p>
+                                </div>
                             </div>
 
-                            <div class="mb-3">
-                                <h5 class="fw-bold">Tiêu đề:</h5>
-                                <div class="ck-content">{!! $banner->title !!}</div>
+                            <div class="mb-3 row">
+                                <div class="col-md-3">
+                                    <h5 class="fw-bold">Tiêu đề:</h5>
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="ck-content">{!! $banner->title !!}</div>
+                                </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Ảnh:</label>
-                                @if ($banner->image)
-                                    <img src="{{ asset('storage/' . $banner->image) }}" alt="{{ $banner->title }}" class="img-fluid mb-2" style="max-width: 200px;">
-                                @else
-                                    <p>Không có ảnh.</p>
-                                @endif
+                            <div class="mb-3 row">
+                                <div class="col-md-3">
+                                    <label class="form-label fw-bold">Ảnh:</label>
+                                </div>
+                                <div class="col-md-9">
+                                    @if ($banner->image)
+                                        <img src="{{ asset('storage/' . $banner->image) }}" alt="{{ $banner->title }}" class="img-fluid mb-2" style="max-width: 200px;">
+                                    @else
+                                        <p>Không có ảnh.</p>
+                                    @endif
+                                </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Link:</label>
-                                <p class="form-control-plaintext">{{ $banner->link ?? 'N/A' }}</p>
+                            <div class="mb-3 row">
+                                <div class="col-md-3">
+                                    <label class="form-label fw-bold">Link:</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <p class="form-control-plaintext">{{ $banner->link ?? 'N/A' }}</p>
+                                </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Hoạt động:</label>
-                                <p class="form-control-plaintext">{{ $banner->active ? 'Có' : 'Không' }}</p>
+                            <div class="mb-3 row">
+                                <div class="col-md-3">
+                                    <label class="form-label fw-bold">Hoạt động:</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <p class="form-control-plaintext">{{ $banner->active ? 'Có' : 'Không' }}</p>
+                                </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Hiển thị lúc:</label>
-                                <p class="form-control-plaintext">{{ $banner->display_at ?? 'N/A' }}</p>
+                            <div class="mb-3 row">
+                                <div class="col-md-3">
+                                    <label class="form-label fw-bold">Vị trí:</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <p class="form-control-plaintext">{{ $banner->location ?? 'N/A' }}</p>
+                                </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Vị trí:</label>
-                                <p class="form-control-plaintext">{{ $banner->location ?? 'N/A' }}</p>
+                            <div class="mb-3 row">
+                                <div class="col-md-3">
+                                    <label class="form-label fw-bold">Ngày hiển thị:</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <p class="form-control-plaintext">{{ $banner->display_at ?? 'N/A' }}</p>
+                                </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Ngày tạo:</label>
-                                <p class="form-control-plaintext">{{ $banner->created_at }}</p>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Ngày cập nhật:</label>
-                                <p class="form-control-plaintext">{{ $banner->updated_at }}</p>
+                            <div class="mb-3 row">
+                                <div class="col-md-3">
+                                    <label class="form-label fw-bold">Ngày kết thúc hiển thị:</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <p class="form-control-plaintext">{{ $banner->display_end_at ?? 'N/A' }}</p>
+                                </div>
                             </div>
 
                             <div class="d-flex justify-content-between">
