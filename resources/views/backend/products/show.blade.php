@@ -139,7 +139,7 @@
                                     <th>Số lượng</th>
                                     <th>SKU</th>
                                     <th>Trạng thái</th>
-                                    <th>Actions</th>
+                                    {{-- <th>Actions</th> --}}
                                 </tr>
                             </thead>
                             <tbody>
@@ -172,7 +172,7 @@
                                             {{ $variant->active ? 'Đang bán' : 'Ngừng bán' }}
                                         </span>
                                     </td>
-                                    <td>
+                                    {{-- <td>
                                         <a href="{{ route('admin.products.variant.show', $variant->id) }}" class="action-link text-decoration-none me-2">
                                             <i class="ri-eye-line"></i>
                                         </a>
@@ -184,7 +184,7 @@
                                             data-id="{{ $variant->id }}" data-name="{{ $variant->name }}">
                                             <i class="ri-delete-bin-line"></i>
                                         </a>
-                                    </td>
+                                    </td> --}}
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -445,7 +445,7 @@
             },
             "columnDefs": [{
                 "orderable": false,
-                "targets": [0, 7] // Cột checkbox và actions không cho sắp xếp
+                "targets": [0] // Cột checkbox và actions không cho sắp xếp
             }]
         });
 
