@@ -372,7 +372,7 @@
                                                         </div>
                                                         <div class="product-detail">
                                                         <a
-                                                            href="{{ route('client.product.detail', ['slug' => $product->slug]) }}">
+                                                            href="{{ route('product.detail', ['slug' => $product->slug]) }}">
                                                                 <h6 class="name">{{ $product->name }}</h6>
                                                             </a>
 
@@ -500,7 +500,7 @@
                                                 <div class="label-tag"><span>NEW</span></div>
                                                 <div class="product-image">
                                                 <a
-                                                    href="{{ route('client.product.detail', ['slug' => $product->slug]) }}">
+                                                    href="{{ route('product.detail', ['slug' => $product->slug]) }}">
                                                     <img src="{{ asset('frontend/assets/images/vegetable/product/' . $product->image) }}"
                                                         class="img-fluid blur-up lazyload" alt="{{ $product->name }}">
                                                     </a>
@@ -526,7 +526,7 @@
                                                 </div>
                                                 <div class="product-detail">
                                                 <a
-                                                    href="{{ route('client.product.detail', ['slug' => $product->slug]) }}">
+                                                    href="{{ route('product.detail', ['slug' => $product->slug]) }}">
                                                         <h6 class="name h-100">{{ $product->name }}</h6>
                                                     </a>
 

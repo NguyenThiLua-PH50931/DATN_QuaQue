@@ -396,6 +396,35 @@
         color: #7c3aed !important;
         font-weight: 500;
     }
+    .bulk-delete-btn[disabled] {
+    background: #e1e8f3 !important;
+    color: #66708a !important;
+    border: none !important;
+    cursor: not-allowed !important;
+    opacity: 1 !important;
+}
+
+.bulk-delete-btn[disabled] .delete-bulk-icon {
+    color: #66708a !important;
+}
+
+.bulk-delete-btn:not([disabled]) {
+    background: #becde4 !important;
+    color: #495057 !important;
+    border: none !important;
+    cursor: pointer !important;
+    box-shadow: 0 2px 8px #becde480;
+    transition: background .5s, color .5s;
+}
+
+.bulk-delete-btn:not([disabled]) .delete-bulk-icon {
+    color: #495057 !important;
+}
+
+.bulk-delete-btn:not([disabled]):hover {
+    background: #aac4e7 !important;
+}
+
 </style>
 @endpush
 
