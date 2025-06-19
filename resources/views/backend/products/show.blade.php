@@ -57,13 +57,13 @@
                         @php
                         $gallery = [];
                         if (!empty($product->main_image) && \Storage::disk('public')->exists(str_replace(asset('storage/'), '', $product->main_image))) {
-                            $gallery[] = $product->main_image;
+                        $gallery[] = $product->main_image;
                         }
                         if ($product->product_images && $product->product_images->count()) {
                         foreach ($product->product_images as $img) {
-                                if (!empty($img->image_url) && \Storage::disk('public')->exists(str_replace(asset('storage/'), '', $img->image_url))) {
-                                    $gallery[] = $img->image_url;
-                                }
+                        if (!empty($img->image_url) && \Storage::disk('public')->exists(str_replace(asset('storage/'), '', $img->image_url))) {
+                        $gallery[] = $img->image_url;
+                        }
                         }
                         }
                         if ($product->variants && $product->variants->count()) {
@@ -90,7 +90,7 @@
                                     style="width:60px; height:60px; object-fit:cover; border-radius:6px; border:2px solid transparent; cursor:pointer;">
                                 @endforeach
                                 @if(empty($gallery))
-                                    <img src="{{ asset('backend/assets/images/placeholder.webp') }}" alt="Không có ảnh" style="width:60px; height:60px; object-fit:cover; border-radius:6px; border:2px solid transparent; cursor:default;">
+                                <img src="{{ asset('backend/assets/images/placeholder.webp') }}" alt="Không có ảnh" style="width:60px; height:60px; object-fit:cover; border-radius:6px; border:2px solid transparent; cursor:default;">
                                 @endif
                             </div>
                         </div>
@@ -132,22 +132,22 @@
                         <table id="variantTable" class="table product-table align-middle">
                             <thead>
                                 <tr>
-                                    <th><input type="checkbox" id="select-all-variants"></th>
+                                    {{-- <th><input type="checkbox" id="select-all-variants"></th> --}}
                                     <th>Tên biến thể</th>
                                     <th>Mô tả</th>
                                     <th>Giá</th>
                                     <th>Số lượng</th>
                                     <th>SKU</th>
                                     <th>Trạng thái</th>
-                                    <th>Actions</th>
+                                    {{-- <th>Actions</th> --}}
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($product->variants as $variant)
                                 <tr class="product-row">
-                                    <td>
+                                    {{-- <td>
                                         <input type="checkbox" class="variant-checkbox row-checkbox" name="variant_ids[]" value="{{ $variant->id }}">
-                                    </td>
+                                    </td> --}}
                                     <td>
                                         <a href="{{ route('admin.products.variant.show', $variant->id) }}" class="fw-bold text-primary" style="font-size:16px;">
                                             {{ $variant->name }}
@@ -172,19 +172,19 @@
                                             {{ $variant->active ? 'Đang bán' : 'Ngừng bán' }}
                                         </span>
                                     </td>
-                                    <td>
+                                    {{-- <td>
                                         <a href="{{ route('admin.products.variant.show', $variant->id) }}" class="action-link text-decoration-none me-2">
-                                            <i class="ri-eye-line"></i>
-                                        </a>
-                                        <a href="{{ route('admin.products.variant.edit', $variant->id) }}" class="action-link text-decoration-none me-2">
-                                            <i class="ri-pencil-line"></i>
-                                        </a>
-                                        <a href="javascript:void(0)" class="action-link text-decoration-none text-danger"
-                                            data-bs-toggle="modal" data-bs-target="#deleteVariantModal"
-                                            data-id="{{ $variant->id }}" data-name="{{ $variant->name }}">
-                                            <i class="ri-delete-bin-line"></i>
-                                        </a>
-                                    </td>
+                                    <i class="ri-eye-line"></i>
+                                    </a>
+                                    <a href="{{ route('admin.products.variant.edit', $variant->id) }}" class="action-link text-decoration-none me-2">
+                                        <i class="ri-pencil-line"></i>
+                                    </a>
+                                    <a href="javascript:void(0)" class="action-link text-decoration-none text-danger"
+                                        data-bs-toggle="modal" data-bs-target="#deleteVariantModal"
+                                        data-id="{{ $variant->id }}" data-name="{{ $variant->name }}">
+                                        <i class="ri-delete-bin-line"></i>
+                                    </a>
+                                    </td> --}}
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -302,7 +302,7 @@
 @push('styles')
 <link rel="stylesheet" href="//cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
 <style>
-    .gallery-container {
+    /* .gallery-container {
         display: flex;
         gap: 12px;
         max-width: 465px;
@@ -320,7 +320,7 @@
         object-fit: cover;
         border-radius: 7px;
         border: 2px solid #ccc;
-    }
+    } */
 
     .main-image-wrapper {
         flex: 1;
@@ -396,35 +396,35 @@
         color: #7c3aed !important;
         font-weight: 500;
     }
+
     .bulk-delete-btn[disabled] {
-    background: #e1e8f3 !important;
-    color: #66708a !important;
-    border: none !important;
-    cursor: not-allowed !important;
-    opacity: 1 !important;
-}
+        background: #e1e8f3 !important;
+        color: #66708a !important;
+        border: none !important;
+        cursor: not-allowed !important;
+        opacity: 1 !important;
+    }
 
-.bulk-delete-btn[disabled] .delete-bulk-icon {
-    color: #66708a !important;
-}
+    .bulk-delete-btn[disabled] .delete-bulk-icon {
+        color: #66708a !important;
+    }
 
-.bulk-delete-btn:not([disabled]) {
-    background: #becde4 !important;
-    color: #495057 !important;
-    border: none !important;
-    cursor: pointer !important;
-    box-shadow: 0 2px 8px #becde480;
-    transition: background .5s, color .5s;
-}
+    .bulk-delete-btn:not([disabled]) {
+        background: #becde4 !important;
+        color: #495057 !important;
+        border: none !important;
+        cursor: pointer !important;
+        box-shadow: 0 2px 8px #becde480;
+        transition: background .5s, color .5s;
+    }
 
-.bulk-delete-btn:not([disabled]) .delete-bulk-icon {
-    color: #495057 !important;
-}
+    .bulk-delete-btn:not([disabled]) .delete-bulk-icon {
+        color: #495057 !important;
+    }
 
-.bulk-delete-btn:not([disabled]):hover {
-    background: #aac4e7 !important;
-}
-
+    .bulk-delete-btn:not([disabled]):hover {
+        background: #aac4e7 !important;
+    }
 </style>
 @endpush
 
@@ -474,7 +474,7 @@
             },
             "columnDefs": [{
                 "orderable": false,
-                "targets": [0, 7] // Cột checkbox và actions không cho sắp xếp
+                "targets": [0] // Cột checkbox và actions không cho sắp xếp
             }]
         });
 
@@ -606,7 +606,8 @@
             }
         } else {
             // Nếu không có ảnh nào trong gallery, đặt ảnh chính thành placeholder
-            mainImage.src = '{{ asset('backend/assets/images/placeholder.webp') }}';
+            mainImage.src = '{{ asset('
+            backend / assets / images / placeholder.webp ') }}';
             console.log('Gallery is empty, displaying placeholder for main image.');
         }
 

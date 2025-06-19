@@ -16,23 +16,17 @@ use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\Admin\AttributeController;
 use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\User\UserController;
-
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\CouponsController;
 use App\Http\Controllers\Admin\RegionController as AdminRegionController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\User\ProfileController;
-
 use App\Http\Controllers\Admin\SupportTicketController;
-
-
 use App\Http\Controllers\Client\ClientHomeController;
-
 use App\Http\Controllers\Client\BlogController as ClientBlogController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\Client\ClientSupportTicketController;
-
 use Illuminate\Support\Facades\Route;
 // use App\Http\Controllers\ProductController as GlobalProductController; // Nếu cần dùng controller gốc ngoài admin/client
 
@@ -106,6 +100,10 @@ Route::post('/register', [RegisterController::class, 'register']);
 Route::get('/login', [LoginController::class, 'login'])->name('login');
 Route::post('/login', [LoginController::class, 'checklogin'])->name('checklogin');
 
+// Đăng xuất
+Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+
+
 // Các trang client tĩnh
 Route::view('/wishlist', 'frontend.wishlist.wishlist')->name('wishlist');
 Route::view('/compare', 'frontend.pages.compare')->name('compare');
@@ -126,8 +124,6 @@ Route::get('/blog-detail/{id}', [ClientBlogController::class, 'show'])->name('bl
 
 // ADMIN:
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin'], function () {
-
-    Route::get('home', [HomeController::class, 'home'])->name('home');
 
     // Route cho dashboard tổng quan và báo cáo
     Route::get('/reports', [ReportController::class, 'dashboard'])->name('dashboard');
@@ -150,6 +146,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
     Route::post('/attribute-values/quick-store', [AdminAttributeValueController::class, 'storeQuick'])->name('attribute_values.storeQuick');
 
     Route::prefix('products')->name('products.')->group(function () {
+        Route::get('/search', [AdminProductController::class, 'search']);
         Route::get('/', [AdminProductController::class, 'index'])->name('index');
         Route::get('/create', [AdminProductController::class, 'create'])->name('create');
         Route::post('/store', [AdminProductController::class, 'store'])->name('store');
@@ -248,12 +245,14 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
 
     // Order
     Route::group(['prefix' => 'orders', 'as' => 'orders.'], function () {
-        Route::get('/', [OrderController::class, 'index'])->name('index');
-        Route::get('/{order}', [OrderController::class, 'show'])->name('show');
-        Route::get('/{order}/tracking', [OrderController::class, 'tracking'])->name('tracking');
-        Route::delete('/{order}', [OrderController::class, 'destroy'])->name('destroy');
-        Route::put('/{order}/update-status', [OrderController::class, 'updateStatus'])->name('updateStatus');
+        Route::get('/', [OrderController::class, 'index'])->name('index');                // Hiển thị danh sách
+        Route::get('/{order}', [OrderController::class, 'show'])->name('show');          // Chi tiết đơn hàng
+        Route::get('/{order}/tracking', [OrderController::class, 'tracking'])->name('tracking');  // Tracking
+        Route::delete('/{order}', [OrderController::class, 'destroy'])->name('destroy'); // Xóa cứng
+        Route::put('/{order}/update-status', [OrderController::class, 'updateStatus'])->name('updateStatus'); // Cập nhật trạng thái
+        Route::patch('/{order}/hide', [OrderController::class, 'hide'])->name('hide');   // Ẩn đơn hàng ✅
     });
+
 
     // User
     Route::group(['prefix' => 'user', 'as' => 'user.'], function () {
@@ -328,19 +327,19 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
     Route::post('/regions/store-quick', [AdminRegionController::class, 'storeQuick'])->name('regions.storeQuick');
     //Route::post('/attributes/store-quick', [AdminAttributeController::class, 'storeQuick'])->name('attributes.storeQuick');
 
-    Route::prefix('products')->name('products.')->group(function () {
-        Route::get('/', [AdminProductController::class, 'index'])->name('index');
-        Route::get('/create', [AdminProductController::class, 'create'])->name('create');
-        Route::post('/store', [AdminProductController::class, 'store'])->name('store');
-        Route::get('/{slug}', [AdminProductController::class, 'show'])->name('show');
-        Route::post('/{id}/toggle', [AdminProductController::class, 'toggleStatus'])->name('toggle');
-        Route::post('/variant/{id}/toggle', [AdminProductController::class, 'toggleVariantStatus'])->name('variant.toggle');
-        Route::post('/bulk-delete', [AdminProductController::class, 'bulkDelete'])->name('bulkDelete');
-        Route::delete('/{id}', [AdminProductController::class, 'destroy'])->name('destroy');
-        Route::get('/{slug}/edit', [AdminProductController::class, 'edit'])->name('edit');
-        Route::post('/{slug}/update', [AdminProductController::class, 'update'])->name('update');
-        Route::delete('/image/{id}', [AdminProductController::class, 'deleteImage'])->name('image.delete');
-    });
+    // Route::prefix('products')->name('products.')->group(function () {
+    //     Route::get('/', [AdminProductController::class, 'index'])->name('index');
+    //     Route::get('/create', [AdminProductController::class, 'create'])->name('create');
+    //     Route::post('/store', [AdminProductController::class, 'store'])->name('store');
+    //     Route::get('/{slug}', [AdminProductController::class, 'show'])->name('show');
+    //     Route::post('/{id}/toggle', [AdminProductController::class, 'toggleStatus'])->name('toggle');
+    //     Route::post('/variant/{id}/toggle', [AdminProductController::class, 'toggleVariantStatus'])->name('variant.toggle');
+    //     Route::post('/bulk-delete', [AdminProductController::class, 'bulkDelete'])->name('bulkDelete');
+    //     Route::delete('/{id}', [AdminProductController::class, 'destroy'])->name('destroy');
+    //     Route::get('/{slug}/edit', [AdminProductController::class, 'edit'])->name('edit');
+    //     Route::post('/{slug}/update', [AdminProductController::class, 'update'])->name('update');
+    //     Route::delete('/image/{id}', [AdminProductController::class, 'deleteImage'])->name('image.delete');
+    // });
 
     // Chỉnh sửa hồ sơ:
     Route::group(['prefix' => 'setting', 'as' => 'setting.'], function () {

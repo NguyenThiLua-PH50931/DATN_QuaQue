@@ -17,6 +17,15 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
+   public function search(Request $request)
+    {
+        $query = $request->input('q');
+        $products = AdminProduct::where('name', 'like', "%$query%")
+                          ->select('id', 'name', 'slug', 'image') 
+                          ->get();
+
+        return response()->json($products);
+    }
     // Trang danh sách sản phẩm (sơ lược)
     public function index(Request $request)
     {
@@ -156,7 +165,6 @@ class ProductController extends Controller
 
             DB::commit();
             return back()->with('success', 'Đã xóa vĩnh viễn sản phẩm "' . $product->name . '"!');
-
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Lỗi xóa vĩnh viễn sản phẩm: ' . $e->getMessage());
@@ -209,7 +217,6 @@ class ProductController extends Controller
 
             DB::commit();
             return back()->with('success', 'Đã xóa vĩnh viễn ' . count($ids) . ' sản phẩm đã chọn!');
-
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Lỗi xóa vĩnh viễn hàng loạt: ' . $e->getMessage());
