@@ -16,22 +16,16 @@ use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\Admin\AttributeController;
 use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\User\UserController;
-
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\CouponsController;
 use App\Http\Controllers\Admin\RegionController as AdminRegionController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\User\ProfileController;
-
 use App\Http\Controllers\Admin\SupportTicketController;
-
-
 use App\Http\Controllers\Client\ClientHomeController;
-
 use App\Http\Controllers\Client\BlogController as ClientBlogController;
 use App\Http\Controllers\Client\ClientSupportTicketController;
-
 use Illuminate\Support\Facades\Route;
 // use App\Http\Controllers\ProductController as GlobalProductController; // Nếu cần dùng controller gốc ngoài admin/client
 
@@ -55,12 +49,12 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
     });
 
     // Liên hệ
-   Route::prefix('support-ticket')->middleware('auth')->name('support-ticket.')->group(function () {
-    Route::get('/', [ClientSupportTicketController::class, 'index'])->name('index');
-    Route::get('/create', [ClientSupportTicketController::class, 'create'])->name('create');
-    Route::post('/', [ClientSupportTicketController::class, 'store'])->name('store');
-    Route::get('/{id}', [ClientSupportTicketController::class, 'show'])->name('show');
-});
+    Route::prefix('support-ticket')->middleware('auth')->name('support-ticket.')->group(function () {
+        Route::get('/', [ClientSupportTicketController::class, 'index'])->name('index');
+        Route::get('/create', [ClientSupportTicketController::class, 'create'])->name('create');
+        Route::post('/', [ClientSupportTicketController::class, 'store'])->name('store');
+        Route::get('/{id}', [ClientSupportTicketController::class, 'show'])->name('show');
+    });
 
     // giỏ hàng
     Route::get('/cart', function () {
@@ -129,7 +123,7 @@ Route::get('/blog-detail/{id}', [ClientBlogController::class, 'show'])->name('bl
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin'], function () {
 
     // Route::get('home', [HomeController::class, 'home'])->name('home');
-     // Route cho dashboard tổng quan và báo cáo
+    // Route cho dashboard tổng quan và báo cáo
     Route::get('/reports', [ReportController::class, 'dashboard'])->name('dashboard');
 
     // Route::group(['prefix' => 'reports', 'as' => 'reports.'], function () {
@@ -247,14 +241,14 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
     });
 
     // Order
-  Route::group(['prefix' => 'orders', 'as' => 'orders.'], function () {
-    Route::get('/', [OrderController::class, 'index'])->name('index');                // Hiển thị danh sách
-    Route::get('/{order}', [OrderController::class, 'show'])->name('show');          // Chi tiết đơn hàng
-    Route::get('/{order}/tracking', [OrderController::class, 'tracking'])->name('tracking');  // Tracking
-    Route::delete('/{order}', [OrderController::class, 'destroy'])->name('destroy'); // Xóa cứng
-    Route::put('/{order}/update-status', [OrderController::class, 'updateStatus'])->name('updateStatus'); // Cập nhật trạng thái
-    Route::patch('/{order}/hide', [OrderController::class, 'hide'])->name('hide');   // Ẩn đơn hàng ✅
-});
+    Route::group(['prefix' => 'orders', 'as' => 'orders.'], function () {
+        Route::get('/', [OrderController::class, 'index'])->name('index');                // Hiển thị danh sách
+        Route::get('/{order}', [OrderController::class, 'show'])->name('show');          // Chi tiết đơn hàng
+        Route::get('/{order}/tracking', [OrderController::class, 'tracking'])->name('tracking');  // Tracking
+        Route::delete('/{order}', [OrderController::class, 'destroy'])->name('destroy'); // Xóa cứng
+        Route::put('/{order}/update-status', [OrderController::class, 'updateStatus'])->name('updateStatus'); // Cập nhật trạng thái
+        Route::patch('/{order}/hide', [OrderController::class, 'hide'])->name('hide');   // Ẩn đơn hàng ✅
+    });
 
 
     // User
