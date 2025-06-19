@@ -4,14 +4,14 @@
         <div class="header-logo-wrapper p-0">
             <div class="logo-wrapper">
                 <a href="{{ url('/admin') }}">
-                    <img class="img-fluid main-logo" src="{{ asset('public/images/logo/anh1.png') }}" alt="logo">
-                    <img class="img-fluid white-logo" src="{{ asset('public/images/logo/anh1.png') }}" alt="logo">
+                    <img class="img-fluid main-logo" src="{{ asset('storage/logo/logo.png') }}" alt="logo">
+                    <img class="img-fluid white-logo" src="{{ asset('storage/logo/logo.png') }}" alt="logo">
                 </a>
             </div>
             <div class="toggle-sidebar">
                 <i class="status_toggle middle sidebar-toggle" data-feather="align-center"></i>
                 <a href="{{ url('/admin') }}">
-                    <img src="{{ asset('public/images/logo/anh1.png') }}" class="img-fluid" alt="">
+                    <img src="{{ asset('storage/logo/logo.png') }}" class="img-fluid" alt="">
                 </a>
             </div>
         </div>
