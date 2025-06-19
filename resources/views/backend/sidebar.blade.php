@@ -2,38 +2,31 @@
 <div class="sidebar-wrapper" style="display: flex; flex-direction: column; height: 100vh;">
     <div id="sidebarEffect"></div>
 
-        <!-- Fixed Logo Header -->
-        <div style="height: 150px; flex-shrink: 0;">
-            <div class="logo-wrapper logo-wrapper-center">
-                <a href="{{ url('/admin') }}" title="">
-                    <img class="img-fluid for-white" src="{{ asset('storage/logo/logo.png') }}" alt="logo"
-                        style="width: 170px; height: auto;">
-                </a>
-                <div class="back-btn">
-                    <i class="fa fa-angle-left"></i>
-                </div>
-                <div class="toggle-sidebar">
-                    <i class="ri-apps-line status_toggle middle sidebar-toggle"></i>
-                </div>
-            </div>
-
-            <div class="logo-icon-wrapper">
-                <a href="{{ url('/admin/home') }}">
-                    <img class="img-fluid main-logo main-white" src="{{ asset('storage/logo/logo.png') }}"
-                        alt="logo" style="width: 170px; height: auto;">
-                    <img class="img-fluid main-logo main-dark" src="{{ asset('storage/logo/logo.png') }}" alt="logo"
-                        style="width: 170px; height: auto;">
-                </a>
-            </div>
+    <!-- Fixed Logo Header -->
+    <div class="logo-wrapper logo-wrapper-center" style="">
+        <a href="{{ url('/admin') }}" title="">
+            <img class="img-fluid for-white" src="{{ asset('storage/banners/logo/logo_1.png') }}" alt="logo" style="top:30px">
+        </a>
+        <div class="back-btn">
+            <i class="fa fa-angle-left"></i>
         </div>
-
+    </div>
     <!-- Scrollable Navigation Area -->
-    <nav class="sidebar-main" style="flex-grow: 1; overflow-y: auto;">
+    <nav class="sidebar-main">
         <div class="left-arrow" id="left-arrow"><i data-feather="arrow-left"></i></div>
         <div id="sidebar-menu">
             <ul class="sidebar-links" id="simple-bar">
                 <li class="back-btn"></li>
-
+                <li class="sidebar-list">
+                    <a class="sidebar-link sidebar-title link-nav" href="{{ route('admin.dashboard') }}">
+                        <span></span>
+                    </a>
+                </li>
+                   <li class="sidebar-list">
+                    <a class="sidebar-link sidebar-title link-nav" href="{{ route('admin.dashboard') }}">
+                        <span></span>
+                    </a>
+                </li>
                 <li class="sidebar-list">
                     <a class="sidebar-link sidebar-title link-nav" href="{{ route('admin.dashboard') }}">
                         <i class="ri-list-check"></i>
@@ -97,8 +90,8 @@
                     </ul>
                 </li>
 
-               
-               
+
+
                 <li class="sidebar-list">
                     <a class="sidebar-link" href="{{ url('/admin/orders') }}">
                         <i class="ri-list-check-2"></i>
@@ -186,3 +179,26 @@
 
 </div>
 <!-- Page Sidebar Ends -->
+<style>
+.logo-wrapper {
+  position: sticky;
+  top: 0;
+  z-index: 10; /* Đảm bảo logo nằm trên menu */
+  background-color: inherit; /* Giữ màu nền để logo không bị trong suốt */
+}
+
+.sidebar-main {
+  overflow-y: auto;
+  flex: 1 1 auto;
+}
+.logo-wrapper {
+  height: 180px; /* hoặc chiều cao logo của bạn */
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+</style>

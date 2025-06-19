@@ -257,7 +257,6 @@
                         <div class="section-t-space">
                             <div class="category-menu">
                                 <h3>Nhận xét của khách hàng</h3>
-
                                 <div class="review-box">
                                     <div class="review-contain">
                                         <h5 class="w-75">We Care About Our Customer Experience</h5>
@@ -655,6 +654,7 @@
 
                     <div class="title section-t-space">
                         <h2>Tin tức nổi bật</h2>
+
                         <span class="title-leaf">
                             <svg class="icon-width">
                                 <use xlink:href="../frontend/assets/svg/leaf.svg#leaf"></use>
@@ -666,22 +666,32 @@
                     <div class="slider-3-blog ratio_65 no-arrow product-wrapper">
                         @foreach ($blogs as $item)
                             <div>
-                                <div class="blog-box">
+                                <div class="blog-box wow fadeInUp" data-wow-delay="0.1s">
                                     <div class="blog-box-image">
                                         <a href="{{ route('blogs-detail', ['id' => $item->id]) }}" class="blog-image">
-                                            <img src="{{ asset($item->thumbnail) }}" class="bg-img blur-up lazyload"
-                                                alt="{{ $item->title }}">
+                                            @if (!empty($item->thumbnail) && file_exists(public_path($item->thumbnail)))
+                                                <img src="{{ asset($item->thumbnail) }}" alt="{{ $item->title }}"
+                                                    class="bg-img blur-up lazyload w-100">
+                                            @else
+                                                <img src="{{ asset('images/default-blog.jpg') }}" alt="No image"
+                                                    class="bg-img blur-up lazyload w-100">
+                                            @endif
                                         </a>
                                     </div>
-                                    <a href="{{ route('blogs-detail', ['id' => $item->id]) }}" class="blog-detail">
-                                        <h6>{{ $item->created_at->format('d M, Y') }}</h6>
-                                        <h5>{{ $item->title }}</h5>
-                                    </a>
+
+                                    <div class="blog-detail px-2 pt-3">
+                                        <h6 class="text-muted">
+                                            <i data-feather="clock" class="me-1"></i>
+                                            {{ $item->created_at ? $item->created_at->format('F d, Y') : 'Chưa có ngày tạo' }}
+                                        </h6>
+                                        <a href="{{ route('blogs-detail', ['id' => $item->id]) }}">
+                                            <h5 class="mt-2 mb-3">{{ $item->title }}</h5>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         @endforeach
                     </div>
-
                 </div>
             </div>
         </div>

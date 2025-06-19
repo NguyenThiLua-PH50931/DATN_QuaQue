@@ -160,7 +160,7 @@
                                 </span>
                             </button>
                             <a href="{{ url('/') }}" class="web-logo nav-logo">
-                                <img src="{{ asset('storage/logo/logo.png') }}" class="img-fluid blur-up lazyload"
+                                <img src="{{ asset('/storage/banners/logo/logo.png') }}" class="img-fluid blur-up lazyload"
                                     alt="Logo Quà Quê" style="width: 150px; height: auto;">
                             </a>
 
@@ -365,10 +365,10 @@
                 <div class="col-12">
                     <div class="header-nav">
                         <div class="header-nav-left">
-                            <button class="dropdown-category">
+                            {{-- <button class="dropdown-category">
                                 <i data-feather="align-left"></i>
                                 <span>Chọn Quà</span>
-                            </button>
+                            </button> --}}
 
                             <div class="category-dropdown">
                                 <div class="category-title">
@@ -1254,7 +1254,7 @@
                             <div class="theme-logo">
                                 <a href="index.html">
                                     <img src="{{ asset('storage/logo/logo.png') }}" class="blur-up lazyload"
-                                        alt="Logo Quà Quê" style="width: 150px; height: auto;">
+                                        alt="Logo Quà Quê">
                                 </a>
                             </div>
 
