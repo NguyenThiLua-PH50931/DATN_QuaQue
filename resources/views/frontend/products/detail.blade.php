@@ -152,7 +152,7 @@
                         class="col-xl-6 wow fadeInUp"
                         data-wow-delay="0.1s">
                         <div class="right-box-contain">
-                            {{--<h6 class="offer-top">30% Off</h6>--}}
+                            {{-- -<h6 class="offer-top">30% Off</h6>--}}
                             <h2 class="name">Creamy Chocolate Cake</h2>
                             <div class="price-rating">
                                 <h3 class="theme-color price">
@@ -186,7 +186,7 @@
                                             <i data-feather="star"></i>
                                         </li>
                                     </ul>
-                                    <span class="review">23 Customer Review</span>
+                                    <span class="review">số đánh giá</span>
                                 </div>
                             </div>
                             <div class="product-packege">
@@ -214,13 +214,13 @@
                                 </ul>
                             </div>
 
-                            <div
+                            {{-- <div
                                 class="time deal-timer product-deal-timer mx-md-0 mx-auto"
                                 id="clockdiv-1"
                                 data-hours="1"
                                 data-minutes="2"
                                 data-seconds="3">
-                                {{-- <div class="product-title">
+                                <div class="product-title">
                                     <h4>Hurry up! Sales Ends In</h4>
                                 </div>
                                 <ul>
