@@ -41,8 +41,12 @@ class ProfileController extends Controller
         if ($request->filled('password')) {
             $data['password'] = Hash::make($request->password);
         }
+        /** @var \App\Models\User $user */
+        // Cập nhật dữ liệu cho user hiện tại
+        $user->update($data);
 
-       User::where('id', $user->id)->update($data);
+        // Làm mới lại đối tượng user trong phiên đăng nhập
+        Auth::setUser($user->fresh());
 
         return redirect()->route('admin.setting.profile')->with('success', 'Cập nhật thông tin thành công!');
     }
