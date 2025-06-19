@@ -30,6 +30,7 @@ use App\Http\Controllers\Admin\SupportTicketController;
 use App\Http\Controllers\Client\ClientHomeController;
 
 use App\Http\Controllers\Client\BlogController as ClientBlogController;
+use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\Client\ClientSupportTicketController;
 
 use Illuminate\Support\Facades\Route;
@@ -44,10 +45,12 @@ Route::get('/', function () {
 
 Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
     Route::get('home', [ClientHomeController::class, 'home'])->name('home');
-    Route::get('product/{slug}', [ClientHomeController::class, 'show'])->name('product.detail');
 
     // Sản phẩm:
-    Route::group(['prefix' => 'product', 'as' => 'product.'], function () {});
+    Route::group(['prefix' => 'san-pham', 'as' => 'product.'], function () {
+        Route::get('/{slug}', [ClientProductController::class, 'show'])->name('.detail');
+        Route::post('/get-variant', [ClientProductController::class, 'getVariant'])->name('.getVariant');
+    });
 
     // Sản phẩm yêu thích
     Route::get('/wishlist', function () {
@@ -55,12 +58,12 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
     });
 
     // Liên hệ
-   Route::prefix('support-ticket')->middleware('auth')->name('support-ticket.')->group(function () {
-    Route::get('/', [ClientSupportTicketController::class, 'index'])->name('index');
-    Route::get('/create', [ClientSupportTicketController::class, 'create'])->name('create');
-    Route::post('/', [ClientSupportTicketController::class, 'store'])->name('store');
-    Route::get('/{id}', [ClientSupportTicketController::class, 'show'])->name('show');
-});
+    Route::prefix('support-ticket')->middleware('auth')->name('support-ticket.')->group(function () {
+        Route::get('/', [ClientSupportTicketController::class, 'index'])->name('index');
+        Route::get('/create', [ClientSupportTicketController::class, 'create'])->name('create');
+        Route::post('/', [ClientSupportTicketController::class, 'store'])->name('store');
+        Route::get('/{id}', [ClientSupportTicketController::class, 'show'])->name('show');
+    });
 
     // giỏ hàng
     Route::get('/cart', function () {
