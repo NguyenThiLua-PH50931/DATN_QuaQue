@@ -16,12 +16,15 @@ public function index(Request $request)
 {
     $query = Order::query();
 
-    // Lọc trạng thái đơn hàng
+    // Luôn lọc theo is_hidden (nếu không truyền thì mặc định là 0)
+    $isHidden = $request->input('is_hidden', '0');
+    $query->where('is_hidden', $isHidden);
+
+    // Các bộ lọc khác giữ nguyên
     if ($request->filled('status')) {
         $query->where('status', $request->status);
     }
 
-    // Lọc trạng thái thanh toán
     if ($request->filled('payment_status')) {
         $query->where('payment_status', $request->payment_status);
     }
@@ -31,17 +34,14 @@ public function index(Request $request)
         $query->where('payment_method', $request->payment_method);
     }
 
-    // Lọc ngày đặt từ
     if ($request->filled('date_from')) {
         $query->whereDate('created_at', '>=', $request->date_from);
     }
 
-    // Lọc ngày đặt đến
     if ($request->filled('date_to')) {
         $query->whereDate('created_at', '<=', $request->date_to);
     }
 
-    // Lọc từ khóa (mã đơn hàng hoặc người đặt)
     if ($request->filled('keyword')) {
         $keyword = $request->keyword;
         $query->where(function ($q) use ($keyword) {
@@ -52,7 +52,6 @@ public function index(Request $request)
         });
     }
 
-    // Lấy danh sách đơn hàng có phân trang
     $orders = $query->with('user', 'items')->orderBy('created_at', 'desc')->paginate(15);
 
     return view('backend.orders.index', compact('orders'));
@@ -60,15 +59,22 @@ public function index(Request $request)
 
 
 
+
+
     // Hiển thị chi tiết đơn hàng
     public function show(Order $order)
-    {
-        // Load các thông tin liên quan đến đơn hàng, như các sản phẩm và người dùng
-        $order->load(['items', 'user', 'address']);
+{
+    $order->load([
+        'items.productVariant.attributeValues.attribute',
+        'items.productVariant.product.firstImage', // THÊM DÒNG NÀY
+        'user',
+        'address'
+    ]);
 
-        // Trả về view 'backend.orders.show' với dữ liệu đơn hàng
-        return view('backend.orders.show', compact('order'));
-    }
+    return view('backend.orders.show', compact('order'));
+}
+
+
 
     // Hiển thị trang tracking (nếu cần)
     public function tracking(Order $order)
@@ -159,20 +165,29 @@ public function index(Request $request)
         'payment_status' => $order->payment_status,
     ]);
 }
-
-
-
     public function destroy(Order $order)
-    {
-        // Kiểm tra trạng thái hợp lệ trước khi xóa
-        if (!in_array($order->status, ['delivered', 'cancelled', 'failed_delivery'])) {
-            return redirect()->back()->with('error', 'Bạn chỉ có thể xóa đơn hàng đã giao, đã hủy hoặc giao thất bại.');
-        }
-
-        // Xóa đơn hàng
-        $order->delete();
-
-        return redirect()->route('admin.orders.index')->with('success', 'Đơn hàng đã được xóa thành công.');
+{
+    if (!in_array($order->status, ['delivered', 'cancelled', 'failed_delivery'])) {
+        return redirect()->back()->with('error', 'Chỉ được ẩn đơn hàng đã giao, đã hủy hoặc giao thất bại.');
     }
+
+    $order->delete(); // Soft delete
+
+    return redirect()->route('admin.orders.index')->with('success', 'Đơn hàng đã được ẩn.');
+}
+// OrderController.php
+public function hide(Order $order)
+{
+    if (!in_array($order->status, ['delivered', 'cancelled', 'failed_delivery'])) {
+        return back()->with('error', 'Chỉ được ẩn đơn hàng đã giao, hủy, hoặc giao thất bại.');
+    }
+
+    $order->is_hidden = true;
+    $order->save();
+
+    return back()->with('success', 'Đơn hàng đã được ẩn.');
+}
+
+
 }
 

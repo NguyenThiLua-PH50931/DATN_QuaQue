@@ -246,15 +246,17 @@ ul {
                                         <tbody>
                                             @foreach ($order->items as $item)
                                                 <tr>
-                                                    <td style="width: 60px">
-                                                        <img src="{{ asset('backend/assets/images/profile/' . $item->product_image) }}"
-                                                            class="img-thumbnail" style="width: 60px; height: 60px"
+                                                    <td style="width: 80px">
+                                                        <img src="{{ asset('storage/' . $item->product_image) }}" 
+                                                            class="img-thumbnail" 
+                                                            style="width:80px; height:80px; object-fit:cover;" 
                                                             alt="{{ $item->product_name }}">
                                                     </td>
+
                                                     <td>
                                                         {{ $item->product_name }}
-                                                        @if ($item->variant)
-                                                            <div class="text-muted small">Biến thể: {{ $item->variant->name }}</div>
+                                                       @if ($item->productVariant)
+                                                            <div class="text-muted small">Loại: {{ $item->productVariant->name }}</div>
                                                         @endif
                                                     </td>
                                                     <td class="text-center">{{ $item->quantity }}</td>
@@ -299,7 +301,6 @@ ul {
                                         <li style="margin-bottom: 0.5rem;"><strong>Ngày đặt:</strong> {{ $order->created_at->format('d/m/Y') }}</li>
                                         <li style="margin-bottom: 0.5rem;"><strong>Thành tiền:</strong> {{ number_format($final_total, 0, ',', '.') }} VNĐ</li>
                                     </ul>
-
                                     <h5 class="fw-bold mt-4 mb-3">Địa chỉ nhận hàng</h5>
                                     <ul class="list-unstyled">
                                         <li style="margin-bottom: 0.5rem;">{{ $order->address->recipient_name ?? 'N/A' }}</li>
@@ -307,7 +308,6 @@ ul {
                                         <li style="margin-bottom: 0.5rem;">{{ $order->address->district ?? '' }}, {{ $order->address->province ?? '' }}</li>
                                         <li style="margin-bottom: 0.5rem;">SĐT: {{ $order->address->phone ?? '' }}</li>
                                     </ul>
-
                                     @php
                                         $method = match ($order->payment_method) {
                                             'cod' => 'Thanh toán khi nhận hàng (COD)',
@@ -315,7 +315,6 @@ ul {
                                             'momo' => 'Ví MoMo',
                                             default => 'Không xác định',
                                         };
-
                                         $status = match ($order->payment_status) {
                                             'paid' => ['text' => 'Đã thanh toán', 'class' => 'text-success'],
                                             'unpaid' => ['text' => 'Chưa thanh toán', 'class' => 'text-danger'],

@@ -4,15 +4,14 @@
         <div class="header-logo-wrapper p-0">
             <div class="logo-wrapper">
                 <a href="{{ url('/admin') }}">
-                    <img class="img-fluid main-logo" src="{{ asset('public/images/logo/anh1.png') }}" alt="logo">
-                    <img class="img-fluid white-logo" src="{{ asset('public/images/logo/anh1.png') }}"
-                        alt="logo">
+                    <img class="img-fluid main-logo" src="{{ asset('storage/logo/logo.png') }}" alt="logo">
+                    <img class="img-fluid white-logo" src="{{ asset('storage/logo/logo.png') }}" alt="logo">
                 </a>
             </div>
             <div class="toggle-sidebar">
                 <i class="status_toggle middle sidebar-toggle" data-feather="align-center"></i>
                 <a href="{{ url('/admin') }}">
-                    <img src="{{ asset('public/images/logo/anh1.png') }}" class="img-fluid" alt="">
+                    <img src="{{ asset('storage/logo/logo.png') }}" class="img-fluid" alt="">
                 </a>
             </div>
         </div>
@@ -42,7 +41,7 @@
                     </span>
                 </li>
 
-                <li class="onhover-dropdown">
+                {{-- <li class="onhover-dropdown">
                     <div class="notification-box">
                         <i class="ri-notification-line"></i>
                         <span class="badge rounded-pill badge-theme">4</span>
@@ -75,7 +74,7 @@
                             <a class="btn btn-primary" href="javascript:void(0)">Xem tất cả thông báo</a>
                         </li>
                     </ul>
-                </li>
+                </li> --}}
 
                 <li>
                     <div class="mode">
@@ -99,38 +98,50 @@
                             </div>
                         </div>
 
+                        <!-- Phần dropdown menu chỉ chứa nút kích hoạt modal và các link -->
                         <ul class="profile-dropdown onhover-show-div">
                             <li>
-                                <a href="{{ url('/admin/users') }}">
-                                    <i data-feather="users"></i>
-                                    <span>Người dùng</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ url('/admin/orders') }}">
-                                    <i data-feather="archive"></i>
-                                    <span>Đơn hàng</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ url('/admin/support-ticket') }}">
-                                    <i data-feather="phone"></i>
-                                    <span>Vé hỗ trợ</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ url('/admin/profile') }}">
-                                    <i data-feather="settings"></i>
-                                    <span>Cài đặt</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a data-bs-toggle="modal" data-bs-target="#staticBackdrop" href="javascript:void(0)">
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">
                                     <i data-feather="log-out"></i>
                                     <span>Đăng xuất</span>
                                 </a>
                             </li>
+
+                            <li>
+                                <a href="{{ route('client.home') }}">
+                                    <i data-feather="home"></i>
+                                    <span>Quay lại trang chủ</span>
+                                </a>
+                            </li>
                         </ul>
+
+                        <!-- Modal đặt ngoài ul, ví dụ đặt ngay dưới div .page-header -->
+                        <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="logoutModalLabel">Xác nhận đăng xuất</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Đóng"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Bạn có chắc muốn đăng xuất không?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Hủy</button>
+                                        <button type="button" class="btn btn-primary"
+                                            onclick="document.getElementById('logout-form').submit();">Đăng xuất</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form logout ẩn -->
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            @csrf
+                        </form>
                     @else
                         {{-- Tùy chọn: Hiển thị liên kết đăng nhập hoặc nội dung khác khi chưa đăng nhập --}}
                         {{-- <li><a href="{{ route('login') }}">Đăng nhập</a></li> --}}
