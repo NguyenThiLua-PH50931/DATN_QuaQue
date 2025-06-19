@@ -27,15 +27,13 @@ use App\Http\Controllers\Client\ClientHomeController;
 use App\Http\Controllers\Client\BlogController as ClientBlogController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\Client\ClientSupportTicketController;
+use App\Http\Controllers\Client\ForgotController;
+use App\Http\Controllers\Client\ResetPasswordController;
 use Illuminate\Support\Facades\Route;
 // use App\Http\Controllers\ProductController as GlobalProductController; // Nếu cần dùng controller gốc ngoài admin/client
 
 
 // CLIENT
-Route::get('/', function () {
-    return redirect()->route('client.home');
-});
-
 
 Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
     Route::get('home', [ClientHomeController::class, 'home'])->name('home');
@@ -87,9 +85,19 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
     //     Route::post('support-ticket', [SupportTicketController::class, 'store'])->name('support-ticket.store');
     // });
 
+    // 
+
+    // Quên mật khẩu:
+
 });
 
 //----------------------------------------------------------
+
+//Quên mật khẩu:
+Route::get('forgot', [ForgotController::class, 'forgot'])->name('forgot');
+Route::post('forgot', [ForgotController::class, 'sendResetLink'])->name('sendResetLink');
+Route::get('reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+Route::post('reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
 
 
 // dang ky
@@ -105,14 +113,14 @@ Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
 
 // Các trang client tĩnh
-Route::view('/wishlist', 'frontend.wishlist.wishlist')->name('wishlist');
-Route::view('/compare', 'frontend.pages.compare')->name('compare');
-Route::view('/contact', 'frontend.pages.contact');
-Route::view('/cart', 'frontend.cart.cart');
-Route::view('/checkout', 'frontend.checkout.checkout');
-Route::view('/products/category', 'frontend.products.category');
-Route::view('/seller/become-seller', 'frontend.seller.become-seller');
-Route::view('/seller/seller-dashboard', 'frontend.seller.seller-dashboard');
+// Route::view('/wishlist', 'frontend.wishlist.wishlist')->name('wishlist');
+// Route::view('/compare', 'frontend.pages.compare')->name('compare');
+// Route::view('/contact', 'frontend.pages.contact');
+// Route::view('/cart', 'frontend.cart.cart');
+// Route::view('/checkout', 'frontend.checkout.checkout');
+// Route::view('/products/category', 'frontend.products.category');
+// Route::view('/seller/become-seller', 'frontend.seller.become-seller');
+// Route::view('/seller/seller-dashboard', 'frontend.seller.seller-dashboard');
 
 // Blog
 Route::get('/blog', [ClientBlogController::class, 'index'])->name('blog');
