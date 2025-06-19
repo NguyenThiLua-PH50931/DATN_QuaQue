@@ -923,7 +923,7 @@
                                              </a>
                                          </li>
                                          <li class="nav-item dropdown new-nav-item">
-                                             <a class="nav-link dropdown-toggle" href="{{ route('blog') }}">Liên
+                                             <a class="nav-link dropdown-toggle" href="{{ route('client.lienhe') }}">Liên
                                                  hệ
                                              </a>
                                          </li>
