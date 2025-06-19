@@ -122,7 +122,6 @@ Route::get('/blog-detail/{id}', [ClientBlogController::class, 'show'])->name('bl
 // ADMIN:
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin'], function () {
 
-    // Route::get('home', [HomeController::class, 'home'])->name('home');
     // Route cho dashboard tổng quan và báo cáo
     Route::get('/reports', [ReportController::class, 'dashboard'])->name('dashboard');
 
