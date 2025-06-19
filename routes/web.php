@@ -25,6 +25,7 @@ use App\Http\Controllers\Admin\User\ProfileController;
 use App\Http\Controllers\Admin\SupportTicketController;
 use App\Http\Controllers\Client\ClientHomeController;
 use App\Http\Controllers\Client\BlogController as ClientBlogController;
+use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\Client\ClientSupportTicketController;
 use App\Http\Controllers\Client\ForgotController;
 use App\Http\Controllers\Client\ResetPasswordController;
@@ -36,10 +37,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
     Route::get('home', [ClientHomeController::class, 'home'])->name('home');
-    Route::get('product/{slug}', [ClientHomeController::class, 'show'])->name('product.detail');
 
     // Sản phẩm:
-    Route::group(['prefix' => 'product', 'as' => 'product.'], function () {});
+    Route::group(['prefix' => 'san-pham', 'as' => 'product.'], function () {
+        Route::get('/{slug}', [ClientProductController::class, 'show'])->name('detail');
+        Route::post('/get-variant', [ClientProductController::class, 'getVariant'])->name('.getVariant');
+    });
 
     // Sản phẩm yêu thích
     Route::get('/wishlist', function () {

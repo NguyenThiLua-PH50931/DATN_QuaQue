@@ -510,6 +510,7 @@
         color: #3ba55d !important;
     }
 
+
     body.dark .filter-dropdown-menu {
         background-color: #2c2c2c !important; /* Đảm bảo nền tối hơn */
         color: #007bff !important; /* Màu chữ xanh dương sáng hơn */
@@ -547,7 +548,6 @@
         background-color: #4a4a4a !important;
     }
 
-    /* Các quy tắc CSS cho bảng và phân trang sẽ được bỏ qua */
 </style>
 @endsection
 @push('scripts')
@@ -562,12 +562,13 @@
         }
 
         // Ghi đè search DataTable (không dấu)
-        $.fn.dataTable.ext.type.search.string = function(data) {
-            return !data ? '' : removeVietnameseTones(data.toString().toLowerCase());
-        };
-        $.fn.dataTable.ext.type.search.html = function(data) {
-            return !data ? '' : removeVietnameseTones($('<div>').html(data).text().toLowerCase());
-        };
+        // $.fn.dataTable.ext.type.search.string = function(data) {
+        //     return !data ? '' : removeVietnameseTones(data.toString().toLowerCase());
+        // };
+        // $.fn.dataTable.ext.type.search.html = function(data) {
+        //     return !data ? '' : removeVietnameseTones($('<div>').html(data).text().toLowerCase());
+        // };
+
 
         // --- Khởi tạo Select2 ---
         $('.select2').select2({
@@ -770,12 +771,10 @@
             if (categoryText) {
                 table.column(3).search(categoryText, true, false);
             }
-
             var regionText = $('#filterRegionDropdown input[type=radio]:checked').next('span').text().trim();
             if (regionText) {
                 table.column(4).search(regionText, true, false);
             }
-
             var statusText = $('#filterStatusDropdown input[type=radio]:checked').next('span').text().trim();
             if (statusText) {
                 table.column(6).search(statusText, true, false);
@@ -784,7 +783,6 @@
             table.draw();
             toggleRemoveFilters();
         }
-
         // --- Checkbox chọn tất cả và từng dòng ---
         function toggleBulkDeleteButton() {
             if ($('.row-checkbox:checked').length > 0) {
@@ -927,6 +925,4 @@
 
     });
 </script>
-
-
 @endpush
