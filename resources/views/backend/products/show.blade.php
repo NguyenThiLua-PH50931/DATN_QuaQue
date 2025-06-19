@@ -57,13 +57,13 @@
                         @php
                         $gallery = [];
                         if (!empty($product->main_image) && \Storage::disk('public')->exists(str_replace(asset('storage/'), '', $product->main_image))) {
-                            $gallery[] = $product->main_image;
+                        $gallery[] = $product->main_image;
                         }
                         if ($product->product_images && $product->product_images->count()) {
                         foreach ($product->product_images as $img) {
-                                if (!empty($img->image_url) && \Storage::disk('public')->exists(str_replace(asset('storage/'), '', $img->image_url))) {
-                                    $gallery[] = $img->image_url;
-                                }
+                        if (!empty($img->image_url) && \Storage::disk('public')->exists(str_replace(asset('storage/'), '', $img->image_url))) {
+                        $gallery[] = $img->image_url;
+                        }
                         }
                         }
                         if ($product->variants && $product->variants->count()) {
@@ -90,7 +90,7 @@
                                     style="width:60px; height:60px; object-fit:cover; border-radius:6px; border:2px solid transparent; cursor:pointer;">
                                 @endforeach
                                 @if(empty($gallery))
-                                    <img src="{{ asset('backend/assets/images/placeholder.webp') }}" alt="Không có ảnh" style="width:60px; height:60px; object-fit:cover; border-radius:6px; border:2px solid transparent; cursor:default;">
+                                <img src="{{ asset('backend/assets/images/placeholder.webp') }}" alt="Không có ảnh" style="width:60px; height:60px; object-fit:cover; border-radius:6px; border:2px solid transparent; cursor:default;">
                                 @endif
                             </div>
                         </div>
@@ -174,16 +174,16 @@
                                     </td>
                                     {{-- <td>
                                         <a href="{{ route('admin.products.variant.show', $variant->id) }}" class="action-link text-decoration-none me-2">
-                                            <i class="ri-eye-line"></i>
-                                        </a>
-                                        <a href="{{ route('admin.products.variant.edit', $variant->id) }}" class="action-link text-decoration-none me-2">
-                                            <i class="ri-pencil-line"></i>
-                                        </a>
-                                        <a href="javascript:void(0)" class="action-link text-decoration-none text-danger"
-                                            data-bs-toggle="modal" data-bs-target="#deleteVariantModal"
-                                            data-id="{{ $variant->id }}" data-name="{{ $variant->name }}">
-                                            <i class="ri-delete-bin-line"></i>
-                                        </a>
+                                    <i class="ri-eye-line"></i>
+                                    </a>
+                                    <a href="{{ route('admin.products.variant.edit', $variant->id) }}" class="action-link text-decoration-none me-2">
+                                        <i class="ri-pencil-line"></i>
+                                    </a>
+                                    <a href="javascript:void(0)" class="action-link text-decoration-none text-danger"
+                                        data-bs-toggle="modal" data-bs-target="#deleteVariantModal"
+                                        data-id="{{ $variant->id }}" data-name="{{ $variant->name }}">
+                                        <i class="ri-delete-bin-line"></i>
+                                    </a>
                                     </td> --}}
                                 </tr>
                                 @endforeach
@@ -364,7 +364,7 @@
         text-decoration: none;
     }
 
-    /* .variant-name:hover {
+    .variant-name:hover {
         text-decoration: underline;
     }
 
@@ -396,7 +396,35 @@
         color: #7c3aed !important;
         font-weight: 500;
     }
-        */
+
+    .bulk-delete-btn[disabled] {
+        background: #e1e8f3 !important;
+        color: #66708a !important;
+        border: none !important;
+        cursor: not-allowed !important;
+        opacity: 1 !important;
+    }
+
+    .bulk-delete-btn[disabled] .delete-bulk-icon {
+        color: #66708a !important;
+    }
+
+    .bulk-delete-btn:not([disabled]) {
+        background: #becde4 !important;
+        color: #495057 !important;
+        border: none !important;
+        cursor: pointer !important;
+        box-shadow: 0 2px 8px #becde480;
+        transition: background .5s, color .5s;
+    }
+
+    .bulk-delete-btn:not([disabled]) .delete-bulk-icon {
+        color: #495057 !important;
+    }
+
+    .bulk-delete-btn:not([disabled]):hover {
+        background: #aac4e7 !important;
+    }
 </style>
 @endpush
 
@@ -578,7 +606,8 @@
             }
         } else {
             // Nếu không có ảnh nào trong gallery, đặt ảnh chính thành placeholder
-            mainImage.src = '{{ asset('backend/assets/images/placeholder.webp') }}';
+            mainImage.src = '{{ asset('
+            backend / assets / images / placeholder.webp ') }}';
             console.log('Gallery is empty, displaying placeholder for main image.');
         }
 
