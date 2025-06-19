@@ -172,7 +172,7 @@
 
                         <div class="section-t-space">
                             <div class="category-menu">
-                                <h3>Trending Products</h3>
+                                <h3>Sản phẩm thịnh hành</h3>
 
                                 <ul class="product-list border-0 p-0 d-block">
                                     <li>
@@ -256,8 +256,7 @@
 
                         <div class="section-t-space">
                             <div class="category-menu">
-                                <h3>Customer Comment</h3>
-
+                                <h3>Nhận xét của khách hàng</h3>
                                 <div class="review-box">
                                     <div class="review-contain">
                                         <h5 class="w-75">We Care About Our Customer Experience</h5>
@@ -907,7 +906,8 @@
                     @endif
 
                     <div class="title section-t-space">
-                        <h2>Featured Blog</h2>
+                        <h2>Tin tức nổi bật</h2>
+
                         <span class="title-leaf">
                             <svg class="icon-width">
                                 <use xlink:href="../frontend/assets/svg/leaf.svg#leaf"></use>
