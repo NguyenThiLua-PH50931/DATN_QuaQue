@@ -6,7 +6,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Quà Quê - Đặc sản Việt">
+    <meta name="description" content="Fastkart">
     <meta name="keywords" content="Fastkart">
     <meta name="author" content="Fastkart">
 
@@ -148,26 +148,34 @@
                                 <div class="dropdown theme-form-select">
                                     <button class="btn dropdown-toggle" type="button" id="select-language"
                                         data-bs-toggle="dropdown" aria-expanded="false">
-                                        <img src="{{ asset('frontend/assets/images/country/Vietnam.svg.png') }}"
-                                            class="img-fluid blur-up lazyload" alt=""
-                                            id="current-language-flag">
-                                        <span id="current-language-text">Tiếng Việt</span>
+                                        <img src="../frontend/assets/images/country/united-states.png"
+                                            class="img-fluid blur-up lazyload" alt="">
+                                        <span>Tiếng Anh</span>
+
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="select-language">
                                         <li>
-                                            <a class="dropdown-item" href="javascript:void(0)" data-lang="vi"
-                                                data-flag="{{ asset('frontend/assets/images/country/Vietnam.svg.png') }}">
-                                                <img src="{{ asset('frontend/assets/images/country/Vietnam.svg.png') }}"
+                                            <a class="dropdown-item" href="javascript:void(0)" id="english">
+                                                <img src="../frontend/assets/images/country/united-kingdom.png"
                                                     class="img-fluid blur-up lazyload" alt="">
-                                                <span>Tiếng Việt</span>
+                                                <span>Tiếng Anh</span>
+
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item" href="javascript:void(0)" data-lang="en"
-                                                data-flag="{{ asset('frontend/assets/images/country/united-kingdom.png') }}">
-                                                <img src="{{ asset('frontend/assets/images/country/united-kingdom.png') }}"
+                                            <a class="dropdown-item" href="javascript:void(0)" id="france">
+                                                <img src="../frontend/assets/images/country/germany.png"
                                                     class="img-fluid blur-up lazyload" alt="">
-                                                <span>Tiếng Anh</span>
+                                                <span>Tiếng Đức</span>
+
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="javascript:void(0)" id="chinese">
+                                                <img src="../frontend/assets/images/country/turkish.png"
+                                                    class="img-fluid blur-up lazyload" alt="">
+                                                <span>Tiếng Thổ Nhĩ Kì</span>
+
                                             </a>
                                         </li>
                                     </ul>
@@ -177,21 +185,19 @@
                                 <div class="dropdown theme-form-select">
                                     <button class="btn dropdown-toggle" type="button" id="select-dollar"
                                         data-bs-toggle="dropdown" aria-expanded="false">
-                                        <span id="current-currency-text">VNĐ</span>
+                                        <span>VNĐ</span>
+
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end sm-dropdown-menu"
                                         aria-labelledby="select-dollar">
                                         <li>
-                                            <a class="dropdown-item" href="javascript:void(0)"
-                                                data-currency="VNĐ">VNĐ</a>
+                                            <a class="dropdown-item" id="aud" href="javascript:void(0)">AUD</a>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item" href="javascript:void(0)"
-                                                data-currency="EUR">EUR</a>
+                                            <a class="dropdown-item" id="eur" href="javascript:void(0)">EUR</a>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item" href="javascript:void(0)"
-                                                data-currency="USD">USD</a>
+                                            <a class="dropdown-item" id="cny" href="javascript:void(0)">USD</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -377,6 +383,13 @@
                                                             Đăng xuất
                                                         </a>
                                                     </li>
+                                                    
+                                                    @if (Auth::user()->role === 'admin')
+                                                        <li class="product-box-contain">
+                                                            <a href="{{ route('admin.dashboard') }}">Quay lại Admin</a>
+                                                        </li>
+                                                    @endif
+
                                                     <form id="logout-form" action="{{ route('logout') }}"
                                                         method="POST" style="display: none;">
                                                         @csrf
@@ -1129,38 +1142,33 @@
                                                 </ul>
                                             </li>
 
-                                            <li class="nav-item dropdown">
-                                                <a class="nav-link dropdown-toggle" href="javascript:void(0)"
-                                                    data-bs-toggle="dropdown">Người bán</a>
-                                                <ul class="dropdown-menu">
-                                                    <li>
-                                                        <a class="dropdown-item"
-                                                            href="{{ url('/seller/become-seller') }}">Trở thành người
-                                                            bán</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item"
-                                                            href="{{ url('/seller/seller-dashboard') }}">Trang người
-                                                            bán</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="seller-detail.html">Seller
-                                                            Detail</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="seller-detail-2.html">Seller
-                                                            Detail 2</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="seller-grid.html">Seller
-                                                            Grid</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="seller-grid-2.html">Seller Grid
-                                                            2</a>
-                                                    </li>
-                                                </ul>
-                                            </li>
+                                            {{-- <li class="nav-item dropdown">
+                                                    <a class="nav-link dropdown-toggle" href="javascript:void(0)"
+                                                        data-bs-toggle="dropdown">Người bán</a>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a class="dropdown-item" href="{{ url('/seller/become-seller') }}">Trở thành người bán</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="dropdown-item" href="{{ url('/seller/seller-dashboard') }}">Trang người bán</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="dropdown-item" href="seller-detail.html">Seller
+                                                                Detail</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="dropdown-item" href="seller-detail-2.html">Seller
+                                                                Detail 2</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="dropdown-item" href="seller-grid.html">Seller Grid</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="dropdown-item" href="seller-grid-2.html">Seller Grid
+                                                                2</a>
+                                                        </li>
+                                                    </ul>
+                                                </li> --}}
                                         </ul>
                                     </div>
                                 </div>
@@ -1888,80 +1896,50 @@
 
     <!-- theme setting js -->
     <script src="{{ asset('frontend/assets/js/theme-setting.js') }}"></script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Language switching logic
-            const currentLanguageFlag = document.getElementById('current-language-flag');
-            const currentLanguageText = document.getElementById('current-language-text');
-            const languageDropdownItems = document.querySelectorAll('#select-language + .dropdown-menu .dropdown-item');
-
-            const savedLanguage = localStorage.getItem('selectedLanguage');
-            const savedLanguageFlag = localStorage.getItem('selectedLanguageFlag');
-
-            if (savedLanguage && savedLanguageFlag) {
-                currentLanguageText.textContent = savedLanguage;
-                currentLanguageFlag.src = savedLanguageFlag;
-            }
-
-            languageDropdownItems.forEach(item => {
-                item.addEventListener('click', function(event) {
-                    event.preventDefault();
-                    const newLanguageText = this.querySelector('span').textContent;
-                    const newLanguageFlag = this.dataset.flag;
-
-                    currentLanguageText.textContent = newLanguageText;
-                    currentLanguageFlag.src = newLanguageFlag;
-
-                    localStorage.setItem('selectedLanguage', newLanguageText);
-                    localStorage.setItem('selectedLanguageFlag', newLanguageFlag);
-
-                    // Update active class for language
-                    languageDropdownItems.forEach(li => li.classList.remove('active'));
-                    this.classList.add('active');
-                });
-
-                // Set initial active class for language
-                if (savedLanguage && item.querySelector('span').textContent === savedLanguage) {
-                    item.classList.add('active');
-                } else if (!savedLanguage && item.dataset.lang === 'vi') { // Default to Vietnamese if nothing saved
-                    item.classList.add('active');
-                }
-            });
-
-            // Currency switching logic
-            const currentCurrencyText = document.getElementById('current-currency-text');
-            const currencyDropdownItems = document.querySelectorAll('#select-dollar + .dropdown-menu .dropdown-item');
-
-            const savedCurrency = localStorage.getItem('selectedCurrency');
-
-            if (savedCurrency) {
-                currentCurrencyText.textContent = savedCurrency;
-            }
-
-            currencyDropdownItems.forEach(item => {
-                item.addEventListener('click', function(event) {
-                    event.preventDefault();
-                    const newCurrencyText = this.dataset.currency;
-
-                    currentCurrencyText.textContent = newCurrencyText;
-
-                    localStorage.setItem('selectedCurrency', newCurrencyText);
-
-                    // Update active class for currency
-                    currencyDropdownItems.forEach(li => li.classList.remove('active'));
-                    this.classList.add('active');
-                });
-
-                // Set initial active class for currency
-                if (savedCurrency && item.dataset.currency === savedCurrency) {
-                    item.classList.add('active');
-                } else if (!savedCurrency && item.dataset.currency === 'VNĐ') { // Default to VNĐ if nothing saved
-                    item.classList.add('active');
-                }
-            });
-        });
-    </script>
 </body>
 
 </html>
+<style>
+   .onhover-div-login {
+  min-width: 140px;      /* Độ rộng tối thiểu vừa phải */
+  max-width: 180px;      /* Giới hạn chiều rộng tối đa */
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+  font-size: 13px;
+  color: #222;
+  padding: 6px 0;
+}
+
+.user-box-name {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.user-box-name li {
+  padding: 6px 14px;
+  border-bottom: 1px solid #eee;
+}
+
+.user-box-name li:last-child {
+  border-bottom: none;
+}
+
+.user-box-name li a {
+  color: #333;
+  text-decoration: none;
+  display: block;
+  white-space: nowrap; /* Không xuống dòng */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Ẩn chữ dài quá */
+}
+
+.user-box-name li a:hover {
+  background-color: #e7e7e7;
+  color: #000;
+}
+
+
+</style>
