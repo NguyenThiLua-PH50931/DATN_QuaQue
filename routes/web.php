@@ -42,7 +42,7 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
 
     // Sản phẩm:
     Route::group(['prefix' => 'san-pham', 'as' => 'product.'], function () {
-        Route::get('/{slug}', [ClientProductController::class, 'show'])->name('.detail');
+        Route::get('/{slug}', [ClientProductController::class, 'show'])->name('detail');
         Route::post('/get-variant', [ClientProductController::class, 'getVariant'])->name('.getVariant');
     });
 

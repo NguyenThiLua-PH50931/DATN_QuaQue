@@ -490,7 +490,6 @@
                         <p>Khám phá những món quà quê mới nhất, tươi ngon và đậm đà hương vị truyền thống.</p>
                     </div>
 
-<<<<<<< HEAD
                         <div class="section-b-space">
                             <div class="product-border overflow-hidden">
                                 <div class="container">
@@ -530,7 +529,7 @@
                                                         </div>
                                                         <div class="product-detail">
                                                         <a
-                                                            href="{{ route('product.detail', ['slug' => $product->slug]) }}">
+                                                            href="{{ route('client.product.detail', ['slug' => $product->slug]) }}">
                                                                 <h6 class="name">{{ $product->name }}</h6>
                                                             </a>
 
@@ -657,18 +656,8 @@
                                             <div class="product-box">
                                                 <div class="label-tag"><span>NEW</span></div>
                                                 <div class="product-image">
-=======
-                    <div class="product-border overflow-hidden wow fadeInUp">
-                        <div class="container">
-                            <div class="row">
-                                @foreach ($latestProducts as $product)
-                                    <div class="col-6 col-md-3 mb-4"> {{-- 4 sản phẩm trên 1 hàng (12/3=4) --}}
-                                        <div class="product-box">
-                                            <div class="label-tag"><span>NEW</span></div>
-                                            <div class="product-image">
->>>>>>> 6591592e5eb967b03a518d2d75dadcd2e0449d1b
                                                 <a
-                                                    href="{{ route('product.detail', ['slug' => $product->slug]) }}">
+                                                    href="{{ route('client.product.detail', ['slug' => $product->slug]) }}">
                                                     <img src="{{ asset('frontend/assets/images/vegetable/product/' . $product->image) }}"
                                                         class="img-fluid blur-up lazyload" alt="{{ $product->name }}">
                                                 </a>
@@ -694,15 +683,10 @@
                                             </div>
                                             <div class="product-detail">
                                                 <a
-<<<<<<< HEAD
-                                                    href="{{ route('product.detail', ['slug' => $product->slug]) }}">
-                                                        <h6 class="name h-100">{{ $product->name }}</h6>
-                                                    </a>
-=======
                                                     href="{{ route('client.product.detail', ['slug' => $product->slug]) }}">
                                                     <h6 class="name h-100">{{ $product->name }}</h6>
                                                 </a>
->>>>>>> 6591592e5eb967b03a518d2d75dadcd2e0449d1b
+
 
                                                 <h5 class="sold text-content">
                                                     <span
