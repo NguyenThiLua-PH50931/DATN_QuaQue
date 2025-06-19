@@ -143,66 +143,6 @@
                     </div>
 
                     <div class="col-lg-3">
-                        <ul class="about-list right-nav-about">
-                            <li class="right-nav-list">
-                                <div class="dropdown theme-form-select">
-                                    <button class="btn dropdown-toggle" type="button" id="select-language"
-                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                        <img src="../frontend/assets/images/country/united-states.png"
-                                            class="img-fluid blur-up lazyload" alt="">
-                                        <span>Tiếng Anh</span>
-
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="select-language">
-                                        <li>
-                                            <a class="dropdown-item" href="javascript:void(0)" id="english">
-                                                <img src="../frontend/assets/images/country/united-kingdom.png"
-                                                    class="img-fluid blur-up lazyload" alt="">
-                                                <span>Tiếng Anh</span>
-
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item" href="javascript:void(0)" id="france">
-                                                <img src="../frontend/assets/images/country/germany.png"
-                                                    class="img-fluid blur-up lazyload" alt="">
-                                                <span>Tiếng Đức</span>
-
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item" href="javascript:void(0)" id="chinese">
-                                                <img src="../frontend/assets/images/country/turkish.png"
-                                                    class="img-fluid blur-up lazyload" alt="">
-                                                <span>Tiếng Thổ Nhĩ Kì</span>
-
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li class="right-nav-list">
-                                <div class="dropdown theme-form-select">
-                                    <button class="btn dropdown-toggle" type="button" id="select-dollar"
-                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                        <span>VNĐ</span>
-
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end sm-dropdown-menu"
-                                        aria-labelledby="select-dollar">
-                                        <li>
-                                            <a class="dropdown-item" id="aud" href="javascript:void(0)">AUD</a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item" id="eur" href="javascript:void(0)">EUR</a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item" id="cny" href="javascript:void(0)">USD</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                        </ul>
                     </div>
                 </div>
             </div>
@@ -389,6 +329,10 @@
                                                             <a href="{{ route('admin.dashboard') }}">Quay lại Admin</a>
                                                         </li>
                                                     @endif
+
+                                                      <li class="product-box-contain">
+                                                            <a href="{{ route('admin.dashboard') }}">Chỉnh sửa hồ sơ</a>
+                                                        </li>
 
                                                     <form id="logout-form" action="{{ route('logout') }}"
                                                         method="POST" style="display: none;">
@@ -840,7 +784,7 @@
                                                 <a class="nav-link dropdown-toggle" href="javascript:void(0)"
                                                     data-bs-toggle="dropdown">Trang chủ</a>
 
-                                                <ul class="dropdown-menu">
+                                                {{-- <ul class="dropdown-menu">
                                                     <li>
                                                         <a class="dropdown-item" href="index.html">Kartshop</a>
                                                     </li>
@@ -870,10 +814,10 @@
                                                     <li>
                                                         <a class="dropdown-item" href="index-9.html">Fashion</a>
                                                     </li>
-                                                </ul>
+                                                </ul> --}}
                                             </li>
 
-                                            <li class="nav-item dropdown">
+                                            {{-- <li class="nav-item dropdown">
                                                 <a class="nav-link dropdown-toggle" href="javascript:void(0)"
                                                     data-bs-toggle="dropdown">Cửa hàng</a>
                                                 <ul class="dropdown-menu">
@@ -907,7 +851,7 @@
                                                             Filter</a>
                                                     </li>
                                                 </ul>
-                                            </li>
+                                            </li> --}}
 
                                             <li class="nav-item dropdown">
                                                 <a class="nav-link dropdown-toggle" href="javascript:void(0)"
@@ -952,7 +896,7 @@
                                                 </ul>
                                             </li>
 
-                                            <li class="nav-item dropdown dropdown-mega">
+                                            {{-- <li class="nav-item dropdown dropdown-mega">
                                                 <a class="nav-link dropdown-toggle ps-xl-2 ps-0"
                                                     href="javascript:void(0)" data-bs-toggle="dropdown">Menu mở
                                                     rộng</a>
@@ -1036,14 +980,31 @@
                                                         <div class="dropdown-column dropdown-column-img col-3"></div>
                                                     </div>
                                                 </div>
-                                            </li>
+                                            </li> --}}
 
                                             <li class="nav-item dropdown new-nav-item">
                                                 <a class="nav-link dropdown-toggle" href="{{ route('blog') }}">Tin
                                                     tức</a>
                                             </li>
-
+                                            
                                             <li class="nav-item dropdown new-nav-item">
+                                                <a class="nav-link dropdown-toggle" href="{{ route('blog') }}">Giới thiệu
+                                                    </a>
+                                            </li>
+                                              <li class="nav-item dropdown new-nav-item">
+                                                <a class="nav-link dropdown-toggle" href="{{ route('blog') }}">Liên hệ
+                                                    </a>
+                                            </li>
+                                              <li class="nav-item dropdown new-nav-item">
+                                                <a class="nav-link dropdown-toggle" href="{{ route('blog') }}">Giỏ hàng
+                                                    </a>
+                                            </li>
+                                              <li class="nav-item dropdown new-nav-item">
+                                                <a class="nav-link dropdown-toggle" href="{{ route('blog') }}">Thanh toán
+                                                    </a>
+                                            </li>
+
+                                            {{-- <li class="nav-item dropdown new-nav-item">
                                                 <label class="new-dropdown">Mới</label>
                                                 <a class="nav-link dropdown-toggle" href="javascript:void(0)"
                                                     data-bs-toggle="dropdown">Trang</a>
@@ -1140,7 +1101,7 @@
                                                         <a class="dropdown-item" href="wishlist.html">Wishlist</a>
                                                     </li>
                                                 </ul>
-                                            </li>
+                                            </li> --}}
 
                                             {{-- <li class="nav-item dropdown">
                                                     <a class="nav-link dropdown-toggle" href="javascript:void(0)"

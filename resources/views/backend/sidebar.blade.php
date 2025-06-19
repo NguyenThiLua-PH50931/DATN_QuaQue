@@ -47,7 +47,7 @@
                     </a>
                     <ul class="sidebar-submenu">
                         <li><a href="{{ route('admin.user.index') }}">Tài khoản</a></li>
-                        <li><a href="{{ route('admin.user.hidden') }}">Tài khoản đã ẩn</a></li>
+                        {{-- <li><a href="{{ route('admin.user.hidden') }}">Tài khoản đã ẩn</a></li> --}}
                     </ul>
                 </li>
 
