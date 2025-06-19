@@ -19,16 +19,16 @@
                                     <label class="form-label fw-bold">ID:</label>
                                 </div>
                                 <div class="col-md-9">
-                                    <p class="form-control-plaintext">{{ $banner->id }}</p>
+                                <p class="form-control-plaintext">{{ $banner->id }}</p>
                                 </div>
                             </div>
 
                             <div class="mb-3 row">
                                 <div class="col-md-3">
-                                    <h5 class="fw-bold">Tiêu đề:</h5>
+                                <h5 class="fw-bold">Tiêu đề:</h5>
                                 </div>
                                 <div class="col-md-9">
-                                    <div class="ck-content">{!! $banner->title !!}</div>
+                                <div class="ck-content">{!! $banner->title !!}</div>
                                 </div>
                             </div>
 
@@ -37,11 +37,11 @@
                                     <label class="form-label fw-bold">Ảnh:</label>
                                 </div>
                                 <div class="col-md-9">
-                                    @if ($banner->image)
-                                        <img src="{{ asset('storage/' . $banner->image) }}" alt="{{ $banner->title }}" class="img-fluid mb-2" style="max-width: 200px;">
-                                    @else
-                                        <p>Không có ảnh.</p>
-                                    @endif
+                                @if ($banner->image)
+                                    <img src="{{ asset('storage/' . $banner->image) }}" alt="{{ $banner->title }}" class="img-fluid mb-2" style="max-width: 200px;">
+                                @else
+                                    <p>Không có ảnh.</p>
+                                @endif
                                 </div>
                             </div>
 
@@ -50,7 +50,7 @@
                                     <label class="form-label fw-bold">Link:</label>
                                 </div>
                                 <div class="col-md-9">
-                                    <p class="form-control-plaintext">{{ $banner->link ?? 'N/A' }}</p>
+                                <p class="form-control-plaintext">{{ $banner->link ?? 'N/A' }}</p>
                                 </div>
                             </div>
 
@@ -59,7 +59,7 @@
                                     <label class="form-label fw-bold">Hoạt động:</label>
                                 </div>
                                 <div class="col-md-9">
-                                    <p class="form-control-plaintext">{{ $banner->active ? 'Có' : 'Không' }}</p>
+                                <p class="form-control-plaintext">{{ $banner->active ? 'Có' : 'Không' }}</p>
                                 </div>
                             </div>
 
