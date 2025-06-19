@@ -27,6 +27,7 @@ use App\Http\Controllers\Client\ClientHomeController;
 use App\Http\Controllers\Client\BlogController as ClientBlogController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\Client\ClientSupportTicketController;
+use App\Http\Controllers\Client\ContactController;
 use App\Http\Controllers\Client\ForgotController;
 use App\Http\Controllers\Client\ResetPasswordController;
 use Illuminate\Support\Facades\Route;
@@ -87,8 +88,9 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
 
     // 
 
-    // Quên mật khẩu:
-
+    // Liên hệ:
+    Route::get('lienhe', [ContactController::class, 'lienhe'])->name('lienhe');
+    Route::post('lienhe', [ContactController::class, 'submit'])->name('submit');
 });
 
 //----------------------------------------------------------
