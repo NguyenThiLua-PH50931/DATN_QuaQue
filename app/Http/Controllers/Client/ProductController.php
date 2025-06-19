@@ -4,9 +4,20 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Models\admin\Product;
+use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
+    public function search(Request $request)
+    {
+        $query = $request->input('q');
+        $products = Product::where('name', 'like', "%$query%")
+                          ->select('id', 'name')
+                          ->get();
+
+        return response()->json($products);
+    }
+
     public function detail($slug)
     {
         // Lấy sản phẩm theo slug, kèm category, region, seller (user), images, reviews

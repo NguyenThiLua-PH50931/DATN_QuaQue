@@ -38,7 +38,8 @@
                             </form>
 
                             <div class="category-table">
-                                <table class="table all-package theme-table" id="table_id" style="width: 100%; table-layout: fixed;">
+                                <table class="table all-package theme-table" id="table_id"
+                                    style="width: 100%; table-layout: fixed;">
                                     <thead>
                                         <tr>
                                             <th style="color: black; background-color: #f8f9fa; width: 5%;">
@@ -84,12 +85,13 @@
                                                         alt="{{ $banner->title }}" class="img-thumbnail"
                                                         style="max-width: 100px; height: auto;">
                                                 </td>
-                                                <td style="word-wrap: break-word;">{{ $locationNames[$banner->location] ?? ($banner->location ?? 'N/A') }}</td>
-                                                 <td>{{ $banner->active ? 'Có' : 'Không' }}</td>
+                                                <td style="word-wrap: break-word;">
+                                                    {{ $locationNames[$banner->location] ?? ($banner->location ?? 'N/A') }}
+                                                </td>
+                                                <td>{{ $banner->active ? 'Có' : 'Không' }}</td>
                                                 {{-- <td>{{ $banner->link }}</td>
                                                 <td>{{ $banner->display_at ? $banner->display_at->format('d-m-Y H:i:s') : 'N/A' }}
                                                 </td>
-
                                                 {{-- <td>{{ $banner->link }}</td>
                                                 <td>{{ $banner->active ? 'Có' : 'Không' }}</td>
                                                 <td>{{ $banner->display_at ? $banner->display_at->format('d-m-Y H:i:s') : 'N/A' }}</td>
@@ -320,9 +322,9 @@
                                             window.location.reload();
                                         });
                                     $('#errorMessageModal').on('hidden.bs.modal',
-                                function() {
-                                        window.location.reload();
-                                    });
+                                        function() {
+                                            window.location.reload();
+                                        });
                                 },
                                 error: function(xhr) {
                                     $('#bulkDeleteModal').modal('hide');
@@ -338,9 +340,9 @@
                                     $('#errorMessageContent').text(errorMessage);
                                     $('#errorMessageModal').modal('show');
                                     $('#errorMessageModal').on('hidden.bs.modal',
-                                function() {
-                                        window.location.reload();
-                                    });
+                                        function() {
+                                            window.location.reload();
+                                        });
                                 }
                             });
                         });
