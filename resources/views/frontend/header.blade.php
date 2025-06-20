@@ -190,7 +190,7 @@
                                      </a>
                                  </li>
                                  <li class="right-side">
-                                     <a href="{{ url('/wishlist') }}" class="btn p-0 position-relative header-wishlist">
+                                     <a href="{{ route('client.wishlist.index') }}" class="btn p-0 position-relative header-wishlist">
                                          <i data-feather="heart"></i>
                                      </a>
                                  </li>
