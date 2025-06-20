@@ -29,6 +29,7 @@ use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\Client\ClientSupportTicketController;
 use App\Http\Controllers\Client\ContactController;
 use App\Http\Controllers\Client\ForgotController;
+use App\Http\Controllers\Client\ProfileClientController;
 use App\Http\Controllers\Client\ResetPasswordController;
 use Illuminate\Support\Facades\Route;
 // use App\Http\Controllers\ProductController as GlobalProductController; // Nếu cần dùng controller gốc ngoài admin/client
@@ -81,10 +82,10 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
         Route::group(['prefix' => 'order', 'as' => 'order.'], function () {});
     });
     // Support ticket (yêu cầu đăng nhập)
-    // Route::middleware('auth')->group(function () {
-    //     Route::get('support-ticket/create', [SupportTicketController::class, 'create'])->name('support-ticket.create');
-    //     Route::post('support-ticket', [SupportTicketController::class, 'store'])->name('support-ticket.store');
-    // });
+    Route::middleware('auth')->group(function () {
+        Route::get('support-ticket/create', [SupportTicketController::class, 'create'])->name('support-ticket.create');
+        Route::post('support-ticket', [SupportTicketController::class, 'store'])->name('support-ticket.store');
+    });
 
     // 
 
@@ -94,6 +95,14 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
 });
 
 //----------------------------------------------------------
+
+// Chỉnh sửa hồ sơ
+Route::middleware('auth')->group(function () {
+    Route::get('/index', [ProfileClientController::class, 'index'])->name('index');
+    Route::put('/update', [ProfileClientController::class, 'update'])->name('update');
+});
+
+
 
 //Quên mật khẩu:
 Route::get('forgot', [ForgotController::class, 'forgot'])->name('forgot');
