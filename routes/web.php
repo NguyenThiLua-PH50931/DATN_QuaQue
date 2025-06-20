@@ -25,23 +25,25 @@ use App\Http\Controllers\Admin\User\ProfileController;
 use App\Http\Controllers\Admin\SupportTicketController;
 use App\Http\Controllers\Client\ClientHomeController;
 use App\Http\Controllers\Client\BlogController as ClientBlogController;
+use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\Client\ClientSupportTicketController;
+use App\Http\Controllers\Client\ContactController;
+use App\Http\Controllers\Client\ForgotController;
+use App\Http\Controllers\Client\ResetPasswordController;
 use Illuminate\Support\Facades\Route;
 // use App\Http\Controllers\ProductController as GlobalProductController; // Nếu cần dùng controller gốc ngoài admin/client
 
 
 // CLIENT
-Route::get('/', function () {
-    return redirect()->route('client.home');
-});
-
 
 Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
     Route::get('home', [ClientHomeController::class, 'home'])->name('home');
-    Route::get('product/{slug}', [ClientHomeController::class, 'show'])->name('product.detail');
 
     // Sản phẩm:
-    Route::group(['prefix' => 'product', 'as' => 'product.'], function () {});
+    Route::group(['prefix' => 'san-pham', 'as' => 'product.'], function () {
+        Route::get('/{slug}', [ClientProductController::class, 'show'])->name('detail');
+        Route::post('/get-variant', [ClientProductController::class, 'getVariant'])->name('.getVariant');
+    });
 
     // Sản phẩm yêu thích
     Route::get('/wishlist', function () {
@@ -84,9 +86,20 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
     //     Route::post('support-ticket', [SupportTicketController::class, 'store'])->name('support-ticket.store');
     // });
 
+    // 
+
+    // Liên hệ:
+    Route::get('lienhe', [ContactController::class, 'lienhe'])->name('lienhe');
+    Route::post('lienhe', [ContactController::class, 'submit'])->name('submit');
 });
 
 //----------------------------------------------------------
+
+//Quên mật khẩu:
+Route::get('forgot', [ForgotController::class, 'forgot'])->name('forgot');
+Route::post('forgot', [ForgotController::class, 'sendResetLink'])->name('sendResetLink');
+Route::get('reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+Route::post('reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
 
 
 // dang ky
@@ -102,14 +115,14 @@ Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
 
 // Các trang client tĩnh
-Route::view('/wishlist', 'frontend.wishlist.wishlist')->name('wishlist');
-Route::view('/compare', 'frontend.pages.compare')->name('compare');
-Route::view('/contact', 'frontend.pages.contact');
-Route::view('/cart', 'frontend.cart.cart');
-Route::view('/checkout', 'frontend.checkout.checkout');
-Route::view('/products/category', 'frontend.products.category');
-Route::view('/seller/become-seller', 'frontend.seller.become-seller');
-Route::view('/seller/seller-dashboard', 'frontend.seller.seller-dashboard');
+// Route::view('/wishlist', 'frontend.wishlist.wishlist')->name('wishlist');
+// Route::view('/compare', 'frontend.pages.compare')->name('compare');
+// Route::view('/contact', 'frontend.pages.contact');
+// Route::view('/cart', 'frontend.cart.cart');
+// Route::view('/checkout', 'frontend.checkout.checkout');
+// Route::view('/products/category', 'frontend.products.category');
+// Route::view('/seller/become-seller', 'frontend.seller.become-seller');
+// Route::view('/seller/seller-dashboard', 'frontend.seller.seller-dashboard');
 
 // Blog
 Route::get('/blog', [ClientBlogController::class, 'index'])->name('blog');
@@ -122,7 +135,6 @@ Route::get('/blog-detail/{id}', [ClientBlogController::class, 'show'])->name('bl
 // ADMIN:
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin'], function () {
 
-    // Route::get('home', [HomeController::class, 'home'])->name('home');
     // Route cho dashboard tổng quan và báo cáo
     Route::get('/reports', [ReportController::class, 'dashboard'])->name('dashboard');
 

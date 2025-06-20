@@ -57,10 +57,10 @@
                     <div class="col-xl-3 col-lg-4 col-sm-6">
                         <div class="footer-logo">
                             <div class="theme-logo">
-                                <a href="index.html">
-                                    <img src="{{ asset('storage/logo/logo.png') }}" class="blur-up lazyload"
-                                        alt="Logo Quà Quê" style="width: 150px; height: auto;">
-                                </a>
+                                 <a href="{{ url('/') }}" class="web-logo nav-logo">
+                             <img src="{{ asset('/storage/banners/logo/logo.png') }}" class="img-fluid blur-up lazyload"
+                                 alt="Logo Quà Quê" style="width: 150px; height: auto;">
+                         </a>
                             </div>
 
                             <div class="footer-logo-contain">
@@ -70,7 +70,7 @@
                                 <ul class="address">
                                     <li>
                                         <i data-feather="home"></i>
-                                        <a href="javascript:void(0)">1418 Riverwood Drive, CA 96052, US</a>
+                                        <a href="javascript:void(0)">Hà Nội, Việt Nam</a>
                                         <!-- Có thể thay bằng địa chỉ thật -->
                                     </li>
                                     <li>
@@ -85,7 +85,7 @@
 
                     <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
                         <div class="footer-title">
-                            <h4>Categories</h4>
+                            <h4>Danh mục</h4>
                         </div>
 
                         <div class="footer-contain">
@@ -114,7 +114,7 @@
 
                     <div class="col-xl col-lg-2 col-sm-3">
                         <div class="footer-title">
-                            <h4>Useful Links</h4>
+                            <h4>Liên kết</h4>
                         </div>
 
                         <div class="footer-contain">
@@ -140,7 +140,7 @@
 
                     <div class="col-xl-2 col-sm-3">
                         <div class="footer-title">
-                            <h4>Help Center</h4>
+                            <h4>Trung tâm hỗ trợ</h4>
                         </div>
 
                         <div class="footer-contain">
@@ -169,7 +169,7 @@
 
                     <div class="col-xl-3 col-lg-4 col-sm-6">
                         <div class="footer-title">
-                            <h4>Contact Us</h4>
+                            <h4>Thông tin liên hệ</h4>
                         </div>
 
                         <div class="footer-contact">
@@ -179,7 +179,7 @@
                                         <i data-feather="phone"></i>
                                         <div class="contact-number">
                                             <h6 class="text-content">Hotline 24/7 :</h6>
-                                            <h5>+91 888 104 2340</h5>
+                                            <h5>+0123456789</h5>
                                         </div>
                                     </div>
                                 </li>
@@ -189,7 +189,7 @@
                                         <i data-feather="mail"></i>
                                         <div class="contact-number">
                                             <h6 class="text-content">Email Address :</h6>
-                                            <h5>fastkart@hotmail.com</h5>
+                                            <h5>support@quaque.vn</h5>
                                         </div>
                                     </div>
                                 </li>

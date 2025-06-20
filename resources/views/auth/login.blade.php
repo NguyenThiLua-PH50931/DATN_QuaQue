@@ -17,7 +17,11 @@
                         <div class="log-in-title">
                             <h3>Đăng nhập</h3>
                         </div>
-
+                        @if (session('status'))
+                            <div class="alert alert-success mt-3">
+                                {{ session('status') }}
+                            </div>
+                        @endif
                         <div class="input-box">
                             <form method="POST" class="row g-4" action="{{ route('checklogin') }}">
                                 @csrf
@@ -50,7 +54,7 @@
                                                 id="flexCheckDefault">
                                             <label class="form-check-label" for="flexCheckDefault">Nhớ tài khoản</label>
                                         </div>
-                                        <a href="forgot.html" class="forgot-password">Quên mật khẩu</a>
+                                        <a href="{{ route('forgot') }}" class="forgot-password">Quên mật khẩu</a>
                                     </div>
                                 </div>
 

@@ -49,10 +49,11 @@
                                             <th style="color: black; background-color: #f8f9fa;">Ảnh</th>
                                             <th style="color: black; background-color: #f8f9fa;">Vị trí</th>
                                             <th style="color: black; background-color: #f8f9fa;">Hoạt động</th>
-                                            {{-- <th style="color: black; background-color: #f8f9fa;">Link</th>
-                                            <th style="color: black; background-color: #f8f9fa;">Ngày hiển thị </th>
-                                            <th style="color: black; background-color: #f8f9fa;">Ngày dừng hiển thị</th> --}}
                                             <th style="color: black; background-color: #f8f9fa;">Hành động</th>
+                                            {{-- <th style="color: black; background-color: #f8f9fa;">Link</th> --}}
+                                            {{-- <th style="color: black; background-color: #f8f9fa;">Ngày hiển thị </th>
+                                            <th style="color: black; background-color: #f8f9fa;">Ngày dừng hiển thị</th> --}}
+
                                         </tr>
                                     </thead>
                                     <tbody>

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <!-- Mirrored from themes.pixelstrap.com/fastkart/front-end/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 06 Nov 2024 13:10:56 GMT -->
+
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -46,6 +47,7 @@
     <!-- Template Style -->
     <link id="color-link" rel="stylesheet" href="{{ asset('frontend/assets/css/style.css') }}">
 </head>
+
 <body class="bg-effect">
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -90,6 +92,16 @@
             }
         });
     </script>
+    <!-- Loader Start -->
+    <!-- <div class="fullpage-loader">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div> -->
+    <!-- Loader End -->
 
     <!-- Header -->
     @includeIf('frontend.header')
@@ -97,7 +109,7 @@
     <div class="mobile-menu d-md-none d-block mobile-cart">
         <ul>
             <li class="active">
-                <a href="index.html">
+                <a href="{{ route('client.home') }}">
                     <i class="iconly-Home icli"></i>
                     <span>Trang chủ</span>
                 </a>
@@ -136,8 +148,6 @@
 
     {{-- Contents --}}
     @yield('contents')
-
-
     @includeIf('frontend.footer')
     <!-- Quick View Modal Box Start -->
     <div class="modal fade theme-modal view-modal" id="view" tabindex="-1">
