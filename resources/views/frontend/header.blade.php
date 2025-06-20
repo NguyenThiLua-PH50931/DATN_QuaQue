@@ -288,7 +288,11 @@
                                                          Đăng xuất
                                                      </a>
                                                  </li>
-
+                                                 <li class="product-box-contain">
+                                                     <a href="{{ route('index') }}">
+                                                         Chỉnh sửa hồ sơ
+                                                     </a>
+                                                 </li>
                                                  @if (Auth::user()->role === 'admin')
                                                      <li class="product-box-contain">
                                                          <a href="{{ route('admin.dashboard') }}">Quay lại
@@ -923,7 +927,8 @@
                                              </a>
                                          </li>
                                          <li class="nav-item dropdown new-nav-item">
-                                             <a class="nav-link dropdown-toggle" href="{{ route('client.lienhe') }}">Liên
+                                             <a class="nav-link dropdown-toggle"
+                                                 href="{{ route('client.lienhe') }}">Liên
                                                  hệ
                                              </a>
                                          </li>
