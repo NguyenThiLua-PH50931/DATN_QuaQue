@@ -31,6 +31,7 @@ use App\Http\Controllers\Client\ContactController;
 use App\Http\Controllers\Client\ForgotController;
 use App\Http\Controllers\Client\ProfileClientController;
 use App\Http\Controllers\Client\ResetPasswordController;
+use App\Http\Controllers\Client\WishlistController;
 use Illuminate\Support\Facades\Route;
 // use App\Http\Controllers\ProductController as GlobalProductController; // Nếu cần dùng controller gốc ngoài admin/client
 
@@ -46,12 +47,15 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
         Route::post('/get-variant', [ClientProductController::class, 'getVariant'])->name('.getVariant');
     });
 
+
     // Sản phẩm yêu thích
-    Route::get('/wishlist', function () {
-        return view('frontend.wishlist.wishlist');
+    Route::middleware('auth')->group(function () {
+        Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+        Route::post('/wishlist', [WishlistController::class, 'store'])->name('wishlist.store');
+        Route::delete('/wishlist/{product_id}', [WishlistController::class, 'destroy'])->name('wishlist.destroy');
     });
 
-    // Liên hệ
+    // Support ticket
     Route::prefix('support-ticket')->middleware('auth')->name('support-ticket.')->group(function () {
         Route::get('/', [ClientSupportTicketController::class, 'index'])->name('index');
         Route::get('/create', [ClientSupportTicketController::class, 'create'])->name('create');
@@ -87,7 +91,7 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
         Route::post('support-ticket', [SupportTicketController::class, 'store'])->name('support-ticket.store');
     });
 
-    // 
+    //
 
     // Liên hệ:
     Route::get('lienhe', [ContactController::class, 'lienhe'])->name('lienhe');
