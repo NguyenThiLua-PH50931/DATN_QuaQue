@@ -119,7 +119,7 @@
 #57 C:\\laragon\\www\\DATN\\DATN_QuaQue\\public\\index.php(20): Illuminate\\Foundation\\Application->handleRequest(Object(Illuminate\\Http\\Request))
 #58 C:\\laragon\\www\\DATN\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php(23): require_once('C:\\\\laragon\\\\www\\\\...')
 #59 {main}
-"} 
+"}
 [2025-06-19 08:16:04] local.ERROR: foreach() argument must be of type array|object, null given (View: C:\laragon\www\DATN\DATN_QuaQue\resources\views\frontend\products\detail.blade.php) {"userId":4,"exception":"[object] (Illuminate\\View\\ViewException(code: 0): foreach() argument must be of type array|object, null given (View: C:\\laragon\\www\\DATN\\DATN_QuaQue\\resources\\views\\frontend\\products\\detail.blade.php) at C:\\laragon\\www\\DATN\\DATN_QuaQue\\storage\\framework\\views\\19b9206a0ccc45ecc723dea7bb641390.php:61)
 [stacktrace]
 #0 C:\\laragon\\www\\DATN\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Engines\\PhpEngine.php(59): Illuminate\\View\\Engines\\CompilerEngine->handleViewException(Object(ErrorException), 1)
@@ -241,7 +241,7 @@
 #57 C:\\laragon\\www\\DATN\\DATN_QuaQue\\public\\index.php(20): Illuminate\\Foundation\\Application->handleRequest(Object(Illuminate\\Http\\Request))
 #58 C:\\laragon\\www\\DATN\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php(23): require_once('C:\\\\laragon\\\\www\\\\...')
 #59 {main}
-"} 
+"}
 [2025-06-19 08:35:10] local.ERROR: foreach() argument must be of type array|object, null given (View: C:\laragon\www\DATN\DATN_QuaQue\resources\views\frontend\products\detail.blade.php) {"userId":4,"exception":"[object] (Illuminate\\View\\ViewException(code: 0): foreach() argument must be of type array|object, null given (View: C:\\laragon\\www\\DATN\\DATN_QuaQue\\resources\\views\\frontend\\products\\detail.blade.php) at C:\\laragon\\www\\DATN\\DATN_QuaQue\\storage\\framework\\views\\19b9206a0ccc45ecc723dea7bb641390.php:61)
 [stacktrace]
 #0 C:\\laragon\\www\\DATN\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Engines\\PhpEngine.php(59): Illuminate\\View\\Engines\\CompilerEngine->handleViewException(Object(ErrorException), 1)
@@ -363,4 +363,4 @@
 #57 C:\\laragon\\www\\DATN\\DATN_QuaQue\\public\\index.php(20): Illuminate\\Foundation\\Application->handleRequest(Object(Illuminate\\Http\\Request))
 #58 C:\\laragon\\www\\DATN\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php(23): require_once('C:\\\\laragon\\\\www\\\\...')
 #59 {main}
-"} 
+"}
