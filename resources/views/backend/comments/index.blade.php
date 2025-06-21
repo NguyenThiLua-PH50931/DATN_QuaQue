@@ -151,8 +151,8 @@
                                 </div>
                             </form>
 
-                            <div class="table-responsive overflow-hidden">
-                                <table class="table all-package theme-table">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover table-bordered align-middle">
                                     <thead>
                                         <tr>
                                             <th>ID</th>
@@ -182,7 +182,7 @@
                                                 <td>
                                                     <div class="action-buttons">
                                                         <a href="{{ route('admin.comments.edit', $comment->id) }}"
-                                                            class="btn btn-primary btn-sm">Sửa trạng thái</a>
+                                                            class="btn btn-primary btn-sm">Sửa</a>
                                                         <form method="POST"
                                                             action="{{ route('admin.comments.destroy', $comment->id) }}"
                                                             style="display:inline;">

@@ -17,21 +17,27 @@ class LoginController extends Controller
     }
     public function checklogin(Request $request)
     {
-
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
+            'email' => ['required', 'email', 'max:255'],
+            'password' => ['required', 'string', 'min:6', 'max:50'],
+        ], [
+            'email.required' => 'Vui lòng nhập địa chỉ email.',
+            'email.email' => 'Địa chỉ email không hợp lệ.',
+            'email.max' => 'Địa chỉ email không được vượt quá 255 ký tự.',
+
+            'password.required' => 'Vui lòng nhập mật khẩu.',
+            'password.string' => 'Mật khẩu phải là chuỗi.',
+            'password.min' => 'Mật khẩu phải có ít nhất 6 ký tự.',
+            'password.max' => 'Mật khẩu không được vượt quá 50 ký tự.',
         ]);
 
-
-        if (Auth::attempt($credentials)) {
+        if (Auth::attempt($credentials, $request->has('remember'))) {
             $request->session()->regenerate();
 
-            if (Auth::user()->role == "admin") {
-                return redirect()->route('admin.home');
+            if (Auth::user()->role == 'admin') {
+                return redirect()->route('admin.dashboard')->with('success', 'Đăng nhập thành công!');
             }
-         return redirect()->route('client.home')->with('success', 'Đăng nhập thành công!');
-
+            return redirect()->route('client.home')->with('success', 'Đăng nhập thành công!');
         }
 
         return back()->withErrors([
@@ -39,4 +45,15 @@ class LoginController extends Controller
         ])->onlyInput('email');
     }
 
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        // Xoá session và regenerate
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        // Chuyển hướng về trang chủ hoặc trang login
+        return redirect()->route('login')->with('success', 'Đăng xuất thành công!');
+    }
 }
