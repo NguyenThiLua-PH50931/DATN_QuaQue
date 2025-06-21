@@ -16,51 +16,52 @@ use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\Admin\AttributeController;
 use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\User\UserController;
-
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\CouponsController;
 use App\Http\Controllers\Admin\RegionController as AdminRegionController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\User\ProfileController;
-
 use App\Http\Controllers\Admin\SupportTicketController;
-
-
 use App\Http\Controllers\Client\ClientHomeController;
-
 use App\Http\Controllers\Client\BlogController as ClientBlogController;
+use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\Client\ClientSupportTicketController;
-
+use App\Http\Controllers\Client\ContactController;
+use App\Http\Controllers\Client\ForgotController;
+use App\Http\Controllers\Client\ProfileClientController;
+use App\Http\Controllers\Client\ResetPasswordController;
+use App\Http\Controllers\Client\WishlistController;
 use Illuminate\Support\Facades\Route;
 // use App\Http\Controllers\ProductController as GlobalProductController; // Nếu cần dùng controller gốc ngoài admin/client
 
 
 // CLIENT
-Route::get('/', function () {
-    return redirect()->route('client.home');
-});
-
 
 Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
     Route::get('home', [ClientHomeController::class, 'home'])->name('home');
-    Route::get('product/{slug}', [ClientHomeController::class, 'show'])->name('product.detail');
 
     // Sản phẩm:
-    Route::group(['prefix' => 'product', 'as' => 'product.'], function () {});
-
-    // Sản phẩm yêu thích
-    Route::get('/wishlist', function () {
-        return view('frontend.wishlist.wishlist');
+    Route::group(['prefix' => 'san-pham', 'as' => 'product.'], function () {
+        Route::get('/{slug}', [ClientProductController::class, 'show'])->name('detail');
+        Route::post('/get-variant', [ClientProductController::class, 'getVariant'])->name('.getVariant');
     });
 
-    // Liên hệ
-   Route::prefix('support-ticket')->middleware('auth')->name('support-ticket.')->group(function () {
-    Route::get('/', [ClientSupportTicketController::class, 'index'])->name('index');
-    Route::get('/create', [ClientSupportTicketController::class, 'create'])->name('create');
-    Route::post('/', [ClientSupportTicketController::class, 'store'])->name('store');
-    Route::get('/{id}', [ClientSupportTicketController::class, 'show'])->name('show');
-});
+
+    // Sản phẩm yêu thích
+    Route::middleware('auth')->group(function () {
+        Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+        Route::post('/wishlist', [WishlistController::class, 'store'])->name('wishlist.store');
+        Route::delete('/wishlist/{product_id}', [WishlistController::class, 'destroy'])->name('wishlist.destroy');
+    });
+
+    // Support ticket
+    Route::prefix('support-ticket')->middleware('auth')->name('support-ticket.')->group(function () {
+        Route::get('/', [ClientSupportTicketController::class, 'index'])->name('index');
+        Route::get('/create', [ClientSupportTicketController::class, 'create'])->name('create');
+        Route::post('/', [ClientSupportTicketController::class, 'store'])->name('store');
+        Route::get('/{id}', [ClientSupportTicketController::class, 'show'])->name('show');
+    });
 
     // giỏ hàng
     Route::get('/cart', function () {
@@ -85,14 +86,33 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
         Route::group(['prefix' => 'order', 'as' => 'order.'], function () {});
     });
     // Support ticket (yêu cầu đăng nhập)
-    // Route::middleware('auth')->group(function () {
-    //     Route::get('support-ticket/create', [SupportTicketController::class, 'create'])->name('support-ticket.create');
-    //     Route::post('support-ticket', [SupportTicketController::class, 'store'])->name('support-ticket.store');
-    // });
+    Route::middleware('auth')->group(function () {
+        Route::get('support-ticket/create', [SupportTicketController::class, 'create'])->name('support-ticket.create');
+        Route::post('support-ticket', [SupportTicketController::class, 'store'])->name('support-ticket.store');
+    });
 
+    //
+
+    // Liên hệ:
+    Route::get('lienhe', [ContactController::class, 'lienhe'])->name('lienhe');
+    Route::post('lienhe', [ContactController::class, 'submit'])->name('submit');
 });
 
 //----------------------------------------------------------
+
+// Chỉnh sửa hồ sơ
+Route::middleware('auth')->group(function () {
+    Route::get('/index', [ProfileClientController::class, 'index'])->name('index');
+    Route::put('/update', [ProfileClientController::class, 'update'])->name('update');
+});
+
+
+
+//Quên mật khẩu:
+Route::get('forgot', [ForgotController::class, 'forgot'])->name('forgot');
+Route::post('forgot', [ForgotController::class, 'sendResetLink'])->name('sendResetLink');
+Route::get('reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+Route::post('reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
 
 
 // dang ky
@@ -103,15 +123,19 @@ Route::post('/register', [RegisterController::class, 'register']);
 Route::get('/login', [LoginController::class, 'login'])->name('login');
 Route::post('/login', [LoginController::class, 'checklogin'])->name('checklogin');
 
+// Đăng xuất
+Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+
+
 // Các trang client tĩnh
-Route::view('/wishlist', 'frontend.wishlist.wishlist')->name('wishlist');
-Route::view('/compare', 'frontend.pages.compare')->name('compare');
-Route::view('/contact', 'frontend.pages.contact');
-Route::view('/cart', 'frontend.cart.cart');
-Route::view('/checkout', 'frontend.checkout.checkout');
-Route::view('/products/category', 'frontend.products.category');
-Route::view('/seller/become-seller', 'frontend.seller.become-seller');
-Route::view('/seller/seller-dashboard', 'frontend.seller.seller-dashboard');
+// Route::view('/wishlist', 'frontend.wishlist.wishlist')->name('wishlist');
+// Route::view('/compare', 'frontend.pages.compare')->name('compare');
+// Route::view('/contact', 'frontend.pages.contact');
+// Route::view('/cart', 'frontend.cart.cart');
+// Route::view('/checkout', 'frontend.checkout.checkout');
+// Route::view('/products/category', 'frontend.products.category');
+// Route::view('/seller/become-seller', 'frontend.seller.become-seller');
+// Route::view('/seller/seller-dashboard', 'frontend.seller.seller-dashboard');
 
 // Blog
 Route::get('/blog', [ClientBlogController::class, 'index'])->name('blog');
@@ -123,8 +147,6 @@ Route::get('/blog-detail/{id}', [ClientBlogController::class, 'show'])->name('bl
 
 // ADMIN:
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin'], function () {
-
-    Route::get('home', [HomeController::class, 'home'])->name('home');
 
     // Route cho dashboard tổng quan và báo cáo
     Route::get('/reports', [ReportController::class, 'dashboard'])->name('dashboard');
@@ -147,6 +169,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
     Route::post('/attribute-values/quick-store', [AdminAttributeValueController::class, 'storeQuick'])->name('attribute_values.storeQuick');
 
     Route::prefix('products')->name('products.')->group(function () {
+        Route::get('/search', [AdminProductController::class, 'search']);
         Route::get('/', [AdminProductController::class, 'index'])->name('index');
         Route::get('/create', [AdminProductController::class, 'create'])->name('create');
         Route::post('/store', [AdminProductController::class, 'store'])->name('store');
@@ -245,12 +268,14 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
 
     // Order
     Route::group(['prefix' => 'orders', 'as' => 'orders.'], function () {
-        Route::get('/', [OrderController::class, 'index'])->name('index');
-        Route::get('/{order}', [OrderController::class, 'show'])->name('show');
-        Route::get('/{order}/tracking', [OrderController::class, 'tracking'])->name('tracking');
-        Route::delete('/{order}', [OrderController::class, 'destroy'])->name('destroy');
-        Route::put('/{order}/update-status', [OrderController::class, 'updateStatus'])->name('updateStatus');
+        Route::get('/', [OrderController::class, 'index'])->name('index');                // Hiển thị danh sách
+        Route::get('/{order}', [OrderController::class, 'show'])->name('show');          // Chi tiết đơn hàng
+        Route::get('/{order}/tracking', [OrderController::class, 'tracking'])->name('tracking');  // Tracking
+        Route::delete('/{order}', [OrderController::class, 'destroy'])->name('destroy'); // Xóa cứng
+        Route::put('/{order}/update-status', [OrderController::class, 'updateStatus'])->name('updateStatus'); // Cập nhật trạng thái
+        Route::patch('/{order}/hide', [OrderController::class, 'hide'])->name('hide');   // Ẩn đơn hàng ✅
     });
+
 
     // User
     Route::group(['prefix' => 'user', 'as' => 'user.'], function () {
@@ -325,19 +350,19 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
     Route::post('/regions/store-quick', [AdminRegionController::class, 'storeQuick'])->name('regions.storeQuick');
     //Route::post('/attributes/store-quick', [AdminAttributeController::class, 'storeQuick'])->name('attributes.storeQuick');
 
-    Route::prefix('products')->name('products.')->group(function () {
-        Route::get('/', [AdminProductController::class, 'index'])->name('index');
-        Route::get('/create', [AdminProductController::class, 'create'])->name('create');
-        Route::post('/store', [AdminProductController::class, 'store'])->name('store');
-        Route::get('/{slug}', [AdminProductController::class, 'show'])->name('show');
-        Route::post('/{id}/toggle', [AdminProductController::class, 'toggleStatus'])->name('toggle');
-        Route::post('/variant/{id}/toggle', [AdminProductController::class, 'toggleVariantStatus'])->name('variant.toggle');
-        Route::post('/bulk-delete', [AdminProductController::class, 'bulkDelete'])->name('bulkDelete');
-        Route::delete('/{id}', [AdminProductController::class, 'destroy'])->name('destroy');
-        Route::get('/{slug}/edit', [AdminProductController::class, 'edit'])->name('edit');
-        Route::post('/{slug}/update', [AdminProductController::class, 'update'])->name('update');
-        Route::delete('/image/{id}', [AdminProductController::class, 'deleteImage'])->name('image.delete');
-    });
+    // Route::prefix('products')->name('products.')->group(function () {
+    //     Route::get('/', [AdminProductController::class, 'index'])->name('index');
+    //     Route::get('/create', [AdminProductController::class, 'create'])->name('create');
+    //     Route::post('/store', [AdminProductController::class, 'store'])->name('store');
+    //     Route::get('/{slug}', [AdminProductController::class, 'show'])->name('show');
+    //     Route::post('/{id}/toggle', [AdminProductController::class, 'toggleStatus'])->name('toggle');
+    //     Route::post('/variant/{id}/toggle', [AdminProductController::class, 'toggleVariantStatus'])->name('variant.toggle');
+    //     Route::post('/bulk-delete', [AdminProductController::class, 'bulkDelete'])->name('bulkDelete');
+    //     Route::delete('/{id}', [AdminProductController::class, 'destroy'])->name('destroy');
+    //     Route::get('/{slug}/edit', [AdminProductController::class, 'edit'])->name('edit');
+    //     Route::post('/{slug}/update', [AdminProductController::class, 'update'])->name('update');
+    //     Route::delete('/image/{id}', [AdminProductController::class, 'deleteImage'])->name('image.delete');
+    // });
 
     // Chỉnh sửa hồ sơ:
     Route::group(['prefix' => 'setting', 'as' => 'setting.'], function () {

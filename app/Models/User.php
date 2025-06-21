@@ -8,6 +8,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use App\Models\admin\Comment;
+use App\Models\Client\Wishlist;
+
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -44,6 +46,11 @@ class User extends Authenticatable
         return $this->hasMany(Comment::class);
     }
 
+    public function wishlist()
+    {
+        return $this->hasMany(Wishlist::class, 'user_id');
+    }
+
     /**
      * Get the attributes that should be cast.
      *
@@ -51,6 +58,6 @@ class User extends Authenticatable
      */
     protected $casts = [
     'email_verified_at' => 'datetime',
-    'password'          => 'hashed',
+    // 'password'          => 'hashed',
 ];
 }

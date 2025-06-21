@@ -25,7 +25,7 @@
                                                 <label class="form-label-title col-sm-2 mb-0">Họ tên</label>
                                                 <div class="col-sm-10">
                                                     <input class="form-control" type="text" name="name"
-                                                        value="{{ old('name', $user->name) }}" required>
+                                                        value="{{ old('name', $user->name) }}">
                                                 </div>
                                             </div>
 
@@ -41,7 +41,7 @@
                                                 <label class="form-label-title col-sm-2 mb-0">Email</label>
                                                 <div class="col-sm-10">
                                                     <input class="form-control" type="email" name="email"
-                                                        value="{{ old('email', $user->email) }}" required>
+                                                        value="{{ old('email', $user->email) }}">
                                                 </div>
                                             </div>
 

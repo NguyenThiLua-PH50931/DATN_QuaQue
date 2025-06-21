@@ -133,7 +133,7 @@
 </div>
 @endsection
 
-@push('scripts')
+{{-- @push('scripts')
     <script>
         $(document).ready(function() {
             $('#table_id').DataTable({
@@ -153,4 +153,4 @@
             });
         });
     </script>
-@endpush
+@endpush --}}
