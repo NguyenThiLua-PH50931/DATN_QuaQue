@@ -792,8 +792,7 @@
                                                  data-bs-toggle="dropdown">Sản phẩm</a>
                                              <ul class="dropdown-menu">
                                                  <li>
-                                                     <a class="dropdown-item" href="product-4-image.html">Product
-                                                         4 Image</a>
+                                                     <a class="dropdown-item" href="{{ route('client.product.index') }}">Tất cả sản phẩm</a>
                                                  </li>
                                                  <li class="sub-dropdown-hover">
                                                      <a href="javascript:void(0)" class="dropdown-item">Product
