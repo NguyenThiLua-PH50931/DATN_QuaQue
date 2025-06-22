@@ -25,6 +25,7 @@ use App\Http\Controllers\Admin\User\ProfileController;
 use App\Http\Controllers\Admin\SupportTicketController;
 use App\Http\Controllers\Client\ClientHomeController;
 use App\Http\Controllers\Client\BlogController as ClientBlogController;
+use App\Http\Controllers\Client\CartController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\Client\ClientSupportTicketController;
 use App\Http\Controllers\Client\ContactController;
@@ -64,17 +65,17 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
     });
 
     // giỏ hàng
-    Route::get('/cart', function () {
-        return view('frontend.cart.cart');
+         Route::prefix('cart')->middleware('auth')->name('cart.')->group(function () {
+        Route::get('index', [CartController::class, 'index'])->name('index');
+         Route::post('add', [CartController::class, 'add'])->name('add');
     });
+
 
     //  Thanh toán
     Route::get('/checkout', function () {
         return view('frontend.checkout.checkout');
     });
 
-    // Giỏ hàng:
-    Route::middleware('auth')->group(function () {});
 
     // Thanh toán mua hàng:
     Route::middleware('auth')->group(function () {

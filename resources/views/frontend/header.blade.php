@@ -197,7 +197,7 @@
                                  <li class="right-side">
                                      <div class="onhover-dropdown header-badge">
                                          <button type="button" class="btn p-0 position-relative header-wishlist">
-                                             <i data-feather="shopping-cart"></i>
+                                             <a href="{{ route('client.cart.index') }}"><i data-feather="shopping-cart"></i></a>
                                              <span class="position-absolute top-0 start-100 translate-middle badge">2
                                                  <span class="visually-hidden">Tin nhắn chưa đọc</span>
                                              </span>
@@ -933,15 +933,14 @@
                                              </a>
                                          </li>
                                          <li class="nav-item dropdown new-nav-item">
-                                             <a class="nav-link dropdown-toggle" href="{{ route('blog') }}">Giỏ
-                                                 hàng
+                                             <a class="nav-link dropdown-toggle" href="{{ route('client.wishlist.index') }}">Yêu thích
                                              </a>
                                          </li>
-                                         <li class="nav-item dropdown new-nav-item">
+                                         {{-- <li class="nav-item dropdown new-nav-item">
                                              <a class="nav-link dropdown-toggle" href="{{ route('blog') }}">Thanh
                                                  toán
                                              </a>
-                                         </li>
+                                         </li> --}}
 
                                          {{-- <li class="nav-item dropdown new-nav-item">
                                                 <label class="new-dropdown">Mới</label>
