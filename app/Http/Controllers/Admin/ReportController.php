@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Order;
-use App\Models\admin\OrderItem;
-use App\Models\admin\Review;
+use App\Models\Admin\OrderItem;
+use App\Models\Admin\Review;
 use App\Models\SupportRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -20,6 +20,7 @@ class ReportController extends Controller
         }
 
         $year = date('Y');
+<<<<<<< HEAD
         $date = $request->input('rating_date');
         $from = $request->input('rating_from_date');
         $to   = $request->input('rating_to_date');
@@ -79,6 +80,36 @@ class ReportController extends Controller
         $topRegion = (clone $orderQuery)
             ->join('addresses', 'orders.address_id', '=', 'addresses.id')
             ->where('orders.status', 'completed')
+=======
+
+        $totalRevenue = Order::withTrashed()
+            ->where('status', 'delivered')
+            ->whereYear('created_at', $year)
+            ->sum('total_amount');
+
+        $completedOrders = Order::withTrashed()
+            ->where('status', 'delivered')
+            ->count();
+
+        $topProduct = OrderItem::join('orders', 'order_items.order_id', '=', 'orders.id')
+    ->where('orders.status', 'delivered')
+    ->join('products', 'order_items.product_id', '=', 'products.id')
+    ->select(
+        'products.name',
+        'products.created_at',   // Thêm dòng này!
+        'products.image',        // Nếu muốn lấy luôn image
+        DB::raw('SUM(order_items.total) as total_revenue')
+    )
+    ->groupBy('products.id', 'products.name', 'products.created_at', 'products.image')
+    ->orderByDesc('total_revenue')
+    ->first();
+
+
+
+        $topRegion = Order::withTrashed()
+            ->join('addresses', 'orders.address_id', '=', 'addresses.id')
+            ->where('orders.status', 'delivered')
+>>>>>>> d72fafcad0920896b6deda9e057381a4e316d110
             ->select(
                 'addresses.address',
                 DB::raw('SUM(orders.total_amount) as total_revenue')
@@ -106,6 +137,7 @@ class ReportController extends Controller
             ->orderByDesc('average_rating')
             ->first();
 
+<<<<<<< HEAD
         // Thống kê trạng thái đơn hàng
         $completed = (clone $orderQuery)->where('status', 'completed')->count();
         $canceled  = (clone $orderQuery)->where('status', 'cancelled')->count();
@@ -114,6 +146,15 @@ class ReportController extends Controller
         // $topProduct = $topProduct ?? (object)['name' => 'N/A', 'total_revenue' => 0];
         // $topRegion = $topRegion ?? (object)['address' => 'N/A', 'total_revenue' => 0];
         // $topRatedProduct = $topRatedProduct ?? (object)['name' => 'N/A', 'average_rating' => 0];
+=======
+        $completed = Order::withTrashed()
+            ->where('status', 'delivered')
+            ->count();
+
+        $canceled = Order::withTrashed()
+            ->where('status', 'cancelled')
+            ->count();
+>>>>>>> d72fafcad0920896b6deda9e057381a4e316d110
 
         return view('backend.reports.dashboard', compact(
             'totalRevenue',
@@ -135,11 +176,13 @@ class ReportController extends Controller
     public function revenueByMonthYear(Request $request)
     {
         $year = $request->input('year', date('Y'));
-        $revenue = Order::select(
-            DB::raw('MONTH(created_at) as month'),
-            DB::raw('SUM(total) as total_revenue')
-        )
-            ->where('status', 'completed')
+
+        $revenue = Order::withTrashed()
+            ->select(
+                DB::raw('MONTH(created_at) as month'),
+                DB::raw('SUM(total) as total_revenue')
+            )
+            ->where('status', 'delivered')
             ->whereYear('created_at', $year)
             ->groupBy(DB::raw('MONTH(created_at)'))
             ->orderBy('month')
@@ -150,7 +193,10 @@ class ReportController extends Controller
 
     public function completedOrders()
     {
-        $completedOrders = Order::where('status', 'completed')->count();
+        $completedOrders = Order::withTrashed()
+            ->where('status', 'delivered')
+            ->count();
+
         return view('admin.reports.completed_orders', compact('completedOrders'));
     }
 
@@ -158,7 +204,7 @@ class ReportController extends Controller
     {
         $topProduct = OrderItem::join('orders', 'order_items.order_id', '=', 'orders.id')
             ->join('products', 'order_items.product_id', '=', 'products.id')
-            ->where('orders.status', 'completed')
+            ->where('orders.status', 'delivered')
             ->select(
                 'products.name',
                 DB::raw('SUM(order_items.quantity * order_items.price) as total_revenue')
@@ -172,8 +218,9 @@ class ReportController extends Controller
 
     public function topRegionRevenue()
     {
-        $topRegion = Order::join('regions', 'orders.region_id', '=', 'regions.id')
-            ->where('orders.status', 'completed')
+        $topRegion = Order::withTrashed()
+            ->join('regions', 'orders.region_id', '=', 'regions.id')
+            ->where('orders.status', 'delivered')
             ->select(
                 'regions.name',
                 DB::raw('SUM(orders.total) as total_revenue')
@@ -188,6 +235,7 @@ class ReportController extends Controller
     public function newUsers(Request $request)
     {
         $year = $request->input('year', date('Y'));
+
         $newUsers = User::select(
             DB::raw('MONTH(created_at) as month'),
             DB::raw('COUNT(*) as total_users')
@@ -222,8 +270,14 @@ class ReportController extends Controller
 
     public function orderStatus()
     {
-        $completed = Order::where('status', 'completed')->count();
-        $canceled = Order::where('status', 'canceled')->count();
+        $completed = Order::withTrashed()
+            ->where('status', 'delivered')
+            ->count();
+
+        $canceled = Order::withTrashed()
+            ->where('status', 'cancelled')
+            ->count();
+
         return view('admin.reports.order_status', compact('completed', 'canceled'));
     }
 }

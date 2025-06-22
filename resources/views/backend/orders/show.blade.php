@@ -237,49 +237,72 @@ ul {
                                    <table class="table table-bordered">
                                         <thead class="table-light">
                                             <tr>
-                                                <th colspan="2">Sản phẩm</th>
+                                                <th colspan="2" class="text-center">Sản phẩm</th>
                                                 <th class="text-center">Số lượng</th>
                                                 <th class="text-end">Giá</th>
-                                                <th class="text-end">Giảm giá</th>
+                                                <th class="text-end">Tạm tính</th>
                                             </tr>
+
                                         </thead>
                                         <tbody>
+                                            @php
+                                                $subtotal = $order->items->sum(fn($item) => $item->price * $item->quantity);
+                                                $itemCount = count($order->items);
+                                            @endphp
                                             @foreach ($order->items as $item)
                                                 <tr>
-                                                    <td style="width: 80px">
-                                                        <img src="{{ asset('storage/' . $item->product_image) }}" 
-                                                            class="img-thumbnail" 
-                                                            style="width:80px; height:80px; object-fit:cover;" 
+                                                    {{-- Ảnh --}}
+                                                    <td class="text-center align-middle">
+                                                        <img src="{{ asset('storage/' . $item->product_image) }}"
+                                                            class="img-thumbnail"
+                                                            style="width:80px; height:80px; object-fit:cover;"
                                                             alt="{{ $item->product_name }}">
                                                     </td>
-
-                                                    <td>
-                                                        {{ $item->product_name }}
-                                                       @if ($item->productVariant)
+                                                    {{-- Tên sản phẩm --}}
+                                                    <td class="align-middle">
+                                                        <div class="fw-semibold">{{ $item->product_name }}</div>
+                                                        @if ($item->productVariant)
                                                             <div class="text-muted small">Loại: {{ $item->productVariant->name }}</div>
                                                         @endif
                                                     </td>
-                                                    <td class="text-center">{{ $item->quantity }}</td>
-                                                    <td class="text-end">{{ number_format($item->price, 0, ',', '.') }} VNĐ</td>
-                                                    <td class="text-end text-danger">-{{ number_format($item->discount * $item->quantity, 0, ',', '.') }} VNĐ</td>
+                                                    <td class="text-center align-middle">{{ $item->quantity }}</td>
+                                                    <td class="text-end align-middle">{{ number_format($item->price, 0, ',', '.') }} VNĐ</td>
+                                                    @if ($loop->first)
+                                                        <td class="text-end fw-bold align-middle" rowspan="{{ $itemCount }}">
+                                                            {{ number_format($subtotal, 0, ',', '.') }} VNĐ
+                                                        </td>
+                                                    @endif
                                                 </tr>
                                             @endforeach
                                         </tbody>
+
                                         <tfoot>
                                             @php
-                                                $subtotal = $order->items->sum(fn($item) => $item->price * $item->quantity);
                                                 $discount_total = $order->items->sum(fn($item) => $item->discount * $item->quantity);
                                                 $shipping = $order->shipping_cost ?? 0;
-                                                $final_total = $subtotal + $shipping - $discount_total;
+                                                $voucher = $order->discount_amount ?? 0;
+                                                $final_total = $subtotal + $shipping - $discount_total - $voucher;
                                             @endphp
+
+                                            @if ($discount_total > 0)
                                             <tr>
-                                                <td colspan="4" class="text-end fw-bold">Giảm giá:</td>
+                                                <td colspan="4" class="text-end fw-bold">Giảm giá sản phẩm:</td>
                                                 <td class="text-end text-danger">-{{ number_format($discount_total, 0, ',', '.') }} VNĐ</td>
                                             </tr>
+                                            @endif
+
+                                            @if ($voucher > 0)
                                             <tr>
-                                                <td colspan="4" class="text-end fw-bold">Tạm tính:</td>
-                                                <td class="text-end">{{ number_format($subtotal, 0, ',', '.') }} VNĐ</td>
+                                                <td colspan="4" class="text-end fw-bold">
+                                                    Mã giảm giá 
+                                                    @if ($order->discountCode)
+                                                        ({{ $order->discountCode->code }})
+                                                    @endif:
+                                                </td>
+                                                <td class="text-end text-danger">-{{ number_format($voucher, 0, ',', '.') }} VNĐ</td>
                                             </tr>
+                                            @endif
+
                                             <tr>
                                                 <td colspan="4" class="text-end fw-bold">Phí vận chuyển:</td>
                                                 <td class="text-end">{{ number_format($shipping, 0, ',', '.') }} VNĐ</td>
@@ -329,10 +352,15 @@ ul {
                                     <h5 class="fw-bold mt-4 mb-2">Trạng thái thanh toán</h5>
                                     <p class="fw-semibold {{ $status['class'] }}">{{ $status['text'] }}</p>
 
-                                    <div class="mt-4">
+                                   <div class="mt-4">
                                         <h5 class="fw-bold">Ngày giao dự kiến:</h5>
-                                        <p class="mb-1 fw-semibold" style="color: #008c7e;">{{ $order->created_at->addDays(3)->format('d/m/Y') }}</p>
-                                        <a href="{{ route('admin.orders.tracking', $order->id) }}" class="btn btn-outline-success btn-sm">Theo dõi đơn hàng</a>
+                                        <p class="mb-1 fw-semibold" style="color: #008c7e;">
+                                            {{ $order->created_at->addDays(3)->format('d/m/Y') }}
+                                        </p>
+                                        <div class="btn-group" role="group">
+                                            <a href="{{ route('admin.orders.index') }}" class="btn btn-outline-success btn-sm">Quay lại</a>
+                                            <a href="{{ route('admin.orders.tracking', $order->id) }}" class="btn btn-outline-success btn-sm">Nhật ký đơn hàng</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
