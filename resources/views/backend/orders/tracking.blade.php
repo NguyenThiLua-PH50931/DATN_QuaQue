@@ -1,6 +1,6 @@
 @extends('layouts.backend')
 
-@section('title', 'Theo dõi đơn hàng')
+@section('title', 'Nhật ký đơn hàng')
 
 @section('content')
 <div class="page-body">
@@ -9,17 +9,16 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
-                        {{-- <div class="mb-4 border-bottom pb-2 d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">📦 Theo dõi đơn hàng</h5>
-                        </div> --}}
                         <div class="title-header option-title">
-                                <h5>Theo dõi đơn hàng</h5>
+                                <h5>Nhật ký đơn hàng</h5>
                             </div>
-                        <!-- Thông tin sản phẩm -->
                         <div class="mb-4">
                             @foreach ($order->items as $item)
                                 <div class="d-flex align-items-center gap-3 border rounded p-3 mb-2">
-                                    <img src="{{ $item->product_image ?? asset('assets/images/default-product.png') }}" alt="{{ $item->product_name }}" style="width: 70px; height: 70px; object-fit: cover;" class="rounded">
+                                    <img src="{{ asset('storage/' . $item->product_image) }}" 
+                                        class="img-thumbnail" 
+                                        style="width:80px; height:80px; object-fit:cover;" 
+                                        alt="{{ $item->product_name }}">
                                     <div class="flex-grow-1">
                                         <h6 class="mb-1">{{ $item->product_name }}</h6>
                                         @if ($item->productVariant)
@@ -27,14 +26,14 @@
                                         @endif
                                         <small>Số lượng: {{ $item->quantity }}</small>
                                     </div>
-                                    <div class="text-end fw-semibold align-self-center" style="min-width: 120px;">
-                                        {{ number_format($item->total, 0, ',', '.') }} VNĐ
-                                    </div>
                                 </div>
                             @endforeach
-                        </div>
 
-                        <!-- Trạng thái đơn hàng -->
+                            {{-- ✅ Tổng tiền sau khi liệt kê xong sản phẩm --}}
+                            <div class="text-end fw-bold mt-3">
+                                Tổng cộng: {{ number_format($order->total_amount, 0, ',', '.') }} VNĐ
+                            </div>
+                        </div>
                         <div class="mb-5 text-center">
                             <h6 class="text-muted">Trạng thái hiện tại:</h6>
                             <h5 class="fw-bold">
@@ -47,8 +46,6 @@
                                 @endif
                             </h5>
                         </div>
-
-                        <!-- Tiến trình đơn hàng nằm ngang -->
                         <div class="mb-5">
                             <div class="d-flex flex-wrap justify-content-between align-items-start text-center">
                                 @foreach ($steps as $step)
@@ -67,28 +64,43 @@
                         <!-- Bảng tracking -->
                         <div class="table-responsive">
                             <table class="table table-sm table-hover align-middle">
-                                <thead class="table-light">
+                               <thead class="table-light">
                                     <tr>
                                         <th>Ngày</th>
                                         <th>Giờ</th>
-                                        <th>Mô tả</th>
-                                        <th>Địa điểm</th>
+                                        <th colspan="3" class="text-center">Trạng thái đơn hàng</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse ($order->trackingUpdates ?? [] as $update)
+                                    @php
+                                        $statusMap = [
+                                            'pending' => 'Chờ xác nhận',
+                                            'confirmed' => 'Đã xác nhận',
+                                            'processing' => 'Đang chuẩn bị',
+                                            'shipped' => 'Đã gửi hàng',
+                                            'in_transit' => 'Đang vận chuyển',
+                                            'delivered' => 'Đã giao hàng',
+                                            'cancelled' => 'Đã hủy',
+                                            'failed_delivery' => 'Giao thất bại',
+                                        ];
+                                    @endphp
+
+                                    @forelse ($order->statusLogs as $log)
                                         <tr>
-                                            <td>{{ \Carbon\Carbon::parse($update->date)->format('d/m/Y') }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($update->date)->format('H:i A') }}</td>
-                                            <td>{{ $update->description }}</td>
-                                            <td>{{ $update->location }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($log->changed_at)->format('d/m/Y') }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($log->changed_at)->format('H:i:s') }}</td>
+                                            <td class="text-end" style="width: 30%;">{{ $statusMap[$log->from_status] ?? $log->from_status }}</td>
+                                            <td class="text-center" style="width: 5%;">→</td>
+                                            <td class="text-start" style="width: 30%;">{{ $statusMap[$log->to_status] ?? $log->to_status }}</td>
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="4" class="text-center text-muted">Chưa có thông tin tracking.</td>
+                                            <td colspan="5" class="text-center text-muted">Chưa có lịch sử thay đổi trạng thái.</td>
                                         </tr>
                                     @endforelse
                                 </tbody>
+
+
                             </table>
                         </div>
                     </div>
@@ -96,9 +108,6 @@
                         <a href="{{ route('admin.orders.index') }}" class="btn btn-outline-secondary">
                             <i class="ri-arrow-left-line me-1"></i> Quay lại
                         </a>
-                        <button class="btn btn-primary">
-                            <i class="ri-refresh-line me-1"></i> Cập nhật
-                        </button>
                     </div>
                 </div>
             </div>

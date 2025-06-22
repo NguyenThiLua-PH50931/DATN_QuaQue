@@ -124,7 +124,8 @@
                         </table>
                     </div>
                     <!-- Table End -->
-                    {{ $reviews->links() }}
+                     {{ $reviews->links() }}
+
                 </div>
             </div>
         </div>
@@ -136,6 +137,7 @@
     <script>
         $(document).ready(function() {
             $('#table_id').DataTable({
+              info: false,
                 language: {
                     search: "Tìm kiếm:",
                     lengthMenu: "Hiển thị _MENU_ đánh giá sản phẩm",
