@@ -10,6 +10,12 @@ use Carbon\Carbon;
 
 class ProductController extends Controller
 {
+    // all products
+    public function index()
+    {
+        $products = Product::with(['category', 'region', 'images'])->where('active', 1)->get();
+        return view('frontend.products.index', compact('products'));
+    }
     /**
      * Hiển thị chi tiết sản phẩm.
      */
@@ -25,10 +31,10 @@ class ProductController extends Controller
             'comments.user',
             'comments.replies.admin'
         ])
-        ->where('slug', $slug)
-        ->where('active', 1)
-        ->whereNull('deleted_at')
-        ->firstOrFail();
+            ->where('slug', $slug)
+            ->where('active', 1)
+            ->whereNull('deleted_at')
+            ->firstOrFail();
 
         // Tăng view count
         $this->increaseView($product);
