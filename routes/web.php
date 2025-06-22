@@ -149,7 +149,9 @@ Route::get('/blog-detail/{id}', [ClientBlogController::class, 'show'])->name('bl
 // ADMIN:
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin'], function () {
 
-    // Route cho dashboard tổng quan và báo cáo
+    // Route::get('home', [HomeController::class, 'home'])->name('home');
+    
+     // Route cho dashboard tổng quan và báo cáo
     Route::get('/reports', [ReportController::class, 'dashboard'])->name('dashboard');
 
     // Route::group(['prefix' => 'reports', 'as' => 'reports.'], function () {
@@ -268,14 +270,15 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
     });
 
     // Order
-    Route::group(['prefix' => 'orders', 'as' => 'orders.'], function () {
-        Route::get('/', [OrderController::class, 'index'])->name('index');                // Hiển thị danh sách
-        Route::get('/{order}', [OrderController::class, 'show'])->name('show');          // Chi tiết đơn hàng
-        Route::get('/{order}/tracking', [OrderController::class, 'tracking'])->name('tracking');  // Tracking
-        Route::delete('/{order}', [OrderController::class, 'destroy'])->name('destroy'); // Xóa cứng
-        Route::put('/{order}/update-status', [OrderController::class, 'updateStatus'])->name('updateStatus'); // Cập nhật trạng thái
-        Route::patch('/{order}/hide', [OrderController::class, 'hide'])->name('hide');   // Ẩn đơn hàng ✅
-    });
+  Route::group(['prefix' => 'orders', 'as' => 'orders.'], function () {
+    Route::get('/', [OrderController::class, 'index'])->name('index');                // Hiển thị danh sách
+    Route::get('/{order}', [OrderController::class, 'show'])->name('show');          // Chi tiết đơn hàng
+    Route::get('/{order}/tracking', [OrderController::class, 'tracking'])->name('tracking');  // Tracking
+    Route::delete('/{order}', [OrderController::class, 'destroy'])->name('destroy'); // Xóa cứng
+    Route::put('/{order}/update-status', [OrderController::class, 'updateStatus'])->name('updateStatus'); // Cập nhật trạng thái
+    Route::patch('/{order}/hide', [OrderController::class, 'hide'])->name('hide');   // Ẩn đơn hàng ✅
+    Route::put('/{order}/update-payment-status', [OrderController::class, 'updatePaymentStatus'])->name('updatePaymentStatus');
+});
 
 
     // User
@@ -381,3 +384,4 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         Route::put('update/{id}', [CouponsController::class, 'update'])->name('update');
     });
 });
+
