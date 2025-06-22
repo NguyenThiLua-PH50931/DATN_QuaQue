@@ -398,10 +398,62 @@
                                                             <h6 class="theme-color">In Stock</h6>
                                                         </div>
                                                         <div class="add-to-cart-box">
-                                                            <button class="btn btn-add-cart addcart-button">Add
-                                                                <span class="add-icon"><i
-                                                                        class="fa-solid fa-plus"></i></span>
-                                                            </button>
+                                                            <form action="{{ route('client.cart.add') }}" method="POST"
+                                                                class="d-flex align-items-center gap-2"
+                                                                style="background:#f8f9fa; padding:6px 10px; border-radius:12px; width:max-content;">
+                                                                @csrf
+                                                                <input type="hidden" name="product_id"
+                                                                    value="{{ $product->id }}">
+                                                                <input type="hidden" name="price"
+                                                                    value="{{ $product->price }}">
+
+                                                                <div class="input-group input-group-sm"
+                                                                    style="width: 110px;">
+                                                                    <button type="button"
+                                                                        class="btn btn-outline-secondary btn-sm btn-qty-minus"
+                                                                        aria-label="Decrease quantity"
+                                                                        style="border-radius: 12px 0 0 12px; padding: 0 8px;">−</button>
+                                                                    <input type="number" name="quantity" value="1"
+                                                                        min="1"
+                                                                        class="form-control form-control-sm text-center"
+                                                                        aria-label="Quantity"
+                                                                        style="border-radius: 0; padding: 0.25rem 0.5rem;">
+                                                                    <button type="button"
+                                                                        class="btn btn-outline-secondary btn-sm btn-qty-plus"
+                                                                        aria-label="Increase quantity"
+                                                                        style="border-radius: 0 12px 12px 0; padding: 0 8px;">+</button>
+                                                                </div>
+
+                                                                <button type="submit" class="btn btn-primary btn-sm px-3"
+                                                                    style="border-radius: 12px;">
+                                                                    Add <i class="fa-solid fa-plus ms-1"></i>
+                                                                </button>
+                                                            </form>
+
+                                                            <script>
+                                                                document.querySelectorAll('.btn-qty-minus').forEach(button => {
+                                                                    button.onclick = function(e) {
+                                                                        e.preventDefault();
+                                                                        const input = this.closest('.input-group').querySelector('input[name="quantity"]');
+                                                                        let val = parseInt(input.value);
+                                                                        if (val > 1) input.value = val - 1;
+                                                                    };
+                                                                });
+
+                                                                document.querySelectorAll('.btn-qty-plus').forEach(button => {
+                                                                    button.onclick = function(e) {
+                                                                        e.preventDefault();
+                                                                        const input = this.closest('.input-group').querySelector('input[name="quantity"]');
+                                                                        let val = parseInt(input.value);
+                                                                        input.value = val + 1;
+                                                                    };
+                                                                });
+                                                            </script>
+
+
+
+
+
                                                             <div class="cart_qty qty-box">
                                                                 <div class="input-group">
                                                                     <button type="button" class="qty-left-minus"
