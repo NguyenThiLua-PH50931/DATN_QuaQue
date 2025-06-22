@@ -345,7 +345,7 @@
                                                     </div>
                                                     <div class="product-image">
                                                         <a href="#">
-                                                            <img src="{{ asset('frontend/assets/images/vegetable/product/' . $product->image) }}"
+                                                            <img src="{{ asset('storage/'. $product->image) }}"
                                                                 alt="{{ $product->name }}">
                                                         </a>
                                                         <ul class="product-option">
@@ -563,7 +563,7 @@
                                                     </div>
                                                     <div class="product-image">
                                                         <a href="#">
-                                                            <img src="{{ asset('frontend/assets/images/vegetable/product/' . $product->image) }}"
+                                                            <img src="{{ asset('storage/' . $product->image) }}"
                                                                 alt="{{ $product->name }}">
                                                         </a>
                                                         <ul class="product-option">
@@ -726,7 +726,7 @@
                                             <div class="product-image">
                                                 <a
                                                     href="{{ route('client.product.detail', ['slug' => $product->slug]) }}">
-                                                    <img src="{{ asset('frontend/assets/images/vegetable/product/' . $product->image) }}"
+                                                    <img src="{{ asset('storage/' . $product->image) }}"
                                                         class="img-fluid blur-up lazyload" alt="{{ $product->name }}">
                                                 </a>
                                                 <ul class="product-option">
