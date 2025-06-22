@@ -213,26 +213,23 @@ ul {
 }
 
 .payment-status-label {
-    color: #333;
-    font-weight: 500;
+    display: inline-block;
     max-width: 120px;
+    padding: 6px 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 4px;
+    text-align: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    display: inline-block;
+    box-sizing: border-box;
+    user-select: none;
+    background-color: transparent !important; /* giữ nền trắng */
+    border: none !important; /* bỏ border */
+    box-shadow: none !important; /* bỏ shadow */
 }
 
-.payment-status-label {
-    display: inline-block;
-    max-width: 110px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-weight: 500;
-    font-size: 0.925rem;
-}
-
-/* Màu chữ theo trạng thái */
 .payment-unpaid {
     color: #d35400; /* cam đậm */
 }
@@ -241,11 +238,32 @@ ul {
     color: #2e7d32; /* xanh lá đậm */
 }
 
-.payment-failed {
-    color: #c0392b; /* đỏ đậm */
+/* Với select: giữ nền trắng, đổi màu chữ khi đã thanh toán */
+.payment-status-select {
+    width: 100%;
+    padding: 6px 10px;
+    font-size: 0.9rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    box-sizing: border-box;
+    background-color: #fff;
+    color: #856404; /* màu chữ cam mặc định (chưa thanh toán) */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    transition: color 0.3s ease;
 }
 
+/* Khi trạng thái đã thanh toán đổi màu chữ xanh */
+.payment-status-select.payment-paid-bank {
+    color: #2e7d32 !important; /* xanh lá đậm */
+}
 
+.payment-paid-cod-delivered {
+    font-size: 0.85rem !important; /* cỡ chữ nhỏ */
+    font-weight: normal !important; /* bỏ in đậm */
+}
 </style>
 <div class="page-body">
     <div class="container-fluid">
@@ -294,6 +312,7 @@ ul {
                                 <option value="0" {{ request('is_hidden') === '0' ? 'selected' : '' }}>-- Hiển thị --</option>
                                 <option value="1" {{ request('is_hidden') === '1' ? 'selected' : '' }}>-- Đã ẩn --</option>
                             </select>
+                            
 
 
 
@@ -339,47 +358,64 @@ ul {
                                                 </span>
                                             </td>
                                             {{-- 👉 Số tiền lên trước --}}
-                                            <td>{{ number_format($computedTotal, 0, ',', '.') }} VNĐ</td>
+                                            <td>{{ number_format($order->total_amount, 0, ',', '.') }} VNĐ</td>
 
                                             {{-- PTTT --}}
                                             <td>{{ $order->payment_method ?? 'N/A' }}</td>
 
                                             {{-- TTTT (trạng thái thanh toán) --}}
                                             <td>
-                                                <span 
-                                                    class="payment-status-label {{ $order->payment_status === 'paid' ? 'payment-paid' : ($order->payment_status === 'unpaid' ? 'payment-unpaid' : 'payment-failed') }}"
-                                                    id="payment-status-{{ $order->id }}"
+                                                @php
+                                                    $paymentClass = 'payment-status-label payment-' . $order->payment_status;
+
+                                                    if ($order->payment_method === 'cod' && $order->status === 'delivered') {
+                                                        $paymentClass = 'payment-status-label payment-paid';
+                                                    }
+
+                                                    if ($order->payment_method === 'bank' && $order->payment_status === 'paid') {
+                                                        $paymentSelectClass = 'payment-status-select payment-paid-bank';
+                                                    } else {
+                                                        $paymentSelectClass = 'payment-status-select';
+                                                    }
+                                                @endphp
+                                                @if($order->payment_method === 'bank')
+                                                    <select
+                                                    class="form-select payment-status-select {{ $paymentSelectClass }}"
+                                                    data-order-id="{{ $order->id }}"
                                                 >
-                                                    {{ $order->payment_status === 'paid' ? 'Đã thanh toán' : ($order->payment_status === 'unpaid' ? 'Chưa thanh toán' : 'Thanh toán thất bại') }}
+                                                    <option value="unpaid" title="Chưa thanh toán" {{ $order->payment_status === 'unpaid' ? 'selected' : '' }}>Chưa thanh...</option>
+                                                    <option value="paid" title="Đã thanh toán" {{ $order->payment_status === 'paid' ? 'selected' : '' }}>Đã thanh...</option>
+                                                </select>
+                                                @else
+                                                    <span id="payment-status-{{ $order->id }}" 
+                                                    class="{{ $paymentClass }}" 
+                                                    data-payment-method="{{ $order->payment_method }}">
+                                                    {{ $order->payment_status === 'paid' || ($order->payment_method === 'cod' && $order->status === 'delivered') ? 'Đã thanh toán' : 'Chưa thanh toán' }}
                                                 </span>
+                                                @endif
                                             </td>
-
-
-
                                             {{-- Trạng thái đơn hàng --}}
                                             <td>
                                                 <form id="status-form-{{ $order->id }}"
-      action="{{ route('admin.orders.updateStatus', $order->id) }}"
-      method="POST" class="status-form">
-    @csrf
-    @method('PUT')
-    <select name="status"
-            class="form-select status-select status-{{ $order->status }}"
-            data-order-id="{{ $order->id }}"
-            data-current-status="{{ $order->status }}">
-        <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>Chờ xác nhận</option>
-        <option value="confirmed" {{ $order->status == 'confirmed' ? 'selected' : '' }}>Đã xác nhận</option>
-        <option value="processing" {{ $order->status == 'processing' ? 'selected' : '' }}>Đang chuẩn bị</option>
-        <option value="shipped" {{ $order->status == 'shipped' ? 'selected' : '' }}>Đã gửi hàng</option>
-        <option value="in_transit" {{ $order->status == 'in_transit' ? 'selected' : '' }}>Đang vận chuyển</option>
-        <option value="delivered" {{ $order->status == 'delivered' ? 'selected' : '' }}>Đã giao hàng</option>
-        <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>Đã hủy</option>
-        <option value="failed_delivery" {{ $order->status == 'failed_delivery' ? 'selected' : '' }}>Giao thất bại</option>
-    </select>
-</form>
-
+                                                    action="{{ route('admin.orders.updateStatus', $order->id) }}"
+                                                    method="POST" class="status-form">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <select name="status"
+                                                            class="form-select status-select status-{{ $order->status }}"
+                                                            data-order-id="{{ $order->id }}"
+                                                            data-current-status="{{ $order->status }}">
+                                                        <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>Chờ xác nhận</option>
+                                                        <option value="confirmed" {{ $order->status == 'confirmed' ? 'selected' : '' }}>Đã xác nhận</option>
+                                                        <option value="processing" {{ $order->status == 'processing' ? 'selected' : '' }}>Đang chuẩn bị</option>
+                                                        <option value="shipped" {{ $order->status == 'shipped' ? 'selected' : '' }}>Đã gửi hàng</option>
+                                                        <option value="in_transit" {{ $order->status == 'in_transit' ? 'selected' : '' }}>Đang vận chuyển</option>
+                                                        <option value="delivered" {{ $order->status == 'delivered' ? 'selected' : '' }}>Đã giao hàng</option>
+                                                        <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>Đã hủy</option>
+                                                        <option value="failed_delivery" {{ $order->status == 'failed_delivery' ? 'selected' : '' }}>Giao thất bại</option>
+                                                    </select>
+                                                </form>
                                             </td>
-
                                             {{-- Tuỳ chọn --}}
                                             <td>
                                                 <ul>
@@ -393,6 +429,7 @@ ul {
                                                             <i class="ri-map-pin-line"></i>
                                                         </a>
                                                     </li>
+                                                    
                                                     {{-- Đơn chưa ẩn → hiện nút ẩn --}}
                                                     @if ($order->is_hidden == false && in_array($order->status, ['delivered', 'cancelled', 'failed_delivery']))
                                                         <li>
@@ -418,8 +455,6 @@ ul {
                                                             </form>
                                                         </li>
                                                     @endif
-
-
                                                 </ul>
                                             </td>
                                         </tr>
