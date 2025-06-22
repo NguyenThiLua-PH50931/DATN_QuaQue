@@ -138,8 +138,15 @@
                                                                 class="img-fluid" alt="Product">
                                                         </div>
                                                         <div class="product-name">
-                                                            <h5>{{ $topProduct->name }}</h5>
-                                                            <h6>{{ $topProduct->created_at->format('d-m-Y') }}</h6>
+                                                            @if ($topProduct)
+                                                                <h5>{{ $topProduct->name }}</h5>
+                                                                <h6>
+                                                                    {{ $topProduct->created_at ? \Carbon\Carbon::parse($topProduct->created_at)->format('d-m-Y') : 'N/A' }}
+                                                                </h6>
+                                                            @else
+                                                                <span>Không có dữ liệu</span>
+                                                            @endif
+
                                                         </div>
                                                     </div>
                                                 </td>
