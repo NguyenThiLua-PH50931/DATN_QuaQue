@@ -37,6 +37,8 @@ use Illuminate\Support\Facades\Route;
 
 
 // CLIENT
+// Route mặc định chuyển hướng đến /client/home
+Route::redirect('/', '/client/home');
 
 Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
     Route::get('home', [ClientHomeController::class, 'home'])->name('home');
@@ -150,7 +152,7 @@ Route::get('/blog-detail/{id}', [ClientBlogController::class, 'show'])->name('bl
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin'], function () {
 
     // Route::get('home', [HomeController::class, 'home'])->name('home');
-    
+
      // Route cho dashboard tổng quan và báo cáo
     Route::get('/reports', [ReportController::class, 'dashboard'])->name('dashboard');
 

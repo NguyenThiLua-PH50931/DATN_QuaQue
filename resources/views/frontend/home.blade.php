@@ -103,8 +103,8 @@
 
                                     <li @if ($loop->last) class="pb-30" @endif>
                                         <div class="category-list">
-                                            <img src="{{ asset('frontend/assets/svg/1/' . $category->image) }}"
-                                                alt="{{ $category->name }}">
+                                            <img src="{{ asset('storage/' . $category->image) }}"
+                                                alt="{{ $category->name }}" class="w-20 h-20 object-cover" width="50">
                                             <h5>
                                                 <a href="{{ url('/products/category') }}">{{ $category->name }}</a>
                                             </h5>
