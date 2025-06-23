@@ -16,6 +16,33 @@
 
         <div class="container mt-5">
             <h2 class="mb-4">Thống kê</h2>
+            <div class="p-3">
+                <form method="GET" action="{{ route('admin.dashboard') }}" class="mb-4">
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-4">
+                            <label class="form-label">Ngày cụ thể:</label>
+                            <input type="date" name="rating_date" class="form-control form-control-sm"
+                                value="{{ request('rating_date') }}" id="rating_date">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Từ ngày:</label>
+                            <input type="date" name="rating_from_date" class="form-control form-control-sm"
+                                value="{{ request('rating_from_date') }}" id="rating_from_date">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Đến ngày:</label>
+                            <input type="date" name="rating_to_date" class="form-control form-control-sm"
+                                value="{{ request('rating_to_date') }}" id="rating_to_date">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col text-end d-flex justify-content-end">
+                            <button type="submit" class="btn btn-primary btn-sm me-2">Lọc</button>
+                            <button type="submit" name="reset" value="1" class="btn btn-secondary btn-sm">Reset</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
             <div class="row">
                 <!-- Tổng doanh thu -->
                 <div class="col-sm-6 col-xxl-3 col-lg-6">
@@ -109,19 +136,6 @@
                                 <h4>Sản phẩm bán chạy nhất</h4>
                             </div>
 
-                            <div class="best-selling-box d-sm-flex d-none">
-                                <span>Lọc theo:</span>
-                                <div class="dropdown">
-                                    <button class="btn p-0 dropdown-toggle" type="button"
-                                        id="dropdownMenuButton1" data-bs-toggle="dropdown"
-                                        data-bs-auto-close="true">Tháng hiện tại</button>
-                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                        <li><a class="dropdown-item" href="#">Hôm nay</a></li>
-                                        <li><a class="dropdown-item" href="#">Tuần này</a></li>
-                                        <li><a class="dropdown-item" href="#">Tháng này</a></li>
-                                    </ul>
-                                </div>
-                            </div>
                         </div>
 
                         <div class="card-body p-0">
@@ -129,7 +143,9 @@
                                 <div class="table-responsive">
                                     <table class="best-selling-table w-image table border-0">
                                         <tbody>
+
                                             @if($topProduct)
+
                                             <tr>
                                                 <td>
                                                     <div class="best-product-box">
@@ -138,8 +154,15 @@
                                                                 class="img-fluid" alt="Product">
                                                         </div>
                                                         <div class="product-name">
-                                                            <h5>{{ $topProduct->name }}</h5>
-                                                            <h6>{{ $topProduct->created_at->format('d-m-Y') }}</h6>
+                                                            @if ($topProduct)
+                                                                <h5>{{ $topProduct->name }}</h5>
+                                                                <h6>
+                                                                    {{ $topProduct->created_at ? \Carbon\Carbon::parse($topProduct->created_at)->format('d-m-Y') : 'N/A' }}
+                                                                </h6>
+                                                            @else
+                                                                <span>Không có dữ liệu</span>
+                                                            @endif
+
                                                         </div>
                                                     </div>
                                                 </td>
@@ -176,25 +199,12 @@
                                 <h4>Vùng miền bán chạy nhất</h4>
                             </div>
 
-                            <div class="best-selling-box d-sm-flex d-none">
-                                <span>Lọc theo:</span>
-                                <div class="dropdown">
-                                    <button class="btn p-0 dropdown-toggle" type="button"
-                                        id="dropdownMenuButton1" data-bs-toggle="dropdown"
-                                        data-bs-auto-close="true">Tháng hiện tại</button>
-                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                        <li><a class="dropdown-item" href="#">Hôm nay</a></li>
-                                        <li><a class="dropdown-item" href="#">Tuần này</a></li>
-                                        <li><a class="dropdown-item" href="#">Tháng này</a></li>
-                                    </ul>
-                                </div>
-                            </div>
                         </div>
 
                         <div class="card-body p-0">
                             {{-- ✅ Box: Vùng bán chạy nhất --}}
                             <div class="p-3 border-bottom">
-                                <h5 class="mb-2">🏆 Vùng bán chạy nhất</h5>
+                                <h5 class="mb-2">Vùng bán chạy nhất</h5>
                                 @if($topRegion)
                                 <p class="mb-0 text-muted">
                                     <strong>{{ $topRegion->name }}</strong>: {{ number_format($topRegion->total_revenue ?? 0) }} VND
@@ -219,19 +229,7 @@
                                 <h4>Sản phẩm được đánh giá cao nhất</h4>
                             </div>
 
-                            <div class="best-selling-box d-sm-flex d-none">
-                                <span>Short By:</span>
-                                <div class="dropdown">
-                                    <button class="btn p-0 dropdown-toggle" type="button"
-                                        id="dropdownMenuButton1" data-bs-toggle="dropdown"
-                                        data-bs-auto-close="true">Today</button>
-                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                        <li><a class="dropdown-item" href="#">Action</a></li>
-                                        <li><a class="dropdown-item" href="#">Another action</a></li>
-                                        <li><a class="dropdown-item" href="#">Something else here</a></li>
-                                    </ul>
-                                </div>
-                            </div>
+
                         </div>
 
                         <div class="card-body p-0">
@@ -331,4 +329,36 @@
 
 <!-- @includeIf('backend.footer') -->
 </div>
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ratingDate = document.getElementById('rating_date');
+        const fromDate = document.getElementById('rating_from_date');
+        const toDate = document.getElementById('rating_to_date');
+
+        function toggleDateFields() {
+            if (ratingDate.value) {
+                fromDate.disabled = true;
+                toDate.disabled = true;
+            } else {
+                fromDate.disabled = false;
+                toDate.disabled = false;
+            }
+
+            if (fromDate.value || toDate.value) {
+                ratingDate.disabled = true;
+            } else {
+                ratingDate.disabled = false;
+            }
+        }
+
+        ratingDate.addEventListener('change', toggleDateFields);
+        fromDate.addEventListener('change', toggleDateFields);
+        toDate.addEventListener('change', toggleDateFields);
+
+
+        toggleDateFields();
+    });
+</script>
+@endpush
 @endsection

@@ -5,13 +5,13 @@ namespace App\Http\Controllers\Client;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\ContactReceived; 
+use App\Mail\ContactReceived;
 
 class ContactController extends Controller
 {
     public function lienhe()
     {
-        return view('frontend.contact-us');
+        return view('frontend.profile-user.contact-us');
     }
     public function submit(Request $request)
     {
@@ -29,7 +29,7 @@ class ContactController extends Controller
             'email.email' => 'Email không hợp lệ.',
             'message.required' => 'Vui lòng nhập lời nhắn.',
         ]);
-        
+
         // Email được gửi tới:
         Mail::to('luantph50931@gmail.com')->send(new ContactReceived($request->all()));
 
