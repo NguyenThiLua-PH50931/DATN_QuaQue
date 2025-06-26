@@ -10,6 +10,7 @@ use App\Models\admin\Region as AdminRegion;
 use App\Models\admin\ProductVariant as AdminProductVariant;
 use App\Models\admin\ProductImage;
 use App\Models\admin\AttributeValue;
+use App\Models\Client\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
@@ -17,14 +18,37 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
-   public function search(Request $request)
+    public function search(Request $request)
     {
         $query = $request->input('q');
+
         $products = AdminProduct::where('name', 'like', "%$query%")
-                          ->select('id', 'name', 'slug', 'image') 
-                          ->get();
+            ->orWhereHas('region', function ($q) use ($query) {
+                $q->where('name', 'like', "%$query%");
+            })
+            ->orWhereHas('category', function ($q) use ($query) {
+                $q->where('name', 'like', "%$query%");
+            })
+            ->select('id', 'name', 'slug', 'image')
+            ->get();
 
         return response()->json($products);
+    }
+
+    public function searchPage(Request $request)
+    {
+        $query = $request->input('search');
+
+        $products = AdminProduct::where('name', 'like', "%$query%")
+            ->orWhereHas('region', function ($q) use ($query) {
+                $q->where('name', 'like', "%$query%");
+            })
+            ->orWhereHas('category', function ($q) use ($query) {
+                $q->where('name', 'like', "%$query%");
+            })
+            ->paginate(12); // Phân trang, hiển thị 12 sản phẩm mỗi trang
+
+        return view('client.products.index', compact('products', 'query'));
     }
     // Trang danh sách sản phẩm (sơ lược)
     public function index(Request $request)
