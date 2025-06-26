@@ -86,7 +86,7 @@ class ProductController extends Controller
             });
         }
 
-        $products = $query->orderByDesc('id')->paginate(10);
+        $products = $query->orderByDesc('id')->get();
 
         $categories = AdminCategory::all();
         $regions = AdminRegion::all();
@@ -332,6 +332,7 @@ class ProductController extends Controller
                 'image' => $imgPath,
                 'origin' => $request->origin,
                 'active' => $request->active ? 1 : 0,
+                'has_variants' => $request->has_variants ? 1 : 0,
             ]);
 
             // Ảnh mô tả nhiều ảnh
@@ -498,7 +499,7 @@ class ProductController extends Controller
             $product->description = $request->description;
             $product->origin = $request->origin;
             $product->active = $request->active ? 1 : 0;
-
+            $product->has_variants = $request->has_variants ? 1 : 0;
             $product->save();
 
             // 3. Thêm ảnh mô tả mới nếu có
@@ -528,6 +529,7 @@ class ProductController extends Controller
             }
 
             // 5. Xử lý biến thể
+            if ($request->has_variants) {
             // Xóa tất cả biến thể cũ
             foreach ($product->variants as $variant) {
                 if ($variant->image && Storage::disk('public')->exists($variant->image)) {
@@ -537,7 +539,6 @@ class ProductController extends Controller
                 $variant->forceDelete();
             }
 
-            if ($request->has_variants) {
                 // Thêm biến thể mới
                 foreach ($request->variants as $variantData) {
                     $variantImagePath = null;
@@ -571,7 +572,7 @@ class ProductController extends Controller
                     $variant->attributeValues()->sync($pivotData);
                 }
             } else {
-                // Tạo một biến thể mặc định cho sản phẩm không có biến thể
+                // KHÔNG xóa các biến thể cũ, chỉ tạo một biến thể mặc định cho sản phẩm không có biến thể
                 AdminProductVariant::create([
                     'product_id' => $product->id,
                     'sku' => $request->sku ?? Str::upper('SKU-' . uniqid()),
