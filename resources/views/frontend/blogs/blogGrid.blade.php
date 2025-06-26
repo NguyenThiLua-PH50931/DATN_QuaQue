@@ -51,7 +51,7 @@
         <div class="col-xxl-4 col-sm-6">
             <div class="blog-box wow fadeInUp">
                 <div class="blog-image">
-                    <a href="{{ route('blogs-detail', ['id' => $item->id]) }}">
+                    <a href="{{ route('client.blogs-detail', ['id' => $item->id]) }}">
                         @if($item->thumbnail)
                             <img src="{{ asset($item->thumbnail) }}" alt="{{ $item->title }}">
                         @endif
@@ -65,10 +65,10 @@
                             <span>{{ $item->created_at ? $item->created_at->format('F d, Y') : 'Chưa có ngày tạo' }}</span>
                         </span>
                     </div>
-                    <a href="{{ route('blogs-detail', ['id' => $item->id]) }}">
+                    <a href="{{ route('client.blogs-detail', ['id' => $item->id]) }}">
                         <h3>{{ $item->title }}</h3>
                     </a>
-                    <button onclick="location.href='{{ route('blogs-detail', ['id' => $item->id]) }}'" class="blog-button">
+                    <button onclick="location.href='{{ route('client.blogs-detail', ['id' => $item->id]) }}'" class="blog-button">
                         Read More <i class="fa-solid fa-right-long"></i>
                     </button>                                        
                 </div>
@@ -127,14 +127,14 @@
                                         <div class="recent-post-box">
                                             @foreach($recentBlogs as $item)
                                                 <div class="recent-box">
-                                                    <a href="{{ route('blogs-detail', ['id' => $item->id]) }}" class="recent-image">
+                                                    <a href="{{ route('client.blogs-detail', ['id' => $item->id]) }}" class="recent-image">
                                                         @if($item->thumbnail)
                                                             <img src="{{ asset($item->thumbnail) }}" alt="{{ $item->title }}" class="img-fluid blur-up lazyload">
                                                         @endif
                                                     </a>
 
                                                     <div class="recent-detail">
-                                                        <a href="{{ route('blogs-detail', ['id' => $item->id]) }}">
+                                                        <a href="{{ route('client.blogs-detail', ['id' => $item->id]) }}">
                                                             <h5 class="recent-name">{{ $item->title }}</h5>
                                                         </a>
                                                         <h6><span>{{ $item->created_at ? $item->created_at->format('F d, Y') : 'Chưa có ngày tạo' }}</span>
