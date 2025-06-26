@@ -55,7 +55,7 @@
                              <img src="{{ asset('/storage/banners/logo/logo.png') }}" class="img-fluid blur-up lazyload"
                                  alt="Logo Quà Quê" style="width: 150px; height: auto;">
                          </a>
-
+                         {{-- TÌM KIẾM SẢN PHẨM --}}
                          <div class="middle-box">
                              <div class="location-box">
                                  <button class="btn location-button" data-bs-toggle="modal"
@@ -78,14 +78,14 @@
                                  </div>
                                  <div id="searchResults" class="search-results list-group"
                                      style="
-                                        width: inherit;
-                                        max-width: 100%;
-                                        z-index: 1000;
-                                        display: none;
-                                        border: 1px solid #ccc;
-                                        background: #fff;
-                                        max-height: 200px;
-                                        overflow-y: auto;">
+                                                width: inherit;
+                                                max-width: 100%;
+                                                z-index: 1000;
+                                                display: none;
+                                                border: 1px solid #ccc;
+                                                background: #fff;
+                                                max-height: 200px;
+                                                overflow-y: auto;">
                                  </div>
                              </div>
 
@@ -123,22 +123,34 @@
                                                  success: function(response) {
                                                      $('#searchResults').empty();
                                                      if (response.length > 0) {
-                                                         response.forEach(product => {
+                                                         // Giới hạn hiển thị 3 sản phẩm
+                                                         response.slice(0, 3).forEach(product => {
                                                              $('#searchResults').append(
-                                                                 `<a href="/products/${product.slug}" class="list-group-item list-group-item-action d-flex align-items-center">
-                                        <img src="${product.image ? '/storage/' + product.image : '/images/default.jpg'}" alt="${product.name}" style="width: 50px; height: 50px; margin-right: 10px; object-fit: cover;"> ${product.name}</a>`
+                                                                 `<a href="/client/san-pham/${product.slug}" class="list-group-item list-group-item-action d-flex align-items-center">
+                                            <img src="${product.image ? '/storage/' + product.image : '/images/default.jpg'}" alt="${product.name}" style="width: 50px; height: 50px; margin-right: 10px; object-fit: cover;"> ${product.name}
+                                        </a>`
                                                              );
                                                          });
+                                                         // Thêm liên kết "Xem thêm" nếu có hơn 3 sản phẩm
+                                                         if (response.length > 3) {
+                                                             $('#searchResults').append(
+                                                                 `<a href="/client/san-pham?search=${encodeURIComponent(query)}" class="list-group-item list-group-item-action text-center text-primary">
+                                            Xem thêm các sản phẩm liên quan
+                                        </a>`
+                                                             );
+                                                         }
                                                          $('#searchResults').show();
                                                      } else {
                                                          $('#searchResults').append(
-                                                                 '<div class="list-group-item">Không tìm thấy sản phẩm.</div>')
-                                                             .show();
+                                                             '<div class="list-group-item">Không tìm thấy sản phẩm.</div>'
+                                                         ).show();
                                                      }
                                                  },
                                                  error: function(xhr) {
-                                                     $('#searchResults').append('<div class="list-group-item">Có lỗi xảy ra: ' +
-                                                         xhr.status + '</div>').show();
+                                                     $('#searchResults').append(
+                                                         '<div class="list-group-item">Có lỗi xảy ra: ' + xhr.status +
+                                                         '</div>'
+                                                     ).show();
                                                  }
                                              });
                                          } else {
@@ -155,6 +167,7 @@
                                  });
                              </script>
                          </div>
+                         {{-- END TÌM KIẾM SẢN PHẨM --}}
 
                          <div class="rightside-box">
                              <div class="search-full">
@@ -190,7 +203,8 @@
                                      </a>
                                  </li>
                                  <li class="right-side">
-                                     <a href="{{ route('client.wishlist.index') }}" class="btn p-0 position-relative header-wishlist">
+                                     <a href="{{ route('client.wishlist.index') }}"
+                                         class="btn p-0 position-relative header-wishlist">
                                          <i data-feather="heart"></i>
                                      </a>
                                  </li>
@@ -792,7 +806,9 @@
                                                  data-bs-toggle="dropdown">Sản phẩm</a>
                                              <ul class="dropdown-menu">
                                                  <li>
-                                                     <a class="dropdown-item" href="{{ route('client.product.index') }}">Tất cả sản phẩm</a>
+                                                     <a class="dropdown-item"
+                                                         href="{{ route('client.product.index') }}">Tất cả sản
+                                                         phẩm</a>
                                                  </li>
                                                  <li class="sub-dropdown-hover">
                                                      <a href="javascript:void(0)" class="dropdown-item">Product

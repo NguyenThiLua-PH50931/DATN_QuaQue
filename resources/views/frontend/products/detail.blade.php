@@ -132,7 +132,7 @@
                                                 data-feather="star"
                                                 class="fill"></i>
                                         </li>
-                                        <li>    
+                                        <li>
                                             <i data-feather="star"></i>
                                         </li>
                                     </ul>
