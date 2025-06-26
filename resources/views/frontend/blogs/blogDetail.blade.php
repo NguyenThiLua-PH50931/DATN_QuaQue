@@ -7,7 +7,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="breadscrumb-contain">
-                        <h2>Blog Details Page</h2>
+                        {{-- <h2>Blog Details Page</h2> --}}
                         <nav>
                             <ol class="breadcrumb mb-0">
                                 <li class="breadcrumb-item">
@@ -15,8 +15,8 @@
                                         <i class="fa-solid fa-house"></i>
                                     </a>
                                 </li>
-                                <li class="breadcrumb-item" aria-current="page">Blog</li>
-                                <li class="breadcrumb-item active" aria-current="page">Blog Details</li>
+                                <li class="breadcrumb-item" aria-current="page">Tin Tức</li>
+                                <li class="breadcrumb-item active" aria-current="page">Chi tiết</li>
                             </ol>
                         </nav>
                     </div>
@@ -45,7 +45,7 @@
                                     <button class="accordion-button" type="button" data-bs-toggle="collapse"
                                         data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true"
                                         aria-controls="panelsStayOpen-collapseOne">
-                                        Recent Post
+                                        Bài viết gần đây
                                     </button>
                                 </h2>
                                 <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show"
