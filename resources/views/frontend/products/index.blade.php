@@ -14,7 +14,7 @@
                     </div>
                     <div class="product-image">
                         <a href="{{ route('client.product.detail', ['slug' => $product->slug]) }}">
-                            <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
+                           <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
                         </a>
                         <ul class="product-option">
                             <li data-bs-toggle="tooltip" data-bs-placement="top" title="Xem nhanh">

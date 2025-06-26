@@ -51,51 +51,39 @@
             <div class="col-xxl-9 col-xl-8 col-lg-7 wow fadeInUp">
                 <div class="row g-4">
                     @php
-                    $mainImages = [];
-                    if ($product->image) $mainImages[] = asset('storage/'.$product->image);
-                    foreach($product->images as $img) {
-                    $mainImages[] = asset('storage/'.$img->image_url);
+                    $descImgs = [];
+                    if (!empty($product->image)) {
+                        $descImgs[] = asset('storage/' . $product->image);
                     }
-                    foreach($variants as $variant) {
-                    if ($variant->image) $mainImages[] = asset('storage/'.$variant->image);
+                    if ($product->images && $product->images->count()) {
+                        foreach ($product->images as $img) {
+                            if (!empty($img->image_url)) {
+                                $descImgs[] = asset('storage/' . $img->image_url);
+                            }
+                        }
                     }
-                    $mainImages = array_unique($mainImages); // Loại trùng nếu có
-                    $thumbImages = $mainImages;
+                    // Map valueId => ảnh biến thể (nếu có)
+                    $variantImages = [];
+                    foreach($product->variants as $variant) {
+                        if (!empty($variant->image) && !empty($variant->value_ids)) {
+                            foreach($variant->value_ids as $valueId) {
+                                $variantImages[$valueId] = asset('storage/'.$variant->image);
+                            }
+                        }
+                    }
                     @endphp
                     <div class="col-xl-6 wow fadeInUp">
                         <div class="product-left-box">
-                            <div class="row g-2">
-                                <div class="col-xxl-10 col-lg-12 col-md-10 order-xxl-2 order-lg-1 order-md-2">
-                                    <div class="product-main-2 no-arrow">
-                                        @foreach($mainImages as $i => $img)
-                                        <div>
-                                            <div class="slider-image">
-                                                <img
-                                                    src="{{ $img }}"
-                                                    id="img-{{ $i + 1 }}"
-                                                    data-zoom-image="{{ $img }}"
-                                                    class="img-fluid image_zoom_cls-{{ $i }} blur-up lazyload"
-                                                    alt="Ảnh sản phẩm {{ $i+1 }}" />
-                                            </div>
-                                        </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-
-                                <div class="col-xxl-2 col-lg-12 col-md-2 order-xxl-1 order-lg-2 order-md-1">
-                                    <div class="left-slider-image-2 left-slider no-arrow slick-top">
-                                        @foreach($thumbImages as $i => $img)
-                                        <div>
-                                            <div class="sidebar-image">
-                                                <img
-                                                    src="{{ $img }}"
-                                                    class="img-fluid blur-up lazyload"
-                                                    alt="Thumbnail {{ $i+1 }}" />
-                                            </div>
-                                        </div>
-                                        @endforeach
-                                    </div>
-                                </div>
+                            <div class="main-image-wrapper" style="border:1px solid #ddd; border-radius:10px; padding:10px; background:#fafafa; text-align:center;">
+                                <img id="mainImage" src="{{ $descImgs[0] ?? asset('backend/assets/images/placeholder.webp') }}" alt="Ảnh sản phẩm" style="width:100%; max-width:420px; height:auto; border-radius:10px; object-fit:contain;">
+                            </div>
+                            <div class="thumbnail-wrapper" style="display:flex; justify-content:center; gap:8px; margin-top:10px; overflow-x:auto; padding-bottom:5px;">
+                                @foreach ($descImgs as $index => $img)
+                                    <img src="{{ $img }}" alt="Thumbnail {{ $index + 1 }}" class="thumbnail-image" data-index="{{ $index }}" style="width:60px; height:60px; object-fit:cover; border-radius:6px; border:2px solid transparent; cursor:pointer;">
+                                @endforeach
+                                @if (empty($descImgs))
+                                    <img src="{{ asset('backend/assets/images/placeholder.webp') }}" alt="Không có ảnh" style="width:60px; height:60px; object-fit:cover; border-radius:6px; border:2px solid transparent; cursor:default;">
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -106,37 +94,17 @@
                         data-wow-delay="0.1s">
                         <div class="right-box-contain">
                             {{-- <h6 class="offer-top">30% Off</h6> --}}
-                            <h2 class="name">Creamy Chocolate Cake</h2>
+                            <h2 class="name">{{ $product->name }}</h2>
                             <div class="price-rating">
                                 <h3 class="theme-color price" id="product-price">{{ number_format($product->variants[0]->price ?? 0) }} đ</h3>
 
                                 <div class="product-rating custom-rate">
                                     <ul class="rating">
-                                        <li>
-                                            <i
-                                                data-feather="star"
-                                                class="fill"></i>
-                                        </li>
-                                        <li>
-                                            <i
-                                                data-feather="star"
-                                                class="fill"></i>
-                                        </li>
-                                        <li>
-                                            <i
-                                                data-feather="star"
-                                                class="fill"></i>
-                                        </li>
-                                        <li>
-                                            <i
-                                                data-feather="star"
-                                                class="fill"></i>
-                                        </li>
-                                        <li>
-                                            <i data-feather="star"></i>
-                                        </li>
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            <li><i data-feather="star" class="{{ $i <= round($product->reviews->avg('rating')) ? 'fill' : '' }}"></i></li>
+                                        @endfor
                                     </ul>
-                                    <span class="review">23 Customer Review</span>
+                                    <span class="review">{{ $product->reviews->count() }} đánh giá</span>
                                 </div>
                             </div>
 
@@ -151,6 +119,7 @@
                                         <a href="javascript:void(0)"
                                             data-attr="{{ $attrId }}"
                                             data-value="{{ $valueId }}"
+                                            @if(isset($variantImages[$valueId])) data-variant-image="{{ $variantImages[$valueId] }}" @endif
                                             class="attribute-select {{ (isset($defaultSelected[$attrId]) && $defaultSelected[$attrId] == $valueId) ? 'active2' : '' }}">
                                             {{ $value }}
                                         </a>
@@ -240,14 +209,14 @@
                                 <button
                                     onclick="location.href = 'cart.html';"
                                     class="btn btn-md bg-dark cart-button text-white w-100">
-                                    Add To Cart
+                                    Thêm vào giỏ
                                 </button>
                             </div>
 
                             <div class="buy-box">
                                 <a href="wishlist.html">
                                     <i data-feather="heart"></i>
-                                    <span>Add To Wishlist</span>
+                                    <span>Thêm vào yêu thích</span>
                                 </a>
                                 {{--
                                 <a href="compare.html">
@@ -260,9 +229,9 @@
 
                                 <div class="product-info">
                                     <ul class="product-info-list product-info-list-2">
-                                        <li>SKU : <a href="javascript:void(0)" id="product-sku">—</a></li>
-                                        <li>Stock : <a href="javascript:void(0)" id="product-stock">—</a></li>
-                                        <li>Tags : <a href="javascript:void(0)">{{ $product->category->name ?? '' }}</a></li>
+                                        <li>SKU : <a href="javascript:void(0)" id="product-sku">{{ $product->variants[0]->sku ?? '—' }}</a></li>
+                                        <li>Trong kho còn : <a href="javascript:void(0)" id="product-stock">{{ $product->variants[0]->stock ?? '—' }}</a>  sản phẩm</li>
+                                        <li>Danh mục : <a href="javascript:void(0)">{{ $product->category->name ?? '' }}</a></li>
                                     </ul>
                                 </div>
 
@@ -926,7 +895,7 @@
 <section class="product-list-section section-b-space">
     <div class="container-fluid-lg">
         <div class="title">
-            <h2>Related Products</h2>
+            <h2>Sản phẩm chung danh mục</h2>
             <span class="title-leaf">
                 <svg class="icon-width">
                     <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
@@ -1123,6 +1092,20 @@
                 document.getElementById('product-stock').textContent = '—';
                 document.getElementById('product-price').textContent = '—';
             }
+
+            // Đổi ảnh nếu có data-variant-image
+            var img = btn.getAttribute('data-variant-image');
+            if (img) {
+                document.getElementById('mainImage').src = img;
+            }
+        });
+    });
+
+    document.querySelectorAll('.thumbnail-image').forEach(function(img) {
+        img.addEventListener('click', function() {
+            document.getElementById('mainImage').src = this.src;
+            document.querySelectorAll('.thumbnail-image').forEach(i => i.style.border = '2px solid transparent');
+            this.style.border = '2px solid #0da487';
         });
     });
 </script>
