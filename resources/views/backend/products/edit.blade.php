@@ -83,7 +83,7 @@
                                             @foreach($product->product_images as $image)
                                                 <div class="image-item position-relative border rounded" style="width: 100px; height: 100px;">
                                                     <img src="{{ $image->image_url }}" class="w-100 h-100 object-fit-cover" alt="Ảnh mô tả">
-                                                    <button type="button" class="btn btn-danger btn-sm product-image-delete-btn position-absolute rounded-circle p-1 delete-image-x-btn" 
+                                                    <button type="button" class="btn btn-danger btn-sm product-image-delete-btn position-absolute rounded-circle p-1 delete-image-x-btn"
                                                             data-id="{{ $image->id }}"
                                                             data-url="{{ route('admin.products.image.delete', $image->id) }}">
                                                         &times;
@@ -493,9 +493,9 @@
         if (mainForm) {
             mainForm.addEventListener('submit', function(e) {
                 e.preventDefault();
-                
+
                 const formData = new FormData(this);
-                
+
                 fetch(this.action, {
                     method: 'POST',
                     headers: {
@@ -1135,10 +1135,10 @@ $(document).ready(function() {
             button.off('click').on('click', function(e) {
                 e.preventDefault();
                 console.log('DIAGNOSTIC: Direct button click detected!', button.data('id')); // This MUST show if clickable
-                
+
                 var imageId = button.data('id');
                 var url = button.data('url');
-                
+
                 if(confirm('Bạn có chắc muốn xóa ảnh này?')) {
                     $.ajax({
                         url: url,
