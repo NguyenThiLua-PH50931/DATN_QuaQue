@@ -163,7 +163,8 @@
                         <div class="col-lg-6">
                             <div class="slider-image">
                                 <img src="../frontend/assets/images/product/category/1.jpg"
-                                    class="img-fluid blur-up lazyload" alt="">
+                                    class="img-fluid blur-up lazyload main-quickview-image" alt="">
+                                <div class="description-thumbnails mt-3 d-flex gap-2"></div>
                             </div>
                         </div>
 
@@ -194,11 +195,8 @@
                                 </div>
 
                                 <div class="product-detail">
-                                    <h4>Product Details :</h4>
-                                    <p>Candy canes sugar plum tart cotton candy chupa chups sugar plum chocolate I love.
-                                        Caramels marshmallow icing dessert candy canes I love soufflé I love toffee.
-                                        Marshmallow pie sweet sweet roll sesame snaps tiramisu jelly bear claw. Bonbon
-                                        muffin I love carrot cake sugar plum dessert bonbon.</p>
+                                    <h4>Mô tả sản phẩm:</h4>
+                                    <p></p>
                                 </div>
 
                                 <ul class="brand-list">
@@ -224,25 +222,10 @@
                                     </li>
                                 </ul>
 
-                                <div class="select-size">
-                                    <h4>Cake Size :</h4>
-                                    <select class="form-select select-form-size">
-                                        <option selected>Select Size</option>
-                                        <option value="1.2">1/2 KG</option>
-                                        <option value="0">1 KG</option>
-                                        <option value="1.5">1/5 KG</option>
-                                        <option value="red">Red Roses</option>
-                                        <option value="pink">With Pink Roses</option>
-                                    </select>
-                                </div>
-
                                 <div class="modal-button">
-                                    <button onclick="location.href = 'cart.html';"
-                                        class="btn btn-md add-cart-button icon">Add
-                                        To Cart</button>
                                     <button onclick="location.href = 'product-left.html';"
                                         class="btn theme-bg-color view-button icon text-white fw-bold btn-md">
-                                        View More Details</button>
+                                        Xem chi tiết</button>
                                 </div>
                             </div>
                         </div>
@@ -263,90 +246,6 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal">
                         <i class="fa-solid fa-xmark"></i>
                     </button>
-                </div>
-                <div class="modal-body">
-                    <div class="location-list">
-                        <div class="search-input">
-                            <input type="search" class="form-control" placeholder="Search Your Area">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                        </div>
-
-                        <div class="disabled-box">
-                            <h6>Select a Location</h6>
-                        </div>
-
-                        <ul class="location-select custom-height">
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>Alabama</h6>
-                                    <span>Min: $130</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>Arizona</h6>
-                                    <span>Min: $150</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>California</h6>
-                                    <span>Min: $110</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>Colorado</h6>
-                                    <span>Min: $140</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>Florida</h6>
-                                    <span>Min: $160</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>Georgia</h6>
-                                    <span>Min: $120</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>Kansas</h6>
-                                    <span>Min: $170</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>Minnesota</h6>
-                                    <span>Min: $120</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>New York</h6>
-                                    <span>Min: $110</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>Washington</h6>
-                                    <span>Min: $130</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
                 </div>
             </div>
         </div>
@@ -555,6 +454,114 @@
 
     <!-- theme setting js -->
     <script src="{{ asset('frontend/assets/js/theme-setting.js') }}"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.quickview-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    // Lấy dữ liệu từ data-*
+                    var name = this.getAttribute('data-name') || '';
+                    var price = this.getAttribute('data-price') || '';
+                    var rating = this.getAttribute('data-rating') || '';
+                    var description = this.getAttribute('data-description') || '';
+                    var code = this.getAttribute('data-code') || '';
+                    var category = this.getAttribute('data-category') || '';
+                    var region = this.getAttribute('data-region') || '';
+                    var variant = this.getAttribute('data-variant') || '';
+                    var image = this.getAttribute('data-image') || '';
+                    var link = this.getAttribute('data-link') || '#';
+
+                    // Đổ dữ liệu vào modal (giữ nguyên giao diện theme)
+                    document.querySelector('#view .title-name').textContent = name;
+                    document.querySelector('#view .price').textContent = price;
+                    document.querySelector('#view .slider-image img').src = image;
+                    document.querySelector('#view .slider-image img').alt = name;
+                    document.querySelector('#view .product-detail p').textContent = description;
+
+                    // Đánh giá (rating, chỉ hiện 1 nếu có)
+                    var ratingHtml = '';
+                    if (rating) {
+                        ratingHtml = '<ul class="rating">';
+                        for (var i = 1; i <= 5; i++) {
+                            ratingHtml += '<li><i data-feather="star" class="' + (i <= Math.round(
+                                rating) ? 'fill' : '') + '"></i></li>';
+                        }
+                        ratingHtml += '</ul>';
+                        ratingHtml += '<span class="ms-2">' + rating + ' sao</span>';
+                    }
+                    document.querySelector('#view .product-rating').innerHTML = ratingHtml;
+                    if (window.feather) feather.replace();
+
+                    // Brand list (theo yêu cầu: mã sản phẩm, danh mục, vùng miền, biến thể)
+                    var brandList = document.querySelector('#view .brand-list');
+                    brandList.innerHTML = '';
+                    if (code) {
+                        brandList.innerHTML +=
+                            `<li><div class="brand-box"><h5>Mã sản phẩm:</h5><h6>${code}</h6></div></li>`;
+                    }
+                    if (category) {
+                        brandList.innerHTML +=
+                            `<li><div class="brand-box"><h5>Danh mục:</h5><h6>${category}</h6></div></li>`;
+                    }
+                    if (region) {
+                        brandList.innerHTML +=
+                            `<li><div class="brand-box"><h5>Vùng miền:</h5><h6>${region}</h6></div></li>`;
+                    }
+                    if (variant) {
+                        brandList.innerHTML +=
+                            `<li><div class="brand-box"><h5>Biến thể:</h5><h6>${variant}</h6></div></li>`;
+                    }
+
+                    // Nút xem chi tiết
+                    var detailBtn = document.querySelector('#view .view-button');
+                    if (detailBtn && link) {
+                        detailBtn.onclick = function() {
+                            window.location.href = link;
+                        };
+                    }
+
+                    // Ảnh mô tả sản phẩm (không phải biến thể)
+                    var descImages = [];
+                    var descImagesAttr = this.getAttribute('data-description-images');
+                    if (descImagesAttr) {
+                        try {
+                            descImages = JSON.parse(descImagesAttr);
+                        } catch (e) {
+                            descImages = descImagesAttr.split(',');
+                        }
+                    }
+                    var descThumbHtml = '';
+                    if (descImages.length > 0 && descImages[0] !== '') {
+                        descImages.forEach(function(img, idx) {
+                            descThumbHtml +=
+                                `<img src="${img}" class="${idx===0?'active':''}" data-big="${img}" />`;
+                        });
+                    }
+                    var descThumbWrap = document.querySelector('#view .description-thumbnails');
+                    if (descThumbWrap) descThumbWrap.innerHTML = descThumbHtml;
+                    if (descThumbWrap) {
+                        descThumbWrap.style.display = (descImages.length > 0 && descImages[0] !==
+                            '') ? 'flex' : 'none';
+                    }
+                    // Sự kiện click thumbnail mô tả
+                    if (descThumbWrap && descThumbWrap.style.display !== 'none') {
+                        descThumbWrap.querySelectorAll('img').forEach(function(imgThumb) {
+                            imgThumb.onclick = function() {
+                                document.querySelector('#view .main-quickview-image')
+                                    .src = this.getAttribute('data-big');
+                                descThumbWrap.querySelectorAll('img').forEach(i => i
+                                    .classList.remove('active'));
+                                this.classList.add('active');
+                            };
+                        });
+                    }
+                    // Hiển thị chi tiết sản phẩm bằng innerHTML để không hiện thẻ <p> ra ngoài
+                    var detailHtml = this.getAttribute('data-description') || '';
+                    document.querySelector('#view .product-detail p').innerHTML = detailHtml;
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>
@@ -602,5 +609,53 @@
     .user-box-name li a:hover {
         background-color: #e7e7e7;
         color: #000;
+    }
+
+    /* Tăng cỡ chữ modal lên 4-5px */
+    #view .modal-content,
+    #view .modal-content * {
+        font-size: 20px !important;
+    }
+
+    #view .title-name {
+        font-size: 28px !important;
+        font-weight: bold;
+    }
+
+    #view .price {
+        font-size: 24px !important;
+        color: #0da487;
+    }
+
+    #view .main-quickview-image {
+        width: 500px !important;
+        height: 350px !important;
+        aspect-ratio: 5/4;
+        object-fit: cover !important;
+        border-radius: 16px;
+        display: block;
+        margin: 0 auto;
+        background: #f8f8f8;
+    }
+
+    #view .description-thumbnails img {
+        width: 48px;
+        height: 48px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 2px solid #eee;
+        cursor: pointer;
+        transition: border 0.2s;
+        background: #f8f8f8;
+        margin-right: 8px;
+    }
+    #view .description-thumbnails img.active {
+        border: 2px solid #0da487;
+    }
+    #view .description-thumbnails {
+        margin-top: 16px;
+        justify-content: flex-start;
+        gap: 0;
+        flex-wrap: wrap;
     }
 </style>

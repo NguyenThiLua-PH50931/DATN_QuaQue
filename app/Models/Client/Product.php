@@ -24,6 +24,7 @@ class Product extends Model
         'view_day',
         'view_week',
         'view_month',
+        'has_variants',
     ];
 
     // Ảnh nhiều
@@ -61,5 +62,5 @@ class Product extends Model
     {
         return $this->hasMany(Comment::class, 'product_id');
     }
-    
+
 }
