@@ -157,7 +157,7 @@
                                     <tr>
                                         {{-- <th><input type="checkbox" id="select-all-variants"></th> --}}
                                         <th>Tên biến thể</th>
-                                        <th>Mô tả</th>
+                                        {{-- <th>Mô tả</th> --}}
                                         <th>Giá</th>
                                         <th>Số lượng</th>
                                         <th>SKU</th>
@@ -177,14 +177,14 @@
                                                     {{ $variant->name }}
                                                 </a>
                                             </td>
-                                            <td>
+                                            {{-- <td>
                                                 <span class="text-truncate description-short text-primary"
                                                     style="max-width: 250px; cursor: pointer;" data-bs-toggle="modal"
                                                     data-bs-target="#descriptionModal"
                                                     data-variant-id="{{ $variant->id }}">
                                                     {!! Str::limit(strip_tags($variant->description), 50) ?: '<em>(Chưa có mô tả)</em>' !!}
                                                 </span>
-                                            </td>
+                                            </td> --}}
                                             <td>{{ number_format($variant->price, 0, ',', '.') }}₫</td>
                                             <td>{{ $variant->stock }}</td>
                                             <td>{{ $variant->sku }}</td>
@@ -330,7 +330,7 @@
 
     @push('styles')
         <link rel="stylesheet" href="//cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
-        <style>
+        {{-- <style>
             /* .gallery-container {
                         display: flex;
                         gap: 12px;
@@ -454,7 +454,7 @@
             .bulk-delete-btn:not([disabled]):hover {
                 background: #aac4e7 !important;
             }
-        </style>
+        </style> --}}
     @endpush
 
     @push('scripts')

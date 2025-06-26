@@ -345,14 +345,40 @@
                                                     </div>
                                                     <div class="product-image">
                                                         <a href="#">
-                                                            <img src="{{ asset('frontend/assets/images/vegetable/product/' . $product->image) }}"
+                                                            {{-- <img src="{{ asset('frontend/assets/images/vegetable/product/' . $product->image) }}"
+                                                                alt="{{ $product->name }}"> --}}
+                                                            <img src="{{ asset('storage/' . $product->image) }}"
                                                                 alt="{{ $product->name }}">
                                                         </a>
                                                         <ul class="product-option">
+                                                            @php
+                                                                $descImgs = [];
+                                                                if (!empty($product->image)) {
+                                                                    $descImgs[] = asset('storage/' . $product->image);
+                                                                }
+                                                                if ($product->product_images && $product->product_images->count()) {
+                                                                    foreach ($product->product_images as $img) {
+                                                                        if (!empty($img->image_url)) {
+                                                                            $descImgs[] = $img->image_url;
+                                                                        }
+                                                                    }
+                                                                }
+                                                            @endphp
                                                             <li data-bs-toggle="tooltip" data-bs-placement="top"
                                                                 title="View">
                                                                 <a href="javascript:void(0)" data-bs-toggle="modal"
-                                                                    data-bs-target="#view">
+                                                                    data-bs-target="#view"
+                                                                    class="quickview-btn"
+                                                                    data-name="{{ $product->name }}"
+                                                                    data-price="{{ number_format($product->price) }}₫"
+                                                                    data-rating="{{ $product->reviews->avg('rating') ?? '' }}"
+                                                                    data-description="{{ $product->description }}"
+                                                                    data-code="{{ $product->variants->first()->sku ?? '' }}"
+                                                                    data-category="{{ $product->category->name ?? '' }}"
+                                                                    data-region="{{ $product->region->name ?? '' }}"
+                                                                    data-image="{{ asset('storage/' . $product->image) }}"
+                                                                    data-link="{{ route('client.product.detail', ['slug' => $product->slug]) }}"
+                                                                    data-description-images='@json($descImgs)'>
                                                                     <i data-feather="eye"></i>
                                                                 </a>
                                                             </li>
@@ -507,13 +533,39 @@
                                             <div class="product-image">
                                                 <a
                                                     href="{{ route('client.product.detail', ['slug' => $product->slug]) }}">
-                                                    <img src="{{ asset('frontend/assets/images/vegetable/product/' . $product->image) }}"
-                                                        class="img-fluid blur-up lazyload" alt="{{ $product->name }}">
+                                                    <img src="{{ asset('storage/' . $product->image) }}"
+                                                        alt="{{ $product->name }}" class="img-fluid blur-up lazyload"
+                                                        alt="{{ $product->name }}">
                                                 </a>
                                                 <ul class="product-option">
+                                                    @php
+                                                        $descImgs = [];
+                                                        if (!empty($product->image)) {
+                                                            $descImgs[] = asset('storage/' . $product->image);
+                                                        }
+                                                        if ($product->product_images && $product->product_images->count()) {
+                                                            foreach ($product->product_images as $img) {
+                                                                if (!empty($img->image_url)) {
+                                                                    $descImgs[] = $img->image_url;
+                                                                }
+                                                            }
+                                                        }
+                                                    @endphp
                                                     <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
                                                         <a href="javascript:void(0)" data-bs-toggle="modal"
-                                                            data-bs-target="#view">
+                                                            data-bs-target="#view"
+                                                            class="quickview-btn"
+                                                            data-name="{{ $product->name }}"
+                                                            data-price="{{ number_format($product->price) }}₫"
+                                                            data-rating="{{ $product->reviews->avg('rating') ?? '' }}"
+                                                            data-description="{{ $product->description }}"
+                                                            data-code="{{ $product->variants->first()->sku ?? '' }}"
+                                                            data-category="{{ $product->category->name ?? '' }}"
+                                                            data-region="{{ $product->region->name ?? '' }}"
+                                                            data-variant="{{ $product->variants->count() ? $product->variants->pluck('name')->implode(', ') : '' }}"
+                                                            data-image="{{ asset('storage/' . $product->image) }}"
+                                                            data-link="{{ route('client.product.detail', ['slug' => $product->slug]) }}"
+                                                            data-description-images='@json($descImgs)'>
                                                             <i data-feather="eye"></i>
                                                         </a>
                                                     </li>
@@ -652,256 +704,57 @@
                             <h2>Sản phẩm bán chạy</h2>
                             <span class="title-leaf">
                                 <svg class="icon-width">
-                                    <use xlink:href="https://themes.pixelstrap.com/fastkart/assets/svg/leaf.svg#leaf">
-                                    </use>
+                                    <use xlink:href="../frontend/assets/svg/leaf.svg#leaf"></use>
                                 </svg>
                             </span>
-                            <p>A virtual assistant collects the products from your list</p>
-                        </div>
+                            <p>Trợ lý ảo thu thập các sản phẩm từ danh sách của bạn</p>
                     </div>
 
                     <div class="best-selling-slider product-wrapper wow fadeInUp">
+                            @php
+                                // Lấy tối đa 12 sản phẩm từ $bestSellingProducts (giữ nguyên collection)
+                                $products = $bestSellingProducts->take(12);
+                                // Chia thành 3 nhóm, mỗi nhóm tối đa 4 sản phẩm (dùng collection chunk)
+                                $chunks = $products->chunk(4);
+                            @endphp
+
+                            @if ($chunks->isEmpty())
+                                <p>Không có sản phẩm nào để hiển thị.</p>
+                            @else
+                                @foreach ($chunks as $index => $chunk)
+                                    @if ($index < 3)
+                                        <!-- Giới hạn tối đa 3 ô -->
                         <div>
                             <ul class="product-list">
+                                                @foreach ($chunk as $product)
                                 <li>
                                     <div class="offer-product">
-                                        <a href="product-left-thumbnail.html" class="offer-image">
-                                            <img src="../assets/images/vegetable/product/11.png" class="blur-up lazyload"
-                                                alt="">
-                                        </a>
-
+                                                            <a href="{{ route('client.product.detail', ['slug' => $product->slug]) }}"
+                                                                class="offer-image">
+                                                                <img src="{{ asset('storage/' . $product->image) }}"
+                                                                    class="blur-up lazyload"
+                                                                    alt="{{ $product->name }}">
+                                                            </a>
                                         <div class="offer-detail">
                                             <div>
-                                                <a href="product-left-thumbnail.html" class="text-title">
-                                                    <h6 class="name">Tuffets Whole Wheat Bread</h6>
-                                                </a>
-                                                <span>500 G</span>
-                                                <h6 class="price theme-color">$ 10.00</h6>
-                                            </div>
+                                                                    <a href="{{ route('client.product.detail', ['slug' => $product->slug]) }}"
+                                                                        class="text-title">
+                                                                        <h6 class="name">{{ $product->name }}</h6>
+                                                                    </a>
+                                                                    <span>{{ $product->weight ?? '' }}</span>
+                                                                    <h6 class="price theme-color">
+                                                                        {{ number_format($product->price) }}₫
+                                                                    </h6>
                                         </div>
                                     </div>
                                 </li>
-
-                                <li>
-                                    <div class="offer-product">
-                                        <a href="product-left-thumbnail.html" class="offer-image">
-                                            <img src="../assets/images/vegetable/product/12.png" class="blur-up lazyload"
-                                                alt="">
-                                        </a>
-
-                                        <div class="offer-detail">
-                                            <div>
-                                                <a href="product-left-thumbnail.html" class="text-title">
-                                                    <h6 class="name">Potato</h6>
-                                                </a>
-                                                <span>500 G</span>
-                                                <h6 class="price theme-color">$ 10.00</h6>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-
-                                <li>
-                                    <div class="offer-product">
-                                        <a href="product-left-thumbnail.html" class="offer-image">
-                                            <img src="../assets/images/vegetable/product/13.png" class="blur-up lazyload"
-                                                alt="">
-                                        </a>
-
-                                        <div class="offer-detail">
-                                            <div>
-                                                <a href="product-left-thumbnail.html" class="text-title">
-                                                    <h6 class="name">Green Chilli</h6>
-                                                </a>
-                                                <span>200 G</span>
-                                                <h6 class="price theme-color">$ 10.00</h6>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-
-                                <li>
-                                    <div class="offer-product">
-                                        <a href="product-left-thumbnail.html" class="offer-image">
-                                            <img src="../assets/images/vegetable/product/14.png" class="blur-up lazyload"
-                                                alt="">
-                                        </a>
-
-                                        <div class="offer-detail">
-                                            <div>
-                                                <a href="product-left-thumbnail.html" class="text-title">
-                                                    <h6 class="name">Muffets Burger Bun</h6>
-                                                </a>
-                                                <span>150 G</span>
-                                                <h6 class="price theme-color">$ 10.00</h6>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
+                                                @endforeach
                             </ul>
                         </div>
-
-                        <div>
-                            <ul class="product-list">
-                                <li>
-                                    <div class="offer-product">
-                                        <a href="product-left-thumbnail.html" class="offer-image">
-                                            <img src="../assets/images/vegetable/product/15.png" class="blur-up lazyload"
-                                                alt="">
-                                        </a>
-
-                                        <div class="offer-detail">
-                                            <div>
-                                                <a href="product-left-thumbnail.html" class="text-title">
-                                                    <h6 class="name">Tuffets Britannia Cheezza</h6>
-                                                </a>
-                                                <span>500 G</span>
-                                                <h6 class="price theme-color">$ 10.00</h6>
+                                    @endif
+                                @endforeach
+                            @endif
                                             </div>
-                                        </div>
-                                    </div>
-                                </li>
-
-                                <li>
-                                    <div class="offer-product">
-                                        <a href="product-left-thumbnail.html" class="offer-image">
-                                            <img src="../assets/images/vegetable/product/16.png" class="blur-up lazyload"
-                                                alt="">
-                                        </a>
-
-                                        <div class="offer-detail">
-                                            <div>
-                                                <a href="product-left-thumbnail.html" class="text-title">
-                                                    <h6 class="name">Long Life Toned Milk</h6>
-                                                </a>
-                                                <span>1 L</span>
-                                                <h6 class="price theme-color">$ 10.00</h6>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-
-                                <li>
-                                    <div class="offer-product">
-                                        <a href="product-left-thumbnail.html" class="offer-image">
-                                            <img src="../assets/images/vegetable/product/17.png" class="blur-up lazyload"
-                                                alt="">
-                                        </a>
-
-                                        <div class="offer-detail">
-                                            <div>
-                                                <a href="product-left-thumbnail.html" class="text-title">
-                                                    <h6 class="name">Organic Tomato</h6>
-                                                </a>
-                                                <span>1 KG</span>
-                                                <h6 class="price theme-color">$ 10.00</h6>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-
-                                <li>
-                                    <div class="offer-product">
-                                        <a href="product-left-thumbnail.html" class="offer-image">
-                                            <img src="../assets/images/vegetable/product/18.png" class="blur-up lazyload"
-                                                alt="">
-                                        </a>
-
-                                        <div class="offer-detail">
-                                            <div>
-                                                <a href="product-left-thumbnail.html" class="text-title">
-                                                    <h6 class="name">Organic Jam</h6>
-                                                </a>
-                                                <span>150 G</span>
-                                                <h6 class="price theme-color">$ 10.00</h6>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div>
-                            <ul class="product-list">
-                                <li>
-                                    <div class="offer-product">
-                                        <a href="product-left-thumbnail.html" class="offer-image">
-                                            <img src="../assets/images/vegetable/product/19.png" class="blur-up lazyload"
-                                                alt="">
-                                        </a>
-
-                                        <div class="offer-detail">
-                                            <div>
-                                                <a href="product-left-thumbnail.html" class="text-title">
-                                                    <h6 class="name">Good Life Refined Sunflower Oil</h6>
-                                                </a>
-                                                <span>1 L</span>
-                                                <h6 class="price theme-color">$ 10.00</h6>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-
-                                <li>
-                                    <div class="offer-product">
-                                        <a href="product-left-thumbnail.html" class="offer-image">
-                                            <img src="../assets/images/vegetable/product/20.png" class="blur-up lazyload"
-                                                alt="">
-                                        </a>
-
-                                        <div class="offer-detail">
-                                            <div>
-                                                <a href="product-left-thumbnail.html" class="text-title">
-                                                    <h6 class="name">Good Life Raw Peanuts</h6>
-                                                </a>
-                                                <span>500 G</span>
-                                                <h6 class="price theme-color">$ 10.00</h6>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-
-                                <li>
-                                    <div class="offer-product">
-                                        <a href="product-left-thumbnail.html" class="offer-image">
-                                            <img src="../assets/images/vegetable/product/21.png" class="blur-up lazyload"
-                                                alt="">
-                                        </a>
-
-                                        <div class="offer-detail">
-                                            <div>
-                                                <a href="product-left-thumbnail.html" class="text-title">
-                                                    <h6 class="name">TufBest Farms Mong Dal</h6>
-                                                </a>
-                                                <span>1 KG</span>
-                                                <h6 class="price theme-color">$ 10.00</h6>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-
-                                <li>
-                                    <div class="offer-product">
-                                        <a href="product-left-thumbnail.html" class="offer-image">
-                                            <img src="../assets/images/vegetable/product/22.png" class="blur-up lazyload"
-                                                alt="">
-                                        </a>
-
-                                        <div class="offer-detail">
-                                            <div>
-                                                <a href="product-left-thumbnail.html" class="text-title">
-                                                    <h6 class="name">Frooti Mango Drink</h6>
-                                                </a>
-                                                <span>160 ML</span>
-                                                <h6 class="price theme-color">$ 10.00</h6>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
                     {{-- Last page promo banner --}}
                     @if ($lastPagePromoBanner)
                         <div class="section-t-space">
@@ -937,7 +790,8 @@
                             <div>
                                 <div class="blog-box wow fadeInUp" data-wow-delay="0.1s">
                                     <div class="blog-box-image">
-                                        <a href="{{ route('blogs-detail', ['id' => $item->id]) }}" class="blog-image">
+                                            <a href="{{ route('blogs-detail', ['id' => $item->id]) }}"
+                                                class="blog-image">
                                             @if (!empty($item->thumbnail) && file_exists(public_path($item->thumbnail)))
                                                 <img src="{{ asset($item->thumbnail) }}" alt="{{ $item->title }}"
                                                     class="bg-img blur-up lazyload w-100">
@@ -996,4 +850,32 @@
         </div>
     </section>
     <!-- NEWSLETTER SECTION END -->
+
+    <style>
+        /* Ảnh sản phẩm ở các phần nổi bật, mới, bán chạy */
+        .product-box .product-image,
+        .product-image,
+        .offer-product .offer-image {
+            width: 100%;
+            max-width: 3050px;
+            aspect-ratio: 1/1;
+            position: relative;
+            overflow: hidden;
+            border-radius: 25px;
+            background: #f8f8f8;
+            display: block;
+        }
+
+        .product-box .product-image img,
+        .product-image img,
+        .offer-product .offer-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            border-radius: 16px;
+            display: block;
+            background: #f8f8f8;
+        }
+    </style>
 @endsection
