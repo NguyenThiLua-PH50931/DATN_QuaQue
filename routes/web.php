@@ -23,6 +23,7 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\User\ProfileController;
 use App\Http\Controllers\Admin\SupportTicketController;
+use App\Http\Controllers\Client\AboutController;
 use App\Http\Controllers\Client\ClientHomeController;
 use App\Http\Controllers\Client\BlogController as ClientBlogController;
 use App\Http\Controllers\Client\BlogCommentController as ClientBlogCommentController;
@@ -108,6 +109,12 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
     Route::middleware('auth')->group(function () {
         Route::post('/blog/comments', [ClientBlogCommentController::class, 'store'])->name('blog.comments.store');
     });
+
+    //Giới thiêu
+    
+Route::get('/about', [AboutController::class, 'index'])->name('about');
+
+    
 });
 
 //----------------------------------------------------------
