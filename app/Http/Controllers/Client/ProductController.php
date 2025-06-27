@@ -7,14 +7,74 @@ use Illuminate\Http\Request;
 use App\Models\Client\Product;
 use App\Models\Client\ProductVariant;
 use Carbon\Carbon;
+use App\Models\Admin\Banner;
+use App\Models\Admin\Product as AdminProduct;
 
 class ProductController extends Controller
 {
     // all products
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::with(['category', 'region', 'images'])->where('active', 1)->get();
-        return view('frontend.products.index', compact('products'));
+        $query = Product::with(['category', 'region', 'images', 'variants', 'reviews'])
+            ->where('active', 1);
+
+        // Filter theo danh mục
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+        // Filter theo vùng miền
+        if ($request->filled('region_id')) {
+            $query->where('region_id', $request->region_id);
+        }
+        // Filter theo giá
+        if ($request->filled('price_min')) {
+            $query->whereHas('variants', function($q) use ($request) {
+                $q->where('price', '>=', $request->price_min);
+            });
+        }
+        if ($request->filled('price_max')) {
+            $query->whereHas('variants', function($q) use ($request) {
+                $q->where('price', '<=', $request->price_max);
+            });
+        }
+        // Filter theo rating trung bình
+        if ($request->filled('rating')) {
+            $query->whereHas('reviews', function($q) use ($request) {
+                $q->havingRaw('AVG(rating) >= ?', [$request->rating]);
+            });
+        }
+        // Sắp xếp
+        if ($request->filled('sort')) {
+            switch ($request->sort) {
+                case 'price_asc':
+                    $query->orderByRaw('(SELECT MIN(price) FROM product_variants WHERE product_id = products.id) ASC');
+                    break;
+                case 'price_desc':
+                    $query->orderByRaw('(SELECT MAX(price) FROM product_variants WHERE product_id = products.id) DESC');
+                    break;
+                case 'rating':
+                    $query->withAvg('reviews', 'rating')->orderByDesc('reviews_avg_rating');
+                    break;
+                case 'name_asc':
+                    $query->orderBy('name', 'asc');
+                    break;
+                case 'name_desc':
+                    $query->orderBy('name', 'desc');
+                    break;
+                default:
+                    $query->orderBy('id', 'desc');
+            }
+        } else {
+            $query->orderBy('id', 'desc');
+        }
+        // Phân trang
+        $products = $query->paginate(12)->appends($request->query());
+
+        // Lấy danh sách danh mục và vùng miền cho filter
+        $categories = \App\Models\admin\Category::all();
+        $regions = \App\Models\admin\Region::all();
+
+        return view('frontend.products.index', compact('products', 'categories', 'regions'));
     }
     /**
      * Hiển thị chi tiết sản phẩm.
@@ -25,7 +85,7 @@ class ProductController extends Controller
             'images',
             'category',
             'region',
-            'variants.attributeValues.attribute', // Load đủ để group attributes/values cho view
+            'variants.attributeValues.attribute',
             'reviews.user',
             'comments.user',
             'comments.replies.admin'
@@ -75,12 +135,36 @@ class ProductController extends Controller
             ->limit(8)
             ->get();
 
+        // Lấy sản phẩm thịnh hành (topViewedProducts)
+        $topViewedProducts = AdminProduct::with('category')
+            ->where('active', 1)
+            ->orderBy('view_total', 'desc')
+            ->limit(8)
+            ->get();
+
+        // Lấy banner dọc (product_section_promo_left_top)
+        $now = now();
+        $productSectionPromoLeftTop = Banner::where('location', 'product_section_promo_left_top')
+            ->where('active', true)
+            ->where(function ($query) use ($now) {
+                $query->where(function ($q) use ($now) {
+                    $q->where('display_at', '<=', $now)
+                        ->where(function ($q2) use ($now) {
+                            $q2->where('display_end_at', '>=', $now)
+                                ->orWhereNull('display_end_at');
+                        });
+                });
+            })
+            ->first();
+
         return view('frontend.products.detail', [
             'product'    => $product,
             'variants'   => $variants,
             'attributes' => $attributeOptions,
             'variantMap' => $variantMap,
             'related'    => $related,
+            'topViewedProducts' => $topViewedProducts,
+            'productSectionPromoLeftTop' => $productSectionPromoLeftTop,
         ]);
     }
 
