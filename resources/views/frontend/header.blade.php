@@ -937,7 +937,7 @@
                                          </li>
 
                                          <li class="nav-item dropdown new-nav-item">
-                                             <a class="nav-link dropdown-toggle" href="{{ route('client.blog') }}">Giới
+                                             <a class="nav-link dropdown-toggle" href="{{ route('client.about') }}">Giới
                                                  thiệu
                                              </a>
                                          </li>
