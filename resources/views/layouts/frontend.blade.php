@@ -43,7 +43,7 @@
     <link rel="stylesheet" href="{{ asset('frontend/assets/css/vendors/slick/slick-theme.css') }}">
     <link rel="stylesheet" href="{{ asset('frontend/assets/css/bulk-style.css') }}">
     <link rel="stylesheet" href="{{ asset('frontend/assets/css/vendors/animate.css') }}">
-
+    <link rel="stylesheet" href="{{ asset('frontend/assets/css/vendors/ion.rangeSlider.min.css') }}">
     <!-- Template Style -->
     <link id="color-link" rel="stylesheet" href="{{ asset('frontend/assets/css/style.css') }}">
 </head>
@@ -149,92 +149,7 @@
     {{-- Contents --}}
     @yield('contents')
     @includeIf('frontend.footer')
-    <!-- Quick View Modal Box Start -->
-    <div class="modal fade theme-modal view-modal" id="view" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-xl modal-fullscreen-sm-down">
-            <div class="modal-content">
-                <div class="modal-header p-0">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="row g-sm-4 g-2">
-                        <div class="col-lg-6">
-                            <div class="slider-image">
-                                <img src="../frontend/assets/images/product/category/1.jpg"
-                                    class="img-fluid blur-up lazyload main-quickview-image" alt="">
-                                <div class="description-thumbnails mt-3 d-flex gap-2"></div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-6">
-                            <div class="right-sidebar-modal">
-                                <h4 class="title-name">Peanut Butter Bite Premium Butter Cookies 600 g</h4>
-                                <h4 class="price">$36.99</h4>
-                                <div class="product-rating">
-                                    <ul class="rating">
-                                        <li>
-                                            <i data-feather="star" class="fill"></i>
-                                        </li>
-                                        <li>
-                                            <i data-feather="star" class="fill"></i>
-                                        </li>
-                                        <li>
-                                            <i data-feather="star" class="fill"></i>
-                                        </li>
-                                        <li>
-                                            <i data-feather="star" class="fill"></i>
-                                        </li>
-                                        <li>
-                                            <i data-feather="star"></i>
-                                        </li>
-                                    </ul>
-                                    <span class="ms-2">8 Reviews</span>
-                                    <span class="ms-2 text-danger">6 sold in last 16 hours</span>
-                                </div>
-
-                                <div class="product-detail">
-                                    <h4>Mô tả sản phẩm:</h4>
-                                    <p></p>
-                                </div>
-
-                                <ul class="brand-list">
-                                    <li>
-                                        <div class="brand-box">
-                                            <h5>Brand Name:</h5>
-                                            <h6>Black Forest</h6>
-                                        </div>
-                                    </li>
-
-                                    <li>
-                                        <div class="brand-box">
-                                            <h5>Product Code:</h5>
-                                            <h6>W0690034</h6>
-                                        </div>
-                                    </li>
-
-                                    <li>
-                                        <div class="brand-box">
-                                            <h5>Product Type:</h5>
-                                            <h6>White Cream Cake</h6>
-                                        </div>
-                                    </li>
-                                </ul>
-
-                                <div class="modal-button">
-                                    <button onclick="location.href = 'product-left.html';"
-                                        class="btn theme-bg-color view-button icon text-white fw-bold btn-md">
-                                        Xem chi tiết</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Quick View Modal Box End -->
+    @include('frontend.wishlist.quickview')
 
     <!-- Location Modal Start -->
     <div class="modal location-modal fade theme-modal" id="locationModal" tabindex="-1">
@@ -454,114 +369,10 @@
 
     <!-- theme setting js -->
     <script src="{{ asset('frontend/assets/js/theme-setting.js') }}"></script>
+     <script src="{{ asset('frontend/assets/js/jquery-3.6.0.min.js') }}"></script>
+    <script src="{{ asset('frontend/assets/js/ion.rangeSlider.min.js') }}"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.quickview-btn').forEach(function(btn) {
-                btn.addEventListener('click', function() {
-                    // Lấy dữ liệu từ data-*
-                    var name = this.getAttribute('data-name') || '';
-                    var price = this.getAttribute('data-price') || '';
-                    var rating = this.getAttribute('data-rating') || '';
-                    var description = this.getAttribute('data-description') || '';
-                    var code = this.getAttribute('data-code') || '';
-                    var category = this.getAttribute('data-category') || '';
-                    var region = this.getAttribute('data-region') || '';
-                    var variant = this.getAttribute('data-variant') || '';
-                    var image = this.getAttribute('data-image') || '';
-                    var link = this.getAttribute('data-link') || '#';
-
-                    // Đổ dữ liệu vào modal (giữ nguyên giao diện theme)
-                    document.querySelector('#view .title-name').textContent = name;
-                    document.querySelector('#view .price').textContent = price;
-                    document.querySelector('#view .slider-image img').src = image;
-                    document.querySelector('#view .slider-image img').alt = name;
-                    document.querySelector('#view .product-detail p').textContent = description;
-
-                    // Đánh giá (rating, chỉ hiện 1 nếu có)
-                    var ratingHtml = '';
-                    if (rating) {
-                        ratingHtml = '<ul class="rating">';
-                        for (var i = 1; i <= 5; i++) {
-                            ratingHtml += '<li><i data-feather="star" class="' + (i <= Math.round(
-                                rating) ? 'fill' : '') + '"></i></li>';
-                        }
-                        ratingHtml += '</ul>';
-                        ratingHtml += '<span class="ms-2">' + rating + ' sao</span>';
-                    }
-                    document.querySelector('#view .product-rating').innerHTML = ratingHtml;
-                    if (window.feather) feather.replace();
-
-                    // Brand list (theo yêu cầu: mã sản phẩm, danh mục, vùng miền, biến thể)
-                    var brandList = document.querySelector('#view .brand-list');
-                    brandList.innerHTML = '';
-                    if (code) {
-                        brandList.innerHTML +=
-                            `<li><div class="brand-box"><h5>Mã sản phẩm:</h5><h6>${code}</h6></div></li>`;
-                    }
-                    if (category) {
-                        brandList.innerHTML +=
-                            `<li><div class="brand-box"><h5>Danh mục:</h5><h6>${category}</h6></div></li>`;
-                    }
-                    if (region) {
-                        brandList.innerHTML +=
-                            `<li><div class="brand-box"><h5>Vùng miền:</h5><h6>${region}</h6></div></li>`;
-                    }
-                    if (variant) {
-                        brandList.innerHTML +=
-                            `<li><div class="brand-box"><h5>Biến thể:</h5><h6>${variant}</h6></div></li>`;
-                    }
-
-                    // Nút xem chi tiết
-                    var detailBtn = document.querySelector('#view .view-button');
-                    if (detailBtn && link) {
-                        detailBtn.onclick = function() {
-                            window.location.href = link;
-                        };
-                    }
-
-                    // Ảnh mô tả sản phẩm (không phải biến thể)
-                    var descImages = [];
-                    var descImagesAttr = this.getAttribute('data-description-images');
-                    if (descImagesAttr) {
-                        try {
-                            descImages = JSON.parse(descImagesAttr);
-                        } catch (e) {
-                            descImages = descImagesAttr.split(',');
-                        }
-                    }
-                    var descThumbHtml = '';
-                    if (descImages.length > 0 && descImages[0] !== '') {
-                        descImages.forEach(function(img, idx) {
-                            descThumbHtml +=
-                                `<img src="${img}" class="${idx===0?'active':''}" data-big="${img}" />`;
-                        });
-                    }
-                    var descThumbWrap = document.querySelector('#view .description-thumbnails');
-                    if (descThumbWrap) descThumbWrap.innerHTML = descThumbHtml;
-                    if (descThumbWrap) {
-                        descThumbWrap.style.display = (descImages.length > 0 && descImages[0] !==
-                            '') ? 'flex' : 'none';
-                    }
-                    // Sự kiện click thumbnail mô tả
-                    if (descThumbWrap && descThumbWrap.style.display !== 'none') {
-                        descThumbWrap.querySelectorAll('img').forEach(function(imgThumb) {
-                            imgThumb.onclick = function() {
-                                document.querySelector('#view .main-quickview-image')
-                                    .src = this.getAttribute('data-big');
-                                descThumbWrap.querySelectorAll('img').forEach(i => i
-                                    .classList.remove('active'));
-                                this.classList.add('active');
-                            };
-                        });
-                    }
-                    // Hiển thị chi tiết sản phẩm bằng innerHTML để không hiện thẻ <p> ra ngoài
-                    var detailHtml = this.getAttribute('data-description') || '';
-                    document.querySelector('#view .product-detail p').innerHTML = detailHtml;
-                });
-            });
-        });
-    </script>
+    @stack('scripts')
 </body>
 
 </html>
@@ -649,9 +460,11 @@
         background: #f8f8f8;
         margin-right: 8px;
     }
+
     #view .description-thumbnails img.active {
         border: 2px solid #0da487;
     }
+
     #view .description-thumbnails {
         margin-top: 16px;
         justify-content: flex-start;
