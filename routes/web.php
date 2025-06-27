@@ -23,8 +23,10 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\User\ProfileController;
 use App\Http\Controllers\Admin\SupportTicketController;
+use App\Http\Controllers\Client\AboutController;
 use App\Http\Controllers\Client\ClientHomeController;
 use App\Http\Controllers\Client\BlogController as ClientBlogController;
+use App\Http\Controllers\Client\BlogCommentController as ClientBlogCommentController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\Client\ClientSupportTicketController;
 use App\Http\Controllers\Client\ContactController;
@@ -99,6 +101,20 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
     // Liên hệ:
     Route::get('lienhe', [ContactController::class, 'lienhe'])->name('lienhe');
     Route::post('lienhe', [ContactController::class, 'submit'])->name('submit');
+
+    // Blog
+    Route::get('/blog', [ClientBlogController::class, 'index'])->name('blog');
+    Route::get('/blog-detail/{id}', [ClientBlogController::class, 'show'])->name('blogs-detail');
+
+    Route::middleware('auth')->group(function () {
+        Route::post('/blog/comments', [ClientBlogCommentController::class, 'store'])->name('blog.comments.store');
+    });
+
+    //Giới thiêu
+    
+Route::get('/about', [AboutController::class, 'index'])->name('about');
+
+    
 });
 
 //----------------------------------------------------------
@@ -139,11 +155,6 @@ Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 // Route::view('/products/category', 'frontend.products.category');
 // Route::view('/seller/become-seller', 'frontend.seller.become-seller');
 // Route::view('/seller/seller-dashboard', 'frontend.seller.seller-dashboard');
-
-// Blog
-Route::get('/blog', [ClientBlogController::class, 'index'])->name('blog');
-Route::get('/blog-detail/{id}', [ClientBlogController::class, 'show'])->name('blogs-detail');
-
 
 
 //-----------------------------------------------------------------

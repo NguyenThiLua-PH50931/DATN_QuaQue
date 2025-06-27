@@ -23,7 +23,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="breadscrumb-contain">
-                        <h2>Blog Grid</h2>
+                        {{-- <h2>Blog Grid</h2> --}}
                         <nav>
                             <ol class="breadcrumb mb-0">
                                 <li class="breadcrumb-item">
@@ -31,7 +31,7 @@
                                         <i class="fa-solid fa-house"></i>
                                     </a>
                                 </li>
-                                <li class="breadcrumb-item active" aria-current="page">Blog Grid</li>
+                                <li class="breadcrumb-item active" aria-current="page">Tin Tức</li>
                             </ol>
                         </nav>
                     </div>
@@ -51,7 +51,7 @@
         <div class="col-xxl-4 col-sm-6">
             <div class="blog-box wow fadeInUp">
                 <div class="blog-image">
-                    <a href="{{ route('blogs-detail', ['id' => $item->id]) }}">
+                    <a href="{{ route('client.blogs-detail', ['id' => $item->id]) }}">
                         @if($item->thumbnail)
                             <img src="{{ asset($item->thumbnail) }}" alt="{{ $item->title }}">
                         @endif
@@ -65,10 +65,10 @@
                             <span>{{ $item->created_at ? $item->created_at->format('F d, Y') : 'Chưa có ngày tạo' }}</span>
                         </span>
                     </div>
-                    <a href="{{ route('blogs-detail', ['id' => $item->id]) }}">
+                    <a href="{{ route('client.blogs-detail', ['id' => $item->id]) }}">
                         <h3>{{ $item->title }}</h3>
                     </a>
-                    <button onclick="location.href='{{ route('blogs-detail', ['id' => $item->id]) }}'" class="blog-button">
+                    <button onclick="location.href='{{ route('client.blogs-detail', ['id' => $item->id]) }}'" class="blog-button">
                         Read More <i class="fa-solid fa-right-long"></i>
                     </button>                                        
                 </div>
@@ -118,7 +118,7 @@
                                     <button class="accordion-button" type="button" data-bs-toggle="collapse"
                                         data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true"
                                         aria-controls="panelsStayOpen-collapseOne">
-                                        Recent Post
+                                        Bài viết gần đây
                                     </button>
                                 </h2>
                                 <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show"
@@ -127,14 +127,14 @@
                                         <div class="recent-post-box">
                                             @foreach($recentBlogs as $item)
                                                 <div class="recent-box">
-                                                    <a href="{{ route('blogs-detail', ['id' => $item->id]) }}" class="recent-image">
+                                                    <a href="{{ route('client.blogs-detail', ['id' => $item->id]) }}" class="recent-image">
                                                         @if($item->thumbnail)
                                                             <img src="{{ asset($item->thumbnail) }}" alt="{{ $item->title }}" class="img-fluid blur-up lazyload">
                                                         @endif
                                                     </a>
 
                                                     <div class="recent-detail">
-                                                        <a href="{{ route('blogs-detail', ['id' => $item->id]) }}">
+                                                        <a href="{{ route('client.blogs-detail', ['id' => $item->id]) }}">
                                                             <h5 class="recent-name">{{ $item->title }}</h5>
                                                         </a>
                                                         <h6><span>{{ $item->created_at ? $item->created_at->format('F d, Y') : 'Chưa có ngày tạo' }}</span>

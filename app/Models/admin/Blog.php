@@ -5,6 +5,7 @@ namespace App\Models\admin;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\admin\BlogComment;
 
 class Blog extends Model
 {
@@ -27,4 +28,9 @@ class Blog extends Model
         'start_date',
         'end_date',
     ];
+
+    public function comments()
+    {
+        return $this->hasMany(BlogComment::class, 'blog_id');
+    }
 }

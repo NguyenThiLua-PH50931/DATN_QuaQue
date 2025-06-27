@@ -88,7 +88,7 @@ class BlogController extends Controller
      */
     public function show(string $id)
     {
-        $blog = Blog::findOrFail($id);
+        $blog = Blog::with(['comments.user'])->findOrFail($id);
         return view('backend.blogs.show', compact('blog'));
     }
 

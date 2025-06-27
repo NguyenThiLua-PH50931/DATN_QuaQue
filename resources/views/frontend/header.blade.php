@@ -932,12 +932,12 @@
                                             </li> --}}
 
                                          <li class="nav-item dropdown new-nav-item">
-                                             <a class="nav-link dropdown-toggle" href="{{ route('blog') }}">Tin
+                                             <a class="nav-link dropdown-toggle" href="{{ route('client.blog') }}">Tin
                                                  tức</a>
                                          </li>
 
                                          <li class="nav-item dropdown new-nav-item">
-                                             <a class="nav-link dropdown-toggle" href="{{ route('blog') }}">Giới
+                                             <a class="nav-link dropdown-toggle" href="{{ route('client.about') }}">Giới
                                                  thiệu
                                              </a>
                                          </li>
@@ -948,12 +948,12 @@
                                              </a>
                                          </li>
                                          <li class="nav-item dropdown new-nav-item">
-                                             <a class="nav-link dropdown-toggle" href="{{ route('blog') }}">Giỏ
+                                             <a class="nav-link dropdown-toggle" href="{{ route('client.blog') }}">Giỏ
                                                  hàng
                                              </a>
                                          </li>
                                          <li class="nav-item dropdown new-nav-item">
-                                             <a class="nav-link dropdown-toggle" href="{{ route('blog') }}">Thanh
+                                             <a class="nav-link dropdown-toggle" href="{{ route('client.blog') }}">Thanh
                                                  toán
                                              </a>
                                          </li>
