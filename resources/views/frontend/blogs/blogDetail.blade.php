@@ -79,9 +79,11 @@
                     </div>
                 </div>
 
-                <div class="col-xxl-9 col-xl-8 col-lg-7" style="margin-top: 130px;">
-                    <div class="blog-detail-image rounded-3">
-                        <img src="../assets/images/inner-page/blog/1.jpg" class="bg-img blur-up lazyload" alt="">
+                <div class="col-xxl-9 col-xl-8 col-lg-7 ratio_50">
+                    <div class="blog-detail-image rounded-3 mb-4">
+                        @if($blog->thumbnail)
+                            <img src="{{ asset($blog->thumbnail) }}" alt="{{ $blog->title }}" class="bg-img blur-up lazyload">
+                        @endif
                         <div class="blog-image-contain">
                             <h2>{{ $blog->title }}</h2>
                             <ul class="contain-comment-list">
@@ -99,12 +101,12 @@
                                     </div>
                                 </li>
 
-                                {{-- <li>
+                                <li>
                                     <div class="user-list">
                                         <i data-feather="message-square"></i>
-                                        <span>82 Comment</span>
+                                        <span>{{ $blog->comments->count()}} Bình luận</span>
                                     </div>
-                                </li> --}}
+                                </li>
                             </ul>
                         </div>
                     </div>
