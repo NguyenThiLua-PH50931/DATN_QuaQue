@@ -7,6 +7,7 @@ use App\Models\admin\Blog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class BlogController extends Controller
 {
