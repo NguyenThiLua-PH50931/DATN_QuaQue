@@ -2,23 +2,39 @@
 @section('title', 'About Us')
 @section('contents')
 <style>
-    /* Áp dụng cho khung reviewer-box */
-.reviewer-box {
-    min-height: 350px; /* hoặc 100% nếu có bố cục parent xác định */
-    height: 100%;
+ .reviewer-box {
+    min-height: 350px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    padding: 20px;
+    border-radius: 10px;
+    background: #fff;
 }
 
-/* Giới hạn chiều cao phần nội dung bình luận */
+/* Tiêu đề */
+.reviewer-box h5 {
+    margin-bottom: 8px;
+}
+
+/* Nội dung bình luận */
 .reviewer-box p {
+    margin: 0 0 16px;
     max-height: 80px;
     overflow: hidden;
     display: -webkit-box;
-    -webkit-line-clamp: 4; /* hiện 4 dòng */
+    -webkit-line-clamp: 4;
     -webkit-box-orient: vertical;
     text-overflow: ellipsis;
+    color: #555;
+    font-style: italic;
+}
+
+/* Footer: đẩy xuống cuối box */
+.reviewer-footer {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 </style>

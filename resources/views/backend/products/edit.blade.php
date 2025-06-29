@@ -655,9 +655,16 @@
         document.addEventListener('DOMContentLoaded', () => {
             // Thêm xử lý form submit
             const mainForm = document.getElementById('main-form');
+            const mainDesc = document.getElementById('main-description');
+            let mainEditor = null;
             if (mainForm) {
                 mainForm.addEventListener('submit', function(e) {
                     e.preventDefault();
+
+                    // Đồng bộ dữ liệu CKEditor về textarea trước khi submit
+                    if (mainEditor && mainDesc) {
+                        mainDesc.value = mainEditor.getData();
+                    }
 
                     const formData = new FormData(this);
 
@@ -702,9 +709,9 @@
 
             // ================== Khởi tạo CKEditor cho mô tả chính ==================
             function initMainEditor() {
-                const mainDesc = document.getElementById('main-description');
                 if (mainDesc && !mainDesc.classList.contains('ck-editor-initialized')) {
                     ClassicEditor.create(mainDesc).then(editor => {
+                        mainEditor = editor;
                         editor.ui.view.editable.element.style.color = '#222';
                         editor.ui.view.editable.element.style.background = '#fff';
                         mainDesc.classList.add('ck-editor-initialized');
