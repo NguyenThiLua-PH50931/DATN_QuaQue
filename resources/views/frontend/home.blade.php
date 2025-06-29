@@ -805,7 +805,7 @@
                                 <div>
                                     <div class="blog-box wow fadeInUp" data-wow-delay="0.1s">
                                         <div class="blog-box-image">
-                                            <a href="{{ route('blogs-detail', ['id' => $item->id]) }}"
+                                            {{-- <a href="{{ route('blogs-detail', ['id' => $item->id]) }}"
                                                 class="blog-image">
                                                 @if (!empty($item->thumbnail) && file_exists(public_path($item->thumbnail)))
                                                     <img src="{{ asset($item->thumbnail) }}" alt="{{ $item->title }}"
@@ -814,7 +814,7 @@
                                                     <img src="{{ asset('images/default-blog.jpg') }}" alt="No image"
                                                         class="bg-img blur-up lazyload w-100">
                                                 @endif
-                                            </a>
+                                            </a> --}}
                                         </div>
 
                                         <div class="blog-detail px-2 pt-3">
@@ -822,9 +822,9 @@
                                                 <i data-feather="clock" class="me-1"></i>
                                                 {{ $item->created_at ? $item->created_at->format('F d, Y') : 'Chưa có ngày tạo' }}
                                             </h6>
-                                            <a href="{{ route('blogs-detail', ['id' => $item->id]) }}">
+                                            {{-- <a href="{{ route('blogs-detail', ['id' => $item->id]) }}">
                                                 <h5 class="mt-2 mb-3">{{ $item->title }}</h5>
-                                            </a>
+                                            </a> --}}
                                         </div>
                                     </div>
                                 </div>
