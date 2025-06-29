@@ -1,13 +1,41 @@
 @extends('layouts.frontend')
 @section('title', 'Sản phẩm yêu thích')
 @section('contents')
+    <style>
+        .wishlist-img {
+            width: 320px; /* Lấp đầy container cha */
+            max-width: 100%; /* Đảm bảo không vượt quá kích thước cha */
+            height: auto; /* Chiều cao tự động dựa trên tỷ lệ */
+            aspect-ratio: 4/3; /* Duy trì tỷ lệ 4/3 */
+            object-fit: cover; /* Đảm bảo ảnh không bị méo */
+            border-radius: 20px !important; /* Bo góc trực tiếp cho ảnh, tăng lên 20px để rõ hơn */
+            background: #f8f8f8; /* Nền mặc định nếu ảnh không tải */
+            display: block; /* Loại bỏ khoảng cách không mong muốn */
+        }
+
+        .product-image {
+            width: 100%; /* Đảm bảo container cha chiếm toàn bộ chiều rộng */
+            margin-bottom: 12px; /* Giữ khoảng cách như yêu cầu */
+        }
+
+        .product-header {
+            position: relative; /* Hỗ trợ định vị nút xóa */
+        }
+
+        /* Ghi đè CSS mặc định nếu có xung đột */
+        .product-box-3 .product-header .product-image img {
+            border-radius: 20px !important;
+            width: 100% !important;
+            height: auto !important;
+        }
+    </style>
     <!-- BREADCRUMB SECTION START -->
     <section class="breadscrumb-section pt-0">
         <div class="container-fluid-lg">
             <div class="row">
                 <div class="col-12">
                     <div class="breadscrumb-contain">
-                        <h2>Wishlist</h2>
+                        <h2>Sản phẩm yêu thích của bạn</h2>
                         <nav>
                             <ol class="breadcrumb mb-0">
                                 <li class="breadcrumb-item">
@@ -15,7 +43,7 @@
                                         <i class="fa-solid fa-house"></i>
                                     </a>
                                 </li>
-                                <li class="breadcrumb-item active" aria-current="page">Wishlist</li>
+                                <li class="breadcrumb-item active" aria-current="page">Trang sản phẩm yêu thích</li>
                             </ol>
                         </nav>
                     </div>
@@ -48,10 +76,7 @@
                             <div class="product-box-3 h-100">
                                 <div class="product-header">
                                     <div class="product-image">
-                                        <a href="{{ route('client.product.detail', $item->product->slug) }}">
-                                            <img src="{{ asset($item->product->image) }}" class="img-fluid blur-up lazyload" alt="{{ $item->product->name }}">
-                                        </a>
-
+                                        <img src="{{ asset('storage/' . $item->product->image) }}" alt="{{ $item->product->name }}" class="wishlist-img">
                                         <div class="product-header-top">
                                             <form action="{{ route('client.wishlist.destroy', $item->product_id) }}" method="POST">
                                                 @csrf
