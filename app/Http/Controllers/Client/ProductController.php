@@ -55,16 +55,18 @@ class ProductController extends Controller
         }
 
         // Mapping variant (dùng cho JS, AJAX tìm variant theo tổ hợp value id)
-        $variantMap = $variants->map(function ($v) {
-            return [
-                'id' => $v->id,
-                'sku' => $v->sku,
-                'stock' => $v->stock,
-                'price' => $v->price,
-                'image' => $v->image ? asset('storage/' . $v->image) : null,
-                'value_ids' => $v->attributeValues->pluck('id')->sort()->values()->all(),
-            ];
-        });
+$variantMap = $variants->map(function ($v) {
+    return [
+        'id' => $v->id,
+        'sku' => $v->sku,
+        'stock' => $v->stock,
+        'price' => $v->price,
+        'image' => $v->image ? asset('storage/' . $v->image) : null,
+        'value_ids' => $v->attributeValues->pluck('id')->sort()->values()->all(),
+        'active' => $v->active, // thêm dòng này để biết trạng thái variant
+           'description' => $v->description, // thêm mô tả biến thể
+    ];
+});
 
         // Lấy sản phẩm liên quan (option)
         $related = Product::with('images')
@@ -81,6 +83,7 @@ class ProductController extends Controller
             'attributes' => $attributeOptions,
             'variantMap' => $variantMap,
             'related'    => $related,
+            'active' => $variant->active,
         ]);
     }
 

@@ -53,23 +53,23 @@
                     @php
                     $descImgs = [];
                     if (!empty($product->image)) {
-                        $descImgs[] = asset('storage/' . $product->image);
+                    $descImgs[] = asset('storage/' . $product->image);
                     }
                     if ($product->images && $product->images->count()) {
-                        foreach ($product->images as $img) {
-                            if (!empty($img->image_url)) {
-                                $descImgs[] = asset('storage/' . $img->image_url);
-                            }
-                        }
+                    foreach ($product->images as $img) {
+                    if (!empty($img->image_url)) {
+                    $descImgs[] = asset('storage/' . $img->image_url);
+                    }
+                    }
                     }
                     // Map valueId => ảnh biến thể (nếu có)
                     $variantImages = [];
                     foreach($product->variants as $variant) {
-                        if (!empty($variant->image) && !empty($variant->value_ids)) {
-                            foreach($variant->value_ids as $valueId) {
-                                $variantImages[$valueId] = asset('storage/'.$variant->image);
-                            }
-                        }
+                    if (!empty($variant->image) && !empty($variant->value_ids)) {
+                    foreach($variant->value_ids as $valueId) {
+                    $variantImages[$valueId] = asset('storage/'.$variant->image);
+                    }
+                    }
                     }
                     @endphp
                     <div class="col-xl-6 wow fadeInUp">
@@ -79,10 +79,10 @@
                             </div>
                             <div class="thumbnail-wrapper" style="display:flex; justify-content:center; gap:8px; margin-top:10px; overflow-x:auto; padding-bottom:5px;">
                                 @foreach ($descImgs as $index => $img)
-                                    <img src="{{ $img }}" alt="Thumbnail {{ $index + 1 }}" class="thumbnail-image" data-index="{{ $index }}" style="width:60px; height:60px; object-fit:cover; border-radius:6px; border:2px solid transparent; cursor:pointer;">
+                                <img src="{{ $img }}" alt="Thumbnail {{ $index + 1 }}" class="thumbnail-image" data-index="{{ $index }}" style="width:60px; height:60px; object-fit:cover; border-radius:6px; border:2px solid transparent; cursor:pointer;">
                                 @endforeach
                                 @if (empty($descImgs))
-                                    <img src="{{ asset('backend/assets/images/placeholder.webp') }}" alt="Không có ảnh" style="width:60px; height:60px; object-fit:cover; border-radius:6px; border:2px solid transparent; cursor:default;">
+                                <img src="{{ asset('backend/assets/images/placeholder.webp') }}" alt="Không có ảnh" style="width:60px; height:60px; object-fit:cover; border-radius:6px; border:2px solid transparent; cursor:default;">
                                 @endif
                             </div>
                         </div>
@@ -102,7 +102,7 @@
                                     <ul class="rating">
                                         @for ($i = 1; $i <= 5; $i++)
                                             <li><i data-feather="star" class="{{ $i <= round($product->reviews->avg('rating')) ? 'fill' : '' }}"></i></li>
-                                        @endfor
+                                            @endfor
                                     </ul>
                                     <span class="review">{{ $product->reviews->count() }} đánh giá</span>
                                 </div>
@@ -230,7 +230,7 @@
                                 <div class="product-info">
                                     <ul class="product-info-list product-info-list-2">
                                         <li>SKU : <a href="javascript:void(0)" id="product-sku">{{ $product->variants[0]->sku ?? '—' }}</a></li>
-                                        <li>Trong kho còn : <a href="javascript:void(0)" id="product-stock">{{ $product->variants[0]->stock ?? '—' }}</a>  sản phẩm</li>
+                                        <li>Trong kho còn : <a href="javascript:void(0)" id="product-stock">{{ $product->variants[0]->stock ?? '—' }}</a> sản phẩm</li>
                                         <li>Danh mục : <a href="javascript:void(0)">{{ $product->category->name ?? '' }}</a></li>
                                     </ul>
                                 </div>
@@ -313,23 +313,15 @@
                             <div
                                 class="tab-content custom-tab"
                                 id="myTabContent">
-                                <div
-                                    class="tab-pane fade show active"
-                                    id="description"
-                                    role="tabpanel"
-                                    aria-labelledby="description-tab">
-                                    <div class="product-description">
-                                        mô tả theo cke
+                                <div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="description-tab">
+                                    <div class="product-description" id="product-description">
+                                        {!! $product->description !!}
                                     </div>
                                 </div>
 
-                                <div
-                                    class="tab-pane fade"
-                                    id="info"
-                                    role="tabpanel"
-                                    aria-labelledby="info-tab">
-                                    <div class="table-responsive">
-                                        mô tả biến thể theo cke
+                                <div class="tab-pane fade" id="info" role="tabpanel" aria-labelledby="info-tab">
+                                    <div class="table-responsive" id="variant-description">
+                                        {!! $product->variants[0]->description ?? 'Chưa có mô tả biến thể' !!}
                                     </div>
                                 </div>
 
@@ -339,7 +331,98 @@
                                     role="tabpanel"
                                     aria-labelledby="care-tab">
                                     <div class="information-box">
-                                        bình luận
+                                        <section class="blog-section">
+                                            <div class="comment-box overflow-hidden">
+                                                <div class="leave-title">
+                                                    <h3>Bình luận</h3>
+                                                </div>
+
+                                                <div class="user-comment-box">
+                                                    <ul>
+                                                        <li>
+                                                            <div class="user-box border-color">
+                                                                <div class="reply-button">
+                                                                    <i
+                                                                        class="fa-solid fa-reply"></i>
+                                                                    <span class="theme-color">Reply</span>
+                                                                </div>
+                                                                <div class="user-iamge">
+                                                                    <img
+                                                                        src="{{ asset('frontend/assets/images/inner-page/user/2.jpg') }}"
+                                                                        class="img-fluid blur-up lazyload"
+                                                                        alt="" />
+                                                                    <div class="user-name">
+                                                                        <h6>30 Jan, 2022</h6>
+                                                                        <h5 class="text-content">
+                                                                            Glenn Greer
+                                                                        </h5>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="user-contain">
+                                                                    <p>
+                                                                        Nội dung bình luận
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+
+                                                        <li class="li-padding">
+                                                            <div class="user-box">
+                                                                <div class="reply-button">
+                                                                    <i
+                                                                        class="fa-solid fa-reply"></i>
+                                                                    <span class="theme-color">Reply</span>
+                                                                </div>
+                                                                <div class="user-iamge">
+                                                                    <img
+                                                                        src="{{ asset('frontend/assets/images/inner-page/user/3.jpg') }}"
+                                                                        class="img-fluid blur-up lazyload"
+                                                                        alt="" />
+                                                                    <div class="user-name">
+                                                                        <h6>30 Jan, 2022</h6>
+                                                                        <h5 class="text-content">
+                                                                            ALex HEKE
+                                                                        </h5>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="user-contain">
+                                                                    <p>
+                                                                        Nội dung trả lời
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+
+                                            <div class="leave-box">
+                                                <div class="leave-title mt-0">
+                                                    <h3>Leave Comment</h3>
+                                                </div>
+
+                                                <div class="leave-comment">
+             
+                                                    <div class="row g-3 mb-3">
+                                                        <div class="col-12">
+                                                            <div class="blog-input">
+                                                                <textarea
+                                                                    class="form-control"
+                                                                    id="exampleFormControlTextarea1"
+                                                                    rows="4"
+                                                                    placeholder="Comments"></textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <button
+                                                        class="btn btn-animation ms-xxl-auto mt-xxl-0 mt-3 btn-md fw-bold">
+                                                        Post Comment
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </section>
                                     </div>
                                 </div>
 
@@ -647,82 +730,6 @@
             <div
                 class="col-xxl-3 col-xl-4 col-lg-5 d-none d-lg-block wow fadeInUp">
                 <div class="right-sidebar-box">
-                    <div class="vendor-box">
-                        <div class="verndor-contain">
-                            <div class="vendor-image">
-                                <img
-                                    src="../assets/images/product/vendor.png"
-                                    class="blur-up lazyload"
-                                    alt="" />
-                            </div>
-
-                            <div class="vendor-name">
-                                <h5 class="fw-500">Noodles Co.</h5>
-
-                                <div class="product-rating mt-1">
-                                    <ul class="rating">
-                                        <li>
-                                            <i
-                                                data-feather="star"
-                                                class="fill"></i>
-                                        </li>
-                                        <li>
-                                            <i
-                                                data-feather="star"
-                                                class="fill"></i>
-                                        </li>
-                                        <li>
-                                            <i
-                                                data-feather="star"
-                                                class="fill"></i>
-                                        </li>
-                                        <li>
-                                            <i
-                                                data-feather="star"
-                                                class="fill"></i>
-                                        </li>
-                                        <li>
-                                            <i data-feather="star"></i>
-                                        </li>
-                                    </ul>
-                                    <span>(36 Reviews)</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <p class="vendor-detail">
-                            Noodles & Company is an American fast-casual
-                            restaurant that offers international and
-                            American noodle dishes and pasta.
-                        </p>
-
-                        <div class="vendor-list">
-                            <ul>
-                                <li>
-                                    <div class="address-contact">
-                                        <i data-feather="map-pin"></i>
-                                        <h5>
-                                            Address:
-                                            <span class="text-content">1288 Franklin
-                                                Avenue</span>
-                                        </h5>
-                                    </div>
-                                </li>
-
-                                <li>
-                                    <div class="address-contact">
-                                        <i
-                                            data-feather="headphones"></i>
-                                        <h5>
-                                            Contact Seller:
-                                            <span class="text-content">(+1)-123-456-789</span>
-                                        </h5>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
                     <!-- Trending Product -->
                     <div class="pt-25">
                         <div class="category-menu">
@@ -1055,57 +1062,126 @@
         border: 1px solid #0da386 !important;
         /* tuỳ bạn muốn style thêm gì nữa thì thêm */
     }
+
+    .attribute-select.disabled-variant {
+        color: #aaa !important;
+        cursor: not-allowed !important;
+        pointer-events: none !important;
+    }
+    .blog-section {
+        padding-top: 0px !important ;
+    }
+    .user-comment-box ul li{
+        list-style-type: none !important;
+    }
 </style>
 <script>
     window.VARIANTS = @json($variantMap ?? []);
+
     let selected = {};
     let variants = window.VARIANTS;
 
+    // Hàm kiểm tra xem giá trị attrValueId có thuộc ít nhất 1 variant active thỏa mãn điều kiện selected hiện tại không
+    function canSelectValue(attrValueId, attrId) {
+        return variants.some(v => {
+            if (Number(v.active) !== 1) return false;
+
+            if (!v.value_ids.includes(Number(attrValueId))) return false;
+
+            for (let selectedAttrId in selected) {
+                if (parseInt(selectedAttrId) === attrId) continue;
+                let selectedValueId = selected[selectedAttrId];
+                if (!v.value_ids.includes(selectedValueId)) {
+                    return false;
+                }
+            }
+            return true;
+        });
+    }
+
+    function updateDisabledStates() {
+        document.querySelectorAll('.attribute-select').forEach(function(btn) {
+            let val = parseInt(btn.getAttribute('data-value'), 10);
+            let attr = parseInt(btn.getAttribute('data-attr'), 10);
+
+            if (canSelectValue(val, attr)) {
+                btn.classList.remove('disabled-variant');
+                btn.style.pointerEvents = 'auto';
+                btn.style.color = '';
+                btn.style.cursor = 'pointer';
+            } else {
+                btn.classList.add('disabled-variant');
+                btn.style.pointerEvents = 'none';
+                btn.style.color = '#aaa';
+                btn.style.cursor = 'not-allowed';
+
+                if (btn.classList.contains('active2')) {
+                    btn.classList.remove('active2');
+                    delete selected[attr];
+                }
+            }
+        });
+    }
+
+    function updateVariantDescription(found) {
+        let variantDescEl = document.getElementById('variant-description');
+        if (found && Number(found.active) === 1 && found.description) {
+            variantDescEl.innerHTML = found.description;
+        } else {
+            variantDescEl.innerHTML = 'Chưa có mô tả biến thể';
+        }
+    }
+
+    // Khởi tạo disable lần đầu (nếu có selected mặc định)
+    updateDisabledStates();
+
     document.querySelectorAll('.attribute-select').forEach(function(btn) {
+        if (btn.classList.contains('disabled-variant')) return;
+
         btn.addEventListener('click', function() {
-            let attr = btn.getAttribute('data-attr');
-            let val = btn.getAttribute('data-value');
+            let attr = parseInt(btn.getAttribute('data-attr'));
+            let val = parseInt(btn.getAttribute('data-value'));
 
-            // Remove active CHỈ trong nhóm này
             btn.closest('ul').querySelectorAll('a').forEach(a => a.classList.remove('active2'));
-            btn.classList.add('active2');
-            selected[attr] = parseInt(val);
 
-            // Nếu đã chọn đủ thuộc tính
+            btn.classList.add('active2');
+            selected[attr] = val;
+
+            updateDisabledStates();
+
+            // Tìm variant và cập nhật thông tin + mô tả biến thể mỗi lần chọn
             if (Object.keys(selected).length === Object.keys(@json($attributes)).length) {
                 let attrValueIds = Object.values(selected).map(Number).sort((a, b) => a - b);
                 let found = variants.find(v =>
                     v.value_ids.length === attrValueIds.length &&
                     v.value_ids.slice().sort((a, b) => a - b).every((id, i) => id === attrValueIds[i])
                 );
-                if (found) {
+
+                if (found && Number(found.active) === 1) {
                     document.getElementById('product-sku').textContent = found.sku || 'N/A';
                     document.getElementById('product-stock').textContent = found.stock ?? 'N/A';
                     document.getElementById('product-price').textContent = found.price ? (Number(found.price).toLocaleString() + ' đ') : 'Liên hệ';
                 } else {
-                    document.getElementById('product-sku').textContent = 'Không tồn tại';
-                    document.getElementById('product-stock').textContent = 'Không tồn tại';
-                    document.getElementById('product-price').textContent = 'Không tồn tại';
+                    document.getElementById('product-sku').textContent = '—';
+                    document.getElementById('product-stock').textContent = '—';
+                    document.getElementById('product-price').textContent = '—';
                 }
+
+                updateVariantDescription(found);
+
             } else {
                 document.getElementById('product-sku').textContent = '—';
                 document.getElementById('product-stock').textContent = '—';
                 document.getElementById('product-price').textContent = '—';
+
+                // Chưa chọn đủ thì mô tả biến thể về mặc định mô tả sản phẩm chung
+                document.getElementById('variant-description').innerHTML = `{!! addslashes($product->description) !!}`;
             }
 
-            // Đổi ảnh nếu có data-variant-image
             var img = btn.getAttribute('data-variant-image');
             if (img) {
                 document.getElementById('mainImage').src = img;
             }
-        });
-    });
-
-    document.querySelectorAll('.thumbnail-image').forEach(function(img) {
-        img.addEventListener('click', function() {
-            document.getElementById('mainImage').src = this.src;
-            document.querySelectorAll('.thumbnail-image').forEach(i => i.style.border = '2px solid transparent');
-            this.style.border = '2px solid #0da487';
         });
     });
 </script>
