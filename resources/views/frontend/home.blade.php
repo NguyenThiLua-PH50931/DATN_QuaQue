@@ -106,7 +106,7 @@
                                             <img src="{{ asset('storage/' . $category->image) }}"
                                                 alt="{{ $category->name }}" class="w-20 h-20 object-cover">
                                             <h5>
-                                                <a href="{{ url('/products/category') }}">{{ $category->name }}</a>
+                                                <a href="{{ route('client.product.index', ['category_id' => $category->id]) }}">{{ $category->name }}</a>
                                             </h5>
                                         </div>
                                     </li>
@@ -452,7 +452,7 @@
                     <div class="category-slider-2 product-wrapper no-arrow">
                         @forelse ($categories as $category)
                             <div>
-                                <a href="#" class="category-box category-dark">
+                                <a href="{{ route('client.product.index', ['category_id' => $category->id]) }}" class="category-box category-dark">
                                     <div>
                                         <img src="{{ asset('storage/' . $category->image) }}"
                                             alt="{{ $category->name }}">
