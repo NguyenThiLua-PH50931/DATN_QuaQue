@@ -441,6 +441,31 @@
 
     <section class="product-list-section section-b-space">
         <div class="container-fluid-lg">
+            <style>
+                .product-list-section .product-box-3 .product-image {
+                    height: 200px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    margin-bottom: 15px;
+                }
+
+                .product-list-section .product-box-3 .product-image img {
+                    width: 250px !important;
+                    height: 160px !important;
+                    object-fit: cover;
+                    border-radius: 16px;
+                    background: #f8f8f8;
+                }
+
+                .product-list-section .product-box-3 .product-image a {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    width: 100%;
+                    height: 100%;
+                }
+            </style>
             <div class="title">
                 <h2>Sản phẩm tương tự</h2>
                 <span class="title-leaf">
@@ -553,6 +578,7 @@
                     </div>
                 </div>
             </div>
+        </div>
     </section>
 
     <script>
