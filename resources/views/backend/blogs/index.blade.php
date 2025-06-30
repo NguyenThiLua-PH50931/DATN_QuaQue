@@ -48,7 +48,6 @@
                                             <tr>
                                                 <th>Ảnh</th>
                                                 <th>Tiêu đề</th>
-
                                                 <th>Ngày hiển thị</th>
                                                 <th>Ngày dừng hiển thị</th>
                                                 <th>Hành động</th>
