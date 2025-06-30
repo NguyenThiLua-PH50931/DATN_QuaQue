@@ -147,7 +147,8 @@
                                                     aria-hidden="true"></i></button>
                                         </div>
                                         <button onclick="location.href = 'cart.html';"
-                                            class="btn btn-md bg-dark cart-button text-white ms-3 px-4 py-2 rounded-pill fw-bold">Thêm vào
+                                            class="btn btn-md bg-dark cart-button text-white ms-3 px-4 py-2 rounded-pill fw-bold">Thêm
+                                            vào
                                             giỏ</button>
                                     </div>
                                 </div>
@@ -441,10 +442,10 @@
     <section class="product-list-section section-b-space">
         <div class="container-fluid-lg">
             <div class="title">
-                <h2>Related Products</h2>
+                <h2>Sản phẩm tương tự</h2>
                 <span class="title-leaf">
                     <svg class="icon-width">
-                        <use xlink:href="https://themes.pixelstrap.com/fastkart/assets/svg/leaf.svg#leaf"></use>
+                        <use xlink:href="../frontend/assets/svg/leaf.svg#leaf"></use>
                     </svg>
                 </span>
             </div>
