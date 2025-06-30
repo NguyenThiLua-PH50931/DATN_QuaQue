@@ -19,6 +19,7 @@ class Product extends Model
         'description',
         'image',
         'origin',
+        'price',
         'active',
         'view_total',
         'view_day',
@@ -61,5 +62,4 @@ class Product extends Model
     {
         return $this->hasMany(Comment::class, 'product_id');
     }
-    
 }

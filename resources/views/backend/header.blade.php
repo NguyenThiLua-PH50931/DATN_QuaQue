@@ -99,7 +99,7 @@
                         </div>
 
                         <!-- Phần dropdown menu chỉ chứa nút kích hoạt modal và các link -->
-                        <ul class="profile-dropdown onhover-show-div">
+                        <ul class="profile-dropdown onhover-show-div" style="width:220px">
                             <li>
                                 <a href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">
                                     <i data-feather="log-out"></i>
