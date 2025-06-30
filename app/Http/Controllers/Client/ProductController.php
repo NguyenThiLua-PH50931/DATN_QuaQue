@@ -28,18 +28,18 @@ class ProductController extends Controller
         }
         // Filter theo giá
         if ($request->filled('price_min')) {
-            $query->whereHas('variants', function($q) use ($request) {
+            $query->whereHas('variants', function ($q) use ($request) {
                 $q->where('price', '>=', $request->price_min);
             });
         }
         if ($request->filled('price_max')) {
-            $query->whereHas('variants', function($q) use ($request) {
+            $query->whereHas('variants', function ($q) use ($request) {
                 $q->where('price', '<=', $request->price_max);
             });
         }
         // Filter theo rating trung bình
         if ($request->filled('rating')) {
-            $query->whereHas('reviews', function($q) use ($request) {
+            $query->whereHas('reviews', function ($q) use ($request) {
                 $q->havingRaw('AVG(rating) >= ?', [$request->rating]);
             });
         }
@@ -94,6 +94,7 @@ class ProductController extends Controller
             ->where('active', 1)
             ->whereNull('deleted_at')
             ->firstOrFail();
+        $this->increaseView($product);
 
         $variants = $product->variants()->where('active', 1)
             ->with('attributeValues.attribute')->get();
@@ -123,6 +124,8 @@ class ProductController extends Controller
                 'price' => $v->price,
                 'image' => $v->image ? asset('storage/' . $v->image) : null,
                 'value_ids' => $v->attributeValues->pluck('id')->sort()->values()->all(),
+                'active' => $v->active,
+                'description' => $v->description, // thêm mô tả biến thể
             ];
         });
 
@@ -156,14 +159,19 @@ class ProductController extends Controller
                 });
             })
             ->first();
-
+        // top sp thang sidebar
+        $topMonthlyProducts = Product::where('active', 1)
+            ->where('id', '!=', $product->id)
+            ->orderByDesc('view_month')
+            ->limit(4)
+            ->get();
         return view('frontend.products.detail', [
             'product'    => $product,
             'variants'   => $variants,
             'attributes' => $attributeOptions,
             'variantMap' => $variantMap,
             'related'    => $related,
-            'topViewedProducts' => $topViewedProducts,
+            'topMonthlyProducts' => $topMonthlyProducts,
             'productSectionPromoLeftTop' => $productSectionPromoLeftTop,
         ]);
     }
@@ -172,27 +180,31 @@ class ProductController extends Controller
     /**
      * Hàm tăng view ngày/tuần/tháng/tổng
      */
-    protected function increaseView($product)
+    protected function increaseView(Product $product)
     {
         $now = Carbon::now('Asia/Ho_Chi_Minh');
 
-        // Reset view_day nếu sang ngày mới
+        // Nếu ngày đã đổi so với lần cập nhật trước, reset view_day
         if ($product->updated_at && $product->updated_at->format('Y-m-d') !== $now->format('Y-m-d')) {
             $product->view_day = 0;
         }
-        // Reset view_week nếu sang tuần mới
-        if ($product->updated_at && $product->updated_at->format('W') !== $now->format('W')) {
+
+        // Nếu tuần đã đổi (theo ISO-8601) so với lần cập nhật trước, reset view_week
+        if ($product->updated_at && $product->updated_at->format('oW') !== $now->format('oW')) {
             $product->view_week = 0;
         }
-        // Reset view_month nếu sang tháng mới
-        if ($product->updated_at && $product->updated_at->format('m') !== $now->format('m')) {
+
+        // Nếu tháng đã đổi so với lần cập nhật trước, reset view_month
+        if ($product->updated_at && $product->updated_at->format('Y-m') !== $now->format('Y-m')) {
             $product->view_month = 0;
         }
 
+        // Tăng lượt xem
         $product->view_total += 1;
-        $product->view_day   += 1;
-        $product->view_week  += 1;
+        $product->view_day += 1;
+        $product->view_week += 1;
         $product->view_month += 1;
+
         $product->save();
     }
 
