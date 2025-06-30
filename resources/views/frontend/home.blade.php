@@ -319,7 +319,7 @@
                                                                 }
                                                             @endphp
                                                             <li data-bs-toggle="tooltip" data-bs-placement="top"
-                                                                title="View">
+                                                                title="Xem nhanh">
                                                                 @php
                                                                     $variantMap = $product->variants->map(function (
                                                                         $v,
@@ -370,12 +370,12 @@
                                                                 </a>
                                                             </li>
                                                             <li data-bs-toggle="tooltip" data-bs-placement="top"
-                                                                title="Compare">
+                                                                title="So sánh">
                                                                 <a href="{{ url('compare') }}"><i
                                                                         data-feather="refresh-cw"></i></a>
                                                             </li>
                                                             <li data-bs-toggle="tooltip" data-bs-placement="top"
-                                                                title="Add To Wishlist">
+                                                                title="Thêm vào yêu thích">
                                                                 <form action="{{ route('client.wishlist.store') }}"
                                                                     method="POST">
                                                                     @csrf
@@ -446,7 +446,7 @@
                                 <use xlink:href="{{ asset('frontend/assets/svg/leaf.svg#leaf') }}"></use>
                             </svg>
                         </span>
-                        <p>Khám phá đa dạng đặc sản theo từng vùng miền.</p>
+                        <p>Khám phá đa dạng các loại đặc sản</p>
                     </div>
 
                     <div class="category-slider-2 product-wrapper no-arrow">
@@ -541,7 +541,7 @@
                                                             }
                                                         }
                                                     @endphp
-                                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
+                                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="Xenh nhanh">
                                                         @php
                                                             $variantMap = $product->variants->map(function ($v) {
                                                                 return [
@@ -585,13 +585,13 @@
                                                             <i data-feather="eye"></i>
                                                         </a>
                                                     </li>
-                                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
+                                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="So sánh">
                                                         <a href="{{ url('compare') }}">
                                                             <i data-feather="refresh-cw"></i>
                                                         </a>
                                                     </li>
                                                     <li data-bs-toggle="tooltip" data-bs-placement="top"
-                                                        title="Add To Wishlist">
+                                                        title="Thêm vào yêu thích">
                                                         <form action="{{ route('client.wishlist.store') }}"
                                                             method="POST">
                                                             @csrf

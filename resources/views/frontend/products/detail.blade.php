@@ -175,6 +175,11 @@
                                                     class="fw-semibold">{{ $product->region->name ?? '' }}</span></li>
                                             <li>Xuất xứ : <span class="fw-semibold">{{ $product->origin ?? '' }}</span>
                                             </li>
+                                            @if(isset($product->has_variants) && !$product->has_variants)
+                                            <li>Khối lượng : <span class="fw-semibold">
+                                                {{ $product->variants->first()->name ?? '' }}
+                                            </span></li>
+                                            @endif
                                             <li class="mb-1">Trong kho còn : <span id="product-stock"
                                                     class="fw-semibold">{{ $product->variants[0]->stock ?? '—' }}</span>
                                                 sản phẩm</li>
@@ -539,7 +544,13 @@
                                                 </ul>
                                                 <span>({{ number_format($avg, 1) }})</span>
                                             </div>
-                                            <h6 class="unit">{{ $product->variants->first()->weight ?? '' }}</h6>
+                                            <h6 class="unit">
+                                                @if(isset($product->has_variants) && !$product->has_variants)
+                                                    {{ $product->variants->first()->weight ?? '' }}
+                                                @else
+                                                    {{ $product->variants->first()->weight ?? '' }}
+                                                @endif
+                                            </h6>
                                             <h5 class="price">
                                                 <span
                                                     class="theme-color">{{ number_format(optional($product->variants->first())->price ?? 0) }}₫</span>
