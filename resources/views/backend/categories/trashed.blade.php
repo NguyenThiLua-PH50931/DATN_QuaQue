@@ -33,7 +33,7 @@
                                                 <input type="checkbox" id="select-all-checkbox">
                                             </th>
                                             <th style="color: black; background-color: #f8f9fa;">Tên danh mục</th>
-                                            <th style="color: black; background-color: #f8f9fa;">Slug</th>
+                                            <th style="color: black; background-color: #f8f9fa;">Icon</th>
                                             <th style="color: black; background-color: #f8f9fa;">Ngày xóa</th>
                                             <th style="color: black; background-color: #f8f9fa;">Tùy chọn</th>
                                         </tr>
@@ -46,7 +46,11 @@
                                                         value="{{ $category->id }}">
                                                 </td>
                                                 <td>{{ $category->name }}</td>
-                                                <td>{{ $category->slug }}</td>
+                                                <td>
+                                                    <img src="{{ asset('storage/' . $category->image) }}"
+                                                        alt="{{ $category->name }}" class="w-20 h-20 object-cover"
+                                                        width="50">
+                                                </td>
                                                 <td>{{ $category->deleted_at->format('d-m-Y') }}</td>
                                                 <td>
                                                     <ul>
