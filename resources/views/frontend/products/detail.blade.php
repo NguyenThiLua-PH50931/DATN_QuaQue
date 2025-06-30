@@ -5,6 +5,7 @@
 
 @section('contents')
 
+
     <!-- Breadcrumb Section Start -->
     <section class="breadscrumb-section pt-0">
         <div class="container-fluid-lg">
@@ -47,110 +48,65 @@
             <div class="row">
                 <div class="col-xxl-9 col-xl-8 col-lg-7 wow fadeInUp">
                     <div class="row g-4">
+                        @php
+                            $mainImages = [];
+                            if ($product->image) {
+                                $mainImages[] = asset('storage/' . $product->image);
+                            }
+                            foreach ($product->images as $img) {
+                                $mainImages[] = asset('storage/' . $img->image_url);
+                            }
+                            foreach ($variants as $variant) {
+                                if ($variant->image) {
+                                    $mainImages[] = asset('storage/' . $variant->image);
+                                }
+                            }
+                            $mainImages = array_unique($mainImages); // Loại trùng nếu có
+                            $thumbImages = $mainImages;
+                        @endphp
                         <div class="col-xl-6 wow fadeInUp">
                             <div class="product-left-box">
                                 <div class="row g-2">
-                                    <!-- Ảnh sản phẩm lớn -->
                                     <div class="col-xxl-10 col-lg-12 col-md-10 order-xxl-2 order-lg-1 order-md-2">
                                         <div class="product-main-2 no-arrow">
-                                            {{-- 1. Ảnh đại diện sản phẩm --}}
-                                            @if ($product->image)
+                                            @foreach ($mainImages as $i => $img)
                                                 <div>
                                                     <div class="slider-image">
-                                                        <img src="{{ asset('storage/' . $product->image) }}" id="img-main"
-                                                            data-zoom-image="{{ asset('storage/' . $product->image) }}"
-                                                            class="img-fluid image_zoom_cls-main blur-up lazyload"
-                                                            alt="{{ $product->name }} ảnh đại diện" />
-                                                    </div>
-                                                </div>
-                                            @endif
-
-                                            {{-- 2. Ảnh album phụ --}}
-                                            @foreach ($product->images as $index => $img)
-                                                <div>
-                                                    <div class="slider-image">
-                                                        <img src="{{ asset('storage/' . $img->image_url) }}"
-                                                            id="img-{{ $index }}"
-                                                            data-zoom-image="{{ asset('storage/' . $img->image_url) }}"
-                                                            class="img-fluid image_zoom_cls-{{ $index }} blur-up lazyload"
-                                                            alt="{{ $product->name }} - ảnh phụ {{ $index + 1 }}" />
+                                                        <img src="{{ $img }}" id="img-{{ $i + 1 }}"
+                                                            data-zoom-image="{{ $img }}"
+                                                            class="img-fluid image_zoom_cls-{{ $i }} blur-up lazyload"
+                                                            alt="Ảnh sản phẩm {{ $i + 1 }}" />
                                                     </div>
                                                 </div>
                                             @endforeach
-
-                                            {{-- 3. Ảnh biến thể (nếu có) --}}
-                                            @if (isset($variants))
-                                                @foreach ($variants as $variant)
-                                                    @if ($variant->image)
-                                                        <div>
-                                                            <div class="slider-image">
-                                                                <img src="{{ asset('storage/' . $variant->image) }}"
-                                                                    id="img-variant-{{ $variant->id }}"
-                                                                    data-zoom-image="{{ asset('storage/' . $variant->image) }}"
-                                                                    class="img-fluid image_zoom_cls-variant-{{ $variant->id }} blur-up lazyload"
-                                                                    alt="{{ $product->name }} - {{ $variant->name }}" />
-                                                            </div>
-                                                        </div>
-                                                    @endif
-                                                @endforeach
-                                            @endif
                                         </div>
                                     </div>
-                                    <!-- Slider ảnh nhỏ (thumbnail) -->
+
                                     <div class="col-xxl-2 col-lg-12 col-md-2 order-xxl-1 order-lg-2 order-md-1">
                                         <div class="left-slider-image-2 left-slider no-arrow slick-top">
-                                            {{-- 1. Thumbnail đại diện --}}
-                                            @if ($product->image)
+                                            @foreach ($thumbImages as $i => $img)
                                                 <div>
                                                     <div class="sidebar-image">
-                                                        <img src="{{ asset('storage/' . $product->image) }}"
-                                                            class="img-fluid blur-up lazyload"
-                                                            alt="{{ $product->name }} thumb đại diện" />
-                                                    </div>
-                                                </div>
-                                            @endif
-
-                                            {{-- 2. Thumbnail ảnh phụ --}}
-                                            @foreach ($product->images as $index => $img)
-                                                <div>
-                                                    <div class="sidebar-image">
-                                                        <img src="{{ asset('storage/' . $img->image_url) }}"
-                                                            class="img-fluid blur-up lazyload"
-                                                            alt="{{ $product->name }} thumb {{ $index + 1 }}" />
+                                                        <img src="{{ $img }}" class="img-fluid blur-up lazyload"
+                                                            alt="Thumbnail {{ $i + 1 }}" />
                                                     </div>
                                                 </div>
                                             @endforeach
-
-                                            {{-- 3. Thumbnail variant --}}
-                                            @if (isset($variants))
-                                                @foreach ($variants as $variant)
-                                                    @if ($variant->image)
-                                                        <div>
-                                                            <div class="sidebar-image">
-                                                                <img src="{{ asset('storage/' . $variant->image) }}"
-                                                                    class="img-fluid blur-up lazyload"
-                                                                    alt="{{ $product->name }} thumb {{ $variant->name }}" />
-                                                            </div>
-                                                        </div>
-                                                    @endif
-                                                @endforeach
-                                            @endif
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
+
                         <div class="col-xl-6 wow fadeInUp" data-wow-delay="0.1s">
                             <div class="right-box-contain">
-                                {{-- -<h6 class="offer-top">30% Off</h6> --}}
+                                {{-- <h6 class="offer-top">30% Off</h6> --}}
                                 <h2 class="name">Creamy Chocolate Cake</h2>
                                 <div class="price-rating">
-                                    <h3 class="theme-color price">
-                                        $49.50
-                                        {{-- <del class="text-content">$58.46</del>
-                                    <span class="offer theme-color">(8% off)</span> --}}
-                                    </h3>
+                                    <h3 class="theme-color price" id="product-price">
+                                        {{ number_format($product->variants[0]->price ?? 0) }} đ</h3>
+
                                     <div class="product-rating custom-rate">
                                         <ul class="rating">
                                             <li>
@@ -169,30 +125,27 @@
                                                 <i data-feather="star"></i>
                                             </li>
                                         </ul>
-                                        <span class="review">số đánh giá</span>
+                                        <span class="review">23 Customer Review</span>
                                     </div>
                                 </div>
+
                                 <div class="product-packege">
-                                    <div class="product-title">
-                                        <h4>Weight</h4>
-                                    </div>
-                                    <ul class="select-packege">
-                                        <li>
-                                            <a href="javascript:void(0)" class="active">1/2 KG</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0)">1 KG</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0)">1.5 KG</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0)">Red Roses</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0)">With Pink Roses</a>
-                                        </li>
-                                    </ul>
+                                    @foreach ($attributes as $attrId => $attr)
+                                        <div class="product-title">
+                                            <h4>{{ $attr['name'] }}</h4>
+                                        </div>
+                                        <ul class="select-packege">
+                                            @foreach ($attr['values'] as $valueId => $value)
+                                                <li>
+                                                    <a href="javascript:void(0)" data-attr="{{ $attrId }}"
+                                                        data-value="{{ $valueId }}"
+                                                        class="attribute-select {{ isset($defaultSelected[$attrId]) && $defaultSelected[$attrId] == $valueId ? 'active2' : '' }}">
+                                                        {{ $value }}
+                                                    </a>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    @endforeach
                                 </div>
 
                                 {{-- <div
@@ -242,60 +195,64 @@
                                 </ul>
                             </div> --}}
 
-                                <div class="note-box product-packege">
-                                    <div class="cart_qty qty-box product-qty">
-                                        <div class="input-group">
-                                            <button type="button" class="qty-right-plus" data-type="plus" data-field="">
-                                                <i class="fa fa-plus" aria-hidden="true"></i>
-                                            </button>
-                                            <input class="form-control input-number qty-input" type="text"
-                                                name="quantity" value="0" />
-                                            <button type="button" class="qty-left-minus" data-type="minus" data-field="">
-                                                <i class="fa fa-minus" aria-hidden="true"></i>
-                                            </button>
-                                        </div>
-                                    </div>
+                                {{-- Thêm giỏ hàng --}}
+                                <!-- Ví dụ trong file sản phẩm (product.blade.php hoặc trang danh sách sản phẩm) -->
+                                <form action="{{ route('client.cart.add') }}" method="POST" class="add-to-cart-form">
+                                    @csrf
+                                    <input type="hidden" name="variant_attributes" id="variant_attributes">
+                                    <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                    <input type="hidden" name="price" id="variant-price"
+                                        value="{{ $product->variants->count() > 0 ? $product->variants[0]->price : $product->price }}">
 
-                                    <button onclick="location.href = 'cart.html';"
-                                        class="btn btn-md bg-dark cart-button text-white w-100">
-                                        Add To Cart
-                                    </button>
-                                </div>
+
+
+                                    <div class="note-box product-packege">
+                                        <div class="cart_qty qty-box product-qty">
+                                            <div class="input-group">
+                                                <button type="button" class="qty-left-minus" data-type="minus"
+                                                    data-field="quantity">
+                                                    <i class="fa fa-minus" aria-hidden="true"></i>
+                                                </button>
+                                                <input class="form-control input-number qty-input" type="number"
+                                                    name="quantity" value="1" min="1"
+                                                    data-stock="{{ $variantStock ?? $product->stock }}"  data-cart-item-id="{{ $product->id }}" />
+                                                <button type="button" class="qty-right-plus" data-type="plus"
+                                                    data-field="quantity">
+                                                    <i class="fa fa-plus" aria-hidden="true"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <button type="submit" class="btn btn-md bg-dark cart-button text-white w-100">
+                                            Thêm giỏ hàng
+                                        </button>
+                                    </div>
+                                </form>
 
                                 <div class="buy-box">
-                                    <form action="{{ route('client.wishlist.store') }}" method="POST">
-                                        @csrf
-                                        <input type="hidden" name="product_id" value="{{ $product->id }}">
-                                        <button type="submit" class="btn p-0 position-relative">
-                                            <i data-feather="heart"
-                                                @if (auth()->check() && auth()->user()->wishlist()->where('product_id', $product->id)->exists()) class="text-red-500" @endif></i>
-                                            <span>Add To Wishlist</span>
-                                        </button>
-                                    </form>
-
-                                    <a href="compare.html">
-                                        <i data-feather="shuffle"></i>
-                                        <span>Add To Compare</span>
+                                    <a href="wishlist.html">
+                                        <i data-feather="heart"></i>
+                                        <span>Add To Wishlist</span>
                                     </a>
+                                    {{--
+                                <a href="compare.html">
+                                    <i data-feather="shuffle"></i>
+                                    <span>Add To Compare</span>
+                                </a> --}}
                                 </div>
 
                                 <div class="pickup-box">
+
                                     <div class="product-info">
                                         <ul class="product-info-list product-info-list-2">
-                                            <li>
-                                                SKU :
-                                                <a href="javascript:void(0)">(thay đổi theo từng biến thể)</a>
-                                            </li>
-                                            <li>
-                                                Stock :
-                                                <a href="javascript:void(0)">(thay đổi theo từng biến thể)</a>
-                                            </li>
-                                            <li>
-                                                Tags :
-                                                <a href="javascript:void(0)">(danh mục)</a>
+                                            <li>SKU : <a href="javascript:void(0)" id="product-sku">—</a></li>
+                                            <li>Stock : <a href="javascript:void(0)" id="product-stock">—</a></li>
+                                            <li>Tags : <a
+                                                    href="javascript:void(0)">{{ $product->category->name ?? '' }}</a>
                                             </li>
                                         </ul>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
@@ -307,7 +264,7 @@
                                         <button class="nav-link active" id="description-tab" data-bs-toggle="tab"
                                             data-bs-target="#description" type="button" role="tab"
                                             aria-controls="description" aria-selected="true">
-                                            Mô tả chung (theo bảng Products)
+                                            Description
                                         </button>
                                     </li>
 
@@ -315,7 +272,15 @@
                                         <button class="nav-link" id="info-tab" data-bs-toggle="tab"
                                             data-bs-target="#info" type="button" role="tab" aria-controls="info"
                                             aria-selected="false">
-                                            Mô tả biến thể (được chọn)
+                                            Mô tả Biến thể
+                                        </button>
+                                    </li>
+
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="care-tab" data-bs-toggle="tab"
+                                            data-bs-target="#care" type="button" role="tab" aria-controls="care"
+                                            aria-selected="false">
+                                            Bình luận
                                         </button>
                                     </li>
 
@@ -332,14 +297,21 @@
                                     <div class="tab-pane fade show active" id="description" role="tabpanel"
                                         aria-labelledby="description-tab">
                                         <div class="product-description">
-                                            Mô tả sản phẩm đã có cke
+                                            mô tả theo cke
                                         </div>
                                     </div>
 
                                     <div class="tab-pane fade" id="info" role="tabpanel"
                                         aria-labelledby="info-tab">
                                         <div class="table-responsive">
-                                            Mô tả của biến thể được chọn đã có cke
+                                            mô tả biến thể theo cke
+                                        </div>
+                                    </div>
+
+                                    <div class="tab-pane fade" id="care" role="tabpanel"
+                                        aria-labelledby="care-tab">
+                                        <div class="information-box">
+                                            bình luận
                                         </div>
                                     </div>
 
@@ -487,40 +459,6 @@
                                                     </div>
 
                                                     <div class="row g-4">
-                                                        <div class="col-md-6">
-                                                            <div class="form-floating theme-form-floating">
-                                                                <input type="text" class="form-control" id="name"
-                                                                    placeholder="Name" />
-                                                                <label for="name">Your
-                                                                    Name</label>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="col-md-6">
-                                                            <div class="form-floating theme-form-floating">
-                                                                <input type="email" class="form-control" id="email"
-                                                                    placeholder="Email Address" />
-                                                                <label for="email">Email
-                                                                    Address</label>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="col-md-6">
-                                                            <div class="form-floating theme-form-floating">
-                                                                <input type="url" class="form-control" id="website"
-                                                                    placeholder="Website" />
-                                                                <label for="website">Website</label>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="col-md-6">
-                                                            <div class="form-floating theme-form-floating">
-                                                                <input type="url" class="form-control" id="review1"
-                                                                    placeholder="Give your review a title" />
-                                                                <label for="review1">Review
-                                                                    Title</label>
-                                                            </div>
-                                                        </div>
 
                                                         <div class="col-12">
                                                             <div class="form-floating theme-form-floating">
@@ -596,8 +534,8 @@
 
                                                                         <div class="reply">
                                                                             <p>
-                                                                                Icing
-                                                                                <a href="javascript:void(0)">Reply</a>
+                                                                                nội dung đánh giá.<a
+                                                                                    href="javascript:void(0)">Reply</a>
                                                                             </p>
                                                                         </div>
                                                                     </div>
@@ -651,7 +589,9 @@
                             </div>
 
                             <p class="vendor-detail">
-                                Noodles
+                                Noodles & Company is an American fast-casual
+                                restaurant that offers international and
+                                American noodle dishes and pasta.
                             </p>
 
                             <div class="vendor-list">
@@ -903,7 +843,7 @@
                                                 </span>
                                             </button>
                                             <div class="cart_qty qty-box">
-                                                <div class="input-group bg-white">
+                                                {{-- <div class="input-group bg-white">
                                                     <button type="button" class="qty-left-minus bg-gray"
                                                         data-type="minus" data-field="">
                                                         <i class="fa fa-minus" aria-hidden="true"></i>
@@ -914,7 +854,7 @@
                                                         data-type="plus" data-field="">
                                                         <i class="fa fa-plus" aria-hidden="true"></i>
                                                     </button>
-                                                </div>
+                                                </div> --}}
                                             </div>
                                         </div>
                                     </div>
@@ -926,4 +866,209 @@
             </div>
         </div>
     </section>
+    <style>
+        .attribute-select.active2 {
+            background: #0da386 !important;
+            color: #fff !important;
+            border: 1px solid #0da386 !important;
+            /* tuỳ bạn muốn style thêm gì nữa thì thêm */
+        }
+    </style>
+
+
 @endsection
+
+@push('scripts')
+    <script>
+        window.VARIANTS = {!! json_encode($variantMap ?? [], JSON_HEX_TAG) !!};
+    </script>
+
+{{-- update số lương trang detail --}}
+    <script>
+        const updateQuantityUrl = "{{ route('client.cart.updateQuantity') }}";
+
+        document.querySelectorAll('.qty-left-minus, .qty-right-plus').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                const input = button.closest('.input-group').querySelector('input[name="quantity"]');
+                if (!input) return;
+
+                let val = parseInt(input.value, 10) || 1;
+                const min = 1;
+                const maxStock = parseInt(input.getAttribute('data-stock'), 10) || 999999;
+
+                const cartItemId = input.getAttribute('data-cart-item-id');
+                if (!cartItemId) {
+                    console.error('cart_item_id not found');
+                    return;
+                }
+
+                let action;
+
+                if (button.classList.contains('qty-right-plus')) {
+                    if (val < maxStock) {
+                        val++;
+                        action = 'increase';
+                    } else {
+                        alert('Số lượng đã đạt tối đa trong kho!');
+                        return;
+                    }
+                } else if (button.classList.contains('qty-left-minus')) {
+                    if (val > min) {
+                        val--;
+                        action = 'decrease';
+                    } else {
+                        return; // không giảm nữa
+                    }
+                }
+
+                fetch(updateQuantityUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content'),
+                        },
+                        body: JSON.stringify({
+                            cart_item_id: cartItemId,
+                            action: action
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            input.value = data.quantity; // cập nhật số lượng mới lên input
+                            console.log('Quantity updated to:', data.quantity);
+                        } else {
+                            alert(data.message || 'Cập nhật số lượng thất bại');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Fetch error:', error);
+                        alert('Có lỗi xảy ra, vui lòng thử lại');
+                    });
+            });
+        });
+    </script>
+
+
+    <script>
+        const updateQuantityUrl = "{{ route('client.cart.updateQuantity') }}";
+    </script>
+
+
+    {{-- Code chọn biên thể --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('.add-to-cart-form');
+            const variantInput = document.getElementById('variant_attributes');
+
+            // Lấy số lượng thuộc tính cần chọn (dựa vào dữ liệu attributes truyền từ backend)
+            const attributesCount = Object.keys(@json($attributes)).length;
+
+            // Biến lưu trạng thái lựa chọn
+            let selected = {};
+
+            // Hàm cập nhật input ẩn và log (bạn có thể tắt console.log khi cần)
+            function updateVariantInput() {
+                if (Object.keys(selected).length === 0) {
+                    variantInput.value = null; // hoặc variantInput.value = '';
+                } else {
+                    variantInput.value = JSON.stringify(selected);
+                }
+                console.log('Updated variant_attributes:', variantInput.value);
+            }
+
+            // Gán sự kiện click cho từng lựa chọn biến thể
+            document.querySelectorAll('.attribute-select').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    let attr = btn.getAttribute('data-attr');
+                    let val = btn.getAttribute('data-value');
+
+                    // Xóa class active2 trong cùng nhóm (ul cha)
+                    const ulParent = btn.closest('ul');
+                    if (ulParent) {
+                        ulParent.querySelectorAll('a').forEach(a => a.classList.remove('active2'));
+                    }
+                    // Thêm class active2 cho lựa chọn hiện tại
+                    btn.classList.add('active2');
+
+                    // Cập nhật lựa chọn
+                    selected[attr] = parseInt(val);
+
+                    // Cập nhật input ẩn
+                    updateVariantInput();
+
+                    // Cập nhật thông tin biến thể (giá, sku, stock) nếu chọn đủ biến thể
+                    if (Object.keys(selected).length === attributesCount) {
+                        let attrValueIds = Object.values(selected).map(Number).sort((a, b) => a -
+                            b);
+                        let found = window.VARIANTS.find(v =>
+                            v.value_ids.length === attrValueIds.length &&
+                            v.value_ids.slice().sort((a, b) => a - b).every((id, i) => id ===
+                                attrValueIds[i])
+                        );
+
+                        if (found) {
+                            document.getElementById('product-sku').textContent = found.sku || 'N/A';
+                            document.getElementById('product-stock').textContent = found.stock ??
+                                'N/A';
+                            document.getElementById('product-price').textContent = found.price ? (
+                                Number(found.price).toLocaleString() + ' đ') : 'Liên hệ';
+                            document.getElementById('variant-price').value = found.price || '';
+                        } else {
+                            document.getElementById('product-sku').textContent = 'Không tồn tại';
+                            document.getElementById('product-stock').textContent = 'Không tồn tại';
+                            document.getElementById('product-price').textContent = 'Không tồn tại';
+                            document.getElementById('variant-price').value = '';
+                        }
+                    } else {
+                        document.getElementById('product-sku').textContent = '—';
+                        document.getElementById('product-stock').textContent = '—';
+                        document.getElementById('product-price').textContent = '—';
+                        document.getElementById('variant-price').value = '';
+                    }
+                });
+            });
+
+            // Khi submit form, kiểm tra đủ biến thể chưa
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    if (attributesCount > 0 && Object.keys(selected).length !== attributesCount) {
+                        e.preventDefault();
+                        alert('Vui lòng chọn đầy đủ biến thể sản phẩm trước khi thêm vào giỏ hàng.');
+                        return false;
+                    }
+                    // Cập nhật lại input ẩn lần cuối trước khi submit
+                    updateVariantInput();
+                });
+            }
+
+            // Khởi tạo giá trị input ẩn ban đầu
+            updateVariantInput();
+
+            // --- Phần tăng giảm số lượng (bạn giữ nguyên nếu muốn) ---
+            document.querySelectorAll('.qty-left-minus, .qty-right-plus').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const input = button.closest('.input-group').querySelector(
+                        'input[name="quantity"]');
+                    if (!input) return;
+
+                    let val = parseInt(input.value, 10) || 1;
+                    const min = 1; // min cứng
+
+                    if (button.classList.contains('qty-right-plus')) {
+                        val += 1;
+                    } else if (button.classList.contains('qty-left-minus')) {
+                        val = val > min ? val - 1 : min;
+                    }
+
+                    input.value = val;
+                    console.log('Quantity updated to:', val);
+                });
+            });
+        });
+    </script>
+@endpush

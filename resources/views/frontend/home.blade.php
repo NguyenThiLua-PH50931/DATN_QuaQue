@@ -296,7 +296,7 @@
                             <div class="timing">
                                 <i data-feather="clock"></i>
                                 <h6 class="name">Expires in :</h6>
-                                <div class="time" id="clockdiv-1" data-hours="1" data-minutes="2" data-seconds="3">
+                                {{-- <div class="time" id="clockdiv-1" data-hours="1" data-minutes="2" data-seconds="3">
                                     <ul>
                                         <li>
                                             <div class="counter">
@@ -327,7 +327,7 @@
                                             </div>
                                         </li>
                                     </ul>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                     </div>
@@ -345,7 +345,7 @@
                                                     </div>
                                                     <div class="product-image">
                                                         <a href="#">
-                                                            <img src="{{ asset('storage/'. $product->image) }}"
+                                                            <img src="{{ asset('storage/' . $product->image) }}"
                                                                 alt="{{ $product->name }}">
                                                         </a>
                                                         <ul class="product-option">
@@ -399,8 +399,8 @@
                                                         </div>
                                                         <div class="add-to-cart-box">
                                                             <form action="{{ route('client.cart.add') }}" method="POST"
-                                                                class="d-flex align-items-center gap-2"
-                                                                style="background:#f8f9fa; padding:6px 10px; border-radius:12px; width:max-content;">
+                                                                class="d-flex align-items-center gap-2 p-1 rounded"
+                                                                style="width: fit-content; max-width: 100%; color: #6c757d;">
                                                                 @csrf
                                                                 <input type="hidden" name="product_id"
                                                                     value="{{ $product->id }}">
@@ -408,27 +408,33 @@
                                                                     value="{{ $product->price }}">
 
                                                                 <div class="input-group input-group-sm"
-                                                                    style="width: 110px;">
+                                                                    style="width: 85px; min-width: 85px;">
                                                                     <button type="button"
-                                                                        class="btn btn-outline-secondary btn-sm btn-qty-minus"
+                                                                        class="btn btn-outline-warning rounded-start btn-qty-minus"
                                                                         aria-label="Decrease quantity"
-                                                                        style="border-radius: 12px 0 0 12px; padding: 0 8px;">−</button>
+                                                                        style="padding: 0 6px; font-weight: 600; font-size: 1.1rem; color: rgb(18, 166, 137); border-color: #ced4da;">
+                                                                        −
+                                                                    </button>
                                                                     <input type="number" name="quantity" value="1"
-                                                                        min="1"
-                                                                        class="form-control form-control-sm text-center"
+                                                                        min="1" class="form-control text-center"
                                                                         aria-label="Quantity"
-                                                                        style="border-radius: 0; padding: 0.25rem 0.5rem;">
+                                                                        style="font-size: 0.70rem; padding: 0.2rem 0; color: rgb(18, 166, 137); border-color: #ced4da; border-radius: 7px;">
                                                                     <button type="button"
-                                                                        class="btn btn-outline-secondary btn-sm btn-qty-plus"
+                                                                        class="btn btn-outline-warning rounded-end btn-qty-plus"
                                                                         aria-label="Increase quantity"
-                                                                        style="border-radius: 0 12px 12px 0; padding: 0 8px;">+</button>
+                                                                        style="padding: 0 6px; font-weight: 600; font-size: 1.1rem; color: rgb(18, 166, 137); border-color: #ced4da;">
+                                                                        +
+                                                                    </button>
                                                                 </div>
 
-                                                                <button type="submit" class="btn btn-primary btn-sm px-3"
-                                                                    style="border-radius: 12px;">
-                                                                    Add <i class="fa-solid fa-plus ms-1"></i>
+                                                                <button type="submit"
+                                                                    class="btn btn-warning btn-sm rounded px-3 ms-3"
+                                                                    style="font-size: 0.70rem; white-space: nowrap; box-shadow: 0 3px 6px rgba(0,0,0,0.15); color: rgb(18, 166, 137); border-color: #ffd966;">
+                                                                        <i class="fa-solid fa-cart-plus"></i>
                                                                 </button>
                                                             </form>
+
+
 
                                                             <script>
                                                                 document.querySelectorAll('.btn-qty-minus').forEach(button => {

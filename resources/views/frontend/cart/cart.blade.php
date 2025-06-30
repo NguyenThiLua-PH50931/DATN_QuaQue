@@ -1,391 +1,358 @@
 @extends('layouts.frontend')
-@section('title', 'giỏ hàng')
-@section('contents')  
-    <!-- Breadcrumb Section Start -->
-        <section class="breadscrumb-section pt-0">
-            <div class="container-fluid-lg">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="breadscrumb-contain">
-                            <h2>Cart</h2>
-                            <nav>
-                                <ol class="breadcrumb mb-0">
-                                    <li class="breadcrumb-item">
-                                        <a href="index.html">
-                                            <i class="fa-solid fa-house"></i>
-                                        </a>
-                                    </li>
-                                    <li class="breadcrumb-item active" aria-current="page">Cart</li>
-                                </ol>
-                            </nav>
-                        </div>
-                    </div>
-                </div>
+@section('title', 'Giỏ hàng')
+@section('contents')
+
+    <section class="py-4 bg-light">
+        <div class="container">
+            <!-- Tiêu đề và breadcrumb -->
+            <div class="breadscrumb-contain mb-6 pb-3 border-bottom d-flex justify-content-between align-items-center">
+                <h2 class="mb-0 fw-bold" style="font-size: 1.5rem; color: #212529;">Giỏ hàng</h2>
             </div>
-        </section>
-    <!-- Breadcrumb Section End -->
+            <style>
+                .breadscrumb-contain h2 {
+                    font-weight: 700;
+                    font-size: 1.5rem;
+                    color: #212529;
+                    margin-left: 35px;
+                    /* đẩy sang phải 15px, bạn chỉnh số này tùy ý */
+                }
+            </style>
 
-    <!-- Cart Section Start -->
-        <section class="cart-section section-b-space">
-            <div class="container-fluid-lg">
-                <div class="row g-sm-5 g-3">
-                    <div class="col-xxl-9">
-                        <div class="cart-table">
-                            <div class="table-responsive-xl">
-                                <table class="table">
+            <!-- Nội dung giỏ hàng và phần tổng tiền -->
+            <div class="container px-5">
+                <div class="row gx-5">
+                    {{-- Các sản phẩm trong giỏ --}}
+                    <div class="col-lg-8">
+                        <div class="bg-white rounded shadow-sm p-4">
+                            <form action="{{ route('client.cart.bulkDelete') }}" method="POST" id="bulk-action-form">
+                                @csrf
+                                <table class="table align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th><input type="checkbox" id="select-all" /></th>
+                                            <th>Sản phẩm</th>
+                                            <th>Giá</th>
+                                            <th style="width: 140px;">Số lượng</th>
+                                            <th>Tổng</th>
+                                            <th>Thao tác</th>
+                                        </tr>
+                                    </thead>
                                     <tbody>
-                                        <tr class="product-box-contain">
-                                            <td class="product-detail">
-                                                <div class="product border-0">
-                                                    <a href="product-left-thumbnail.html" class="product-image">
-                                                        <img src="../frontend/assets/images/vegetable/product/1.png"
-                                                            class="img-fluid blur-up lazyload" alt="">
-                                                    </a>
-                                                    <div class="product-detail">
-                                                        <ul>
-                                                            <li class="name">
-                                                                <a href="product-left-thumbnail.html">Bell pepper</a>
-                                                            </li>
+                                        @php $tongTienTamTinh = 0; @endphp
 
-                                                            <li class="text-content"><span class="text-title">Sold
-                                                                    By:</span> Fresho</li>
-
-                                                            <li class="text-content"><span
-                                                                    class="text-title">Quantity</span> - 500 g</li>
-
-                                                            <li>
-                                                                <h5 class="text-content d-inline-block">Price :</h5>
-                                                                <span>$35.10</span>
-                                                                <span class="text-content">$45.68</span>
-                                                            </li>
-
-                                                            <li>
-                                                                <h5 class="saving theme-color">Saving : $20.68</h5>
-                                                            </li>
-
-                                                            <li class="quantity-price-box">
-                                                                <div class="cart_qty">
-                                                                    <div class="input-group">
-                                                                        <button type="button" class="btn qty-left-minus"
-                                                                            data-type="minus" data-field="">
-                                                                            <i class="fa fa-minus ms-0"
-                                                                                aria-hidden="true"></i>
-                                                                        </button>
-                                                                        <input class="form-control input-number qty-input"
-                                                                            type="text" name="quantity" value="0">
-                                                                        <button type="button" class="btn qty-right-plus"
-                                                                            data-type="plus" data-field="">
-                                                                            <i class="fa fa-plus ms-0"
-                                                                                aria-hidden="true"></i>
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-                                                            </li>
-
-                                                            <li>
-                                                                <h5>Total: $35.10</h5>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </td>
-
-                                            <td class="price">
-                                                <h4 class="table-title text-content">Price</h4>
-                                                <h5>$35.10 <del class="text-content">$45.68</del></h5>
-                                                <h6 class="theme-color">You Save : $20.68</h6>
-                                            </td>
-
-                                            <td class="quantity">
-                                                <h4 class="table-title text-content">Qty</h4>
-                                                <div class="quantity-price">
-                                                    <div class="cart_qty">
-                                                        <div class="input-group">
-                                                            <button type="button" class="btn qty-left-minus"
-                                                                data-type="minus" data-field="">
-                                                                <i class="fa fa-minus ms-0" aria-hidden="true"></i>
-                                                            </button>
-                                                            <input class="form-control input-number qty-input" type="text"
-                                                                name="quantity" value="0">
-                                                            <button type="button" class="btn qty-right-plus"
-                                                                data-type="plus" data-field="">
-                                                                <i class="fa fa-plus ms-0" aria-hidden="true"></i>
-                                                            </button>
+                                        @forelse ($cartItems as $item)
+                                            @if (isset($item->product))
+                                                @php
+                                                    $pricePerItem = $item->price ?? ($item->product->price ?? 0);
+                                                    $tongTien = $pricePerItem * $item->quantity;
+                                                    $tongTienTamTinh += $tongTien;
+                                                    $attrArr = json_decode($item->variant_attributes, true) ?? [];
+                                                @endphp
+                                                <tr>
+                                                    <td>
+                                                        <input type="checkbox" name="selected_items[]"
+                                                            value="{{ $item->id }}" data-price="{{ $tongTien }}">
+                                                    </td>
+                                                    <td class="d-flex align-items-center gap-3">
+                                                        <img src="{{ asset('storage/' . $item->product->image) }}"
+                                                            alt="{{ $item->product->name }}"
+                                                            style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
+                                                        <div>
+                                                            <h6 class="mb-1">{{ $item->product->name }}</h6>
+                                                            <small>
+                                                                @foreach ($attrArr as $attrId => $valId)
+                                                                    {{ $attributesData[$attrId]['name'] ?? $attrId }}:
+                                                                    {{ $attributesData[$attrId]['values'][$valId] ?? $valId }}
+                                                                    @if (!$loop->last)
+                                                                        ,
+                                                                    @endif
+                                                                @endforeach
+                                                            </small>
                                                         </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-
-                                            <td class="subtotal">
-                                                <h4 class="table-title text-content">Total</h4>
-                                                <h5>$35.10</h5>
-                                            </td>
-
-                                            <td class="save-remove">
-                                                <h4 class="table-title text-content">Action</h4>
-                                                <a class="save notifi-wishlist" href="javascript:void(0)">Save for later</a>
-                                                <a class="remove close_button" href="javascript:void(0)">Remove</a>
-                                            </td>
-                                        </tr>
-
-                                        <tr class="product-box-contain">
-                                            <td class="product-detail">
-                                                <div class="product border-0">
-                                                    <a href="product-left-thumbnail.html" class="product-image">
-                                                        <img src="../frontend/assets/images/vegetable/product/2.png"
-                                                            class="img-fluid blur-up lazyload" alt="">
-                                                    </a>
-                                                    <div class="product-detail">
-                                                        <ul>
-                                                            <li class="name">
-                                                                <a href="product-left-thumbnail.html">Eggplant</a>
-                                                            </li>
-
-                                                            <li class="text-content"><span class="text-title">Sold
-                                                                    By:</span> Nesto
-                                                            </li>
-
-                                                            <li class="text-content"><span
-                                                                    class="text-title">Quantity</span> - 250 g</li>
-
-                                                            <li>
-                                                                <h5 class="text-content d-inline-block">Price :</h5>
-                                                                <span>$35.10</span>
-                                                                <span class="text-content">$45.68</span>
-                                                            </li>
-
-                                                            <li>
-                                                                <h5 class="saving theme-color">Saving : $20.68</h5>
-                                                            </li>
-
-                                                            <li class="quantity">
-                                                                <div class="quantity-price">
-                                                                    <div class="cart_qty">
-                                                                        <div class="input-group">
-                                                                            <button type="button" class="btn qty-left-minus"
-                                                                                data-type="minus" data-field="">
-                                                                                <i class="fa fa-minus ms-0"
-                                                                                    aria-hidden="true"></i>
-                                                                            </button>
-                                                                            <input
-                                                                                class="form-control input-number qty-input"
-                                                                                type="text" name="quantity" value="0">
-                                                                            <button type="button" class="btn qty-right-plus"
-                                                                                data-type="plus" data-field="">
-                                                                                <i class="fa fa-plus ms-0"
-                                                                                    aria-hidden="true"></i>
-                                                                            </button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </li>
-
-                                                            <li>
-                                                                <h5>Total: $52.95</h5>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </td>
-
-                                            <td class="price">
-                                                <h4 class="table-title text-content">Price</h4>
-                                                <h5>$52.95 <del class="text-content">$68.49</del></h5>
-                                                <h6 class="theme-color">You Save : $15.14</h6>
-                                            </td>
-
-                                            <td class="quantity">
-                                                <h4 class="table-title text-content">Qty</h4>
-                                                <div class="quantity-price">
-                                                    <div class="cart_qty">
-                                                        <div class="input-group">
-                                                            <button type="button" class="btn qty-left-minus"
-                                                                data-type="minus" data-field="">
-                                                                <i class="fa fa-minus ms-0" aria-hidden="true"></i>
-                                                            </button>
-                                                            <input class="form-control input-number qty-input" type="text"
-                                                                name="quantity" value="0">
-                                                            <button type="button" class="btn qty-right-plus"
-                                                                data-type="plus" data-field="">
-                                                                <i class="fa fa-plus ms-0" aria-hidden="true"></i>
-                                                            </button>
+                                                    </td>
+                                                    <td><strong>{{ number_format($pricePerItem, 2) }} $</strong></td>
+                                                    <td>
+                                                        <div class="d-flex align-items-center gap-2">
+                                                            <button class="btn btn-outline-secondary btn-sm btn-decrease"
+                                                                data-id="{{ $item->id }}">−</button>
+                                                            <input type="text" value="{{ $item->quantity }}" readonly
+                                                                class="form-control form-control-sm text-center quantity-input"
+                                                                data-id="{{ $item->id }}" style="width: 50px;">
+                                                            <button class="btn btn-outline-secondary btn-sm btn-increase"
+                                                                data-id="{{ $item->id }}">+</button>
                                                         </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-
-                                            <td class="subtotal">
-                                                <h4 class="table-title text-content">Total</h4>
-                                                <h5>$52.95</h5>
-                                            </td>
-
-                                            <td class="save-remove">
-                                                <h4 class="table-title text-content">Action</h4>
-                                                <a class="save notifi-wishlist" href="javascript:void(0)">Save for later</a>
-                                                <a class="remove close_button" href="javascript:void(0)">Remove</a>
-                                            </td>
-                                        </tr>
-
-                                        <tr class="product-box-contain">
-                                            <td class="product-detail">
-                                                <div class="product border-0">
-                                                    <a href="product-left-thumbnail.html" class="product-image">
-                                                        <img src="../frontend/assets/images/vegetable/product/3.png"
-                                                            class="img-fluid blur-up lazyload" alt="">
-                                                    </a>
-                                                    <div class="product-detail">
-                                                        <ul>
-                                                            <li class="name">
-                                                                <a href="product-left-thumbnail.html">Onion</a>
-                                                            </li>
-
-                                                            <li class="text-content"><span class="text-title">Sold
-                                                                    By:</span> Basket</li>
-
-                                                            <li class="text-content"><span
-                                                                    class="text-title">Quantity</span> - 750 g</li>
-
-                                                            <li>
-                                                                <h5 class="text-content d-inline-block">Price :</h5>
-                                                                <span>$35.10</span>
-                                                                <span class="text-content">$45.68</span>
-                                                            </li>
-
-                                                            <li>
-                                                                <h5 class="saving theme-color">Saving : $20.68</h5>
-                                                            </li>
-
-                                                            <li class="quantity">
-                                                                <div class="quantity-price">
-                                                                    <div class="cart_qty">
-                                                                        <div class="input-group">
-                                                                            <button type="button" class="btn qty-left-minus"
-                                                                                data-type="minus" data-field="">
-                                                                                <i class="fa fa-minus ms-0"
-                                                                                    aria-hidden="true"></i>
-                                                                            </button>
-                                                                            <input
-                                                                                class="form-control input-number qty-input"
-                                                                                type="text" name="quantity" value="0">
-                                                                            <button type="button" class="btn qty-right-plus"
-                                                                                data-type="plus" data-field="">
-                                                                                <i class="fa fa-plus ms-0"
-                                                                                    aria-hidden="true"></i>
-                                                                            </button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </li>
-
-                                                            <li>
-                                                                <h5>Total: $67.36</h5>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </td>
-
-                                            <td class="price">
-                                                <h4 class="table-title text-content">Price</h4>
-                                                <h5>$67.36 <del class="text-content">$96.58</del></h5>
-                                                <h6 class="theme-color">You Save : $29.22</h6>
-                                            </td>
-
-                                            <td class="quantity">
-                                                <h4 class="table-title text-content">Qty</h4>
-                                                <div class="quantity-price">
-                                                    <div class="cart_qty">
-                                                        <div class="input-group">
-                                                            <button type="button" class="btn qty-left-minus"
-                                                                data-type="minus" data-field="">
-                                                                <i class="fa fa-minus ms-0" aria-hidden="true"></i>
-                                                            </button>
-                                                            <input class="form-control input-number qty-input" type="text"
-                                                                name="quantity" value="0">
-                                                            <button type="button" class="btn qty-right-plus"
-                                                                data-type="plus" data-field="">
-                                                                <i class="fa fa-plus ms-0" aria-hidden="true"></i>
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-
-                                            <td class="subtotal">
-                                                <h4 class="table-title text-content">Total</h4>
-                                                <h5>$67.36</h5>
-                                            </td>
-
-                                            <td class="save-remove">
-                                                <h4 class="table-title text-content">Action</h4>
-                                                <a class="save notifi-wishlist" href="javascript:void(0)">Save for later</a>
-                                                <a class="remove close_button" href="javascript:void(0)">Remove</a>
-                                            </td>
-                                        </tr>
+                                                    </td>
+                                                    <td><strong>{{ number_format($tongTien, 2) }} $</strong></td>
+                                                    <td>
+                                                        <button type="button"
+                                                            class="btn btn-link p-0 text-danger btn-delete-item"
+                                                            data-id="{{ $item->id }}">Xóa</button>
+                                                    </td>
+                                                </tr>
+                                            @else
+                                                <tr>
+                                                    <td colspan="6" class="text-center text-danger fw-semibold">Sản phẩm
+                                                        không tồn tại</td>
+                                                </tr>
+                                            @endif
+                                        @empty
+                                            <tr>
+                                                <td colspan="6" class="text-center">Giỏ hàng của bạn đang trống.</td>
+                                            </tr>
+                                        @endforelse
                                     </tbody>
                                 </table>
-                            </div>
+                                <button type="submit" class="btn btn-custom" aria-label="Xóa mục đã chọn"
+                                    id="btn-bulk-delete">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+
+                            </form>
+                            <script>
+                                document.getElementById('btn-bulk-delete').addEventListener('click', function(event) {
+                                    if (!confirm('Bạn có chắc chắn muốn xóa các mục đã chọn không?')) {
+                                        event.preventDefault(); // Hủy submit form nếu nhấn Cancel
+                                    }
+                                });
+                            </script>
+                            <script>
+                                document.addEventListener('click', function(e) {
+                                    if (!e.target.classList.contains('btn-delete-item')) return;
+
+                                    if (!confirm('Bạn chắc chắn muốn xóa sản phẩm này?')) return;
+
+                                    const id = e.target.dataset.id;
+
+                                    fetch(`/client/cart/delete/${id}`, {
+                                            method: 'DELETE',
+                                            headers: {
+                                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                                'Accept': 'application/json',
+                                                'Content-Type': 'application/json'
+                                            }
+                                        })
+                                        .then(res => res.json())
+                                        .then(data => {
+                                            if (data.success) {
+                                                location.reload();
+                                            } else {
+                                                alert(data.message || 'Xóa thất bại');
+                                            }
+                                        })
+                                        .catch(() => alert('Lỗi hệ thống'));
+
+                                });
+                            </script>
+
                         </div>
                     </div>
 
-                    <div class="col-xxl-3">
-                        <div class="summery-box p-sticky">
-                            <div class="summery-header">
-                                <h3>Cart Total</h3>
-                            </div>
-
-                            <div class="summery-contain">
-                                <div class="coupon-cart">
-                                    <h6 class="text-content mb-2">Coupon Apply</h6>
-                                    <div class="mb-3 coupon-box input-group">
-                                        <input type="email" class="form-control" id="exampleFormControlInput1"
-                                            placeholder="Enter Coupon Code Here...">
-                                        <button class="btn-apply">Apply</button>
-                                    </div>
-                                </div>
-                                <ul>
-                                    <li>
-                                        <h4>Subtotal</h4>
-                                        <h4 class="price">$125.65</h4>
-                                    </li>
-
-                                    <li>
-                                        <h4>Coupon Discount</h4>
-                                        <h4 class="price">(-) 0.00</h4>
-                                    </li>
-
-                                    <li class="align-items-start">
-                                        <h4>Shipping</h4>
-                                        <h4 class="price text-end">$6.90</h4>
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <ul class="summery-total">
-                                <li class="list-total border-top-0">
-                                    <h4>Total (USD)</h4>
-                                    <h4 class="price theme-color">$132.58</h4>
+                    {{-- Tổng tiền giỏ hàng --}}
+                    <div class="col-lg-4">
+                        <div class="bg-white rounded shadow-sm p-4">
+                            <h4 class="fw-bold mb-4">Tổng tiền giỏ hàng</h4>
+                            <form action="" method="POST" class="mb-4 d-flex gap-2">
+                                @csrf
+                                <input type="text" name="ma_giam_gia" class="form-control"
+                                    placeholder="Nhập mã giảm giá">
+                                <button type="submit" class="btn btn-success">Áp dụng</button>
+                            </form>
+                            <ul class="list-unstyled mb-4">
+                                <li class="d-flex justify-content-between mb-2">
+                                    <span>Tạm tính (đã chọn)</span>
+                                    <span id="selected-total">0.00 $</span>
+                                </li>
+                                <li class="d-flex justify-content-between mb-2">
+                                    <span>Giảm giá</span>
+                                    <span>(-) 0.00 $</span>
+                                </li>
+                                <li class="d-flex justify-content-between mb-3">
+                                    <span>Phí vận chuyển</span>
+                                    <span>6.90 $</span>
                                 </li>
                             </ul>
-
-                            <div class="button-group cart-button">
-                                <ul>
-                                    <li>
-                                        <button onclick="location.href = 'checkout.html';"
-                                            class="btn btn-animation proceed-btn fw-bold">Process To Checkout</button>
-                                    </li>
-
-                                    <li>
-                                        <button onclick="location.href = 'index.html';"
-                                            class="btn btn-light shopping-button text-dark">
-                                            <i class="fa-solid fa-arrow-left-long"></i>Return To Shopping</button>
-                                    </li>
-                                </ul>
+                            <div class="d-flex justify-content-between border-top pt-3 fw-bold fs-5 mb-4">
+                                <span>Tổng cộng (USD)</span>
+                                <span id="total-amount" class="text-success">0.00 $</span>
                             </div>
+                            <a href="" class="btn btn-danger w-100 mb-3">Tiến hành thanh toán</a>
+                            <a href="{{ route('client.home') }}" class="btn btn-outline-secondary w-100">
+                                <i class="fa-solid fa-arrow-left-long me-2"></i> Tiếp tục mua hàng
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
-    <!-- Cart Section End -->
+    </section>
+
+    <style>
+        .btn-custom {
+            background: transparent;
+            color: #0da487;
+            border: 2px solid #0da487;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-weight: normal;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-custom:hover {
+            background: linear-gradient(90deg, #0da487 0%, #07a37f 100%);
+            color: white;
+            border: none;
+            opacity: 1;
+        }
+
+        .breadscrumb-contain {
+            border-bottom: 1px solid #e6e6e6;
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .breadscrumb-contain h2 {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #212529;
+        }
+
+        .breadcrumb {
+            background-color: transparent;
+            padding: 0;
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        .breadcrumb-item+.breadcrumb-item::before {
+            content: ">";
+            padding: 0 0.5rem;
+            color: #6c757d;
+        }
+
+        .breadcrumb-item a {
+            color: #212529;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb-item a:hover {
+            color: #0da487;
+        }
+
+        .breadcrumb-item.active {
+            color: #6c757d;
+        }
+    </style>
+
+    <script>
+        // Định nghĩa hàm updateTotals ở phạm vi toàn cục để gọi ở mọi nơi
+        function updateTotals() {
+            const checkboxes = document.querySelectorAll('input[name="selected_items[]"]');
+            const totalDisplay = document.getElementById('selected-total');
+            const totalAmountDisplay = document.getElementById('total-amount');
+            const shippingFee = 6.9;
+
+            let selectedTotal = 0;
+            checkboxes.forEach(cb => {
+                if (cb.checked) {
+                    selectedTotal += parseFloat(cb.getAttribute('data-price')) || 0;
+                }
+            });
+
+            if (totalDisplay) totalDisplay.textContent = selectedTotal.toFixed(2) + ' $';
+            if (totalAmountDisplay) {
+                totalAmountDisplay.textContent = selectedTotal > 0 ? (selectedTotal + shippingFee).toFixed(2) + ' $' :
+                    '0.00 $';
+            }
+            console.log('Updated totals:', totalDisplay?.textContent, totalAmountDisplay?.textContent);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const selectAll = document.getElementById('select-all');
+
+            // Thiết lập sự kiện cho checkbox chọn tất cả
+            if (selectAll) {
+                selectAll.addEventListener('change', function() {
+                    const checkboxes = document.querySelectorAll('input[name="selected_items[]"]');
+                    checkboxes.forEach(cb => cb.checked = this.checked);
+                    updateTotals();
+                });
+            }
+
+            // Thiết lập sự kiện cho từng checkbox
+            const checkboxes = document.querySelectorAll('input[name="selected_items[]"]');
+            checkboxes.forEach(cb => {
+                cb.addEventListener('change', updateTotals);
+            });
+
+            // Cập nhật tổng tiền ngay khi load trang
+            updateTotals();
+        });
+
+        // Xử lý nút tăng giảm số lượng
+        document.querySelectorAll('.btn-increase, .btn-decrease').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const cartItemId = this.getAttribute('data-id');
+                const action = this.classList.contains('btn-increase') ? 'increase' : 'decrease';
+
+                fetch('{{ route('client.cart.updateQuantity') }}', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            cart_item_id: cartItemId,
+                            action: action,
+                        }),
+                    })
+                    .then(async response => {
+                        const text = await response.text();
+                        try {
+                            const data = JSON.parse(text);
+                            if (!response.ok) {
+                                console.error('Server error:', data);
+                                alert('Server trả về lỗi: ' + (data.message || response
+                                    .statusText));
+                                throw new Error('Server error');
+                            }
+                            return data;
+                        } catch (e) {
+                            console.error('Response không phải JSON:', text);
+                            alert('Server trả về dữ liệu không hợp lệ');
+                            throw new Error('Invalid JSON');
+                        }
+                    })
+                  .then(data => {
+    if (data.success) {
+        const inputQuantity = document.querySelector(
+            `input.quantity-input[data-id='${cartItemId}']`
+        );
+
+        inputQuantity.value = data.quantity;
+
+        const row = inputQuantity.closest('tr');
+        const priceText = row.querySelector('td:nth-child(3) strong').textContent.replace('$', '').trim();
+        const normalizedPriceText = priceText.replace(/,/g, '');
+        const pricePerItem = parseFloat(normalizedPriceText);
+        const newTotal = pricePerItem * data.quantity;
+
+        const totalCell = row.querySelector('td:nth-child(5) strong');
+        totalCell.textContent = newTotal.toFixed(2) + ' $';
+
+        const checkbox = row.querySelector('input[name="selected_items[]"]');
+        if (checkbox) {
+            checkbox.setAttribute('data-price', newTotal);
+        }
+
+        updateTotals();
+    } else {
+        alert(data.message || 'Cập nhật số lượng thất bại');
+    }
+})
+            });
+        });
+    </script>
 @endsection

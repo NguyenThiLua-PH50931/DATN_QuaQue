@@ -21,12 +21,11 @@ class ProductController extends Controller
      */
     public function show($slug)
     {
-        // Lấy sản phẩm theo slug, load các liên kết liên quan
         $product = Product::with([
             'images',
             'category',
             'region',
-            'variants.attributeValues.attribute',
+            'variants.attributeValues.attribute', // Load đủ để group attributes/values cho view
             'reviews.user',
             'comments.user',
             'comments.replies.admin'
@@ -36,16 +35,40 @@ class ProductController extends Controller
             ->whereNull('deleted_at')
             ->firstOrFail();
 
-        // Tăng view count
-        $this->increaseView($product);
+        $variants = $product->variants()->where('active', 1)
+            ->with('attributeValues.attribute')->get();
 
-        // Lấy các biến thể sản phẩm
-        $variants = $product->variants()->where('active', 1)->get();
+        // Group các thuộc tính (attribute) + value
+        $attributeOptions = [];
+        foreach ($variants as $variant) {
+            foreach ($variant->attributeValues as $value) {
+                $attrId = $value->attribute->id;
+                $attrName = $value->attribute->name;
+                if (!isset($attributeOptions[$attrId])) {
+                    $attributeOptions[$attrId] = [
+                        'name' => $attrName,
+                        'values' => []
+                    ];
+                }
+                $attributeOptions[$attrId]['values'][$value->id] = $value->value;
+            }
+        }
 
-        // Lấy thông tin thuộc tính từ variants cho select (chọn biến thể)
-        $attributes = $this->getAttributeOptions($variants);
+        // Mapping variant (dùng cho JS, AJAX tìm variant theo tổ hợp value id)
+        $variantMap = $variants->map(function ($v) {
+            return [
+                'id' => $v->id,
+                'sku' => $v->sku,
+                'stock' => $v->stock,
+                'price' => $v->price,
+                'image' => $v->image ? asset('storage/' . $v->image) : null,
+                // Ép kiểu int cho các value_ids và sort
+                'value_ids' => $v->attributeValues->pluck('id')->map(fn($id) => (int)$id)->sort()->values()->all(),
+            ];
+        });
 
-        // Lấy sản phẩm liên quan (cùng category)
+
+        // Lấy sản phẩm liên quan (option)
         $related = Product::with('images')
             ->where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
@@ -57,10 +80,12 @@ class ProductController extends Controller
         return view('frontend.products.detail', [
             'product'    => $product,
             'variants'   => $variants,
-            'attributes' => $attributes,
+            'attributes' => $attributeOptions,
+            'variantMap' => $variantMap,
             'related'    => $related,
         ]);
     }
+
 
     /**
      * Hàm tăng view ngày/tuần/tháng/tổng
