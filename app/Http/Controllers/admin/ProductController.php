@@ -39,16 +39,32 @@ class ProductController extends Controller
     {
         $query = $request->input('search');
 
-        $products = AdminProduct::where('name', 'like', "%$query%")
-            ->orWhereHas('region', function ($q) use ($query) {
-                $q->where('name', 'like', "%$query%");
-            })
-            ->orWhereHas('category', function ($q) use ($query) {
-                $q->where('name', 'like', "%$query%");
-            })
-            ->paginate(12); // Phân trang, hiển thị 12 sản phẩm mỗi trang
+        $products = AdminProduct::with([
+            'category',
+            'region',
+            'product_images',
+            'variants' => function ($q) {
+                $q->where('active', 1)->orderBy('id');
+            },
+            'reviews'
+        ])
+        ->where(function ($q) use ($query) {
+            $q->where('name', 'like', "%$query%")
+              ->orWhereHas('region', function ($regionQuery) use ($query) {
+                  $regionQuery->where('name', 'like', "%$query%");
+              })
+              ->orWhereHas('category', function ($categoryQuery) use ($query) {
+                  $categoryQuery->where('name', 'like', "%$query%");
+              });
+        })
+        ->where('active', 1) // Chỉ lấy sản phẩm đang hoạt động
+        ->paginate(12); // Phân trang, hiển thị 12 sản phẩm mỗi trang
 
-        return view('client.products.index', compact('products', 'query'));
+        // Lấy danh sách categories và regions cho sidebar filter
+        $categories = AdminCategory::all();
+        $regions = AdminRegion::all();
+
+        return view('frontend.products.search', compact('products', 'query', 'categories', 'regions'));
     }
     // Trang danh sách sản phẩm (sơ lược)
     public function index(Request $request)
@@ -386,7 +402,7 @@ class ProductController extends Controller
                     'sku' => $request->sku ?? Str::upper('SKU-' . uniqid()),
                     'price' => $request->price,
                     'stock' => $request->stock,
-                    'name' => 'Mặc định',
+                    'name' => $request->variant_name ?? 'Mặc định',
                     'description' => null,
                     'image' => null,
                     'active' => 1,
@@ -530,14 +546,14 @@ class ProductController extends Controller
 
             // 5. Xử lý biến thể
             if ($request->has_variants) {
-            // Xóa tất cả biến thể cũ
-            foreach ($product->variants as $variant) {
-                if ($variant->image && Storage::disk('public')->exists($variant->image)) {
-                    Storage::disk('public')->delete($variant->image);
+                // XÓA tất cả biến thể cũ trước khi tạo mới
+                foreach ($product->variants as $variant) {
+                    if ($variant->image && Storage::disk('public')->exists($variant->image)) {
+                        Storage::disk('public')->delete($variant->image);
+                    }
+                    $variant->attributeValues()->detach();
+                    $variant->forceDelete();
                 }
-                $variant->attributeValues()->detach();
-                $variant->forceDelete();
-            }
 
                 // Thêm biến thể mới
                 foreach ($request->variants as $variantData) {
@@ -572,13 +588,21 @@ class ProductController extends Controller
                     $variant->attributeValues()->sync($pivotData);
                 }
             } else {
-                // KHÔNG xóa các biến thể cũ, chỉ tạo một biến thể mặc định cho sản phẩm không có biến thể
+                // XÓA tất cả biến thể cũ trước khi tạo mới
+                foreach ($product->variants as $variant) {
+                    if ($variant->image && Storage::disk('public')->exists($variant->image)) {
+                        Storage::disk('public')->delete($variant->image);
+                    }
+                    $variant->attributeValues()->detach();
+                    $variant->forceDelete();
+                }
+                // Tạo một biến thể mặc định cho sản phẩm không có biến thể
                 AdminProductVariant::create([
                     'product_id' => $product->id,
                     'sku' => $request->sku ?? Str::upper('SKU-' . uniqid()),
                     'price' => $request->price,
                     'stock' => $request->stock,
-                    'name' => 'Mặc định',
+                    'name' => $request->variant_name ?? 'Mặc định',
                     'description' => null,
                     'image' => null,
                     'active' => 1,

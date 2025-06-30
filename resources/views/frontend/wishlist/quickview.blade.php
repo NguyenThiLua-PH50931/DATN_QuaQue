@@ -40,16 +40,16 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     function bindQuickviewEvents() {
-        document.querySelectorAll('.quickview-btn').forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                var name = this.getAttribute('data-name') || '';
-                var price = this.getAttribute('data-price') || '';
-                var rating = this.getAttribute('data-rating') || '';
-                var description = this.getAttribute('data-description') || '';
-                var code = this.getAttribute('data-code') || '';
-                var origin = this.getAttribute('data-origin') || '';
-                var image = this.getAttribute('data-image') || '';
-                var link = this.getAttribute('data-link') || '#';
+    document.querySelectorAll('.quickview-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var name = this.getAttribute('data-name') || '';
+            var price = this.getAttribute('data-price') || '';
+            var rating = this.getAttribute('data-rating') || '';
+            var description = this.getAttribute('data-description') || '';
+            var code = this.getAttribute('data-code') || '';
+            var origin = this.getAttribute('data-origin') || '';
+            var image = this.getAttribute('data-image') || '';
+            var link = this.getAttribute('data-link') || '#';
 
                 var modal = document.getElementById('view');
                 modal.querySelector('.title-name').textContent = name;
@@ -57,33 +57,33 @@ document.addEventListener('DOMContentLoaded', function() {
                 modal.querySelector('.slider-image img').src = image;
                 modal.querySelector('.slider-image img').alt = name;
 
-                var ratingHtml = '';
-                if (rating) {
-                    ratingHtml = '<ul class="rating">';
-                    for (var i = 1; i <= 5; i++) {
-                        ratingHtml += '<li><i data-feather="star" class="' + (i <= Math.round(rating) ? 'fill' : '') + '"></i></li>';
-                    }
-                    ratingHtml += '</ul>';
-                    ratingHtml += '<span class="ms-2">' + rating + ' sao</span>';
+            var ratingHtml = '';
+            if (rating) {
+                ratingHtml = '<ul class="rating">';
+                for (var i = 1; i <= 5; i++) {
+                    ratingHtml += '<li><i data-feather="star" class="' + (i <= Math.round(rating) ? 'fill' : '') + '"></i></li>';
                 }
+                ratingHtml += '</ul>';
+                ratingHtml += '<span class="ms-2">' + rating + ' sao</span>';
+            }
                 modal.querySelector('.product-rating').innerHTML = ratingHtml;
-                if (window.feather) feather.replace();
+            if (window.feather) feather.replace();
 
                 var brandList = modal.querySelector('.brand-list');
-                brandList.innerHTML = '';
-                if (code) {
-                    brandList.innerHTML += `<li><div class="brand-box"><h5>Mã sản phẩm:</h5><h6>${code}</h6></div></li>`;
-                }
-                if (origin) {
-                    brandList.innerHTML += `<li><div class="brand-box"><h5>Xuất xứ:</h5><h6>${origin}</h6></div></li>`;
-                }
+            brandList.innerHTML = '';
+            if (code) {
+                brandList.innerHTML += `<li><div class="brand-box"><h5>Mã sản phẩm:</h5><h6>${code}</h6></div></li>`;
+            }
+            if (origin) {
+                brandList.innerHTML += `<li><div class="brand-box"><h5>Xuất xứ:</h5><h6>${origin}</h6></div></li>`;
+            }
 
                 var detailBtn = modal.querySelector('.view-button');
-                if (detailBtn && link) {
-                    detailBtn.onclick = function() {
-                        window.location.href = link;
-                    };
-                }
+            if (detailBtn && link) {
+                detailBtn.onclick = function() {
+                    window.location.href = link;
+                };
+            }
 
                 // Mô tả sản phẩm rút gọn
                 var descElem = modal.querySelector('.description-text');
@@ -99,9 +99,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else {
                     descElem.innerHTML = description;
                     showMoreBtn.style.display = 'none';
-                }
-            });
+            }
         });
+    });
     }
     bindQuickviewEvents();
 });
