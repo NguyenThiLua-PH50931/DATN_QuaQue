@@ -148,7 +148,7 @@
                                                 <div class="card-body">
                                                     <h6 class="fw-bold mb-3">Thông tin sản phẩm đơn</h6>
                                                     <div class="row gx-2 gy-2">
-                                                        <div class="col-md-4">
+                                                        <div class="col-md-6">
                                                             <label class="form-label">Giá bán</label>
                                                             <input type="number" name="price" min="0"
                                                                 step="0.01" class="form-control"
@@ -157,7 +157,14 @@
                                                                 <small class="text-danger">{{ $message }}</small>
                                                             @enderror
                                                         </div>
-                                                        <div class="col-md-4">
+                                                        <div class="col-md-6">
+                                                            <label class="form-label">Khối lượng (hiển thị ở tên biến thể)</label>
+                                                            <input type="text" name="variant_name" class="form-control" value="{{ old('variant_name') }}" placeholder="Nhập khối lượng, ví dụ: 500g, 1kg...">
+                                                            @error('variant_name')
+                                                                <small class="text-danger">{{ $message }}</small>
+                                                            @enderror
+                                                        </div>
+                                                        <div class="col-md-6">
                                                             <label class="form-label">Tồn kho</label>
                                                             <input type="number" name="stock" min="0"
                                                                 class="form-control" value="{{ old('stock') }}">
@@ -165,7 +172,7 @@
                                                                 <small class="text-danger">{{ $message }}</small>
                                                             @enderror
                                                         </div>
-                                                        <div class="col-md-4">
+                                                        <div class="col-md-6">
                                                             <label class="form-label">SKU (Mã kho)</label>
                                                             <input type="text" name="sku" class="form-control"
                                                                 value="{{ old('sku') }}"
