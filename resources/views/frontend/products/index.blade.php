@@ -111,7 +111,8 @@
                             <div class="product-header">
                                 <div class="product-image product-image-rounded">
                                     <a href="{{ route('client.product.detail', ['slug' => $product->slug]) }}">
-                                        <img src="{{ asset('storage/' . $product->image) }}" class="img-fluid blur-up lazyload product-img-large" alt="{{ $product->name }}">
+                                        <img src="{{ asset('storage/' . $product->image) }}" class="img-fluid blur-up lazyload product-img-large"
+                                        alt="{{ $product->name }}" style="width: 300px; height: 230px; object-fit: cover; border-radius: 24px;">
                                     </a>
                                     <ul class="product-option">
                                         <li data-bs-toggle="tooltip" data-bs-placement="top" title="Xem nhanh">
@@ -207,20 +208,17 @@
 
 @push('styles')
 <style>
-    .product-image.product-image-rounded, .product-img-large {
+    .product-image.product-image-rounded {
         border-radius: 24px !important;
         overflow: hidden;
-        width: 100%;
-        aspect-ratio: 1/1;
-        max-width: 350px;
-        min-width: 220px;
-        min-height: 220px;
+        width: 200px;
+        height: 100px;
         margin: 0 auto;
         background: #f8f8f8;
     }
     .product-img-large {
-        width: 100% !important;
-        height: 100% !important;
+        width: 200px !important;
+        height: 100px !important;
         object-fit: cover;
         border-radius: 24px !important;
     }
