@@ -22,17 +22,17 @@
                         <div class="col-md-4">
                             <label class="form-label">Ngày cụ thể:</label>
                             <input type="date" name="rating_date" class="form-control form-control-sm"
-                                value="{{ request('rating_date') }}" id="rating_date">
+                                value="{{ request('rating_date') }}" id="rating_date" max="{{ date('Y-m-d') }}">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Từ ngày:</label>
                             <input type="date" name="rating_from_date" class="form-control form-control-sm"
-                                value="{{ request('rating_from_date') }}" id="rating_from_date">
+                                value="{{ request('rating_from_date') }}" id="rating_from_date" max="{{ date('Y-m-d') }}">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Đến ngày:</label>
                             <input type="date" name="rating_to_date" class="form-control form-control-sm"
-                                value="{{ request('rating_to_date') }}" id="rating_to_date">
+                                value="{{ request('rating_to_date') }}" id="rating_to_date" max="{{ date('Y-m-d') }}">
                         </div>
                     </div>
                     <div class="row mt-3">
