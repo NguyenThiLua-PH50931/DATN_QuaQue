@@ -18,6 +18,26 @@
                             <div class="content-body">
                                 {!! str_replace('<img', '<img style="max-width: 100%; height: auto; display: block; border-radius: 12px; margin: 2rem 0; box-shadow: 0 10px 30px rgba(0,0,0,0.1);"', $blog->content) !!}
                             </div>
+
+                            <!-- Bình luận -->
+                            <div class="content-header">
+                                <h3><i class="fas fa-file-text me-3"></i>Bình luận</h3>
+                            </div>
+                            <div class="content-body">
+                                @forelse ($blog->comments as $comment)
+                                    <div class="comment-item border rounded p-3 mb-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <strong>{{ $comment->user->name ?? 'Ẩn danh' }}</strong>
+                                            <span class="text-muted small">
+                                                {{ $comment->created_at->format('d/m/Y H:i') }}
+                                            </span>
+                                        </div>
+                                        <div class="comment-content">{!! nl2br(e($comment->content)) !!}</div>
+                                    </div>
+                                @empty
+                                    <div class="text-muted">Chưa có bình luận nào.</div>
+                                @endforelse
+                            </div>
                         </div>
                     </div>
 

@@ -15,7 +15,7 @@ class ProfileClientController extends Controller
     public function index()
     {
         $user = Auth::user();
-        return view('frontend.profile', compact('user'));
+        return view('frontend.profile-user.profile', compact('user'));
     }
 
     public function update(Request $request)

@@ -10,6 +10,7 @@ use App\Models\admin\Region as AdminRegion;
 use App\Models\admin\ProductVariant as AdminProductVariant;
 use App\Models\admin\ProductImage;
 use App\Models\admin\AttributeValue;
+use App\Models\Client\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
@@ -17,14 +18,53 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
-   public function search(Request $request)
+    public function search(Request $request)
     {
         $query = $request->input('q');
+
         $products = AdminProduct::where('name', 'like', "%$query%")
-                          ->select('id', 'name', 'slug', 'image') 
-                          ->get();
+            ->orWhereHas('region', function ($q) use ($query) {
+                $q->where('name', 'like', "%$query%");
+            })
+            ->orWhereHas('category', function ($q) use ($query) {
+                $q->where('name', 'like', "%$query%");
+            })
+            ->select('id', 'name', 'slug', 'image')
+            ->get();
 
         return response()->json($products);
+    }
+
+    public function searchPage(Request $request)
+    {
+        $query = $request->input('search');
+
+        $products = AdminProduct::with([
+            'category',
+            'region',
+            'product_images',
+            'variants' => function ($q) {
+                $q->where('active', 1)->orderBy('id');
+            },
+            'reviews'
+        ])
+        ->where(function ($q) use ($query) {
+            $q->where('name', 'like', "%$query%")
+              ->orWhereHas('region', function ($regionQuery) use ($query) {
+                  $regionQuery->where('name', 'like', "%$query%");
+              })
+              ->orWhereHas('category', function ($categoryQuery) use ($query) {
+                  $categoryQuery->where('name', 'like', "%$query%");
+              });
+        })
+        ->where('active', 1) // Chỉ lấy sản phẩm đang hoạt động
+        ->paginate(12); // Phân trang, hiển thị 12 sản phẩm mỗi trang
+
+        // Lấy danh sách categories và regions cho sidebar filter
+        $categories = AdminCategory::all();
+        $regions = AdminRegion::all();
+
+        return view('frontend.products.search', compact('products', 'query', 'categories', 'regions'));
     }
     // Trang danh sách sản phẩm (sơ lược)
     public function index(Request $request)
@@ -62,7 +102,7 @@ class ProductController extends Controller
             });
         }
 
-        $products = $query->orderByDesc('id')->paginate(10);
+        $products = $query->orderByDesc('id')->get();
 
         $categories = AdminCategory::all();
         $regions = AdminRegion::all();
@@ -308,6 +348,7 @@ class ProductController extends Controller
                 'image' => $imgPath,
                 'origin' => $request->origin,
                 'active' => $request->active ? 1 : 0,
+                'has_variants' => $request->has_variants ? 1 : 0,
             ]);
 
             // Ảnh mô tả nhiều ảnh
@@ -361,7 +402,7 @@ class ProductController extends Controller
                     'sku' => $request->sku ?? Str::upper('SKU-' . uniqid()),
                     'price' => $request->price,
                     'stock' => $request->stock,
-                    'name' => 'Mặc định',
+                    'name' => $request->variant_name ?? 'Mặc định',
                     'description' => null,
                     'image' => null,
                     'active' => 1,
@@ -474,7 +515,7 @@ class ProductController extends Controller
             $product->description = $request->description;
             $product->origin = $request->origin;
             $product->active = $request->active ? 1 : 0;
-
+            $product->has_variants = $request->has_variants ? 1 : 0;
             $product->save();
 
             // 3. Thêm ảnh mô tả mới nếu có
@@ -504,16 +545,16 @@ class ProductController extends Controller
             }
 
             // 5. Xử lý biến thể
-            // Xóa tất cả biến thể cũ
-            foreach ($product->variants as $variant) {
-                if ($variant->image && Storage::disk('public')->exists($variant->image)) {
-                    Storage::disk('public')->delete($variant->image);
-                }
-                $variant->attributeValues()->detach();
-                $variant->forceDelete();
-            }
-
             if ($request->has_variants) {
+                // XÓA tất cả biến thể cũ trước khi tạo mới
+                foreach ($product->variants as $variant) {
+                    if ($variant->image && Storage::disk('public')->exists($variant->image)) {
+                        Storage::disk('public')->delete($variant->image);
+                    }
+                    $variant->attributeValues()->detach();
+                    $variant->forceDelete();
+                }
+
                 // Thêm biến thể mới
                 foreach ($request->variants as $variantData) {
                     $variantImagePath = null;
@@ -547,13 +588,21 @@ class ProductController extends Controller
                     $variant->attributeValues()->sync($pivotData);
                 }
             } else {
+                // XÓA tất cả biến thể cũ trước khi tạo mới
+                foreach ($product->variants as $variant) {
+                    if ($variant->image && Storage::disk('public')->exists($variant->image)) {
+                        Storage::disk('public')->delete($variant->image);
+                    }
+                    $variant->attributeValues()->detach();
+                    $variant->forceDelete();
+                }
                 // Tạo một biến thể mặc định cho sản phẩm không có biến thể
                 AdminProductVariant::create([
                     'product_id' => $product->id,
                     'sku' => $request->sku ?? Str::upper('SKU-' . uniqid()),
                     'price' => $request->price,
                     'stock' => $request->stock,
-                    'name' => 'Mặc định',
+                    'name' => $request->variant_name ?? 'Mặc định',
                     'description' => null,
                     'image' => null,
                     'active' => 1,

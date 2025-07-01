@@ -11,7 +11,7 @@ class ForgotController extends Controller
 {
     public function forgot()
     {
-        return view('frontend.forgot');
+        return view('frontend.profile-user.forgot');
     }
     public function sendResetLink(Request $request)
     {

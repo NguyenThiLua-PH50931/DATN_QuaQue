@@ -6,6 +6,7 @@
 @section('contents')
 
 
+
     <!-- Breadcrumb Section Start -->
     <section class="breadscrumb-section pt-0">
         <div class="container-fluid-lg">
@@ -29,7 +30,6 @@
                                         </a>
                                     </li>
                                 @endif
-
                                 <li class="breadcrumb-item active" aria-current="page">
                                     {{ $product->name }}
                                 </li>
@@ -764,6 +764,7 @@
                 <span class="title-leaf">
                     <svg class="icon-width">
                         <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
+
                     </svg>
                 </span>
             </div>
@@ -855,17 +856,20 @@
                                                         <i class="fa fa-plus" aria-hidden="true"></i>
                                                     </button>
                                                 </div> --}}
+
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+
     <style>
         .attribute-select.active2 {
             background: #0da386 !important;
@@ -876,9 +880,10 @@
     </style>
 
 
-@endsection
 
+@endsection
 @push('scripts')
+
     <script>
         window.VARIANTS = {!! json_encode($variantMap ?? [], JSON_HEX_TAG) !!};
     </script>

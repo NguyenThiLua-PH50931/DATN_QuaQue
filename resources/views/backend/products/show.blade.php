@@ -157,7 +157,11 @@
                                     <tr>
                                         {{-- <th><input type="checkbox" id="select-all-variants"></th> --}}
                                         <th>Tên biến thể</th>
+<<<<<<< HEAD
                                         <th>Mô tả</th>
+=======
+                                        {{-- <th>Mô tả</th> --}}
+>>>>>>> 68e1b1d468ee19060fc1579b7a24fda9cf64b1f6
                                         <th>Giá</th>
                                         <th>Số lượng</th>
                                         <th>SKU</th>
@@ -177,14 +181,22 @@
                                                     {{ $variant->name }}
                                                 </a>
                                             </td>
+<<<<<<< HEAD
                                             <td>
+=======
+                                            {{-- <td>
+>>>>>>> 68e1b1d468ee19060fc1579b7a24fda9cf64b1f6
                                                 <span class="text-truncate description-short text-primary"
                                                     style="max-width: 250px; cursor: pointer;" data-bs-toggle="modal"
                                                     data-bs-target="#descriptionModal"
                                                     data-variant-id="{{ $variant->id }}">
                                                     {!! Str::limit(strip_tags($variant->description), 50) ?: '<em>(Chưa có mô tả)</em>' !!}
                                                 </span>
+<<<<<<< HEAD
                                             </td>
+=======
+                                            </td> --}}
+>>>>>>> 68e1b1d468ee19060fc1579b7a24fda9cf64b1f6
                                             <td>{{ number_format($variant->price, 0, ',', '.') }}₫</td>
                                             <td>{{ $variant->stock }}</td>
                                             <td>{{ $variant->sku }}</td>
@@ -330,6 +342,7 @@
 
     @push('styles')
         <link rel="stylesheet" href="//cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+<<<<<<< HEAD
         <style>
             /* .gallery-container {
                                         display: flex;
@@ -350,6 +363,28 @@
                                         border-radius: 7px;
                                         border: 2px solid #ccc;
                                     } */
+=======
+        {{-- <style>
+            /* .gallery-container {
+                        display: flex;
+                        gap: 12px;
+                        max-width: 465px;
+                        height: 350px;
+                    }
+
+                    .thumb-swiper {
+                        height: 350px;
+                        width: 85px;
+                    }
+
+                    .thumb-swiper .swiper-slide img {
+                        width: 80px;
+                        height: 60px;
+                        object-fit: cover;
+                        border-radius: 7px;
+                        border: 2px solid #ccc;
+                    } */
+>>>>>>> 68e1b1d468ee19060fc1579b7a24fda9cf64b1f6
 
             .main-image-wrapper {
                 flex: 1;
@@ -454,7 +489,11 @@
             .bulk-delete-btn:not([disabled]):hover {
                 background: #aac4e7 !important;
             }
+<<<<<<< HEAD
         </style>
+=======
+        </style> --}}
+>>>>>>> 68e1b1d468ee19060fc1579b7a24fda9cf64b1f6
     @endpush
 
     @push('scripts')
@@ -627,7 +666,11 @@
                     thumb.addEventListener('click', () => {
                         const idx = parseInt(thumb.getAttribute('data-index'));
                         console.log('Thumbnail clicked, index:', idx, 'Gallery length:', gallery
+<<<<<<< HEAD
                             .length);
+=======
+                        .length);
+>>>>>>> 68e1b1d468ee19060fc1579b7a24fda9cf64b1f6
                         if (idx >= 0 && idx < gallery.length && gallery[idx]) {
                             mainImage.src = gallery[idx]; // Thay ảnh chính
                             setActiveThumbnail(idx);
