@@ -27,17 +27,17 @@
                                 </div>
                             @endif
 
-                            <div class="table-responsive category-table">
-                                <table class="table all-package theme-table" id="productTable">
+                            <div class="table-responsive category-table" style="overflow-x: auto; width: 100%;">
+                                <table class="table all-package theme-table" id="productTable" style="width: 100%; min-width: 900px;">
                                     <thead>
                                         <tr>
-                                            <th style="color: black; background-color: #f8f9fa; width: 30px;">
+                                            <th style="color: black; background-color: #f8f9fa;">
                                                 <input type="checkbox" id="select-all-checkbox">
                                             </th>
-                                            <th style="color: black; background-color: #f8f9fa;">ID</th>
-                                            <th style="color: black; background-color: #f8f9fa;">Tiêu đề</th>
+                                            {{-- <th style="color: black; background-color: #f8f9fa;">ID</th> --}}
+                                            <th style="color: black; background-color: #f8f9fa;">Tên sản phẩm</th>
                                             <th style="color: black; background-color: #f8f9fa;">Ảnh</th>
-                                            <th style="color: black; background-color: #f8f9fa;">Trạng thái</th>
+                                            {{-- <th style="color: black; background-color: #f8f9fa;">Trạng thái</th> --}}
                                             <th style="color: black; background-color: #f8f9fa;">Ngày xóa</th>
                                             <th style="color: black; background-color: #f8f9fa;">Hành động</th>
                                         </tr>
@@ -49,14 +49,14 @@
                                                     <input type="checkbox" class="row-checkbox" name="selected_ids[]"
                                                         value="{{ $product->id }}">
                                                 </td>
-                                                <td>{{ $product->id }}</td>
-                                                <td>{{ $product->name }}</td>
+                                                {{-- <td>{{ $product->id }}</td> --}}
+                                                <td style="max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $product->name }}</td>
                                                 <td>
                                                     <img src="{{ asset('storage/' . $product->image) }}"
                                                         alt="{{ $product->name }}" class="w-20 h-20 object-cover"
-                                                        width="100px">
+                                                        width="80px">
                                                 </td>
-                                                <td>{{ $product->active ? 'Đang bán' : 'Ngừng bán' }}</td>
+                                                {{-- <td>{{ $product->active ? 'Đang bán' : 'Ngừng bán' }}</td> --}}
                                                 <td>{{ $product->deleted_at->format('d-m-Y H:i:s') }}</td>
                                                 <td>
                                                     <ul>
