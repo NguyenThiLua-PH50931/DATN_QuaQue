@@ -35,7 +35,7 @@
                                                 <input type="checkbox" id="select-all-checkbox">
                                             </th>
                                             <th style="color: black; background-color: #f8f9fa;">Tên danh mục</th>
-                                            <th style="color: black; background-color: #f8f9fa;">Slug</th>
+                                            <th style="color: black; background-color: #f8f9fa;">Icon</th>
                                             <th style="color: black; background-color: #f8f9fa;">Ngày tạo</th>
                                             <th style="color: black; background-color: #f8f9fa;">Tùy chọn</th>
                                         </tr>
@@ -48,7 +48,11 @@
                                                         value="{{ $category->id }}">
                                                 </td>
                                                 <td>{{ $category->name }}</td>
-                                                <td>{{ $category->slug }}</td>
+                                                <td>
+                                                    <img src="{{ asset('storage/' . $category->image) }}"
+                                                        alt="{{ $category->name }}" class="w-20 h-20 object-cover"
+                                                        width="50">
+                                                </td>
                                                 <td>{{ $category->created_at->format('d-m-Y') }}</td>
                                                 <td>
                                                     <ul>
@@ -56,7 +60,8 @@
                                                             <a href="javascript:void(0)" class="edit-btn"
                                                                 data-bs-toggle="modal" data-bs-target="#editModal"
                                                                 data-id="{{ $category->id }}"
-                                                                data-name="{{ $category->name }}">
+                                                                data-name="{{ $category->name }}"
+                                                                data-image="{{ $category->image }}">
                                                                 <i class="ri-pencil-line"></i>
                                                             </a>
                                                         </li>
@@ -71,7 +76,6 @@
                                                     </ul>
                                                 </td>
                                             </tr>
-
                                         @empty
                                             <tr>
                                                 <td colspan="5" class="py-4 px-4 text-center">Không tìm thấy danh mục
@@ -86,7 +90,6 @@
                                         <i data-feather="trash"></i> Xóa đã chọn
                                     </button>
                                 </form>
-
                             </div>
                             <form id="bulk-delete-form" action="{{ route('admin.categories.bulkDelete') }}" method="POST"
                                 style="display: none;">
@@ -109,12 +112,16 @@
                     <h5 class="modal-title" id="createModalLabel">Thêm danh mục mới</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{ route('admin.categories.store') }}" method="POST">
+                <form action="{{ route('admin.categories.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="name" class="form-label">Tên danh mục</label>
                             <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="image" class="form-label">Icon (Ảnh)</label>
+                            <input type="file" class="form-control" id="image" name="image" accept="image/*">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -134,13 +141,20 @@
                     <h5 class="modal-title" id="editModalLabel">Sửa danh mục</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="editForm" method="POST">
+                <form id="editForm" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     <div class="modal-body">
+                        <input type="hidden" id="edit_id" name="id">
                         <div class="mb-3">
                             <label for="edit_name" class="form-label">Tên danh mục</label>
                             <input type="text" class="form-control" id="edit_name" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_image" class="form-label">Icon (Ảnh)</label>
+                            <input type="file" class="form-control" id="edit_image" name="image" accept="image/*">
+                            <img id="edit_image_preview" src="" alt="Hình ảnh hiện tại" class="mt-2"
+                                style="max-width: 100px; max-height: 100px; display: none;">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -151,7 +165,6 @@
             </div>
         </div>
     </div>
-
     {{-- Delete Modal --}}
     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -263,10 +276,17 @@
             });
 
             // Xử lý sự kiện click nút sửa
-            $('.edit-btn').click(function() {
+            $(document).on('click', '.edit-btn', function() {
                 var id = $(this).data('id');
                 var name = $(this).data('name');
+                var image = $(this).data('image');
+                $('#edit_id').val(id);
                 $('#edit_name').val(name);
+                if (image) {
+                    $('#edit_image_preview').attr('src', '{{ asset('storage/') }}' + image).show();
+                } else {
+                    $('#edit_image_preview').hide();
+                }
                 $('#editForm').attr('action', '/admin/categories/' + id);
             });
 
@@ -277,6 +297,7 @@
 
             $('#editModal').on('hidden.bs.modal', function() {
                 $('#editModal form')[0].reset();
+                $('#edit_image_preview').hide();
             });
 
             // Logic cho chức năng chọn tất cả và xóa hàng loạt
@@ -331,7 +352,8 @@
                                 } else {
                                     toastr.info(response.message);
                                 }
-                                window.location.reload(); // Tải lại trang sau khi hoàn thành
+                                window.location
+                            .reload(); // Tải lại trang sau khi hoàn thành
                             },
                             error: function(xhr) {
                                 $('#bulkDeleteModal').modal('hide');
@@ -339,7 +361,8 @@
                                 if (xhr.responseJSON && xhr.responseJSON.message) {
                                     errorMessage = xhr.responseJSON.message;
                                 } else if (xhr.responseText) {
-                                    errorMessage = 'Lỗi server: ' + xhr.responseText.substring(0, 100) + '...';
+                                    errorMessage = 'Lỗi server: ' + xhr.responseText
+                                        .substring(0, 100) + '...';
                                 } else {
                                     errorMessage = 'Lỗi không xác định';
                                 }
@@ -353,7 +376,7 @@
             });
 
             // Hiển thị modal lỗi nếu có session error
-            @if(session('error'))
+            @if (session('error'))
                 var errorMessage = "{{ session('error') }}";
                 if (errorMessage.includes('sản phẩm liên kết')) {
                     $('#cannotDeleteMessage').text(errorMessage);
@@ -363,17 +386,26 @@
         });
     </script>
 @endpush
-
 <style>
     .btn.btn-warning {
-        background-color: #ffc107 !important; /* Màu vàng */
+        background-color: #ffc107 !important;
+        /* Màu vàng */
         border-color: #ffc107 !important;
-        color: #212529 !important; /* Màu chữ đen */
+        color: #212529 !important;
+        /* Màu chữ đen */
     }
 
     .btn.btn-danger {
-        background-color: #35dc94 !important; /* Màu đỏ */
+        background-color: #dc3545 !important;
+        /* Màu đỏ */
         border-color: #dc3545 !important;
-        color: #fff !important; /* Màu chữ trắng */
+        color: #fff !important;
+        /* Màu chữ trắng */
+    }
+
+    .w-20 {
+        width: 50px !important;
+        height: 50px !important;
     }
 </style>
+

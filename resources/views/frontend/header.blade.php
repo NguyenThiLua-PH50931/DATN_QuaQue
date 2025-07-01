@@ -55,7 +55,7 @@
                              <img src="{{ asset('/storage/banners/logo/logo.png') }}" class="img-fluid blur-up lazyload"
                                  alt="Logo Quà Quê" style="height: 50px;">
                          </a>
-
+                         {{-- TÌM KIẾM SẢN PHẨM --}}
                          <div class="middle-box">
                              <div class="location-box">
                                  <button class="btn location-button" data-bs-toggle="modal"
@@ -78,14 +78,14 @@
                                  </div>
                                  <div id="searchResults" class="search-results list-group"
                                      style="
-                                        width: inherit;
-                                        max-width: 100%;
-                                        z-index: 1000;
-                                        display: none;
-                                        border: 1px solid #ccc;
-                                        background: #fff;
-                                        max-height: 200px;
-                                        overflow-y: auto;">
+                                                width: inherit;
+                                                max-width: 100%;
+                                                z-index: 1000;
+                                                display: none;
+                                                border: 1px solid #ccc;
+                                                background: #fff;
+                                                max-height: 200px;
+                                                overflow-y: auto;">
                                  </div>
                              </div>
 
@@ -133,18 +133,29 @@
                 ${product.name}
             </a>
         `);
+
                                                          });
+                                                         // Thêm liên kết "Xem thêm" nếu có hơn 3 sản phẩm
+                                                         if (response.length > 3) {
+                                                             $('#searchResults').append(
+                                                                 `<a href="/client/san-pham/search?search=${encodeURIComponent(query)}" class="list-group-item list-group-item-action text-center text-primary">
+                                            Xem tất cả kết quả cho "${query}"
+                                        </a>`
+                                                             );
+                                                         }
                                                          $('#searchResults').show();
                                                      } else {
                                                          $('#searchResults').append(
-                                                                 '<div class="list-group-item">Không tìm thấy sản phẩm.</div>')
-                                                             .show();
+                                                             '<div class="list-group-item">Không tìm thấy sản phẩm.</div>'
+                                                         ).show();
                                                      }
 
                                                  },
                                                  error: function(xhr) {
-                                                     $('#searchResults').append('<div class="list-group-item">Có lỗi xảy ra: ' +
-                                                         xhr.status + '</div>').show();
+                                                     $('#searchResults').append(
+                                                         '<div class="list-group-item">Có lỗi xảy ra: ' + xhr.status +
+                                                         '</div>'
+                                                     ).show();
                                                  }
                                              });
                                          } else {
@@ -161,6 +172,7 @@
                                  });
                              </script>
                          </div>
+                         {{-- END TÌM KIẾM SẢN PHẨM --}}
 
                          <div class="rightside-box">
                              <div class="search-full">
@@ -1060,12 +1072,12 @@
                                             </li> --}}
 
                                          <li class="nav-item dropdown new-nav-item">
-                                             <a class="nav-link dropdown-toggle" href="{{ route('blog') }}">Tin
+                                             <a class="nav-link dropdown-toggle" href="{{ route('client.blog') }}">Tin
                                                  tức</a>
                                          </li>
 
                                          <li class="nav-item dropdown new-nav-item">
-                                             <a class="nav-link dropdown-toggle" href="{{ route('blog') }}">Giới
+                                             <a class="nav-link dropdown-toggle" href="{{ route('client.about') }}">Giới
                                                  thiệu
                                              </a>
                                          </li>
@@ -1082,6 +1094,7 @@
                                          </li>
                                          {{-- <li class="nav-item dropdown new-nav-item">
                                              <a class="nav-link dropdown-toggle" href="{{ route('blog') }}">Thanh
+
                                                  toán
                                              </a>
                                          </li> --}}

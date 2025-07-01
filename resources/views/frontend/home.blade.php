@@ -103,10 +103,10 @@
 
                                     <li @if ($loop->last) class="pb-30" @endif>
                                         <div class="category-list">
-                                            <img src="{{ asset('frontend/assets/svg/1/' . $category->image) }}"
-                                                alt="{{ $category->name }}">
+                                            <img src="{{ asset('storage/' . $category->image) }}"
+                                                alt="{{ $category->name }}" class="w-20 h-20 object-cover">
                                             <h5>
-                                                <a href="{{ url('/products/category') }}">{{ $category->name }}</a>
+                                                <a href="{{ route('client.product.index', ['category_id' => $category->id]) }}">{{ $category->name }}</a>
                                             </h5>
                                         </div>
                                     </li>
@@ -175,81 +175,31 @@
                                 <h3>Sản phẩm thịnh hành</h3>
 
                                 <ul class="product-list border-0 p-0 d-block">
-                                    <li>
-                                        <div class="offer-product">
-                                            <a href="product-left-thumbnail.html" class="offer-image">
-                                                <img src="../frontend/assets/images/vegetable/product/23.png"
-                                                    class="blur-up lazyload" alt="">
-                                            </a>
-
-                                            <div class="offer-detail">
-                                                <div>
-                                                    <a href="product-left-thumbnail.html" class="text-title">
-                                                        <h6 class="name">Meatigo Premium Goat Curry</h6>
-                                                    </a>
-                                                    <span>450 G</span>
-                                                    <h6 class="price theme-color">$ 70.00</h6>
+                                    @php
+                                        $trendingProducts = $topViewedProducts->take(4);
+                                    @endphp
+                                    @foreach ($trendingProducts as $product)
+                                        <li>
+                                            <div class="offer-product">
+                                                <a href="{{ route('client.product.detail', ['slug' => $product->slug]) }}"
+                                                    class="offer-image">
+                                                    <img src="{{ asset('storage/' . $product->image) }}"
+                                                        class="blur-up lazyload" alt="{{ $product->name }}">
+                                                </a>
+                                                <div class="offer-detail">
+                                                    <div>
+                                                        <a href="{{ route('client.product.detail', ['slug' => $product->slug]) }}"
+                                                            class="text-title">
+                                                            <h6 class="name">{{ $product->name }}</h6>
+                                                        </a>
+                                                        <span>{{ $product->weight ?? '' }}</span>
+                                                        <h6 class="price theme-color">{{ number_format($product->price) }}₫
+                                                        </h6>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </li>
-
-                                    <li>
-                                        <div class="offer-product">
-                                            <a href="product-left-thumbnail.html" class="offer-image">
-                                                <img src="../frontend/assets/images/vegetable/product/24.png"
-                                                    class="blur-up lazyload" alt="">
-                                            </a>
-
-                                            <div class="offer-detail">
-                                                <div>
-                                                    <a href="product-left-thumbnail.html" class="text-title">
-                                                        <h6 class="name">Dates Medjoul Premium Imported</h6>
-                                                    </a>
-                                                    <span>450 G</span>
-                                                    <h6 class="price theme-color">$ 40.00</h6>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-
-                                    <li>
-                                        <div class="offer-product">
-                                            <a href="product-left-thumbnail.html" class="offer-image">
-                                                <img src="../frontend/assets/images/vegetable/product/25.png"
-                                                    class="blur-up lazyload" alt="">
-                                            </a>
-
-                                            <div class="offer-detail">
-                                                <div>
-                                                    <a href="product-left-thumbnail.html" class="text-title">
-                                                        <h6 class="name">Good Life Walnut Kernels</h6>
-                                                    </a>
-                                                    <span>200 G</span>
-                                                    <h6 class="price theme-color">$ 52.00</h6>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-
-                                    <li class="mb-0">
-                                        <div class="offer-product">
-                                            <a href="product-left-thumbnail.html" class="offer-image">
-                                                <img src="../frontend/assets/images/vegetable/product/26.png"
-                                                    class="blur-up lazyload" alt="">
-                                            </a>
-
-                                            <div class="offer-detail">
-                                                <div>
-                                                    <a href="product-left-thumbnail.html" class="text-title">
-                                                        <h6 class="name">Apple Red Premium Imported</h6>
-                                                    </a>
-                                                    <span>1 KG</span>
-                                                    <h6 class="price theme-color">$ 80.00</h6>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
+                                        </li>
+                                    @endforeach
                                 </ul>
                             </div>
                         </div>
@@ -346,23 +296,84 @@
                                                     <div class="product-image">
                                                         <a href="#">
                                                             <img src="{{ asset('storage/' . $product->image) }}"
+
                                                                 alt="{{ $product->name }}">
                                                         </a>
                                                         <ul class="product-option">
+                                                            @php
+                                                                $descImgs = [];
+                                                                if (!empty($product->image)) {
+                                                                    $descImgs[] = asset('storage/' . $product->image);
+                                                                }
+                                                                if (
+                                                                    $product->product_images &&
+                                                                    $product->product_images->count()
+                                                                ) {
+                                                                    foreach ($product->product_images as $img) {
+                                                                        if (!empty($img->image_url)) {
+                                                                            $descImgs[] = $img->image_url;
+                                                                        }
+                                                                    }
+                                                                }
+                                                            @endphp
                                                             <li data-bs-toggle="tooltip" data-bs-placement="top"
-                                                                title="View">
+                                                                title="Xem nhanh">
+                                                                @php
+                                                                    $variantMap = $product->variants->map(function (
+                                                                        $v,
+                                                                    ) {
+                                                                        return [
+                                                                            'id' => $v->id,
+                                                                            'sku' => $v->sku,
+                                                                            'stock' => $v->stock,
+                                                                            'price' => $v->price,
+                                                                            'image' => $v->image
+                                                                                ? asset('storage/' . $v->image)
+                                                                                : null,
+                                                                            'value_ids' => $v->attributeValues
+                                                                                ->pluck('id')
+                                                                                ->sort()
+                                                                                ->values()
+                                                                                ->all(),
+                                                                        ];
+                                                                    });
+                                                                    $attributesMap = $product->variants->flatMap->attributeValues
+                                                                        ->groupBy('attribute_id')
+                                                                        ->map(function ($values, $attrId) {
+                                                                            return [
+                                                                                'name' => $values->first()->attribute
+                                                                                    ->name,
+                                                                                'values' => $values->pluck(
+                                                                                    'value',
+                                                                                    'id',
+                                                                                ),
+                                                                            ];
+                                                                        });
+                                                                @endphp
                                                                 <a href="javascript:void(0)" data-bs-toggle="modal"
-                                                                    data-bs-target="#view">
+                                                                    data-bs-target="#view" class="quickview-btn"
+                                                                    data-name="{{ $product->name }}"
+                                                                    data-price="{{ number_format($product->price) }}₫"
+                                                                    data-rating="{{ $product->reviews->avg('rating') ?? '' }}"
+                                                                    data-description="{{ $product->description }}"
+                                                                    data-code="{{ $product->variants->first()->sku ?? '' }}"
+                                                                    data-origin="{{ $product->origin ?? '' }}"
+                                                                    data-variant="{{ $product->variants->count() ? $product->variants->pluck('name')->implode(', ') : '' }}"
+                                                                    data-image="{{ asset('storage/' . $product->image) }}"
+                                                                    data-link="{{ route('client.product.detail', ['slug' => $product->slug]) }}"
+                                                                    data-description-images='@json($descImgs)'
+                                                                    data-variant-map='@json($variantMap)'
+                                                                    data-attributes='@json($attributesMap)'>
                                                                     <i data-feather="eye"></i>
                                                                 </a>
                                                             </li>
                                                             <li data-bs-toggle="tooltip" data-bs-placement="top"
-                                                                title="Compare">
+                                                                title="So sánh">
                                                                 <a href="{{ url('compare') }}"><i
                                                                         data-feather="refresh-cw"></i></a>
                                                             </li>
                                                             <li data-bs-toggle="tooltip" data-bs-placement="top"
-                                                                title="Add To Wishlist">
+                                                                title="Thêm vào yêu thích">
                                                                 <form action="{{ route('client.wishlist.store') }}"
                                                                     method="POST">
                                                                     @csrf
@@ -484,7 +495,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="title">
                         <h2>Sản phẩm theo danh mục</h2>
                         <span class="title-leaf">
@@ -492,13 +502,13 @@
                                 <use xlink:href="{{ asset('frontend/assets/svg/leaf.svg#leaf') }}"></use>
                             </svg>
                         </span>
-                        <p>Khám phá đa dạng đặc sản theo từng vùng miền.</p>
+                        <p>Khám phá đa dạng các loại đặc sản</p>
                     </div>
 
                     <div class="category-slider-2 product-wrapper no-arrow">
                         @forelse ($categories as $category)
                             <div>
-                                <a href="#" class="category-box category-dark">
+                                <a href="{{ route('client.product.index', ['category_id' => $category->id]) }}" class="category-box category-dark">
                                     <div>
                                         <img src="{{ asset('frontend/assets/svg/1/' . $category->image) }}"
                                             alt="{{ $category->name }}">
@@ -726,29 +736,84 @@
                         <div class="container">
                             <div class="row">
                                 @foreach ($latestProducts as $product)
-                                    <div class="col-6 col-md-3 mb-4"> {{-- 4 sản phẩm trên 1 hàng (12/3=4) --}}
+                                    <div class="col-6 col-md-3 mb-4">
                                         <div class="product-box">
                                             <div class="label-tag"><span>NEW</span></div>
                                             <div class="product-image">
                                                 <a
                                                     href="{{ route('client.product.detail', ['slug' => $product->slug]) }}">
                                                     <img src="{{ asset('storage/' . $product->image) }}"
+
                                                         class="img-fluid blur-up lazyload" alt="{{ $product->name }}">
                                                 </a>
                                                 <ul class="product-option">
-                                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
+                                                    @php
+                                                        $descImgs = [];
+                                                        if (!empty($product->image)) {
+                                                            $descImgs[] = asset('storage/' . $product->image);
+                                                        }
+                                                        if (
+                                                            $product->product_images &&
+                                                            $product->product_images->count()
+                                                        ) {
+                                                            foreach ($product->product_images as $img) {
+                                                                if (!empty($img->image_url)) {
+                                                                    $descImgs[] = $img->image_url;
+                                                                }
+                                                            }
+                                                        }
+                                                    @endphp
+                                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="Xenh nhanh">
+                                                        @php
+                                                            $variantMap = $product->variants->map(function ($v) {
+                                                                return [
+                                                                    'id' => $v->id,
+                                                                    'sku' => $v->sku,
+                                                                    'stock' => $v->stock,
+                                                                    'price' => $v->price,
+                                                                    'image' => $v->image
+                                                                        ? asset('storage/' . $v->image)
+                                                                        : null,
+                                                                    'value_ids' => $v->attributeValues
+                                                                        ->pluck('id')
+                                                                        ->sort()
+                                                                        ->values()
+                                                                        ->all(),
+                                                                ];
+                                                            });
+                                                            $attributesMap = $product->variants->flatMap->attributeValues
+                                                                ->groupBy('attribute_id')
+                                                                ->map(function ($values, $attrId) {
+                                                                    return [
+                                                                        'name' => $values->first()->attribute->name,
+                                                                        'values' => $values->pluck('value', 'id'),
+                                                                    ];
+                                                                });
+                                                        @endphp
                                                         <a href="javascript:void(0)" data-bs-toggle="modal"
-                                                            data-bs-target="#view">
+                                                            data-bs-target="#view" class="quickview-btn"
+                                                            data-name="{{ $product->name }}"
+                                                            data-price="{{ number_format($product->price) }}₫"
+                                                            data-rating="{{ $product->reviews->avg('rating') ?? '' }}"
+                                                            data-description="{{ $product->description }}"
+                                                            data-code="{{ $product->variants->first()->sku ?? '' }}"
+                                                            data-origin="{{ $product->origin ?? '' }}"
+                                                            data-variant="{{ $product->variants->count() ? $product->variants->pluck('name')->implode(', ') : '' }}"
+                                                            data-image="{{ asset('storage/' . $product->image) }}"
+                                                            data-link="{{ route('client.product.detail', ['slug' => $product->slug]) }}"
+                                                            data-description-images='@json($descImgs)'
+                                                            data-variant-map='@json($variantMap)'
+                                                            data-attributes='@json($attributesMap)'>
                                                             <i data-feather="eye"></i>
                                                         </a>
                                                     </li>
-                                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
+                                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="So sánh">
                                                         <a href="{{ url('compare') }}">
                                                             <i data-feather="refresh-cw"></i>
                                                         </a>
                                                     </li>
                                                     <li data-bs-toggle="tooltip" data-bs-placement="top"
-                                                        title="Add To Wishlist">
+                                                        title="Thêm vào yêu thích">
                                                         <form action="{{ route('client.wishlist.store') }}"
                                                             method="POST">
                                                             @csrf
@@ -877,318 +942,119 @@
                             <h2>Sản phẩm bán chạy</h2>
                             <span class="title-leaf">
                                 <svg class="icon-width">
-                                    <use xlink:href="https://themes.pixelstrap.com/fastkart/assets/svg/leaf.svg#leaf">
-                                    </use>
+                                    <use xlink:href="../frontend/assets/svg/leaf.svg#leaf"></use>
+                                </svg>
+                            </span>
+                            <p>Trợ lý ảo thu thập các sản phẩm từ danh sách của bạn</p>
+                        </div>
+
+                        <div class="best-selling-slider product-wrapper wow fadeInUp">
+                            @php
+                                // Lấy tối đa 12 sản phẩm từ $bestSellingProducts (giữ nguyên collection)
+                                $products = $bestSellingProducts->take(12);
+                                // Chia thành 3 nhóm, mỗi nhóm tối đa 4 sản phẩm (dùng collection chunk)
+                                $chunks = $products->chunk(4);
+                            @endphp
+
+                            @if ($chunks->isEmpty())
+                                <p>Không có sản phẩm nào để hiển thị.</p>
+                            @else
+                                @foreach ($chunks as $index => $chunk)
+                                    @if ($index < 3)
+                                        <!-- Giới hạn tối đa 3 ô -->
+                                        <div>
+                                            <ul class="product-list">
+                                                @foreach ($chunk as $product)
+                                                    <li>
+                                                        <div class="offer-product">
+                                                            <a href="{{ route('client.product.detail', ['slug' => $product->slug]) }}"
+                                                                class="offer-image">
+                                                                <img src="{{ asset('storage/' . $product->image) }}"
+                                                                    class="blur-up lazyload" alt="{{ $product->name }}">
+                                                            </a>
+                                                            <div class="offer-detail">
+                                                                <div>
+                                                                    <a href="{{ route('client.product.detail', ['slug' => $product->slug]) }}"
+                                                                        class="text-title">
+                                                                        <h6 class="name">{{ $product->name }}</h6>
+                                                                    </a>
+                                                                    <span>{{ $product->weight ?? '' }}</span>
+                                                                    <h6 class="price theme-color">
+                                                                        {{ number_format($product->price) }}₫
+                                                                    </h6>
+                                                                </div>
+                                                            </div>
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                    @endif
+                                @endforeach
+                            @endif
+                        </div>
+                        {{-- Last page promo banner --}}
+                        @if ($lastPagePromoBanner)
+                            <div class="section-t-space">
+                                <div class="banner-contain hover-effect" style="min-height: 250px;">
+                                    <img src="{{ asset('storage/' . $lastPagePromoBanner->image) }}"
+                                        class="bg-img blur-up lazyload" alt="{{ $lastPagePromoBanner->title }}">
+                                    <div class="banner-details p-center banner-b-space w-100 text-center">
+                                        <div>
+                                            <h6 class="ls-expanded theme-color mb-sm-3 mb-1">{!! $lastPagePromoBanner->title !!}</h6>
+                                            {{-- <h2 class="banner-title">{!! $lastPagePromoBanner->link !!}</h2> --}}
+                                            {{-- <button onclick="location.href = '{{ $lastPagePromoBanner->link ?? '#' }}';"
+                                            class="btn btn-animation btn-sm mx-auto mt-sm-3 mt-2">Shop Now <i
+                                                class="fa-solid fa-arrow-right icon"></i></button> --}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                        <div class="title section-t-space">
+                            <h2>Tin tức nổi bật</h2>
+
+                            <span class="title-leaf">
+                                <svg class="icon-width">
+                                    <use xlink:href="../frontend/assets/svg/leaf.svg#leaf"></use>
                                 </svg>
                             </span>
                             <p>A virtual assistant collects the products from your list</p>
                         </div>
-                    </div>
 
-                    <div class="best-selling-slider product-wrapper wow fadeInUp">
-                        <div>
-                            <ul class="product-list">
-                                <li>
-                                    <div class="offer-product">
-                                        <a href="product-left-thumbnail.html" class="offer-image">
-                                            <img src="../assets/images/vegetable/product/11.png" class="blur-up lazyload"
-                                                alt="">
-                                        </a>
-
-                                        <div class="offer-detail">
-                                            <div>
-                                                <a href="product-left-thumbnail.html" class="text-title">
-                                                    <h6 class="name">Tuffets Whole Wheat Bread</h6>
-                                                </a>
-                                                <span>500 G</span>
-                                                <h6 class="price theme-color">$ 10.00</h6>
-                                            </div>
+                        <div class="slider-3-blog ratio_65 no-arrow product-wrapper">
+                            @foreach ($blogs as $item)
+                                <div>
+                                    <div class="blog-box wow fadeInUp" data-wow-delay="0.1s">
+                                        <div class="blog-box-image">
+                                            <a href="{{ route('client.blogs-detail', ['id' => $item->id]) }}"
+                                                class="blog-image">
+                                                @if (!empty($item->thumbnail) && file_exists(public_path($item->thumbnail)))
+                                                    <img src="{{ asset($item->thumbnail) }}" alt="{{ $item->title }}"
+                                                        class="bg-img blur-up lazyload w-100">
+                                                @else
+                                                    <img src="{{ asset('images/default-blog.jpg') }}" alt="No image"
+                                                        class="bg-img blur-up lazyload w-100">
+                                                @endif
+                                            </a>
                                         </div>
-                                    </div>
-                                </li>
 
-                                <li>
-                                    <div class="offer-product">
-                                        <a href="product-left-thumbnail.html" class="offer-image">
-                                            <img src="../assets/images/vegetable/product/12.png" class="blur-up lazyload"
-                                                alt="">
-                                        </a>
-
-                                        <div class="offer-detail">
-                                            <div>
-                                                <a href="product-left-thumbnail.html" class="text-title">
-                                                    <h6 class="name">Potato</h6>
-                                                </a>
-                                                <span>500 G</span>
-                                                <h6 class="price theme-color">$ 10.00</h6>
-                                            </div>
+                                        <div class="blog-detail px-2 pt-3">
+                                            <h6 class="text-muted">
+                                                <i data-feather="clock" class="me-1"></i>
+                                                {{ $item->created_at ? $item->created_at->format('F d, Y') : 'Chưa có ngày tạo' }}
+                                            </h6>
+                                            <a href="{{ route('client.blogs-detail', ['id' => $item->id]) }}">
+                                                <h5 class="mt-2 mb-3">{{ $item->title }}</h5>
+                                            </a>
                                         </div>
-                                    </div>
-                                </li>
-
-                                <li>
-                                    <div class="offer-product">
-                                        <a href="product-left-thumbnail.html" class="offer-image">
-                                            <img src="../assets/images/vegetable/product/13.png" class="blur-up lazyload"
-                                                alt="">
-                                        </a>
-
-                                        <div class="offer-detail">
-                                            <div>
-                                                <a href="product-left-thumbnail.html" class="text-title">
-                                                    <h6 class="name">Green Chilli</h6>
-                                                </a>
-                                                <span>200 G</span>
-                                                <h6 class="price theme-color">$ 10.00</h6>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-
-                                <li>
-                                    <div class="offer-product">
-                                        <a href="product-left-thumbnail.html" class="offer-image">
-                                            <img src="../assets/images/vegetable/product/14.png" class="blur-up lazyload"
-                                                alt="">
-                                        </a>
-
-                                        <div class="offer-detail">
-                                            <div>
-                                                <a href="product-left-thumbnail.html" class="text-title">
-                                                    <h6 class="name">Muffets Burger Bun</h6>
-                                                </a>
-                                                <span>150 G</span>
-                                                <h6 class="price theme-color">$ 10.00</h6>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div>
-                            <ul class="product-list">
-                                <li>
-                                    <div class="offer-product">
-                                        <a href="product-left-thumbnail.html" class="offer-image">
-                                            <img src="../assets/images/vegetable/product/15.png" class="blur-up lazyload"
-                                                alt="">
-                                        </a>
-
-                                        <div class="offer-detail">
-                                            <div>
-                                                <a href="product-left-thumbnail.html" class="text-title">
-                                                    <h6 class="name">Tuffets Britannia Cheezza</h6>
-                                                </a>
-                                                <span>500 G</span>
-                                                <h6 class="price theme-color">$ 10.00</h6>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-
-                                <li>
-                                    <div class="offer-product">
-                                        <a href="product-left-thumbnail.html" class="offer-image">
-                                            <img src="../assets/images/vegetable/product/16.png" class="blur-up lazyload"
-                                                alt="">
-                                        </a>
-
-                                        <div class="offer-detail">
-                                            <div>
-                                                <a href="product-left-thumbnail.html" class="text-title">
-                                                    <h6 class="name">Long Life Toned Milk</h6>
-                                                </a>
-                                                <span>1 L</span>
-                                                <h6 class="price theme-color">$ 10.00</h6>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-
-                                <li>
-                                    <div class="offer-product">
-                                        <a href="product-left-thumbnail.html" class="offer-image">
-                                            <img src="../assets/images/vegetable/product/17.png" class="blur-up lazyload"
-                                                alt="">
-                                        </a>
-
-                                        <div class="offer-detail">
-                                            <div>
-                                                <a href="product-left-thumbnail.html" class="text-title">
-                                                    <h6 class="name">Organic Tomato</h6>
-                                                </a>
-                                                <span>1 KG</span>
-                                                <h6 class="price theme-color">$ 10.00</h6>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-
-                                <li>
-                                    <div class="offer-product">
-                                        <a href="product-left-thumbnail.html" class="offer-image">
-                                            <img src="../assets/images/vegetable/product/18.png" class="blur-up lazyload"
-                                                alt="">
-                                        </a>
-
-                                        <div class="offer-detail">
-                                            <div>
-                                                <a href="product-left-thumbnail.html" class="text-title">
-                                                    <h6 class="name">Organic Jam</h6>
-                                                </a>
-                                                <span>150 G</span>
-                                                <h6 class="price theme-color">$ 10.00</h6>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div>
-                            <ul class="product-list">
-                                <li>
-                                    <div class="offer-product">
-                                        <a href="product-left-thumbnail.html" class="offer-image">
-                                            <img src="../assets/images/vegetable/product/19.png" class="blur-up lazyload"
-                                                alt="">
-                                        </a>
-
-                                        <div class="offer-detail">
-                                            <div>
-                                                <a href="product-left-thumbnail.html" class="text-title">
-                                                    <h6 class="name">Good Life Refined Sunflower Oil</h6>
-                                                </a>
-                                                <span>1 L</span>
-                                                <h6 class="price theme-color">$ 10.00</h6>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-
-                                <li>
-                                    <div class="offer-product">
-                                        <a href="product-left-thumbnail.html" class="offer-image">
-                                            <img src="../assets/images/vegetable/product/20.png" class="blur-up lazyload"
-                                                alt="">
-                                        </a>
-
-                                        <div class="offer-detail">
-                                            <div>
-                                                <a href="product-left-thumbnail.html" class="text-title">
-                                                    <h6 class="name">Good Life Raw Peanuts</h6>
-                                                </a>
-                                                <span>500 G</span>
-                                                <h6 class="price theme-color">$ 10.00</h6>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-
-                                <li>
-                                    <div class="offer-product">
-                                        <a href="product-left-thumbnail.html" class="offer-image">
-                                            <img src="../assets/images/vegetable/product/21.png" class="blur-up lazyload"
-                                                alt="">
-                                        </a>
-
-                                        <div class="offer-detail">
-                                            <div>
-                                                <a href="product-left-thumbnail.html" class="text-title">
-                                                    <h6 class="name">TufBest Farms Mong Dal</h6>
-                                                </a>
-                                                <span>1 KG</span>
-                                                <h6 class="price theme-color">$ 10.00</h6>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-
-                                <li>
-                                    <div class="offer-product">
-                                        <a href="product-left-thumbnail.html" class="offer-image">
-                                            <img src="../assets/images/vegetable/product/22.png" class="blur-up lazyload"
-                                                alt="">
-                                        </a>
-
-                                        <div class="offer-detail">
-                                            <div>
-                                                <a href="product-left-thumbnail.html" class="text-title">
-                                                    <h6 class="name">Frooti Mango Drink</h6>
-                                                </a>
-                                                <span>160 ML</span>
-                                                <h6 class="price theme-color">$ 10.00</h6>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    {{-- Last page promo banner --}}
-                    @if ($lastPagePromoBanner)
-                        <div class="section-t-space">
-                            <div class="banner-contain hover-effect" style="min-height: 250px;">
-                                <img src="{{ asset('storage/' . $lastPagePromoBanner->image) }}"
-                                    class="bg-img blur-up lazyload" alt="{{ $lastPagePromoBanner->title }}">
-                                <div class="banner-details p-center banner-b-space w-100 text-center">
-                                    <div>
-                                        <h6 class="ls-expanded theme-color mb-sm-3 mb-1">{!! $lastPagePromoBanner->title !!}</h6>
-                                        {{-- <h2 class="banner-title">{!! $lastPagePromoBanner->link !!}</h2> --}}
-                                        {{-- <button onclick="location.href = '{{ $lastPagePromoBanner->link ?? '#' }}';"
-                                            class="btn btn-animation btn-sm mx-auto mt-sm-3 mt-2">Shop Now <i
-                                                class="fa-solid fa-arrow-right icon"></i></button> --}}
                                     </div>
                                 </div>
-                            </div>
+                            @endforeach
                         </div>
-                    @endif
-
-                    <div class="title section-t-space">
-                        <h2>Tin tức nổi bật</h2>
-
-                        <span class="title-leaf">
-                            <svg class="icon-width">
-                                <use xlink:href="../frontend/assets/svg/leaf.svg#leaf"></use>
-                            </svg>
-                        </span>
-                        <p>A virtual assistant collects the products from your list</p>
-                    </div>
-
-                    <div class="slider-3-blog ratio_65 no-arrow product-wrapper">
-                        @foreach ($blogs as $item)
-                            <div>
-                                <div class="blog-box wow fadeInUp" data-wow-delay="0.1s">
-                                    <div class="blog-box-image">
-                                        <a href="{{ route('blogs-detail', ['id' => $item->id]) }}" class="blog-image">
-                                            @if (!empty($item->thumbnail) && file_exists(public_path($item->thumbnail)))
-                                                <img src="{{ asset($item->thumbnail) }}" alt="{{ $item->title }}"
-                                                    class="bg-img blur-up lazyload w-100">
-                                            @else
-                                                <img src="{{ asset('images/default-blog.jpg') }}" alt="No image"
-                                                    class="bg-img blur-up lazyload w-100">
-                                            @endif
-                                        </a>
-                                    </div>
-
-                                    <div class="blog-detail px-2 pt-3">
-                                        <h6 class="text-muted">
-                                            <i data-feather="clock" class="me-1"></i>
-                                            {{ $item->created_at ? $item->created_at->format('F d, Y') : 'Chưa có ngày tạo' }}
-                                        </h6>
-                                        <a href="{{ route('blogs-detail', ['id' => $item->id]) }}">
-                                            <h5 class="mt-2 mb-3">{{ $item->title }}</h5>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
                     </div>
                 </div>
             </div>
-        </div>
     </section>
     <!-- PRODUCT SECTION END -->
 
@@ -1221,4 +1087,32 @@
         </div>
     </section>
     <!-- NEWSLETTER SECTION END -->
+
+    <style>
+        /* Ảnh sản phẩm ở các phần nổi bật, mới, bán chạy */
+        .product-box .product-image,
+        .product-image,
+        .offer-product .offer-image {
+            width: 100%;
+            max-width: 3050px;
+            aspect-ratio: 1/1;
+            position: relative;
+            overflow: hidden;
+            border-radius: 25px;
+            background: #f8f8f8;
+            display: block;
+        }
+
+        .product-box .product-image img,
+        .product-image img,
+        .offer-product .offer-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            border-radius: 16px;
+            display: block;
+            background: #f8f8f8;
+        }
+    </style>
 @endsection
