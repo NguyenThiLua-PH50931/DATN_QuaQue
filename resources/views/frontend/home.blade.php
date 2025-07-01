@@ -104,7 +104,9 @@
                                     <li @if ($loop->last) class="pb-30" @endif>
                                         <div class="category-list">
                                             <img src="{{ asset('storage/' . $category->image) }}"
-                                                alt="{{ $category->name }}" class="w-20 h-20 object-cover">
+                                                alt="{{ $category->name }}"
+                                                style="filter:none !important; mix-blend-mode:normal !important; opacity:1 !important;"
+                                                class="w-20 h-20 object-cover">
                                             <h5>
                                                 <a href="{{ route('client.product.index', ['category_id' => $category->id]) }}">{{ $category->name }}</a>
                                             </h5>
@@ -299,7 +301,7 @@
                                                             <img src="{{ asset('storage/' . $product->image) }}"
                                                                 alt="{{ $product->name }}"
                                                                 class="img-fluid blur-up lazyload"
-                                                                alt="{{ $product->name }}">
+                                                                style="filter:none !important; mix-blend-mode:normal !important; opacity:1 !important;">
                                                         </a>
                                                         <ul class="product-option">
                                                             @php
@@ -455,7 +457,8 @@
                                 <a href="{{ route('client.product.index', ['category_id' => $category->id]) }}" class="category-box category-dark">
                                     <div>
                                         <img src="{{ asset('storage/' . $category->image) }}"
-                                            alt="{{ $category->name }}">
+                                            alt="{{ $category->name }}"
+                                            style="filter:none !important; mix-blend-mode:normal !important; opacity:1 !important;">
                                         <h5>{{ $category->name }}</h5>
                                     </div>
                                 </a>
@@ -522,7 +525,7 @@
                                                     href="{{ route('client.product.detail', ['slug' => $product->slug]) }}">
                                                     <img src="{{ asset('storage/' . $product->image) }}"
                                                         alt="{{ $product->name }}" class="img-fluid blur-up lazyload"
-                                                        alt="{{ $product->name }}">
+                                                        style="filter:none !important; mix-blend-mode:normal !important; opacity:1 !important;">
                                                 </a>
                                                 <ul class="product-option">
                                                     @php
