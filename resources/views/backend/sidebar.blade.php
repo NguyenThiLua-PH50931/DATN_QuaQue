@@ -4,7 +4,7 @@
 
     <!-- Fixed Logo Header -->
     <div class="logo-wrapper logo-wrapper-center" style="">
-        <a href="{{ url('/admin') }}" title="">
+        <a href="{{ url('/admin/reports') }}" title="">
             <img class="img-fluid for-white" src="{{ asset('storage/banners/logo/logo_1.png') }}" alt="logo" style="top:30px">
         </a>
         <div class="back-btn">
@@ -16,23 +16,20 @@
         <div class="left-arrow" id="left-arrow"><i data-feather="arrow-left"></i></div>
         <div id="sidebar-menu">
             <ul class="sidebar-links" id="simple-bar">
-                <li class="back-btn"></li>
-                <li class="sidebar-list">
-                    <a class="sidebar-link sidebar-title link-nav" href="{{ route('admin.dashboard') }}">
-                        <span></span>
-                    </a>
-                </li>
-                   <li class="sidebar-list">
-                    <a class="sidebar-link sidebar-title link-nav" href="{{ route('admin.dashboard') }}">
-                        <span></span>
-                    </a>
-                </li>
-                <li class="sidebar-list">
+                <li class="back-btn"></li> <br><br><br><br>
+                {{-- <li class="sidebar-list">
                     <a class="sidebar-link sidebar-title link-nav" href="{{ route('admin.dashboard') }}">
                         <i class="ri-list-check"></i>
                         <span>Báo cáo hệ thống</span>
                     </a>
+                </li> --}}
+                <li class="sidebar-list">
+                    <a class="sidebar-link" href="{{ url('/admin/reports') }}">
+                        <i class="ri-list-check-2"></i>
+                        <span>Báo cáo hệ thống</span>
+                    </a>
                 </li>
+
                 <li class="sidebar-list">
                     <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                         <i class="ri-user-3-line"></i>
@@ -97,11 +94,6 @@
                         <i class="ri-list-check-2"></i>
                         <span>Đơn hàng</span>
                     </a>
-                    <ul class="sidebar-submenu">
-                        <li><a href="{{ url('/admin/orders') }}">Danh sách</a></li>
-                        <li><a href="{{ url('/admin/orders/detail') }}">Chi tiết</a></li>
-                        <li><a href="{{ url('/admin/orders/tracking') }}">Theo dõi đơn hàng</a></li>
-                    </ul>
                 </li>
 
                 <li class="sidebar-list">

@@ -51,7 +51,7 @@
                                  <i class="fa-solid fa-bars"></i>
                              </span>
                          </button>
-                         <a href="{{ url('/') }}" class="web-logo nav-logo">
+                         <a href="{{ url('/client/home') }}" class="web-logo nav-logo">
                              <img src="{{ asset('/storage/banners/logo/logo.png') }}" class="img-fluid blur-up lazyload"
                                  alt="Logo Quà Quê" style="width: 150px; height: auto;">
                          </a>
