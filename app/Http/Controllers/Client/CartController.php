@@ -105,11 +105,15 @@ class CartController extends Controller
         $price = $variant->price;
         $stock = $variant->stock ?? 0;
 
+        if ($stock <= 0) {
+            return redirect()->back()->with('error', 'Sản phẩm đã hết hàng, bạn không thể thêm vào giỏ.');
+        }
         if ($price === null || $price <= 0) {
             return redirect()->back()->with('error', 'Giá sản phẩm không hợp lệ.');
         }
 
         // Tìm cart item với product + variant_attributes giống nhau
+        // Tìm cart item với product + variant_attributes + variant_id giống nhau
         $cartQuery = CartItem::where('user_id', $userId)
             ->where('product_id', $productId);
 
@@ -119,7 +123,15 @@ class CartController extends Controller
             $cartQuery->where('variant_attributes', $variantAttributes);
         }
 
+        if ($variantId === null) {
+            $cartQuery->whereNull('variant_id');
+        } else {
+            $cartQuery->where('variant_id', $variantId);
+        }
+
         $existingCartItem = $cartQuery->first();
+
+
 
         if ($existingCartItem) {
             $newQuantity = $existingCartItem->quantity + $quantityToAdd;
@@ -200,6 +212,13 @@ class CartController extends Controller
     public function updateQuantity(Request $request)
     {
         $cartItemId = $request->cart_item_id;
+
+        $cartItem = CartItem::with(['variant', 'product'])->find($cartItemId);
+        Log::info('CartItem Debug:', [
+            'cartItem' => $cartItem,
+            'variant' => $cartItem->variant,
+            'product' => $cartItem->product,
+        ]);
         $action = $request->action;
 
         $cartItem = CartItem::with(['variant', 'product'])->find($cartItemId);
@@ -209,11 +228,15 @@ class CartController extends Controller
 
         $quantity = $cartItem->quantity;
 
-        // Lấy tồn kho ưu tiên biến thể, nếu không có thì lấy tồn kho sản phẩm
-        $stock = $cartItem->variant->stock ?? $cartItem->product->stock ?? 0;
+        $stock = 0;
 
+        if ($cartItem->variant && isset($cartItem->variant->stock)) {
+            $stock = (int) $cartItem->variant->stock;
+        } elseif ($cartItem->product && isset($cartItem->product->stock)) {
+            $stock = (int) $cartItem->product->stock;
+        }
         if ($action === 'increase') {
-            if ($quantity < $stock) {
+            if ($quantity + 1 <= $stock) {
                 $quantity++;
             } else {
                 return response()->json(['success' => false, 'message' => 'Số lượng vượt quá tồn kho'], 400);
@@ -225,12 +248,12 @@ class CartController extends Controller
         $cartItem->quantity = $quantity;
         $cartItem->save();
 
-        return response()->json(['success' => true, 'quantity' => $quantity]);
+        return response()->json([
+            'success' => true,
+            'quantity' => $quantity,
+            'stock' => $stock,
+        ]);
     }
-
-
-
-
 
     // Giỏ hàng ở header
     public function remove($id)
@@ -259,5 +282,42 @@ class CartController extends Controller
                 'message' => 'Có lỗi khi xóa sản phẩm.'
             ], 500);
         }
+    }
+
+    // Cập nhập biến thể:
+    public function updateVariant(Request $request)
+    {
+        $cartItemId = $request->cart_item_id;
+        $variantId = $request->variant_id;
+
+        $cartItem = CartItem::with('product', 'variant')->find($cartItemId);
+        if (!$cartItem) {
+            return response()->json(['success' => false, 'message' => 'Sản phẩm trong giỏ không tồn tại'], 404);
+        }
+
+        $newVariant = ProductVariant::find($variantId);
+        if (!$newVariant || $newVariant->product_id != $cartItem->product_id) {
+            return response()->json(['success' => false, 'message' => 'Biến thể không hợp lệ'], 400);
+        }
+
+        // Kiểm tra tồn kho
+        if ($cartItem->quantity > $newVariant->stock) {
+            return response()->json(['success' => false, 'message' => 'Số lượng vượt quá tồn kho biến thể mới'], 400);
+        }
+
+        // Cập nhật cart item
+        $cartItem->variant_id = $newVariant->id;
+        $cartItem->price = $newVariant->price;
+        // Nếu muốn lưu variant_attributes tương ứng thì thêm
+        // $cartItem->variant_attributes = ... lấy thuộc tính của variant mới
+        $cartItem->save();
+
+        return response()->json([
+            'success' => true,
+            'newVariantName' => $newVariant->name,  // <-- Thêm dòng này
+            'newPrice' => $newVariant->price,
+            'quantity' => $cartItem->quantity,
+            'stock' => $newVariant->stock,
+        ]);
     }
 }

@@ -38,12 +38,13 @@
 }
 
 </style>
-    {{-- <!-- Breadcrumb Section Start -->
+    {{-- {{-- <!-- Breadcrumb Section Start --> --}}
     <section class="breadscrumb-section pt-0">
         <div class="container-fluid-lg">
             <div class="row">
                 <div class="col-12">
                     <div class="breadscrumb-contain">
+                        <h2>Giới thiệu</h2>
                         <nav>
                             <ol class="breadcrumb mb-0">
                                 <li class="breadcrumb-item">
@@ -61,7 +62,7 @@
             </div>
         </div>
     </section>
-    <!-- Breadcrumb Section End --> --}}
+    <!-- Breadcrumb Section End -->
 
     <!-- Fresh Vegetable Section Start -->
     <section class="fresh-vegetable-section section-lg-space">

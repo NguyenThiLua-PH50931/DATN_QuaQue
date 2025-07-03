@@ -3,6 +3,29 @@
 @section('title', 'Tất cả sản phẩm')
 
 @section('contents')
+<div style="margin-bottom: 40px">
+ <section class="breadscrumb-section pt-0">
+        <div class="container-fluid-lg">
+            <div class="row">
+                <div class="col-12">
+                    <div class="breadscrumb-contain">
+                        <h2>Sản phẩm</h2>
+                        <nav>
+                            <ol class="breadcrumb mb-0">
+                                <li class="breadcrumb-item">
+                                    <a href="{{ route('client.home') }}">
+                                        <i class="fa-solid fa-house"></i>
+                                    </a>
+                                </li>
+                                <li class="breadcrumb-item active" aria-current="page">Sản phẩm</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    </div>
 <div class="container-fluid-lg">
     <div class="row">
         <!-- Sidebar Filter -->

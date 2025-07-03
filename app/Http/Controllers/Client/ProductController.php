@@ -124,7 +124,8 @@ class ProductController extends Controller
                 'price' => $v->price,
                 'image' => $v->image ? asset('storage/' . $v->image) : null,
                 // Ép kiểu int cho các value_ids và sort
-                'value_ids' => $v->attributeValues->pluck('id')->map(fn($id) => (int)$id)->sort()->values()->all(),6
+                'value_ids' => $v->attributeValues->pluck('id')->map(fn($id) => (int)$id)->sort()->values()->all(),
+                'active' => (int) $v->active,  // lấy trường active đúng kiểu int
             ];
         });
 
