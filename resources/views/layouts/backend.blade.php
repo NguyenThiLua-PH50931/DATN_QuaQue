@@ -254,12 +254,12 @@ document.querySelectorAll('.status-select').forEach(function(select) {
             const isHidden = !!data.is_hidden;
             ul.innerHTML = `
                 <li>
-                    <a href="${form.action.replace('update-status', 'show')}">
+                    <a href="${form.action.replace('update-status', '')}">
                         <i class="ri-eye-line"></i>
                     </a>
                 </li>
                 <li>
-                    <a href="${form.action.replace('update-status', 'tracking')}">
+                    <a href="${form.action.replace('/update-status', '/tracking')}">
                         <i class="ri-map-pin-line"></i>
                     </a>
                 </li>
