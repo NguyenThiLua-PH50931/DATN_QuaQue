@@ -93,6 +93,7 @@
                         <div class="category-menu">
                             <h3>Danh Mục</h3>
                             <ul>
+                                {{-- @php dd($categories) @endphp --}}
                                 @foreach ($categories as $category)
                                     @php
                                         // Chuyển tên category thành tên ảnh (bỏ dấu cách, ký tự đặc biệt)
@@ -100,7 +101,6 @@
                                         $imgName = str_replace([' ', '&'], '-', $imgName);
                                         $imgName = preg_replace('/[^a-z0-9\-]/', '', $imgName);
                                     @endphp
-
                                     <li @if ($loop->last) class="pb-30" @endif>
                                         <div class="category-list">
                                             <img src="{{ asset('storage/' . $category->image) }}"
@@ -108,7 +108,8 @@
                                                 style="filter:none !important; mix-blend-mode:normal !important; opacity:1 !important;"
                                                 class="w-20 h-20 object-cover">
                                             <h5>
-                                                <a href="{{ route('client.product.index', ['category_id' => $category->id]) }}">{{ $category->name }}</a>
+                                                <a
+                                                    href="{{ route('client.product.index', ['category_id' => $category->id]) }}">{{ $category->name }}</a>
                                             </h5>
                                         </div>
                                     </li>
@@ -247,8 +248,8 @@
                         <div class="timing-box">
                             {{-- <div class="timing">
                                 <i data-feather="clock"></i> --}}
-                                {{-- <h6 class="name">Expires in :</h6> --}}
-                                {{-- <div class="time" id="clockdiv-1" data-hours="1" data-minutes="2" data-seconds="3">
+                            {{-- <h6 class="name">Expires in :</h6> --}}
+                            {{-- <div class="time" id="clockdiv-1" data-hours="1" data-minutes="2" data-seconds="3">
                                     <ul>
                                         <li>
                                             <div class="counter">
@@ -376,14 +377,14 @@
                                                                         data-feather="refresh-cw"></i></a>
                                                             </li>
                                                             <li data-bs-toggle="tooltip" data-bs-placement="top"
-                                                                title="Thêm vào yêu thích">
+                                                                title="Yêu thích">
                                                                 <form action="{{ route('client.wishlist.store') }}"
-                                                                    method="POST">
+                                                                    method="POST" style="display:inline-block;">
                                                                     @csrf
                                                                     <input type="hidden" name="product_id"
                                                                         value="{{ $product->id }}">
-                                                                    <button type="submit"
-                                                                        class="notifi-wishlist btn p-0">
+                                                                    <button type="submit" class="notifi-wishlist btn p-0"
+                                                                        style="border:none; background:none; width: 18px; height: 18px; margin-top: 10px">
                                                                         <i data-feather="heart"
                                                                             @if (auth()->check() && auth()->user()->wishlist()->where('product_id', $product->id)->exists()) class="text-red-500" @endif></i>
                                                                     </button>
@@ -468,9 +469,10 @@
                     <div class="category-slider-2 product-wrapper no-arrow">
                         @forelse ($categories as $category)
                             <div>
-                                <a href="{{ route('client.product.index', ['category_id' => $category->id]) }}" class="category-box category-dark">
+                                <a href="{{ route('client.product.index', ['category_id' => $category->id]) }}"
+                                    class="category-box category-dark">
                                     <div>
-                                        <img src="{{ asset('frontend/assets/svg/1/' . $category->image) }}"
+                                        <img src="{{ asset('storage/' . $category->image) }}"
                                             alt="{{ $category->name }}">
                                         <h5>{{ $category->name }}</h5>
                                     </div>
@@ -620,33 +622,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <div class="title">
-                        <h2>Sản phẩm theo danh mục</h2>
-                        <span class="title-leaf">
-                            <svg class="icon-width">
-                                <use xlink:href="{{ asset('frontend/assets/svg/leaf.svg#leaf') }}"></use>
-                            </svg>
-                        </span>
-                        <p>Khám phá đa dạng đặc sản theo từng vùng miền.</p>
-                    </div>
-
-                    <div class="category-slider-2 product-wrapper no-arrow">
-                        @forelse ($categories as $category)
-                            <div>
-                                <a href="#" class="category-box category-dark">
-                                    <div>
-                                        <img src="{{ asset('frontend/assets/svg/1/' . $category->image) }}"
-                                            alt="{{ $category->name }}">
-                                        <h5>{{ $category->name }}</h5>
-                                    </div>
-                                </a>
-                            </div>
-                        @empty
-                            <p>Không có danh mục nào.</p>
-                        @endforelse
-                    </div>
-
                     <div class="section-t-space section-b-space">
                         <div class="row g-md-4 g-3">
                             <div class="col-md-6">
@@ -723,7 +698,8 @@
                                                             }
                                                         }
                                                     @endphp
-                                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="Xenh nhanh">
+                                                    <li data-bs-toggle="tooltip" data-bs-placement="top"
+                                                        title="Xenh nhanh">
                                                         @php
                                                             $variantMap = $product->variants->map(function ($v) {
                                                                 return [
@@ -773,7 +749,7 @@
                                                         </a>
                                                     </li>
                                                     <li data-bs-toggle="tooltip" data-bs-placement="top"
-                                                        title="Thêm vào yêu thích">
+                                                        title="Yêu thích">
                                                         <form action="{{ route('client.wishlist.store') }}"
                                                             method="POST">
                                                             @csrf
@@ -1027,14 +1003,14 @@
                         <div class="row">
                             <div class="col-xxl-4 col-lg-5 col-md-7 col-sm-9 offset-xxl-2 offset-md-1">
                                 <div class="newsletter-detail">
-                                    <h2>Join our newsletter and get...</h2>
-                                    <h5>$20 discount for your first order</h5>
+                                    <h2>Hân hạnh được phục vụ!</h2>
+                                    <h5>Nếu bạn có thắc mắc hãy để lại nhé !</h5>
                                     <div class="input-box">
                                         <input type="email" class="form-control" id="exampleFormControlInput1"
-                                            placeholder="Enter Your Email">
+                                            placeholder="Email của bạn">
                                         <i class="fa-solid fa-envelope arrow"></i>
                                         <button class="sub-btn  btn-animation">
-                                            <span class="d-sm-block d-none">Subscribe</span>
+                                            <span class="d-sm-block d-none">Gửi</span>
                                             <i class="fa-solid fa-arrow-right icon"></i>
                                         </button>
                                     </div>
