@@ -1,15 +1,41 @@
 @extends('layouts.frontend')
 @section('title', 'Liên hệ')
 @section('contents')
-    <section class="contact-box-section section-b-space" style="background: url('/frontend/assets/images/inner-page/log-in-bg.png') center/cover no-repeat;">
+    <section class="breadscrumb-section pt-0">
+        <div class="container-fluid-lg">
+            <div class="row">
+                <div class="col-12">
+                    <div class="breadscrumb-contain">
+                        <h2>Liên hệ</h2>
+                        <nav>
+                            <ol class="breadcrumb mb-0">
+                                <li class="breadcrumb-item">
+                                    <a href="index.html">
+                                        <i class="fa-solid fa-house"></i>
+                                    </a>
+                                </li>
+                                <li class="breadcrumb-item active" aria-current="page">
+                                    Liên hệ
+                                </li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="contact-box-section section-b-space"
+        style="background: url('/frontend/assets/images/inner-page/log-in-bg.png') center/cover no-repeat;">
         <div class="container-fluid-lg">
             <div class="row g-lg-5 g-3">
                 <div class="col-lg-6 d-flex align-items-center justify-content-center">
                     <div class="left-sidebar-box w-100">
                         <div class="row">
                             <div class="col-xl-12">
-                                <div class="contact-image text-center d-flex align-items-center justify-content-center" style="min-height: 500px;">
-                                    <img src="uploads/anh3.png" class="img-fluid blur-up lazyloaded" alt="" style="max-width: 600px; width: 100%; height: auto; margin: 0 auto; display: block;">
+                                <div class="contact-image text-center d-flex align-items-center justify-content-center"
+                                    style="min-height: 500px;">
+                                    <img src="uploads/anh3.png" class="img-fluid blur-up lazyloaded" alt=""
+                                        style="max-width: 600px; width: 100%; height: auto; margin: 0 auto; display: block;">
                                 </div>
                             </div>
                         </div>

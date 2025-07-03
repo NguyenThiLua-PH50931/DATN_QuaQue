@@ -26,6 +26,8 @@ use App\Http\Controllers\Admin\SupportTicketController;
 use App\Http\Controllers\Client\AboutController;
 use App\Http\Controllers\Client\ClientHomeController;
 use App\Http\Controllers\Client\BlogController as ClientBlogController;
+use App\Http\Controllers\Client\CartController;
+
 use App\Http\Controllers\Client\BlogCommentController as ClientBlogCommentController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\Client\ClientSupportTicketController;
@@ -70,17 +72,25 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
     });
 
     // giỏ hàng
-    Route::get('/cart', function () {
-        return view('frontend.cart.cart');
+    Route::prefix('cart')->middleware('auth')->name('cart.')->group(function () {
+        Route::get('index', [CartController::class, 'index'])->name('index');
+        Route::post('add', [CartController::class, 'add'])->name('add');
+        Route::delete('delete/{id}', [CartController::class, 'delete'])->name('delete');
+        // checkbox
+        Route::post('bulkDelete', [CartController::class, 'bulkDelete'])->name('bulkDelete');
+        // update số lượng giỏ
+        Route::post('updateQuantity', [CartController::class, 'updateQuantity'])->name('updateQuantity');
+        Route::delete('remove/{id}', [CartController::class, 'remove'])->name('remove');
+        Route::post('update-variant', [CartController::class, 'updateVariant'])->name('updateVariant');
+
     });
+
 
     //  Thanh toán
     Route::get('/checkout', function () {
         return view('frontend.checkout.checkout');
     });
 
-    // Giỏ hàng:
-    Route::middleware('auth')->group(function () {});
 
     // Thanh toán mua hàng:
     Route::middleware('auth')->group(function () {
@@ -164,8 +174,7 @@ Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin'], function () {
 
     // Route::get('home', [HomeController::class, 'home'])->name('home');
-
-     // Route cho dashboard tổng quan và báo cáo
+    // Route cho dashboard tổng quan và báo cáo
     Route::get('/reports', [ReportController::class, 'dashboard'])->name('dashboard');
 
     // Route::group(['prefix' => 'reports', 'as' => 'reports.'], function () {
@@ -284,15 +293,15 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
     });
 
     // Order
-  Route::group(['prefix' => 'orders', 'as' => 'orders.'], function () {
-    Route::get('/', [OrderController::class, 'index'])->name('index');                // Hiển thị danh sách
-    Route::get('/{order}', [OrderController::class, 'show'])->name('show');          // Chi tiết đơn hàng
-    Route::get('/{order}/tracking', [OrderController::class, 'tracking'])->name('tracking');  // Tracking
-    Route::delete('/{order}', [OrderController::class, 'destroy'])->name('destroy'); // Xóa cứng
-    Route::put('/{order}/update-status', [OrderController::class, 'updateStatus'])->name('updateStatus'); // Cập nhật trạng thái
-    Route::patch('/{order}/hide', [OrderController::class, 'hide'])->name('hide');   // Ẩn đơn hàng ✅
-    Route::put('/{order}/update-payment-status', [OrderController::class, 'updatePaymentStatus'])->name('updatePaymentStatus');
-});
+    Route::group(['prefix' => 'orders', 'as' => 'orders.'], function () {
+        Route::get('/', [OrderController::class, 'index'])->name('index');                // Hiển thị danh sách
+        Route::get('/{order}', [OrderController::class, 'show'])->name('show');          // Chi tiết đơn hàng
+        Route::get('/{order}/tracking', [OrderController::class, 'tracking'])->name('tracking');  // Tracking
+        Route::delete('/{order}', [OrderController::class, 'destroy'])->name('destroy'); // Xóa cứng
+        Route::put('/{order}/update-status', [OrderController::class, 'updateStatus'])->name('updateStatus'); // Cập nhật trạng thái
+        Route::patch('/{order}/hide', [OrderController::class, 'hide'])->name('hide');   // Ẩn đơn hàng ✅
+        Route::put('/{order}/update-payment-status', [OrderController::class, 'updatePaymentStatus'])->name('updatePaymentStatus');
+    });
 
 
     // User
@@ -398,4 +407,3 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         Route::put('update/{id}', [CouponsController::class, 'update'])->name('update');
     });
 });
-

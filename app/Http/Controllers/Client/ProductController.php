@@ -123,11 +123,12 @@ class ProductController extends Controller
                 'stock' => $v->stock,
                 'price' => $v->price,
                 'image' => $v->image ? asset('storage/' . $v->image) : null,
-                'value_ids' => $v->attributeValues->pluck('id')->sort()->values()->all(),
-                'active' => $v->active,
-                'description' => $v->description, // thêm mô tả biến thể
+                // Ép kiểu int cho các value_ids và sort
+                'value_ids' => $v->attributeValues->pluck('id')->map(fn($id) => (int)$id)->sort()->values()->all(),
+                'active' => (int) $v->active,  // lấy trường active đúng kiểu int
             ];
         });
+
 
         // Lấy sản phẩm liên quan (option)
         $related = Product::with('images')

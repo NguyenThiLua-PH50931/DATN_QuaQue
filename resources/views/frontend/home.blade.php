@@ -245,10 +245,10 @@
                             <p>Sản phẩm hot nhất tuần này – Đặt sớm kẻo lỡ, số lượng có hạn!</p>
                         </div>
                         <div class="timing-box">
-                            <div class="timing">
-                                <i data-feather="clock"></i>
-                                <h6 class="name">Expires in :</h6>
-                                <div class="time" id="clockdiv-1" data-hours="1" data-minutes="2" data-seconds="3">
+                            {{-- <div class="timing">
+                                <i data-feather="clock"></i> --}}
+                                {{-- <h6 class="name">Expires in :</h6> --}}
+                                {{-- <div class="time" id="clockdiv-1" data-hours="1" data-minutes="2" data-seconds="3">
                                     <ul>
                                         <li>
                                             <div class="counter">
@@ -279,8 +279,8 @@
                                             </div>
                                         </li>
                                     </ul>
-                                </div>
-                            </div>
+                                </div> --}}
+                            {{-- </div> --}}
                         </div>
                     </div>
 
@@ -296,8 +296,7 @@
                                                         <span>HOT</span>
                                                     </div>
                                                     <div class="product-image">
-                                                        <a
-                                                            href="{{ route('client.product.detail', ['slug' => $product->slug]) }}">
+                                                        <a href="#">
                                                             <img src="{{ asset('storage/' . $product->image) }}"
                                                                 alt="{{ $product->name }}"
                                                                 class="img-fluid blur-up lazyload"
@@ -413,10 +412,25 @@
                                                             <h6 class="theme-color">In Stock</h6>
                                                         </div>
                                                         <div class="add-to-cart-box">
-                                                            <button class="btn btn-add-cart addcart-button">Add
-                                                                <span class="add-icon"><i
-                                                                        class="fa-solid fa-plus"></i></span>
-                                                            </button>
+                                                            <script>
+                                                                document.querySelectorAll('.btn-qty-minus').forEach(button => {
+                                                                    button.onclick = function(e) {
+                                                                        e.preventDefault();
+                                                                        const input = this.closest('.input-group').querySelector('input[name="quantity"]');
+                                                                        let val = parseInt(input.value);
+                                                                        if (val > 1) input.value = val - 1;
+                                                                    };
+                                                                });
+
+                                                                document.querySelectorAll('.btn-qty-plus').forEach(button => {
+                                                                    button.onclick = function(e) {
+                                                                        e.preventDefault();
+                                                                        const input = this.closest('.input-group').querySelector('input[name="quantity"]');
+                                                                        let val = parseInt(input.value);
+                                                                        input.value = val + 1;
+                                                                    };
+                                                                });
+                                                            </script>
                                                             <div class="cart_qty qty-box">
                                                                 <div class="input-group">
                                                                     <button type="button" class="qty-left-minus"
@@ -456,9 +470,174 @@
                             <div>
                                 <a href="{{ route('client.product.index', ['category_id' => $category->id]) }}" class="category-box category-dark">
                                     <div>
-                                        <img src="{{ asset('storage/' . $category->image) }}"
-                                            alt="{{ $category->name }}"
-                                            style="filter:none !important; mix-blend-mode:normal !important; opacity:1 !important;">
+                                        <img src="{{ asset('frontend/assets/svg/1/' . $category->image) }}"
+                                            alt="{{ $category->name }}">
+                                        <h5>{{ $category->name }}</h5>
+                                    </div>
+                                </a>
+                            </div>
+                        @empty
+                            <p>Không có danh mục nào.</p>
+                        @endforelse
+                    </div>
+
+                    <div class="section-t-space section-b-space">
+                        <div class="row g-md-4 g-3">
+                            <div class="col-md-6">
+                                <div class="banner-contain hover-effect">
+                                    <img src="../frontend/assets/images/vegetable/banner/9.jpg"
+                                        class="bg-img blur-up lazyload" alt="">
+                                    <div class="banner-details p-center-left p-4">
+                                        <div>
+                                            <h3 class="text-exo">Ưu đãi 50%</h3>
+                                            <h4 class="text-russo fw-normal theme-color mb-2">Thơm ngon – Tươi mới</h4>
+                                            <button onclick="location.href = 'shop-left-sidebar.html';"
+                                                class="btn btn-animation btn-sm mend-auto">Mua ngay <i
+                                                    class="fa-solid fa-arrow-right icon"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="banner-contain hover-effect">
+                                    <img src="../frontend/assets/images/vegetable/banner/10.jpg"
+                                        class="bg-img blur-up lazyload" alt="">
+                                    <div class="banner-details p-center-left p-4">
+                                        <div>
+                                            <h3 class="text-exo">Ưu đãi 50%</h3>
+                                            <h4 class="text-russo fw-normal theme-color mb-2">Chất lượng – Giá tốt</h4>
+                                            <button onclick="location.href = 'shop-left-sidebar.html';"
+                                                class="btn btn-animation btn-sm mend-auto">Mua ngay <i
+                                                    class="fa-solid fa-arrow-right icon"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="title d-block" id="latest-products">
+                        <h2>Sản phẩm mới</h2>
+                        <span class="title-leaf">
+                            <svg class="icon-width">
+                                <use xlink:href="../frontend/assets/svg/leaf.svg#leaf"></use>
+                            </svg>
+                        </span>
+                        <p>Khám phá những món quà quê mới nhất, tươi ngon và đậm đà hương vị truyền thống.</p>
+                    </div>
+
+                    <div class="section-b-space">
+                        <div class="product-border overflow-hidden">
+                            <div class="container">
+                                @foreach ($topViewedProducts->chunk(4) as $chunk)
+                                    <div class="row">
+                                        @foreach ($chunk as $product)
+                                            <div class="col-md-3 col-sm-6 col-12 mb-4">
+                                                <div class="product-box" style="position: relative;">
+                                                    <div class="label-tagg">
+                                                        <span>HOT</span>
+                                                    </div>
+                                                    <div class="product-image">
+                                                        <a href="#">
+                                                            <img src="{{ asset('storage/' . $product->image) }}"
+                                                                alt="{{ $product->name }}">
+                                                        </a>
+                                                        <ul class="product-option">
+                                                            <li data-bs-toggle="tooltip" data-bs-placement="top"
+                                                                title="View">
+                                                                <a href="javascript:void(0)" data-bs-toggle="modal"
+                                                                    data-bs-target="#view">
+                                                                    <i data-feather="eye"></i>
+                                                                </a>
+                                                            </li>
+                                                            <li data-bs-toggle="tooltip" data-bs-placement="top"
+                                                                title="Compare">
+                                                                <a href="{{ url('compare') }}"><i
+                                                                        data-feather="refresh-cw"></i></a>
+                                                            </li>
+                                                            <li data-bs-toggle="tooltip" data-bs-placement="top"
+                                                                title="Add To Wishlist">
+                                                                <form action="{{ route('client.wishlist.store') }}"
+                                                                    method="POST">
+                                                                    @csrf
+                                                                    <input type="hidden" name="product_id"
+                                                                        value="{{ $product->id }}">
+                                                                    <button type="submit"
+                                                                        class="notifi-wishlist btn p-0">
+                                                                        <i data-feather="heart"
+                                                                            @if (auth()->check() && auth()->user()->wishlist()->where('product_id', $product->id)->exists()) class="text-red-500" @endif></i>
+                                                                    </button>
+                                                                </form>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="product-detail">
+                                                        <a
+                                                            href="{{ route('client.product.detail', ['slug' => $product->slug]) }}">
+                                                            <h6 class="name">{{ $product->name }}</h6>
+                                                        </a>
+
+                                                        <h5 class="sold text-content">
+                                                            <span
+                                                                class="theme-color price">{{ number_format($product->price) }}₫</span>
+                                                        </h5>
+                                                        <div class="product-rating mt-sm-2 mt-1">
+                                                            <ul class="rating">
+                                                                <li><i data-feather="star" class="fill"></i></li>
+                                                                <li><i data-feather="star" class="fill"></i></li>
+                                                                <li><i data-feather="star" class="fill"></i></li>
+                                                                <li><i data-feather="star" class="fill"></i></li>
+                                                                <li><i data-feather="star"></i></li>
+                                                            </ul>
+                                                            <h6 class="theme-color">In Stock</h6>
+                                                        </div>
+                                                        {{-- <div class="add-to-cart-box">
+                                                            <button class="btn btn-add-cart addcart-button">Add
+                                                                <span class="add-icon"><i
+                                                                        class="fa-solid fa-plus"></i></span>
+                                                            </button>
+                                                            <div class="cart_qty qty-box">
+                                                                <div class="input-group">
+                                                                    <button type="button" class="qty-left-minus"
+                                                                        data-type="minus">
+                                                                        <i class="fa fa-minus" aria-hidden="true"></i>
+                                                                    </button>
+                                                                    <input class="form-control input-number qty-input"
+                                                                        type="text" value="0">
+                                                                    <button type="button" class="qty-right-plus"
+                                                                        data-type="plus">
+                                                                        <i class="fa fa-plus" aria-hidden="true"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div> --}}
+                                                    </div>
+                                                </div> <!-- .product-box -->
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="title">
+                        <h2>Sản phẩm theo danh mục</h2>
+                        <span class="title-leaf">
+                            <svg class="icon-width">
+                                <use xlink:href="{{ asset('frontend/assets/svg/leaf.svg#leaf') }}"></use>
+                            </svg>
+                        </span>
+                        <p>Khám phá đa dạng đặc sản theo từng vùng miền.</p>
+                    </div>
+
+                    <div class="category-slider-2 product-wrapper no-arrow">
+                        @forelse ($categories as $category)
+                            <div>
+                                <a href="#" class="category-box category-dark">
+                                    <div>
+                                        <img src="{{ asset('frontend/assets/svg/1/' . $category->image) }}"
+                                            alt="{{ $category->name }}">
                                         <h5>{{ $category->name }}</h5>
                                     </div>
                                 </a>
@@ -634,7 +813,7 @@
                                                     <h6 class="theme-color">
                                                         {{ $product->stock > 0 ? 'In Stock' : 'Out of Stock' }}</h6>
                                                 </div>
-                                                <div class="add-to-cart-box">
+                                                {{-- <div class="add-to-cart-box">
                                                     <button class="btn btn-add-cart addcart-button">Add
                                                         <span class="add-icon">
                                                             <i class="fa-solid fa-plus"></i>
@@ -654,7 +833,7 @@
                                                             </button>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </div> --}}
                                             </div>
                                         </div> <!-- .product-box -->
                                     </div>
