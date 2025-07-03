@@ -1,11 +1,11 @@
-<!-- <pre>{{ var_dump($product) }}</pre> -->
 @extends('layouts.frontend') {{-- Đổi lại đúng layout nếu khác --}}
 
 @section('title', $product->name)
 
 @section('contents')
-
-
+    <script>
+        window.VARIANTS = @json($variantMap);
+    </script>
 
     <!-- Breadcrumb Section Start -->
     <section class="breadscrumb-section pt-0">
@@ -21,7 +21,6 @@
                                         <i class="fa-solid fa-house"></i>
                                     </a>
                                 </li>
-
                                 @if (isset($product->category))
                                     <li class="breadcrumb-item">
                                         <a href="#">
@@ -36,11 +35,13 @@
                             </ol>
                         </nav>
                     </div>
+
                 </div>
             </div>
         </div>
     </section>
     <!-- Breadcrumb Section End -->
+
 
     <!-- Product Left Sidebar Start -->
     <section class="product-section">
@@ -93,39 +94,35 @@
                                                 </div>
                                             @endforeach
                                         </div>
+
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-
                         <div class="col-xl-6 wow fadeInUp" data-wow-delay="0.1s">
                             <div class="right-box-contain">
                                 {{-- <h6 class="offer-top">30% Off</h6> --}}
-                                <h2 class="name">Creamy Chocolate Cake</h2>
+                                <h2 class="name">{{ $product->name }}</h2>
+
                                 <div class="price-rating">
                                     <h3 class="theme-color price" id="product-price">
-                                        {{ number_format($product->variants[0]->price ?? 0) }} đ</h3>
+                                        {{ number_format($product->variants[0]->price ?? 0) }} đ
+                                    </h3>
 
                                     <div class="product-rating custom-rate">
                                         <ul class="rating">
-                                            <li>
-                                                <i data-feather="star" class="fill"></i>
-                                            </li>
-                                            <li>
-                                                <i data-feather="star" class="fill"></i>
-                                            </li>
-                                            <li>
-                                                <i data-feather="star" class="fill"></i>
-                                            </li>
-                                            <li>
-                                                <i data-feather="star" class="fill"></i>
-                                            </li>
-                                            <li>
-                                                <i data-feather="star"></i>
-                                            </li>
+                                            @php
+                                                $avgRating = round($product->reviews->avg('rating'));
+                                            @endphp
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                <li>
+                                                    <i data-feather="star"
+                                                        class="{{ $i <= $avgRating ? 'fill' : '' }}"></i>
+                                                </li>
+                                            @endfor
                                         </ul>
-                                        <span class="review">23 Customer Review</span>
+                                        <span class="review">{{ $product->reviews->count() }} Đánh giá</span>
                                     </div>
                                 </div>
 
@@ -148,97 +145,41 @@
                                     @endforeach
                                 </div>
 
-                                {{-- <div
-                                class="time deal-timer product-deal-timer mx-md-0 mx-auto"
-                                id="clockdiv-1"
-                                data-hours="1"
-                                data-minutes="2"
-                                data-seconds="3">
-                                <div class="product-title">
-                                    <h4>Hurry up! Sales Ends In</h4>
-                                </div>
-                                <ul>
-                                    <li>
-                                        <div class="counter d-block">
-                                            <div class="days d-block">
-                                                <h5></h5>
-                                            </div>
-                                            <h6>Days</h6>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="counter d-block">
-                                            <div class="hours d-block">
-                                                <h5></h5>
-                                            </div>
-                                            <h6>Hours</h6>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="counter d-block">
-                                            <div
-                                                class="minutes d-block">
-                                                <h5></h5>
-                                            </div>
-                                            <h6>Min</h6>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="counter d-block">
-                                            <div
-                                                class="seconds d-block">
-                                                <h5></h5>
-                                            </div>
-                                            <h6>Sec</h6>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div> --}}
-
-                                {{-- Thêm giỏ hàng --}}
-                                <!-- Ví dụ trong file sản phẩm (product.blade.php hoặc trang danh sách sản phẩm) -->
-                                <form action="{{ route('client.cart.add') }}" method="POST" class="add-to-cart-form">
+                                <form method="POST" action="{{ route('client.cart.add') }}" class="add-to-cart-form">
                                     @csrf
-                                    <input type="hidden" name="variant_attributes" id="variant_attributes">
-                                    <input type="hidden" name="product_id" value="{{ $product->id }}">
-                                    <input type="hidden" name="price" id="variant-price"
-                                        value="{{ $product->variants->count() > 0 ? $product->variants[0]->price : $product->price }}">
-
-
+                                    <!-- Input ẩn gửi product_id -->
+                                    <input type="hidden" name="product_id" value="{{ $product->id }}" />
 
                                     <div class="note-box product-packege">
                                         <div class="cart_qty qty-box product-qty">
                                             <div class="input-group">
                                                 <button type="button" class="qty-left-minus" data-type="minus"
-                                                    data-field="quantity">
+                                                    data-field="">
                                                     <i class="fa fa-minus" aria-hidden="true"></i>
                                                 </button>
-                                                <input class="form-control input-number qty-input" type="number"
-                                                    name="quantity" value="1" min="1"
-                                                    data-stock="{{ $variantStock ?? $product->stock }}"  data-cart-item-id="{{ $product->id }}" />
+                                                <input class="form-control input-number qty-input" type="text"
+                                                    name="quantity" value="1" min="1" />
                                                 <button type="button" class="qty-right-plus" data-type="plus"
-                                                    data-field="quantity">
+                                                    data-field="">
                                                     <i class="fa fa-plus" aria-hidden="true"></i>
                                                 </button>
                                             </div>
                                         </div>
+
+                                        <!-- Input ẩn lưu dữ liệu biến thể, JS sẽ cập nhật giá trị này khi người dùng chọn biến thể -->
+                                        <input type="hidden" id="variant_attributes" name="variant_attributes"
+                                            value="" />
 
                                         <button type="submit" class="btn btn-md bg-dark cart-button text-white w-100">
                                             Thêm giỏ hàng
                                         </button>
                                     </div>
                                 </form>
-
                                 <div class="buy-box">
                                     <a href="wishlist.html">
                                         <i data-feather="heart"></i>
                                         <span>Add To Wishlist</span>
                                     </a>
-                                    {{--
-                                <a href="compare.html">
-                                    <i data-feather="shuffle"></i>
-                                    <span>Add To Compare</span>
-                                </a> --}}
                                 </div>
 
                                 <div class="pickup-box">
@@ -246,10 +187,9 @@
                                     <div class="product-info">
                                         <ul class="product-info-list product-info-list-2">
                                             <li>SKU : <a href="javascript:void(0)" id="product-sku">—</a></li>
-                                            <li>Stock : <a href="javascript:void(0)" id="product-stock">—</a></li>
+                                            <li>Số lượng : <a href="javascript:void(0)" id="product-stock">—</a></li>
                                             <li>Tags : <a
-                                                    href="javascript:void(0)">{{ $product->category->name ?? '' }}</a>
-                                            </li>
+                                                    href="javascript:void(0)">{{ $product->category->name ?? '' }}</a></li>
                                         </ul>
                                     </div>
 
@@ -264,7 +204,7 @@
                                         <button class="nav-link active" id="description-tab" data-bs-toggle="tab"
                                             data-bs-target="#description" type="button" role="tab"
                                             aria-controls="description" aria-selected="true">
-                                            Description
+                                            Mô tả
                                         </button>
                                     </li>
 
@@ -297,14 +237,16 @@
                                     <div class="tab-pane fade show active" id="description" role="tabpanel"
                                         aria-labelledby="description-tab">
                                         <div class="product-description">
-                                            mô tả theo cke
+                                            {!! $product->description !!}
                                         </div>
                                     </div>
 
                                     <div class="tab-pane fade" id="info" role="tabpanel"
                                         aria-labelledby="info-tab">
                                         <div class="table-responsive">
-                                            mô tả biến thể theo cke
+                                            <div class="table-responsive" id="variant-description">
+                                                {!! $product->variants[0]->description ?? '<p>Chưa có mô tả biến thể</p>' !!}
+                                            </div>
                                         </div>
                                     </div>
 
@@ -322,7 +264,7 @@
                                                 <div class="col-xl-6">
                                                     <div class="review-title">
                                                         <h4 class="fw-500">
-                                                            Customer reviews
+                                                            Đánh giá
                                                         </h4>
                                                     </div>
 
@@ -361,11 +303,8 @@
                                                                     </h5>
                                                                     <div class="progress">
                                                                         <div class="progress-bar" role="progressbar"
-                                                                            style="
-                                                                                    width: 68%;
-                                                                                "
-                                                                            aria-valuenow="100" aria-valuemin="0"
-                                                                            aria-valuemax="100">
+                                                                            style="width: 68%;" aria-valuenow="100"
+                                                                            aria-valuemin="0" aria-valuemax="100">
                                                                             68%
                                                                         </div>
                                                                     </div>
@@ -380,11 +319,8 @@
                                                                     </h5>
                                                                     <div class="progress">
                                                                         <div class="progress-bar" role="progressbar"
-                                                                            style="
-                                                                                    width: 67%;
-                                                                                "
-                                                                            aria-valuenow="100" aria-valuemin="0"
-                                                                            aria-valuemax="100">
+                                                                            style="width: 67%;" aria-valuenow="100"
+                                                                            aria-valuemin="0" aria-valuemax="100">
                                                                             67%
                                                                         </div>
                                                                     </div>
@@ -399,11 +335,8 @@
                                                                     </h5>
                                                                     <div class="progress">
                                                                         <div class="progress-bar" role="progressbar"
-                                                                            style="
-                                                                                    width: 42%;
-                                                                                "
-                                                                            aria-valuenow="100" aria-valuemin="0"
-                                                                            aria-valuemax="100">
+                                                                            style="width: 42%;" aria-valuenow="100"
+                                                                            aria-valuemin="0" aria-valuemax="100">
                                                                             42%
                                                                         </div>
                                                                     </div>
@@ -418,11 +351,8 @@
                                                                     </h5>
                                                                     <div class="progress">
                                                                         <div class="progress-bar" role="progressbar"
-                                                                            style="
-                                                                                    width: 30%;
-                                                                                "
-                                                                            aria-valuenow="100" aria-valuemin="0"
-                                                                            aria-valuemax="100">
+                                                                            style="width: 30%;" aria-valuenow="100"
+                                                                            aria-valuemin="0" aria-valuemax="100">
                                                                             30%
                                                                         </div>
                                                                     </div>
@@ -437,11 +367,8 @@
                                                                     </h5>
                                                                     <div class="progress">
                                                                         <div class="progress-bar" role="progressbar"
-                                                                            style="
-                                                                                    width: 24%;
-                                                                                "
-                                                                            aria-valuenow="100" aria-valuemin="0"
-                                                                            aria-valuemax="100">
+                                                                            style="width: 24%;" aria-valuenow="100"
+                                                                            aria-valuemin="0" aria-valuemax="100">
                                                                             24%
                                                                         </div>
                                                                     </div>
@@ -552,177 +479,39 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="col-xxl-3 col-xl-4 col-lg-5 d-none d-lg-block wow fadeInUp">
                     <div class="right-sidebar-box">
-                        <div class="vendor-box">
-                            <div class="verndor-contain">
-                                <div class="vendor-image">
-                                    <img src="../assets/images/product/vendor.png" class="blur-up lazyload"
-                                        alt="" />
-                                </div>
-
-                                <div class="vendor-name">
-                                    <h5 class="fw-500">Noodles Co.</h5>
-
-                                    <div class="product-rating mt-1">
-                                        <ul class="rating">
-                                            <li>
-                                                <i data-feather="star" class="fill"></i>
-                                            </li>
-                                            <li>
-                                                <i data-feather="star" class="fill"></i>
-                                            </li>
-                                            <li>
-                                                <i data-feather="star" class="fill"></i>
-                                            </li>
-                                            <li>
-                                                <i data-feather="star" class="fill"></i>
-                                            </li>
-                                            <li>
-                                                <i data-feather="star"></i>
-                                            </li>
-                                        </ul>
-                                        <span>(36 Reviews)</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <p class="vendor-detail">
-                                Noodles & Company is an American fast-casual
-                                restaurant that offers international and
-                                American noodle dishes and pasta.
-                            </p>
-
-                            <div class="vendor-list">
-                                <ul>
-                                    <li>
-                                        <div class="address-contact">
-                                            <i data-feather="map-pin"></i>
-                                            <h5>
-                                                Address:
-                                                <span class="text-content">1288 Franklin
-                                                    Avenue</span>
-                                            </h5>
-                                        </div>
-                                    </li>
-
-                                    <li>
-                                        <div class="address-contact">
-                                            <i data-feather="headphones"></i>
-                                            <h5>
-                                                Contact Seller:
-                                                <span class="text-content">(+1)-123-456-789</span>
-                                            </h5>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
 
                         <!-- Trending Product -->
                         <div class="pt-25">
                             <div class="category-menu">
-                                <h3>Trending Products</h3>
-
+                                <h3>Sản phẩm nổi bật</h3>
                                 <ul class="product-list product-right-sidebar border-0 p-0">
-                                    <li>
-                                        <div class="offer-product">
-                                            <a href="product-left-thumbnail.html" class="offer-image">
-                                                <img src="../assets/images/vegetable/product/23.png"
-                                                    class="img-fluid blur-up lazyload" alt="" />
-                                            </a>
+                                    @foreach ($topMonthlyProducts as $item)
+                                        <li>
+                                            <div class="offer-product">
+                                                <a href="{{ route('client.product.detail', $item->slug) }}"
+                                                    class="offer-image">
+                                                    <img src="{{ asset('storage/' . ($item->image ?? 'default.png')) }}"
+                                                        class="img-fluid blur-up lazyload" alt="{{ $item->name }}" />
 
-                                            <div class="offer-detail">
-                                                <div>
-                                                    <a href="product-left-thumbnail.html">
-                                                        <h6 class="name">
-                                                            Meatigo Premium
-                                                            Goat Curry
-                                                        </h6>
-                                                    </a>
-                                                    <span>450 G</span>
-                                                    <h6 class="price theme-color">
-                                                        $ 70.00
-                                                    </h6>
+                                                </a>
+                                                <div class="offer-detail">
+                                                    <div>
+                                                        <a href="{{ route('client.product.detail', $item->slug) }}">
+                                                            <h6 class="name">{{ $item->name }}</h6>
+                                                        </a>
+                                                        <span>{{ $item->weight ?? '' }}</span> {{-- Nếu có trường weight --}}
+                                                        <h6 class="price theme-color">
+                                                            {{ number_format($item->variants->min('price') ?? 0) }} đ</h6>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </li>
-
-                                    <li>
-                                        <div class="offer-product">
-                                            <a href="product-left-thumbnail.html" class="offer-image">
-                                                <img src="../assets/images/vegetable/product/24.png"
-                                                    class="blur-up lazyload" alt="" />
-                                            </a>
-
-                                            <div class="offer-detail">
-                                                <div>
-                                                    <a href="product-left-thumbnail.html">
-                                                        <h6 class="name">
-                                                            Dates Medjoul
-                                                            Premium Imported
-                                                        </h6>
-                                                    </a>
-                                                    <span>450 G</span>
-                                                    <h6 class="price theme-color">
-                                                        $ 40.00
-                                                    </h6>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-
-                                    <li>
-                                        <div class="offer-product">
-                                            <a href="product-left-thumbnail.html" class="offer-image">
-                                                <img src="../assets/images/vegetable/product/25.png"
-                                                    class="blur-up lazyload" alt="" />
-                                            </a>
-
-                                            <div class="offer-detail">
-                                                <div>
-                                                    <a href="product-left-thumbnail.html">
-                                                        <h6 class="name">
-                                                            Good Life Walnut
-                                                            Kernels
-                                                        </h6>
-                                                    </a>
-                                                    <span>200 G</span>
-                                                    <h6 class="price theme-color">
-                                                        $ 52.00
-                                                    </h6>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-
-                                    <li class="mb-0">
-                                        <div class="offer-product">
-                                            <a href="product-left-thumbnail.html" class="offer-image">
-                                                <img src="../assets/images/vegetable/product/26.png"
-                                                    class="blur-up lazyload" alt="" />
-                                            </a>
-
-                                            <div class="offer-detail">
-                                                <div>
-                                                    <a href="product-left-thumbnail.html">
-                                                        <h6 class="name">
-                                                            Apple Red
-                                                            Premium Imported
-                                                        </h6>
-                                                    </a>
-                                                    <span>1 KG</span>
-                                                    <h6 class="price theme-color">
-                                                        $ 80.00
-                                                    </h6>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
+                                        </li>
+                                    @endforeach
                                 </ul>
                             </div>
+
                         </div>
 
                         <!-- Banner Section -->
@@ -764,7 +553,6 @@
                 <span class="title-leaf">
                     <svg class="icon-width">
                         <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
-
                     </svg>
                 </span>
             </div>
@@ -844,7 +632,7 @@
                                                 </span>
                                             </button>
                                             <div class="cart_qty qty-box">
-                                                {{-- <div class="input-group bg-white">
+                                                <div class="input-group bg-white">
                                                     <button type="button" class="qty-left-minus bg-gray"
                                                         data-type="minus" data-field="">
                                                         <i class="fa fa-minus" aria-hidden="true"></i>
@@ -855,21 +643,24 @@
                                                         data-type="plus" data-field="">
                                                         <i class="fa fa-plus" aria-hidden="true"></i>
                                                     </button>
-                                                </div> --}}
-
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
                         </div>
+
+                        <!-- Add more related products as needed -->
+
                     </div>
                 </div>
             </div>
         </div>
     </section>
+    <!-- Releted Product Section End -->
 
+    {{-- Sửa lỗi style lồng nhau và CSS sai cú pháp --}}
     <style>
         .attribute-select.active2 {
             background: #0da386 !important;
@@ -877,18 +668,19 @@
             border: 1px solid #0da386 !important;
             /* tuỳ bạn muốn style thêm gì nữa thì thêm */
         }
+
+        .attribute-select.disabled-variant {
+            color: #aaa !important;
+            cursor: not-allowed !important;
+            pointer-events: none !important;
+        }
     </style>
-
-
-
-@endsection
-@push('scripts')
 
     <script>
         window.VARIANTS = {!! json_encode($variantMap ?? [], JSON_HEX_TAG) !!};
     </script>
 
-{{-- update số lương trang detail --}}
+    {{-- update số lượng trang detail --}}
     <script>
         const updateQuantityUrl = "{{ route('client.cart.updateQuantity') }}";
 
@@ -957,13 +749,118 @@
         });
     </script>
 
-
     <script>
-        const updateQuantityUrl = "{{ route('client.cart.updateQuantity') }}";
+        window.VARIANTS = @json($variantMap ?? []);
+
+        let selected = {};
+        let variants = window.VARIANTS;
+
+        function canSelectValue(attrValueId, attrId) {
+            return variants.some(v => {
+                if (Number(v.active) !== 1) return false;
+
+                if (!v.value_ids.includes(Number(attrValueId))) return false;
+
+                for (let selectedAttrId in selected) {
+                    if (parseInt(selectedAttrId) === attrId) continue;
+                    let selectedValueId = selected[selectedAttrId];
+                    if (!v.value_ids.includes(selectedValueId)) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+        }
+
+        function updateDisabledStates() {
+            document.querySelectorAll('.attribute-select').forEach(function(btn) {
+                let val = parseInt(btn.getAttribute('data-value'), 10);
+                let attr = parseInt(btn.getAttribute('data-attr'), 10);
+
+                if (canSelectValue(val, attr)) {
+                    btn.classList.remove('disabled-variant');
+                    btn.style.pointerEvents = 'auto';
+                    btn.style.color = '';
+                    btn.style.cursor = 'pointer';
+                } else {
+                    btn.classList.add('disabled-variant');
+                    btn.style.pointerEvents = 'none';
+                    btn.style.color = '#aaa';
+                    btn.style.cursor = 'not-allowed';
+
+                    if (btn.classList.contains('active2')) {
+                        btn.classList.remove('active2');
+                        delete selected[attr];
+                    }
+                }
+            });
+        }
+
+        function updateVariantDescription(found) {
+            let variantDescEl = document.getElementById('variant-description');
+            if (found && Number(found.active) === 1 && found.description) {
+                variantDescEl.innerHTML = found.description;
+            } else {
+                variantDescEl.innerHTML = 'Chưa có mô tả biến thể';
+            }
+        }
+
+        // Khởi tạo disable lần đầu (nếu có selected mặc định)
+        updateDisabledStates();
+
+        document.querySelectorAll('.attribute-select').forEach(function(btn) {
+            if (btn.classList.contains('disabled-variant')) return;
+
+            btn.addEventListener('click', function() {
+                let attr = parseInt(btn.getAttribute('data-attr'));
+                let val = parseInt(btn.getAttribute('data-value'));
+
+                btn.closest('ul').querySelectorAll('a').forEach(a => a.classList.remove('active2'));
+
+                btn.classList.add('active2');
+                selected[attr] = val;
+
+                updateDisabledStates();
+
+                // Tìm variant và cập nhật thông tin + mô tả biến thể mỗi lần chọn
+                if (Object.keys(selected).length === Object.keys(@json($attributes)).length) {
+                    let attrValueIds = Object.values(selected).map(Number).sort((a, b) => a - b);
+                    let found = variants.find(v =>
+                        v.value_ids.length === attrValueIds.length &&
+                        v.value_ids.slice().sort((a, b) => a - b).every((id, i) => id === attrValueIds[
+                            i])
+                    );
+
+                    if (found && Number(found.active) === 1) {
+                        document.getElementById('product-sku').textContent = found.sku || 'N/A';
+                        document.getElementById('product-stock').textContent = found.stock ?? 'N/A';
+                        document.getElementById('product-price').textContent = found.price ? (Number(found
+                            .price).toLocaleString() + ' đ') : 'Liên hệ';
+                    } else {
+                        document.getElementById('product-sku').textContent = '—';
+                        document.getElementById('product-stock').textContent = '—';
+                        document.getElementById('product-price').textContent = '—';
+                    }
+
+                    updateVariantDescription(found);
+
+                } else {
+                    document.getElementById('product-sku').textContent = '—';
+                    document.getElementById('product-stock').textContent = '—';
+                    document.getElementById('product-price').textContent = '—';
+
+                    // Chưa chọn đủ thì mô tả biến thể về mặc định mô tả sản phẩm chung
+                    document.getElementById('variant-description').innerHTML = `{!! addslashes($product->description) !!}`;
+                }
+
+                var img = btn.getAttribute('data-variant-image');
+                if (img) {
+                    document.getElementById('mainImage').src = img;
+                }
+            });
+        });
     </script>
 
-
-    {{-- Code chọn biên thể --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.querySelector('.add-to-cart-form');
@@ -1042,7 +939,20 @@
                 form.addEventListener('submit', function(e) {
                     if (attributesCount > 0 && Object.keys(selected).length !== attributesCount) {
                         e.preventDefault();
-                        alert('Vui lòng chọn đầy đủ biến thể sản phẩm trước khi thêm vào giỏ hàng.');
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Thông báo',
+                            text: 'Vui lòng chọn đầy đủ biến thể sản phẩm trước khi thêm vào giỏ hàng.',
+                            confirmButtonText: 'OK',
+                            confirmButtonColor: '#0da487',
+                            width: 300, // nhỏ hơn nữa
+                            padding: '0.8rem 1rem',
+                            customClass: {
+                                title: 'swal2-title-smaller',
+                                content: 'swal2-content-smaller'
+                            }
+                        });
+
                         return false;
                     }
                     // Cập nhật lại input ẩn lần cuối trước khi submit
@@ -1050,10 +960,11 @@
                 });
             }
 
+
             // Khởi tạo giá trị input ẩn ban đầu
             updateVariantInput();
 
-            // --- Phần tăng giảm số lượng (bạn giữ nguyên nếu muốn) ---
+            // --- Phần tăng giảm số lượng ---
             document.querySelectorAll('.qty-left-minus, .qty-right-plus').forEach(button => {
                 button.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -1076,4 +987,69 @@
             });
         });
     </script>
-@endpush
+    <style>
+        .swal2-title-smaller {
+            font-size: 14px !important;
+            margin-bottom: 0.3rem;
+            text-align: center;
+        }
+
+        .swal2-content-smaller {
+            font-size: 12px !important;
+            text-align: center;
+            white-space: normal;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            @if (session('error'))
+                Swal.fire({
+                    icon: 'error', // hoặc 'success'
+                    title: 'Lỗi',
+                    text: '{{ session('error') }}',
+                    confirmButtonColor: '#0da487',
+                    width: 350, // giảm chiều ngang
+                    padding: '1rem 1.5rem', // giảm padding
+                    customClass: {
+                        popup: 'swal2-popup-small',
+                        title: 'swal2-title-small',
+                        content: 'swal2-content-small'
+                    }
+                });
+            @endif
+
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công',
+                    text: '{{ session('success') }}',
+                    confirmButtonColor: '#0da487',
+                    width: 350,
+                    padding: '1rem 1.5rem',
+                    customClass: {
+                        popup: 'swal2-popup-small',
+                        title: 'swal2-title-small',
+                        content: 'swal2-content-small'
+                    }
+                });
+            @endif
+        });
+    </script>
+    <style>
+        .swal2-popup-small {
+            font-size: 14px !important;
+            padding: 1rem !important;
+        }
+
+        .swal2-title-small {
+            font-size: 18px !important;
+            margin-bottom: 0.4rem;
+        }
+
+        .swal2-content-small {
+            font-size: 14px !important;
+            white-space: normal;
+        }
+    </style>
+
+@endsection

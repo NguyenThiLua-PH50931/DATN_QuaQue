@@ -245,9 +245,9 @@
                             <p>Sản phẩm hot nhất tuần này – Đặt sớm kẻo lỡ, số lượng có hạn!</p>
                         </div>
                         <div class="timing-box">
-                            <div class="timing">
-                                <i data-feather="clock"></i>
-                                <h6 class="name">Expires in :</h6>
+                            {{-- <div class="timing">
+                                <i data-feather="clock"></i> --}}
+                                {{-- <h6 class="name">Expires in :</h6> --}}
                                 {{-- <div class="time" id="clockdiv-1" data-hours="1" data-minutes="2" data-seconds="3">
                                     <ul>
                                         <li>
@@ -280,7 +280,7 @@
                                         </li>
                                     </ul>
                                 </div> --}}
-                            </div>
+                            {{-- </div> --}}
                         </div>
                     </div>
 
@@ -412,44 +412,6 @@
                                                             <h6 class="theme-color">In Stock</h6>
                                                         </div>
                                                         <div class="add-to-cart-box">
-                                                            <form action="{{ route('client.cart.add') }}" method="POST"
-                                                                class="d-flex align-items-center gap-2 p-1 rounded"
-                                                                style="width: fit-content; max-width: 100%; color: #6c757d;">
-                                                                @csrf
-                                                                <input type="hidden" name="product_id"
-                                                                    value="{{ $product->id }}">
-                                                                <input type="hidden" name="price"
-                                                                    value="{{ $product->price }}">
-
-                                                                <div class="input-group input-group-sm"
-                                                                    style="width: 85px; min-width: 85px;">
-                                                                    <button type="button"
-                                                                        class="btn btn-outline-warning rounded-start btn-qty-minus"
-                                                                        aria-label="Decrease quantity"
-                                                                        style="padding: 0 6px; font-weight: 600; font-size: 1.1rem; color: rgb(18, 166, 137); border-color: #ced4da;">
-                                                                        −
-                                                                    </button>
-                                                                    <input type="number" name="quantity" value="1"
-                                                                        min="1" class="form-control text-center"
-                                                                        aria-label="Quantity"
-                                                                        style="font-size: 0.70rem; padding: 0.2rem 0; color: rgb(18, 166, 137); border-color: #ced4da; border-radius: 7px;">
-                                                                    <button type="button"
-                                                                        class="btn btn-outline-warning rounded-end btn-qty-plus"
-                                                                        aria-label="Increase quantity"
-                                                                        style="padding: 0 6px; font-weight: 600; font-size: 1.1rem; color: rgb(18, 166, 137); border-color: #ced4da;">
-                                                                        +
-                                                                    </button>
-                                                                </div>
-
-                                                                <button type="submit"
-                                                                    class="btn btn-warning btn-sm rounded px-3 ms-3"
-                                                                    style="font-size: 0.70rem; white-space: nowrap; box-shadow: 0 3px 6px rgba(0,0,0,0.15); color: rgb(18, 166, 137); border-color: #ffd966;">
-                                                                        <i class="fa-solid fa-cart-plus"></i>
-                                                                </button>
-                                                            </form>
-
-
-
                                                             <script>
                                                                 document.querySelectorAll('.btn-qty-minus').forEach(button => {
                                                                     button.onclick = function(e) {
@@ -469,11 +431,6 @@
                                                                     };
                                                                 });
                                                             </script>
-
-
-
-
-
                                                             <div class="cart_qty qty-box">
                                                                 <div class="input-group">
                                                                     <button type="button" class="qty-left-minus"
@@ -634,7 +591,7 @@
                                                             </ul>
                                                             <h6 class="theme-color">In Stock</h6>
                                                         </div>
-                                                        <div class="add-to-cart-box">
+                                                        {{-- <div class="add-to-cart-box">
                                                             <button class="btn btn-add-cart addcart-button">Add
                                                                 <span class="add-icon"><i
                                                                         class="fa-solid fa-plus"></i></span>
@@ -653,7 +610,7 @@
                                                                     </button>
                                                                 </div>
                                                             </div>
-                                                        </div>
+                                                        </div> --}}
                                                     </div>
                                                 </div> <!-- .product-box -->
                                             </div>
@@ -856,7 +813,7 @@
                                                     <h6 class="theme-color">
                                                         {{ $product->stock > 0 ? 'In Stock' : 'Out of Stock' }}</h6>
                                                 </div>
-                                                <div class="add-to-cart-box">
+                                                {{-- <div class="add-to-cart-box">
                                                     <button class="btn btn-add-cart addcart-button">Add
                                                         <span class="add-icon">
                                                             <i class="fa-solid fa-plus"></i>
@@ -876,7 +833,7 @@
                                                             </button>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </div> --}}
                                             </div>
                                         </div> <!-- .product-box -->
                                     </div>

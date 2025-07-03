@@ -235,7 +235,7 @@
                                                              </a>
                                                              <div class="cart-item-qty-price">
                                                                  {{ $item->quantity }} x
-                                                                 ${{ number_format($item->price ?? $item->product->price, 2) }}
+                                                                 đ{{ number_format($item->price ?? $item->product->price, 2) }}
                                                              </div>
                                                          </div>
                                                          <button type="button" class="cart-item-remove"
@@ -249,13 +249,13 @@
                                              </ul>
                                              <div
                                                  class="cart-popup-total d-flex justify-content-between align-items-center">
-                                                 <strong>Total :</strong>
+                                                 <strong>Tổng: </strong>
                                                  <strong
-                                                     class="total-price">${{ number_format($totalPrice, 2) }}</strong>
+                                                     class="total-price">đ{{ number_format($totalPrice, 2) }}</strong>
                                              </div>
                                              <div class="cart-popup-actions d-flex justify-content-between mt-3">
                                                  <a href="{{ route('client.cart.index') }}"
-                                                     class="btn btn-outline-danger btn-sm">View Cart</a>
+                                                     class="btn btn-outline-danger btn-sm">Xem giỏ</a>
                                              </div>
                                          </div>
                                      </div>
@@ -375,30 +375,58 @@
                                                      const itemId = this.getAttribute('data-id');
                                                      if (!itemId) return;
 
-                                                     if (confirm('Bạn chắc chắn muốn xóa sản phẩm này?')) {
+                                                     const modalEl = document.getElementById('notificationModal');
+                                                     const modalBody = document.getElementById('notificationModalBody');
+                                                     const modalFooter = modalEl.querySelector('.modal-footer');
+
+                                                     modalBody.textContent = 'Bạn chắc chắn muốn xóa sản phẩm này?';
+
+                                                     // Reset footer nút
+                                                     modalFooter.innerHTML = `
+            <button type="button" class="btn btn-sm btn-success" data-bs-dismiss="modal">Hủy</button>
+            <button type="button" class="btn btn-sm btn-danger" id="confirmDeleteBtn">Xóa</button>
+        `;
+
+                                                     const modal = new bootstrap.Modal(modalEl);
+                                                     modal.show();
+
+                                                     const confirmBtn = document.getElementById('confirmDeleteBtn');
+
+                                                     confirmBtn.onclick = () => {
                                                          fetch('/client/cart/remove/' + itemId, {
-                                                             method: 'DELETE',
-                                                             headers: {
-                                                                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                                                 'Accept': 'application/json'
-                                                             }
-                                                         }).then(res => {
-                                                             if (!res.ok) throw new Error('Lỗi server');
-                                                             return res.json();
-                                                         }).then(data => {
-                                                             if (data.success) {
-                                                                 this.closest('li').remove();
-                                                                 updateTotal();
-                                                             } else {
-                                                                 alert(data.message || 'Xóa thất bại');
-                                                             }
-                                                         }).catch(err => {
-                                                             console.error(err);
-                                                             alert('Lỗi xảy ra, vui lòng thử lại');
-                                                         });
-                                                     }
+                                                                 method: 'DELETE',
+                                                                 headers: {
+                                                                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                                                     'Accept': 'application/json'
+                                                                 }
+                                                             })
+                                                             .then(res => {
+                                                                 if (!res.ok) throw new Error('Lỗi server');
+                                                                 return res.json();
+                                                             })
+                                                             .then(data => {
+                                                                 if (data.success) {
+                                                                     // Xóa phần tử cart-item khỏi DOM
+                                                                     const cartItemElem = button.closest('.cart-item');
+                                                                     if (cartItemElem) cartItemElem.remove();
+
+                                                                     // Cập nhật tổng tiền nếu có hàm updateTotal
+                                                                     if (typeof updateTotal === 'function') updateTotal();
+
+                                                                     modal.hide();
+                                                                 } else {
+                                                                     alert(data.message || 'Xóa thất bại');
+                                                                 }
+                                                             })
+                                                             .catch(err => {
+                                                                 console.error(err);
+                                                                 alert('Lỗi xảy ra, vui lòng thử lại');
+                                                             });
+                                                     };
                                                  });
                                              });
+
+
 
                                              function updateTotal() {
                                                  let total = 0;
@@ -409,7 +437,7 @@
                                                          total += parseInt(match[1]) * parseFloat(match[2]);
                                                      }
                                                  });
-                                                 popup.querySelector('.total-price').textContent = '$' + total.toFixed(2);
+                                                 popup.querySelector('.total-price').textContent = 'đ' + total.toFixed(2);
                                              }
                                          });
                                      </script>
@@ -941,50 +969,10 @@
                                                 </ul>
                                             </li> --}}
 
-                                         <li class="nav-item dropdown">
-                                             <a class="nav-link dropdown-toggle" href="javascript:void(0)"
-                                                 data-bs-toggle="dropdown">Sản phẩm</a>
-                                             <ul class="dropdown-menu">
-                                                 <li>
-                                                     <a class="dropdown-item"
-                                                         href="{{ route('client.product.index') }}">Tất cả sản
-                                                         phẩm</a>
-                                                 </li>
-                                                 <li class="sub-dropdown-hover">
-                                                     <a href="javascript:void(0)" class="dropdown-item">Product
-                                                         Thumbnail</a>
-                                                     <ul class="sub-menu">
-                                                         <li>
-                                                             <a href="product-left-thumbnail.html">Left
-                                                                 Thumbnail</a>
-                                                         </li>
-
-                                                         <li>
-                                                             <a href="product-right-thumbnail.html">Right
-                                                                 Thumbnail</a>
-                                                         </li>
-
-                                                         <li>
-                                                             <a href="product-bottom-thumbnail.html">Bottom
-                                                                 Thumbnail</a>
-                                                         </li>
-                                                     </ul>
-                                                 </li>
-                                                 <li>
-                                                     <a href="product-bundle.html" class="dropdown-item">Product
-                                                         Bundle</a>
-                                                 </li>
-                                                 <li>
-                                                     <a href="product-slider.html" class="dropdown-item">Product
-                                                         Slider</a>
-                                                 </li>
-                                                 <li>
-                                                     <a href="product-sticky.html" class="dropdown-item">Product
-                                                         Sticky</a>
-                                                 </li>
-                                             </ul>
+                                         <li class="nav-item">
+                                             <a class="nav-link" href="{{ route('client.product.index') }}">Sản
+                                                 phẩm</a>
                                          </li>
-
                                          {{-- <li class="nav-item dropdown dropdown-mega">
                                                 <a class="nav-link dropdown-toggle ps-xl-2 ps-0"
                                                     href="javascript:void(0)" data-bs-toggle="dropdown">Menu mở
@@ -1072,12 +1060,14 @@
                                             </li> --}}
 
                                          <li class="nav-item dropdown new-nav-item">
-                                             <a class="nav-link dropdown-toggle" href="{{ route('client.blog') }}">Tin
+                                             <a class="nav-link dropdown-toggle"
+                                                 href="{{ route('client.blog') }}">Tin
                                                  tức</a>
                                          </li>
 
                                          <li class="nav-item dropdown new-nav-item">
-                                             <a class="nav-link dropdown-toggle" href="{{ route('client.about') }}">Giới
+                                             <a class="nav-link dropdown-toggle"
+                                                 href="{{ route('client.about') }}">Giới
                                                  thiệu
                                              </a>
                                          </li>

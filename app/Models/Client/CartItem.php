@@ -11,7 +11,7 @@ class CartItem extends Model
     protected $table = 'cart_items';
 
     // Thêm 'variant_attributes' vào fillable để có thể mass assign được
-    protected $fillable = ['user_id', 'product_id', 'price', 'quantity', 'variant_attributes'];
+    protected $fillable = ['user_id', 'product_id', 'price', 'quantity', 'variant_attributes', 'variant_id'];
 
     protected $casts = [
         'variant_attributes' => 'array',

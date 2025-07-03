@@ -81,7 +81,7 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
         // update số lượng giỏ
         Route::post('updateQuantity', [CartController::class, 'updateQuantity'])->name('updateQuantity');
         Route::delete('remove/{id}', [CartController::class, 'remove'])->name('remove');
-
+        Route::post('update-variant', [CartController::class, 'updateVariant'])->name('updateVariant');
 
     });
 
