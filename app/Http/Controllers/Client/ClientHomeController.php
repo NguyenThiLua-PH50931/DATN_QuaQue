@@ -55,11 +55,13 @@ class ClientHomeController extends Controller
             ->get();
 
         $topViewedProducts = Product::with('category')
+            ->where('active', 1)
             ->orderBy('view_total', 'desc')
             ->take(8)
             ->get();
 
         $latestProducts = Product::with('category')
+            ->where('active', 1)
             ->latest()
             ->take(8)
             ->get();
@@ -145,6 +147,12 @@ class ClientHomeController extends Controller
             })
             ->first();
 
+        $bestSellingProducts = Product::with('category')
+            ->where('active', 1)
+            ->orderBy('view_total', 'desc')
+            ->take(12)
+            ->get();
+
         return view('frontend.home', compact(
             'mainHeroBanner',
             'smallPromoTopBanner',
@@ -159,7 +167,8 @@ class ClientHomeController extends Controller
             'newProductsPromoLeft',
             'newProductsPromoRight',
             'lastPagePromoBanner',
-            'blogs'
+            'blogs',
+            'bestSellingProducts'
         ));
     }
 

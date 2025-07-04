@@ -317,13 +317,20 @@ const loaderEl = document.getElementsByClassName("fullpage-loader")[0];
 document.addEventListener("readystatechange", (event) => {
     const readyState = "complete";
     if (document.readyState == readyState) {
-        loaderEl.classList.add("fullpage-loader--invisible");
-
-        setTimeout(() => {
-            loaderEl.parentNode.removeChild(loaderEl);
-        }, 100);
+        if (loaderEl) {
+            loaderEl.classList.add("fullpage-loader--invisible");
+            setTimeout(() => {
+                if (loaderEl.parentNode) {
+                    loaderEl.parentNode.removeChild(loaderEl);
+                }
+            }, 100);
+        } else {
+            console.warn("Không tìm thấy phần tử .fullpage-loader");
+        }
     }
 });
+
+
 
 /*=====================
     15. header Dropdown Js

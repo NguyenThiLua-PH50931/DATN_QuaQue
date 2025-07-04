@@ -906,7 +906,7 @@
         });
 
         // Xử lý đổi trạng thái sản phẩm
-        $('.status-badge').on('click', function() {
+        $(document).on('click', '.status-badge', function() {
             var id = $(this).data('id');
             var name = $(this).data('name');
             var status = $(this).data('status');

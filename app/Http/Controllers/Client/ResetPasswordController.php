@@ -12,7 +12,7 @@ class ResetPasswordController extends Controller
     // Hiển thị form nhập mật khẩu mới
     public function showResetForm($token)
     {
-        return view('frontend.reset-password', ['token' => $token]);
+        return view('frontend.profile-user.reset-password', ['token' => $token]);
     }
 
     // Xử lý lưu mật khẩu mới

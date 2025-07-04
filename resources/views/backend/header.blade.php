@@ -99,7 +99,7 @@
                         </div>
 
                         <!-- Phần dropdown menu chỉ chứa nút kích hoạt modal và các link -->
-                        <ul class="profile-dropdown onhover-show-div">
+                        <ul class="profile-dropdown onhover-show-div" style="width:220px">
                             <li>
                                 <a href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">
                                     <i data-feather="log-out"></i>
@@ -158,6 +158,3 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
 <script src="{{ asset('backend/assets/js/admin-search.js') }}"></script>
-
-
-{{-- <h1>Quân đẹp trai</h1> --}}
