@@ -17,9 +17,6 @@
         <div class="left-arrow" id="left-arrow"><i data-feather="arrow-left"></i></div>
         <div id="sidebar-menu" style="margin-top: -70px">
             <ul class="sidebar-links" id="simple-bar">
-                <li class="back-btn"></li> <br><br><br><br>
-                {{-- <li class="sidebar-list">
-                </li> --}}
                 <li class="sidebar-list">
                     <a class="sidebar-link" href="{{ url('/admin/reports') }}">
                         <i class="ri-list-check-2"></i>
