@@ -57,16 +57,7 @@
                          </a>
                          {{-- TÌM KIẾM SẢN PHẨM --}}
                          <div class="middle-box">
-                             <div class="location-box">
-                                 <button class="btn location-button" data-bs-toggle="modal"
-                                     data-bs-target="#locationModal">
-                                     <span class="location-arrow">
-                                         <i data-feather="map-pin"></i>
-                                     </span>
-                                     <span class="locat-name">Vị trí</span>
-                                     <i class="fa-solid fa-angle-down"></i>
-                                 </button>
-                             </div>
+
                              <div class="search-box">
                                  <div class="input-group">
                                      <input type="search" class="form-control" id="searchInput"
@@ -1253,7 +1244,7 @@
 
                      <div class="header-nav-right">
                          <button class="btn deal-button" data-bs-toggle="modal" data-bs-target="#deal-box">
-                             <i data-feather="zap"></i>
+                             <i class="ri-leaf-line"></i> <!-- icon lá cây từ Remix Icon -->
                              <span>Ưu đãi hôm nay</span>
                          </button>
                      </div>

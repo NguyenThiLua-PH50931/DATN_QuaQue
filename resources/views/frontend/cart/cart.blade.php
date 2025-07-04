@@ -109,8 +109,7 @@
                                                                                         data-variant-id="{{ $variant->id }}"
                                                                                         style="font-size: 0.9rem; padding: 8px 14px; border-radius: 0.375rem;">
                                                                                         {{ $variant->name }} —
-                                                                                        {{ number_format($variant->price, 0, ',', '.') }}
-                                                                                        ₫
+                                                                                       {{ number_format($variant->price, 0, ',', '.') }} ₫
                                                                                     </button>
                                                                                 @endforeach
                                                                             </div>
@@ -133,7 +132,7 @@
 
                                                         </td>
                                                         <td class="text-end fw-semibold">
-                                                            {{ number_format($pricePerItem, 0, ',', '.') }} ₫</td>
+                                                          {{ number_format($pricePerItem, 0, ',', '.') }} ₫
                                                         <td class="text-center">
                                                             <div
                                                                 class="d-flex justify-content-center align-items-center gap-2">
@@ -153,7 +152,7 @@
                                                             </div>
                                                         </td>
                                                         <td class="text-end fw-semibold">
-                                                            {{ number_format($tongTien, 0, ',', '.') }} ₫</td>
+                                                          {{ number_format($tongTien, 0, ',', '.') }} ₫
                                                         <td class="text-center">
                                                             <button type="button"
                                                                 class="btn btn-link p-0 text-danger btn-delete-item"
@@ -318,7 +317,7 @@
                                     </li>
                                     <li class="d-flex justify-content-between mb-3">
                                         <span>Phí vận chuyển</span>
-                                        <span>6.900 ₫</span>
+                                        <span>20.000 ₫</span>
                                     </li>
                                 </ul>
                                 <div class="d-flex justify-content-between border-top pt-3 fw-bold fs-5 mb-4">
@@ -454,7 +453,7 @@
                     const checkboxes = document.querySelectorAll('input[name="selected_items[]"]');
                     const totalDisplay = document.getElementById('selected-total');
                     const totalAmountDisplay = document.getElementById('total-amount');
-                    const shippingFee = 6900; // 6.900 ₫
+                    const shippingFee = 20000; // 6.900 ₫
 
                     let selectedTotal = 0;
                     checkboxes.forEach(cb => {
