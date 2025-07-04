@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Client\Product;
 use App\Models\Client\ProductVariant;
+use App\Models\Client\Review;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
@@ -53,12 +55,13 @@ class ProductController extends Controller
             ->whereNull('deleted_at')
             ->limit(8)
             ->get();
-
+        $reviews = $product->reviews()->with('user')->latest()->get();
         return view('frontend.products.detail', [
             'product'    => $product,
             'variants'   => $variants,
             'attributes' => $attributes,
             'related'    => $related,
+            'reviews'    => $reviews,
         ]);
     }
 
@@ -130,5 +133,43 @@ class ProductController extends Controller
                 ];
             })
         ]);
+    }
+
+    // đánh giá sản phẩm
+    public function storeReview(Request $request)
+    {
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'comment'    => 'required|string',
+            'rating'     => 'required|integer|min:1|max:5',
+        ]);
+
+        $user = Auth::user();
+
+        Review::create([
+            'product_id' => $request->product_id,
+            'user_id'    => $user?->id,
+            'rating'     => $request->rating,
+            'comment'    => $request->comment,
+        ]);
+
+        return redirect()->back()->with('success', 'Đánh giá của bạn đã được gửi.');
+    }
+    public function filterReviews(Request $request, $slug)
+    {
+        $ratingFilter = $request->query('star');
+
+        $product = Product::where('slug', $slug)
+            ->where('active', 1)
+            ->whereNull('deleted_at')
+            ->firstOrFail();
+
+        $reviews = $product->reviews()
+            ->with('user')
+            ->when($ratingFilter, fn($q) => $q->where('rating', $ratingFilter))
+            ->latest()
+            ->get();
+
+        return view('frontend.products.review-items', compact('reviews'));
     }
 }
