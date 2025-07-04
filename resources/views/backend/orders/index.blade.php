@@ -302,17 +302,22 @@ ul {
                                 <option value="wallet" {{ request('payment_method') == 'wallet' ? 'selected' : '' }}>Ví điện tử</option>
                             </select>
                             
+                            <select name="bank_transfer_confirmed" class="form-select form-select-sm" style="width: 150px;">
+                                <option value="">-- XN chuyển khoản --</option>
+                                <option value="1" {{ request('bank_transfer_confirmed') === '1' ? 'selected' : '' }}>Đã xác nhận</option>
+                                <option value="0" {{ request('bank_transfer_confirmed') === '0' ? 'selected' : '' }}>Chưa xác nhận</option>
+                            </select>
+
 
                             <input type="date" name="date_from" class="form-control form-control-sm" style="width: 130px;" value="{{ request('date_from') }}" placeholder="Từ ngày">
 
                             <input type="date" name="date_to" class="form-control form-control-sm" style="width: 130px;" value="{{ request('date_to') }}" placeholder="Đến ngày">
 
-                            <input type="text" name="keyword" class="form-control form-control-sm" style="width: 160px;" value="{{ request('keyword') }}" placeholder="Mã đơn / Người đặt">
                             <select name="is_hidden" class="form-select form-select-sm" style="width: 140px;">
                                 <option value="0" {{ request('is_hidden') === '0' ? 'selected' : '' }}>-- Hiển thị --</option>
                                 <option value="1" {{ request('is_hidden') === '1' ? 'selected' : '' }}>-- Đã ẩn --</option>
                             </select>
-                            
+                            <input type="text" name="keyword" class="form-control form-control-sm" style="width: 160px;" value="{{ request('keyword') }}" placeholder="Mã đơn / Người đặt">                            
 
 
 
@@ -326,8 +331,9 @@ ul {
                                     <tr>
                                         <th>Người đặt</th>
                                         <th>Ngày đặt</th>
-                                        <th>Mã đơn hàng</th>
+                                        <th>MĐH</th>
                                         <th>Số tiền</th>
+                                        <th>XN CK</th>
                                         <th>PTTT</th>
                                         <th>TTTT</th>
                                         <th>TT đơn hàng</th>
@@ -359,6 +365,18 @@ ul {
                                             </td>
                                             {{-- 👉 Số tiền lên trước --}}
                                             <td>{{ number_format($order->total_amount, 0, ',', '.') }} VNĐ</td>
+                                            {{-- Xác nhận chuyển khoản --}}
+                                            <td>
+                                                @if($order->payment_method === 'bank')
+                                                    @if($order->bank_transfer_confirmed)
+                                                        <span class="badge bg-success">Đã xác nhận</span>
+                                                    @else
+                                                        <span class="badge bg-warning text-dark">Chưa xác nhận</span>
+                                                    @endif
+                                                @else
+                                                    <span class="text-muted">-</span>
+                                                @endif
+                                            </td>
 
                                             {{-- PTTT --}}
                                             <td>{{ $order->payment_method ?? 'N/A' }}</td>

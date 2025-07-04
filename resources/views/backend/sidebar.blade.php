@@ -4,8 +4,9 @@
 
     <!-- Fixed Logo Header -->
     <div class="logo-wrapper logo-wrapper-center" style="">
-        <a href="{{ url('/admin/reports') }}" title="">
-            <img class="img-fluid for-white" src="{{ asset('storage/banners/logo/logo_1.png') }}" alt="logo" style="top:30px">
+        <a href="{{ url('/admin/report') }}" title="">
+            <img class="img-fluid for-white" src="{{ asset('storage/banners/logo/logo_1.png') }}" alt="logo"
+                style="top:30px">
         </a>
         <div class="back-btn">
             <i class="fa fa-angle-left"></i>
@@ -172,25 +173,29 @@
 </div>
 <!-- Page Sidebar Ends -->
 <style>
-.logo-wrapper {
-  position: sticky;
-  top: 0;
-  z-index: 10; /* Đảm bảo logo nằm trên menu */
-  background-color: inherit; /* Giữ màu nền để logo không bị trong suốt */
-}
+    .logo-wrapper {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        /* Đảm bảo logo nằm trên menu */
+        background-color: inherit;
+        /* Giữ màu nền để logo không bị trong suốt */
+    }
 
-.sidebar-main {
-  overflow-y: auto;
-  flex: 1 1 auto;
-}
-.logo-wrapper {
-  height: 180px; /* hoặc chiều cao logo của bạn */
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background-color: inherit;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+    .sidebar-main {
+        overflow-y: auto;
+        flex: 1 1 auto;
+    }
+
+    .logo-wrapper {
+        height: 180px;
+        /* hoặc chiều cao logo của bạn */
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background-color: inherit;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 </style>

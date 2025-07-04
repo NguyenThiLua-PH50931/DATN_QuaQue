@@ -1,9 +1,11 @@
-<!-- <pre>{{ var_dump($product) }}</pre> -->
 @extends('layouts.frontend') {{-- Đổi lại đúng layout nếu khác --}}
 
 @section('title', $product->name)
 
 @section('contents')
+    <script>
+        window.VARIANTS = @json($variantMap);
+    </script>
 
     <!-- Breadcrumb Section Start -->
     <section class="breadscrumb-section pt-0">
@@ -19,7 +21,6 @@
                                         <i class="fa-solid fa-house"></i>
                                     </a>
                                 </li>
-
                                 @if (isset($product->category))
                                     <li class="breadcrumb-item">
                                         <a href="#">
@@ -28,18 +29,19 @@
                                         </a>
                                     </li>
                                 @endif
-
                                 <li class="breadcrumb-item active" aria-current="page">
                                     {{ $product->name }}
                                 </li>
                             </ol>
                         </nav>
                     </div>
+
                 </div>
             </div>
         </div>
     </section>
     <!-- Breadcrumb Section End -->
+
 
     <!-- Product Left Sidebar Start -->
     <section class="product-section">
@@ -47,95 +49,52 @@
             <div class="row">
                 <div class="col-xxl-9 col-xl-8 col-lg-7 wow fadeInUp">
                     <div class="row g-4">
+                        @php
+                            $mainImages = [];
+                            if ($product->image) {
+                                $mainImages[] = asset('storage/' . $product->image);
+                            }
+                            foreach ($product->images as $img) {
+                                $mainImages[] = asset('storage/' . $img->image_url);
+                            }
+                            foreach ($variants as $variant) {
+                                if ($variant->image) {
+                                    $mainImages[] = asset('storage/' . $variant->image);
+                                }
+                            }
+                            $mainImages = array_unique($mainImages); // Loại trùng nếu có
+                            $thumbImages = $mainImages;
+                        @endphp
                         <div class="col-xl-6 wow fadeInUp">
                             <div class="product-left-box">
                                 <div class="row g-2">
-                                    <!-- Ảnh sản phẩm lớn -->
                                     <div class="col-xxl-10 col-lg-12 col-md-10 order-xxl-2 order-lg-1 order-md-2">
                                         <div class="product-main-2 no-arrow">
-                                            {{-- 1. Ảnh đại diện sản phẩm --}}
-                                            @if ($product->image)
+                                            @foreach ($mainImages as $i => $img)
                                                 <div>
                                                     <div class="slider-image">
-                                                        <img src="{{ asset('storage/' . $product->image) }}" id="img-main"
-                                                            data-zoom-image="{{ asset('storage/' . $product->image) }}"
-                                                            class="img-fluid image_zoom_cls-main blur-up lazyload"
-                                                            alt="{{ $product->name }} ảnh đại diện" />
-                                                    </div>
-                                                </div>
-                                            @endif
-
-                                            {{-- 2. Ảnh album phụ --}}
-                                            @foreach ($product->images as $index => $img)
-                                                <div>
-                                                    <div class="slider-image">
-                                                        <img src="{{ asset('storage/' . $img->image_url) }}"
-                                                            id="img-{{ $index }}"
-                                                            data-zoom-image="{{ asset('storage/' . $img->image_url) }}"
-                                                            class="img-fluid image_zoom_cls-{{ $index }} blur-up lazyload"
-                                                            alt="{{ $product->name }} - ảnh phụ {{ $index + 1 }}" />
+                                                        <img src="{{ $img }}" id="img-{{ $i + 1 }}"
+                                                            data-zoom-image="{{ $img }}"
+                                                            class="img-fluid image_zoom_cls-{{ $i }} blur-up lazyload"
+                                                            alt="Ảnh sản phẩm {{ $i + 1 }}" />
                                                     </div>
                                                 </div>
                                             @endforeach
-
-                                            {{-- 3. Ảnh biến thể (nếu có) --}}
-                                            @if (isset($variants))
-                                                @foreach ($variants as $variant)
-                                                    @if ($variant->image)
-                                                        <div>
-                                                            <div class="slider-image">
-                                                                <img src="{{ asset('storage/' . $variant->image) }}"
-                                                                    id="img-variant-{{ $variant->id }}"
-                                                                    data-zoom-image="{{ asset('storage/' . $variant->image) }}"
-                                                                    class="img-fluid image_zoom_cls-variant-{{ $variant->id }} blur-up lazyload"
-                                                                    alt="{{ $product->name }} - {{ $variant->name }}" />
-                                                            </div>
-                                                        </div>
-                                                    @endif
-                                                @endforeach
-                                            @endif
                                         </div>
                                     </div>
-                                    <!-- Slider ảnh nhỏ (thumbnail) -->
+
                                     <div class="col-xxl-2 col-lg-12 col-md-2 order-xxl-1 order-lg-2 order-md-1">
                                         <div class="left-slider-image-2 left-slider no-arrow slick-top">
-                                            {{-- 1. Thumbnail đại diện --}}
-                                            @if ($product->image)
+                                            @foreach ($thumbImages as $i => $img)
                                                 <div>
                                                     <div class="sidebar-image">
-                                                        <img src="{{ asset('storage/' . $product->image) }}"
-                                                            class="img-fluid blur-up lazyload"
-                                                            alt="{{ $product->name }} thumb đại diện" />
-                                                    </div>
-                                                </div>
-                                            @endif
-
-                                            {{-- 2. Thumbnail ảnh phụ --}}
-                                            @foreach ($product->images as $index => $img)
-                                                <div>
-                                                    <div class="sidebar-image">
-                                                        <img src="{{ asset('storage/' . $img->image_url) }}"
-                                                            class="img-fluid blur-up lazyload"
-                                                            alt="{{ $product->name }} thumb {{ $index + 1 }}" />
+                                                        <img src="{{ $img }}" class="img-fluid blur-up lazyload"
+                                                            alt="Thumbnail {{ $i + 1 }}" />
                                                     </div>
                                                 </div>
                                             @endforeach
-
-                                            {{-- 3. Thumbnail variant --}}
-                                            @if (isset($variants))
-                                                @foreach ($variants as $variant)
-                                                    @if ($variant->image)
-                                                        <div>
-                                                            <div class="sidebar-image">
-                                                                <img src="{{ asset('storage/' . $variant->image) }}"
-                                                                    class="img-fluid blur-up lazyload"
-                                                                    alt="{{ $product->name }} thumb {{ $variant->name }}" />
-                                                            </div>
-                                                        </div>
-                                                    @endif
-                                                @endforeach
-                                            @endif
                                         </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -143,159 +102,97 @@
 
                         <div class="col-xl-6 wow fadeInUp" data-wow-delay="0.1s">
                             <div class="right-box-contain">
-                                {{-- -<h6 class="offer-top">30% Off</h6> --}}
-                                <h2 class="name">Creamy Chocolate Cake</h2>
+                                {{-- <h6 class="offer-top">30% Off</h6> --}}
+                                <h2 class="name">{{ $product->name }}</h2>
+
                                 <div class="price-rating">
-                                    <h3 class="theme-color price">
-                                        $49.50
-                                        {{-- <del class="text-content">$58.46</del>
-                                    <span class="offer theme-color">(8% off)</span> --}}
+                                    <h3 class="theme-color price" id="product-price">
+                                        {{ number_format($product->variants[0]->price ?? 0) }} đ
                                     </h3>
+
                                     <div class="product-rating custom-rate">
                                         <ul class="rating">
-                                            <li>
-                                                <i data-feather="star" class="fill"></i>
-                                            </li>
-                                            <li>
-                                                <i data-feather="star" class="fill"></i>
-                                            </li>
-                                            <li>
-                                                <i data-feather="star" class="fill"></i>
-                                            </li>
-                                            <li>
-                                                <i data-feather="star" class="fill"></i>
-                                            </li>
-                                            <li>
-                                                <i data-feather="star"></i>
-                                            </li>
+                                            @php
+                                                $avgRating = round($product->reviews->avg('rating'));
+                                            @endphp
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                <li>
+                                                    <i data-feather="star"
+                                                        class="{{ $i <= $avgRating ? 'fill' : '' }}"></i>
+                                                </li>
+                                            @endfor
                                         </ul>
-                                        <span class="review">số đánh giá</span>
+                                        <span class="review">{{ $product->reviews->count() }} Đánh giá</span>
                                     </div>
                                 </div>
+
                                 <div class="product-packege">
-                                    <div class="product-title">
-                                        <h4>Weight</h4>
-                                    </div>
-                                    <ul class="select-packege">
-                                        <li>
-                                            <a href="javascript:void(0)" class="active">1/2 KG</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0)">1 KG</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0)">1.5 KG</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0)">Red Roses</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0)">With Pink Roses</a>
-                                        </li>
-                                    </ul>
+                                    @foreach ($attributes as $attrId => $attr)
+                                        <div class="product-title">
+                                            <h4>{{ $attr['name'] }}</h4>
+                                        </div>
+                                        <ul class="select-packege">
+                                            @foreach ($attr['values'] as $valueId => $value)
+                                                <li>
+                                                    <a href="javascript:void(0)" data-attr="{{ $attrId }}"
+                                                        data-value="{{ $valueId }}"
+                                                        class="attribute-select {{ isset($defaultSelected[$attrId]) && $defaultSelected[$attrId] == $valueId ? 'active2' : '' }}">
+                                                        {{ $value }}
+                                                    </a>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    @endforeach
                                 </div>
 
-                                {{-- <div
-                                class="time deal-timer product-deal-timer mx-md-0 mx-auto"
-                                id="clockdiv-1"
-                                data-hours="1"
-                                data-minutes="2"
-                                data-seconds="3">
-                                <div class="product-title">
-                                    <h4>Hurry up! Sales Ends In</h4>
-                                </div>
-                                <ul>
-                                    <li>
-                                        <div class="counter d-block">
-                                            <div class="days d-block">
-                                                <h5></h5>
-                                            </div>
-                                            <h6>Days</h6>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="counter d-block">
-                                            <div class="hours d-block">
-                                                <h5></h5>
-                                            </div>
-                                            <h6>Hours</h6>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="counter d-block">
-                                            <div
-                                                class="minutes d-block">
-                                                <h5></h5>
-                                            </div>
-                                            <h6>Min</h6>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="counter d-block">
-                                            <div
-                                                class="seconds d-block">
-                                                <h5></h5>
-                                            </div>
-                                            <h6>Sec</h6>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div> --}}
+                                <form method="POST" action="{{ route('client.cart.add') }}" class="add-to-cart-form">
+                                    @csrf
+                                    <!-- Input ẩn gửi product_id -->
+                                    <input type="hidden" name="product_id" value="{{ $product->id }}" />
 
-                                <div class="note-box product-packege">
-                                    <div class="cart_qty qty-box product-qty">
-                                        <div class="input-group">
-                                            <button type="button" class="qty-right-plus" data-type="plus" data-field="">
-                                                <i class="fa fa-plus" aria-hidden="true"></i>
-                                            </button>
-                                            <input class="form-control input-number qty-input" type="text"
-                                                name="quantity" value="0" />
-                                            <button type="button" class="qty-left-minus" data-type="minus" data-field="">
-                                                <i class="fa fa-minus" aria-hidden="true"></i>
-                                            </button>
+                                    <div class="note-box product-packege">
+                                        <div class="cart_qty qty-box product-qty">
+                                            <div class="input-group">
+                                                <button type="button" class="qty-left-minus" data-type="minus"
+                                                    data-field="">
+                                                    <i class="fa fa-minus" aria-hidden="true"></i>
+                                                </button>
+                                                <input class="form-control input-number qty-input" type="text"
+                                                    name="quantity" value="1" min="1" />
+                                                <button type="button" class="qty-right-plus" data-type="plus"
+                                                    data-field="">
+                                                    <i class="fa fa-plus" aria-hidden="true"></i>
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <button onclick="location.href = 'cart.html';"
-                                        class="btn btn-md bg-dark cart-button text-white w-100">
-                                        Add To Cart
-                                    </button>
-                                </div>
+                                        <!-- Input ẩn lưu dữ liệu biến thể, JS sẽ cập nhật giá trị này khi người dùng chọn biến thể -->
+                                        <input type="hidden" id="variant_attributes" name="variant_attributes"
+                                            value="" />
 
-                                <div class="buy-box">
-                                    <form action="{{ route('client.wishlist.store') }}" method="POST">
-                                        @csrf
-                                        <input type="hidden" name="product_id" value="{{ $product->id }}">
-                                        <button type="submit" class="btn p-0 position-relative">
-                                            <i data-feather="heart"
-                                                @if (auth()->check() && auth()->user()->wishlist()->where('product_id', $product->id)->exists()) class="text-red-500" @endif></i>
-                                            <span>Add To Wishlist</span>
+                                        <button type="submit" class="btn btn-md bg-dark cart-button text-white w-100">
+                                            Thêm giỏ hàng
                                         </button>
-                                    </form>
-
-                                    <a href="compare.html">
-                                        <i data-feather="shuffle"></i>
-                                        <span>Add To Compare</span>
+                                    </div>
+                                </form>
+                                <div class="buy-box">
+                                    <a href="wishlist.html">
+                                        <i data-feather="heart"></i>
+                                        <span>Add To Wishlist</span>
                                     </a>
                                 </div>
 
                                 <div class="pickup-box">
+
                                     <div class="product-info">
                                         <ul class="product-info-list product-info-list-2">
-                                            <li>
-                                                SKU :
-                                                <a href="javascript:void(0)">(thay đổi theo từng biến thể)</a>
-                                            </li>
-                                            <li>
-                                                Stock :
-                                                <a href="javascript:void(0)">(thay đổi theo từng biến thể)</a>
-                                            </li>
-                                            <li>
-                                                Tags :
-                                                <a href="javascript:void(0)">(danh mục)</a>
-                                            </li>
+                                            <li>SKU : <a href="javascript:void(0)" id="product-sku">—</a></li>
+                                            <li>Số lượng : <a href="javascript:void(0)" id="product-stock">—</a></li>
+                                            <li>Tags : <a
+                                                    href="javascript:void(0)">{{ $product->category->name ?? '' }}</a></li>
                                         </ul>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
@@ -307,7 +204,7 @@
                                         <button class="nav-link active" id="description-tab" data-bs-toggle="tab"
                                             data-bs-target="#description" type="button" role="tab"
                                             aria-controls="description" aria-selected="true">
-                                            Mô tả chung (theo bảng Products)
+                                            Mô tả
                                         </button>
                                     </li>
 
@@ -315,7 +212,15 @@
                                         <button class="nav-link" id="info-tab" data-bs-toggle="tab"
                                             data-bs-target="#info" type="button" role="tab" aria-controls="info"
                                             aria-selected="false">
-                                            Mô tả biến thể (được chọn)
+                                            Mô tả Biến thể
+                                        </button>
+                                    </li>
+
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="care-tab" data-bs-toggle="tab"
+                                            data-bs-target="#care" type="button" role="tab" aria-controls="care"
+                                            aria-selected="false">
+                                            Bình luận
                                         </button>
                                     </li>
 
@@ -332,14 +237,23 @@
                                     <div class="tab-pane fade show active" id="description" role="tabpanel"
                                         aria-labelledby="description-tab">
                                         <div class="product-description">
-                                            Mô tả sản phẩm đã có cke
+                                            {!! $product->description !!}
                                         </div>
                                     </div>
 
                                     <div class="tab-pane fade" id="info" role="tabpanel"
                                         aria-labelledby="info-tab">
                                         <div class="table-responsive">
-                                            Mô tả của biến thể được chọn đã có cke
+                                            <div class="table-responsive" id="variant-description">
+                                                {!! $product->variants[0]->description ?? '<p>Chưa có mô tả biến thể</p>' !!}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="tab-pane fade" id="care" role="tabpanel"
+                                        aria-labelledby="care-tab">
+                                        <div class="information-box">
+                                            bình luận
                                         </div>
                                     </div>
 
@@ -350,7 +264,7 @@
                                                 <div class="col-xl-6">
                                                     <div class="review-title">
                                                         <h4 class="fw-500">
-                                                            Customer reviews
+                                                            Đánh giá
                                                         </h4>
                                                     </div>
 
@@ -389,11 +303,8 @@
                                                                     </h5>
                                                                     <div class="progress">
                                                                         <div class="progress-bar" role="progressbar"
-                                                                            style="
-                                                                                    width: 68%;
-                                                                                "
-                                                                            aria-valuenow="100" aria-valuemin="0"
-                                                                            aria-valuemax="100">
+                                                                            style="width: 68%;" aria-valuenow="100"
+                                                                            aria-valuemin="0" aria-valuemax="100">
                                                                             68%
                                                                         </div>
                                                                     </div>
@@ -408,11 +319,8 @@
                                                                     </h5>
                                                                     <div class="progress">
                                                                         <div class="progress-bar" role="progressbar"
-                                                                            style="
-                                                                                    width: 67%;
-                                                                                "
-                                                                            aria-valuenow="100" aria-valuemin="0"
-                                                                            aria-valuemax="100">
+                                                                            style="width: 67%;" aria-valuenow="100"
+                                                                            aria-valuemin="0" aria-valuemax="100">
                                                                             67%
                                                                         </div>
                                                                     </div>
@@ -427,11 +335,8 @@
                                                                     </h5>
                                                                     <div class="progress">
                                                                         <div class="progress-bar" role="progressbar"
-                                                                            style="
-                                                                                    width: 42%;
-                                                                                "
-                                                                            aria-valuenow="100" aria-valuemin="0"
-                                                                            aria-valuemax="100">
+                                                                            style="width: 42%;" aria-valuenow="100"
+                                                                            aria-valuemin="0" aria-valuemax="100">
                                                                             42%
                                                                         </div>
                                                                     </div>
@@ -446,11 +351,8 @@
                                                                     </h5>
                                                                     <div class="progress">
                                                                         <div class="progress-bar" role="progressbar"
-                                                                            style="
-                                                                                    width: 30%;
-                                                                                "
-                                                                            aria-valuenow="100" aria-valuemin="0"
-                                                                            aria-valuemax="100">
+                                                                            style="width: 30%;" aria-valuenow="100"
+                                                                            aria-valuemin="0" aria-valuemax="100">
                                                                             30%
                                                                         </div>
                                                                     </div>
@@ -465,11 +367,8 @@
                                                                     </h5>
                                                                     <div class="progress">
                                                                         <div class="progress-bar" role="progressbar"
-                                                                            style="
-                                                                                    width: 24%;
-                                                                                "
-                                                                            aria-valuenow="100" aria-valuemin="0"
-                                                                            aria-valuemax="100">
+                                                                            style="width: 24%;" aria-valuenow="100"
+                                                                            aria-valuemin="0" aria-valuemax="100">
                                                                             24%
                                                                         </div>
                                                                     </div>
@@ -487,40 +386,6 @@
                                                     </div>
 
                                                     <div class="row g-4">
-                                                        <div class="col-md-6">
-                                                            <div class="form-floating theme-form-floating">
-                                                                <input type="text" class="form-control" id="name"
-                                                                    placeholder="Name" />
-                                                                <label for="name">Your
-                                                                    Name</label>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="col-md-6">
-                                                            <div class="form-floating theme-form-floating">
-                                                                <input type="email" class="form-control" id="email"
-                                                                    placeholder="Email Address" />
-                                                                <label for="email">Email
-                                                                    Address</label>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="col-md-6">
-                                                            <div class="form-floating theme-form-floating">
-                                                                <input type="url" class="form-control" id="website"
-                                                                    placeholder="Website" />
-                                                                <label for="website">Website</label>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="col-md-6">
-                                                            <div class="form-floating theme-form-floating">
-                                                                <input type="url" class="form-control" id="review1"
-                                                                    placeholder="Give your review a title" />
-                                                                <label for="review1">Review
-                                                                    Title</label>
-                                                            </div>
-                                                        </div>
 
                                                         <div class="col-12">
                                                             <div class="form-floating theme-form-floating">
@@ -596,8 +461,8 @@
 
                                                                         <div class="reply">
                                                                             <p>
-                                                                                Icing
-                                                                                <a href="javascript:void(0)">Reply</a>
+                                                                                nội dung đánh giá.<a
+                                                                                    href="javascript:void(0)">Reply</a>
                                                                             </p>
                                                                         </div>
                                                                     </div>
@@ -614,175 +479,39 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="col-xxl-3 col-xl-4 col-lg-5 d-none d-lg-block wow fadeInUp">
                     <div class="right-sidebar-box">
-                        <div class="vendor-box">
-                            <div class="verndor-contain">
-                                <div class="vendor-image">
-                                    <img src="../assets/images/product/vendor.png" class="blur-up lazyload"
-                                        alt="" />
-                                </div>
-
-                                <div class="vendor-name">
-                                    <h5 class="fw-500">Noodles Co.</h5>
-
-                                    <div class="product-rating mt-1">
-                                        <ul class="rating">
-                                            <li>
-                                                <i data-feather="star" class="fill"></i>
-                                            </li>
-                                            <li>
-                                                <i data-feather="star" class="fill"></i>
-                                            </li>
-                                            <li>
-                                                <i data-feather="star" class="fill"></i>
-                                            </li>
-                                            <li>
-                                                <i data-feather="star" class="fill"></i>
-                                            </li>
-                                            <li>
-                                                <i data-feather="star"></i>
-                                            </li>
-                                        </ul>
-                                        <span>(36 Reviews)</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <p class="vendor-detail">
-                                Noodles
-                            </p>
-
-                            <div class="vendor-list">
-                                <ul>
-                                    <li>
-                                        <div class="address-contact">
-                                            <i data-feather="map-pin"></i>
-                                            <h5>
-                                                Address:
-                                                <span class="text-content">1288 Franklin
-                                                    Avenue</span>
-                                            </h5>
-                                        </div>
-                                    </li>
-
-                                    <li>
-                                        <div class="address-contact">
-                                            <i data-feather="headphones"></i>
-                                            <h5>
-                                                Contact Seller:
-                                                <span class="text-content">(+1)-123-456-789</span>
-                                            </h5>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
 
                         <!-- Trending Product -->
                         <div class="pt-25">
                             <div class="category-menu">
-                                <h3>Trending Products</h3>
-
+                                <h3>Sản phẩm nổi bật</h3>
                                 <ul class="product-list product-right-sidebar border-0 p-0">
-                                    <li>
-                                        <div class="offer-product">
-                                            <a href="product-left-thumbnail.html" class="offer-image">
-                                                <img src="../assets/images/vegetable/product/23.png"
-                                                    class="img-fluid blur-up lazyload" alt="" />
-                                            </a>
+                                    @foreach ($topMonthlyProducts as $item)
+                                        <li>
+                                            <div class="offer-product">
+                                                <a href="{{ route('client.product.detail', $item->slug) }}"
+                                                    class="offer-image">
+                                                    <img src="{{ asset('storage/' . ($item->image ?? 'default.png')) }}"
+                                                        class="img-fluid blur-up lazyload" alt="{{ $item->name }}" />
 
-                                            <div class="offer-detail">
-                                                <div>
-                                                    <a href="product-left-thumbnail.html">
-                                                        <h6 class="name">
-                                                            Meatigo Premium
-                                                            Goat Curry
-                                                        </h6>
-                                                    </a>
-                                                    <span>450 G</span>
-                                                    <h6 class="price theme-color">
-                                                        $ 70.00
-                                                    </h6>
+                                                </a>
+                                                <div class="offer-detail">
+                                                    <div>
+                                                        <a href="{{ route('client.product.detail', $item->slug) }}">
+                                                            <h6 class="name">{{ $item->name }}</h6>
+                                                        </a>
+                                                        <span>{{ $item->weight ?? '' }}</span> {{-- Nếu có trường weight --}}
+                                                        <h6 class="price theme-color">
+                                                            {{ number_format($item->variants->min('price') ?? 0) }} đ</h6>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </li>
-
-                                    <li>
-                                        <div class="offer-product">
-                                            <a href="product-left-thumbnail.html" class="offer-image">
-                                                <img src="../assets/images/vegetable/product/24.png"
-                                                    class="blur-up lazyload" alt="" />
-                                            </a>
-
-                                            <div class="offer-detail">
-                                                <div>
-                                                    <a href="product-left-thumbnail.html">
-                                                        <h6 class="name">
-                                                            Dates Medjoul
-                                                            Premium Imported
-                                                        </h6>
-                                                    </a>
-                                                    <span>450 G</span>
-                                                    <h6 class="price theme-color">
-                                                        $ 40.00
-                                                    </h6>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-
-                                    <li>
-                                        <div class="offer-product">
-                                            <a href="product-left-thumbnail.html" class="offer-image">
-                                                <img src="../assets/images/vegetable/product/25.png"
-                                                    class="blur-up lazyload" alt="" />
-                                            </a>
-
-                                            <div class="offer-detail">
-                                                <div>
-                                                    <a href="product-left-thumbnail.html">
-                                                        <h6 class="name">
-                                                            Good Life Walnut
-                                                            Kernels
-                                                        </h6>
-                                                    </a>
-                                                    <span>200 G</span>
-                                                    <h6 class="price theme-color">
-                                                        $ 52.00
-                                                    </h6>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-
-                                    <li class="mb-0">
-                                        <div class="offer-product">
-                                            <a href="product-left-thumbnail.html" class="offer-image">
-                                                <img src="../assets/images/vegetable/product/26.png"
-                                                    class="blur-up lazyload" alt="" />
-                                            </a>
-
-                                            <div class="offer-detail">
-                                                <div>
-                                                    <a href="product-left-thumbnail.html">
-                                                        <h6 class="name">
-                                                            Apple Red
-                                                            Premium Imported
-                                                        </h6>
-                                                    </a>
-                                                    <span>1 KG</span>
-                                                    <h6 class="price theme-color">
-                                                        $ 80.00
-                                                    </h6>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
+                                        </li>
+                                    @endforeach
                                 </ul>
                             </div>
+
                         </div>
 
                         <!-- Banner Section -->
@@ -921,9 +650,406 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Add more related products as needed -->
+
                     </div>
                 </div>
             </div>
         </div>
     </section>
+    <!-- Releted Product Section End -->
+
+    {{-- Sửa lỗi style lồng nhau và CSS sai cú pháp --}}
+    <style>
+        .attribute-select.active2 {
+            background: #0da386 !important;
+            color: #fff !important;
+            border: 1px solid #0da386 !important;
+            /* tuỳ bạn muốn style thêm gì nữa thì thêm */
+        }
+
+        .attribute-select.disabled-variant {
+            color: #aaa !important;
+            cursor: not-allowed !important;
+            pointer-events: none !important;
+        }
+    </style>
+
+    <script>
+        window.VARIANTS = {!! json_encode($variantMap ?? [], JSON_HEX_TAG) !!};
+    </script>
+
+    {{-- update số lượng trang detail --}}
+    <script>
+        const updateQuantityUrl = "{{ route('client.cart.updateQuantity') }}";
+
+        document.querySelectorAll('.qty-left-minus, .qty-right-plus').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                const input = button.closest('.input-group').querySelector('input[name="quantity"]');
+                if (!input) return;
+
+                let val = parseInt(input.value, 10) || 1;
+                const min = 1;
+                const maxStock = parseInt(input.getAttribute('data-stock'), 10) || 999999;
+
+                const cartItemId = input.getAttribute('data-cart-item-id');
+                if (!cartItemId) {
+                    console.error('cart_item_id not found');
+                    return;
+                }
+
+                let action;
+
+                if (button.classList.contains('qty-right-plus')) {
+                    if (val < maxStock) {
+                        val++;
+                        action = 'increase';
+                    } else {
+                        alert('Số lượng đã đạt tối đa trong kho!');
+                        return;
+                    }
+                } else if (button.classList.contains('qty-left-minus')) {
+                    if (val > min) {
+                        val--;
+                        action = 'decrease';
+                    } else {
+                        return; // không giảm nữa
+                    }
+                }
+
+                fetch(updateQuantityUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content'),
+                        },
+                        body: JSON.stringify({
+                            cart_item_id: cartItemId,
+                            action: action
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            input.value = data.quantity; // cập nhật số lượng mới lên input
+                            console.log('Quantity updated to:', data.quantity);
+                        } else {
+                            alert(data.message || 'Cập nhật số lượng thất bại');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Fetch error:', error);
+                        alert('Có lỗi xảy ra, vui lòng thử lại');
+                    });
+            });
+        });
+    </script>
+
+    <script>
+        window.VARIANTS = @json($variantMap ?? []);
+
+        let selected = {};
+        let variants = window.VARIANTS;
+
+        function canSelectValue(attrValueId, attrId) {
+            return variants.some(v => {
+                if (Number(v.active) !== 1) return false;
+
+                if (!v.value_ids.includes(Number(attrValueId))) return false;
+
+                for (let selectedAttrId in selected) {
+                    if (parseInt(selectedAttrId) === attrId) continue;
+                    let selectedValueId = selected[selectedAttrId];
+                    if (!v.value_ids.includes(selectedValueId)) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+        }
+
+        function updateDisabledStates() {
+            document.querySelectorAll('.attribute-select').forEach(function(btn) {
+                let val = parseInt(btn.getAttribute('data-value'), 10);
+                let attr = parseInt(btn.getAttribute('data-attr'), 10);
+
+                if (canSelectValue(val, attr)) {
+                    btn.classList.remove('disabled-variant');
+                    btn.style.pointerEvents = 'auto';
+                    btn.style.color = '';
+                    btn.style.cursor = 'pointer';
+                } else {
+                    btn.classList.add('disabled-variant');
+                    btn.style.pointerEvents = 'none';
+                    btn.style.color = '#aaa';
+                    btn.style.cursor = 'not-allowed';
+
+                    if (btn.classList.contains('active2')) {
+                        btn.classList.remove('active2');
+                        delete selected[attr];
+                    }
+                }
+            });
+        }
+
+        function updateVariantDescription(found) {
+            let variantDescEl = document.getElementById('variant-description');
+            if (found && Number(found.active) === 1 && found.description) {
+                variantDescEl.innerHTML = found.description;
+            } else {
+                variantDescEl.innerHTML = 'Chưa có mô tả biến thể';
+            }
+        }
+
+        // Khởi tạo disable lần đầu (nếu có selected mặc định)
+        updateDisabledStates();
+
+        document.querySelectorAll('.attribute-select').forEach(function(btn) {
+            if (btn.classList.contains('disabled-variant')) return;
+
+            btn.addEventListener('click', function() {
+                let attr = parseInt(btn.getAttribute('data-attr'));
+                let val = parseInt(btn.getAttribute('data-value'));
+
+                btn.closest('ul').querySelectorAll('a').forEach(a => a.classList.remove('active2'));
+
+                btn.classList.add('active2');
+                selected[attr] = val;
+
+                updateDisabledStates();
+
+                // Tìm variant và cập nhật thông tin + mô tả biến thể mỗi lần chọn
+                if (Object.keys(selected).length === Object.keys(@json($attributes)).length) {
+                    let attrValueIds = Object.values(selected).map(Number).sort((a, b) => a - b);
+                    let found = variants.find(v =>
+                        v.value_ids.length === attrValueIds.length &&
+                        v.value_ids.slice().sort((a, b) => a - b).every((id, i) => id === attrValueIds[
+                            i])
+                    );
+
+                    if (found && Number(found.active) === 1) {
+                        document.getElementById('product-sku').textContent = found.sku || 'N/A';
+                        document.getElementById('product-stock').textContent = found.stock ?? 'N/A';
+                        document.getElementById('product-price').textContent = found.price ? (Number(found
+                            .price).toLocaleString() + ' đ') : 'Liên hệ';
+                    } else {
+                        document.getElementById('product-sku').textContent = '—';
+                        document.getElementById('product-stock').textContent = '—';
+                        document.getElementById('product-price').textContent = '—';
+                    }
+
+                    updateVariantDescription(found);
+
+                } else {
+                    document.getElementById('product-sku').textContent = '—';
+                    document.getElementById('product-stock').textContent = '—';
+                    document.getElementById('product-price').textContent = '—';
+
+                    // Chưa chọn đủ thì mô tả biến thể về mặc định mô tả sản phẩm chung
+                    document.getElementById('variant-description').innerHTML = `{!! addslashes($product->description) !!}`;
+                }
+
+                var img = btn.getAttribute('data-variant-image');
+                if (img) {
+                    document.getElementById('mainImage').src = img;
+                }
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('.add-to-cart-form');
+            const variantInput = document.getElementById('variant_attributes');
+
+            // Lấy số lượng thuộc tính cần chọn (dựa vào dữ liệu attributes truyền từ backend)
+            const attributesCount = Object.keys(@json($attributes)).length;
+
+            // Biến lưu trạng thái lựa chọn
+            let selected = {};
+
+            // Hàm cập nhật input ẩn và log (bạn có thể tắt console.log khi cần)
+            function updateVariantInput() {
+                if (Object.keys(selected).length === 0) {
+                    variantInput.value = null; // hoặc variantInput.value = '';
+                } else {
+                    variantInput.value = JSON.stringify(selected);
+                }
+                console.log('Updated variant_attributes:', variantInput.value);
+            }
+
+            // Gán sự kiện click cho từng lựa chọn biến thể
+            document.querySelectorAll('.attribute-select').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    let attr = btn.getAttribute('data-attr');
+                    let val = btn.getAttribute('data-value');
+
+                    // Xóa class active2 trong cùng nhóm (ul cha)
+                    const ulParent = btn.closest('ul');
+                    if (ulParent) {
+                        ulParent.querySelectorAll('a').forEach(a => a.classList.remove('active2'));
+                    }
+                    // Thêm class active2 cho lựa chọn hiện tại
+                    btn.classList.add('active2');
+
+                    // Cập nhật lựa chọn
+                    selected[attr] = parseInt(val);
+
+                    // Cập nhật input ẩn
+                    updateVariantInput();
+
+                    // Cập nhật thông tin biến thể (giá, sku, stock) nếu chọn đủ biến thể
+                    if (Object.keys(selected).length === attributesCount) {
+                        let attrValueIds = Object.values(selected).map(Number).sort((a, b) => a -
+                            b);
+                        let found = window.VARIANTS.find(v =>
+                            v.value_ids.length === attrValueIds.length &&
+                            v.value_ids.slice().sort((a, b) => a - b).every((id, i) => id ===
+                                attrValueIds[i])
+                        );
+
+                        if (found) {
+                            document.getElementById('product-sku').textContent = found.sku || 'N/A';
+                            document.getElementById('product-stock').textContent = found.stock ??
+                                'N/A';
+                            document.getElementById('product-price').textContent = found.price ? (
+                                Number(found.price).toLocaleString() + ' đ') : 'Liên hệ';
+                            document.getElementById('variant-price').value = found.price || '';
+                        } else {
+                            document.getElementById('product-sku').textContent = 'Không tồn tại';
+                            document.getElementById('product-stock').textContent = 'Không tồn tại';
+                            document.getElementById('product-price').textContent = 'Không tồn tại';
+                            document.getElementById('variant-price').value = '';
+                        }
+                    } else {
+                        document.getElementById('product-sku').textContent = '—';
+                        document.getElementById('product-stock').textContent = '—';
+                        document.getElementById('product-price').textContent = '—';
+                        document.getElementById('variant-price').value = '';
+                    }
+                });
+            });
+
+            // Khi submit form, kiểm tra đủ biến thể chưa
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    if (attributesCount > 0 && Object.keys(selected).length !== attributesCount) {
+                        e.preventDefault();
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Thông báo',
+                            text: 'Vui lòng chọn đầy đủ biến thể sản phẩm trước khi thêm vào giỏ hàng.',
+                            confirmButtonText: 'OK',
+                            confirmButtonColor: '#0da487',
+                            width: 300, // nhỏ hơn nữa
+                            padding: '0.8rem 1rem',
+                            customClass: {
+                                title: 'swal2-title-smaller',
+                                content: 'swal2-content-smaller'
+                            }
+                        });
+
+                        return false;
+                    }
+                    // Cập nhật lại input ẩn lần cuối trước khi submit
+                    updateVariantInput();
+                });
+            }
+
+
+            // Khởi tạo giá trị input ẩn ban đầu
+            updateVariantInput();
+
+            // --- Phần tăng giảm số lượng ---
+            document.querySelectorAll('.qty-left-minus, .qty-right-plus').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const input = button.closest('.input-group').querySelector(
+                        'input[name="quantity"]');
+                    if (!input) return;
+
+                    let val = parseInt(input.value, 10) || 1;
+                    const min = 1; // min cứng
+
+                    if (button.classList.contains('qty-right-plus')) {
+                        val += 1;
+                    } else if (button.classList.contains('qty-left-minus')) {
+                        val = val > min ? val - 1 : min;
+                    }
+
+                    input.value = val;
+                    console.log('Quantity updated to:', val);
+                });
+            });
+        });
+    </script>
+    <style>
+        .swal2-title-smaller {
+            font-size: 14px !important;
+            margin-bottom: 0.3rem;
+            text-align: center;
+        }
+
+        .swal2-content-smaller {
+            font-size: 12px !important;
+            text-align: center;
+            white-space: normal;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            @if (session('error'))
+                Swal.fire({
+                    icon: 'error', // hoặc 'success'
+                    title: 'Lỗi',
+                    text: '{{ session('error') }}',
+                    confirmButtonColor: '#0da487',
+                    width: 350, // giảm chiều ngang
+                    padding: '1rem 1.5rem', // giảm padding
+                    customClass: {
+                        popup: 'swal2-popup-small',
+                        title: 'swal2-title-small',
+                        content: 'swal2-content-small'
+                    }
+                });
+            @endif
+
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công',
+                    text: '{{ session('success') }}',
+                    confirmButtonColor: '#0da487',
+                    width: 350,
+                    padding: '1rem 1.5rem',
+                    customClass: {
+                        popup: 'swal2-popup-small',
+                        title: 'swal2-title-small',
+                        content: 'swal2-content-small'
+                    }
+                });
+            @endif
+        });
+    </script>
+    <style>
+        .swal2-popup-small {
+            font-size: 14px !important;
+            padding: 1rem !important;
+        }
+
+        .swal2-title-small {
+            font-size: 18px !important;
+            margin-bottom: 0.4rem;
+        }
+
+        .swal2-content-small {
+            font-size: 14px !important;
+            white-space: normal;
+        }
+    </style>
+
 @endsection

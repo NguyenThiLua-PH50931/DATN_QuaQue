@@ -7,6 +7,7 @@ use App\Models\admin\Blog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class BlogController extends Controller
 {
@@ -88,7 +89,7 @@ class BlogController extends Controller
      */
     public function show(string $id)
     {
-        $blog = Blog::findOrFail($id);
+        $blog = Blog::with(['comments.user'])->findOrFail($id);
         return view('backend.blogs.show', compact('blog'));
     }
 
