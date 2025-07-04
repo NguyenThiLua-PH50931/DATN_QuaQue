@@ -57,16 +57,7 @@
                          </a>
                          {{-- TÌM KIẾM SẢN PHẨM --}}
                          <div class="middle-box">
-                             <div class="location-box">
-                                 <button class="btn location-button" data-bs-toggle="modal"
-                                     data-bs-target="#locationModal">
-                                     <span class="location-arrow">
-                                         <i data-feather="map-pin"></i>
-                                     </span>
-                                     <span class="locat-name">Vị trí</span>
-                                     <i class="fa-solid fa-angle-down"></i>
-                                 </button>
-                             </div>
+
                              <div class="search-box">
                                  <div class="input-group">
                                      <input type="search" class="form-control" id="searchInput"
@@ -227,16 +218,28 @@
                                                          $totalPrice += $itemTotal;
                                                      @endphp
                                                      <li class="cart-item d-flex align-items-center">
-                                                         <img src="{{ asset('storage/' . $item->product->image) }}"
-                                                             alt="{{ $item->product->name }}" class="cart-item-img">
+                                                         @if ($item->product && $item->product->image)
+                                                             <img src="{{ asset('storage/' . $item->product->image) }}"
+                                                                 alt="{{ $item->product->name }}" class="cart-item-img">
+                                                         @else
+                                                             <img src="{{ asset('images/default-product.png') }}"
+                                                                 alt="Sản phẩm không tồn tại" class="cart-item-img">
+                                                         @endif
+
                                                          <div class="cart-item-info">
-                                                             <a href="{{ route('client.product.detail', ['slug' => $item->product->slug]) }}"
-                                                                 class="cart-item-name">
-                                                                 {{ \Illuminate\Support\Str::limit($item->product->name, 20) }}
-                                                             </a>
+                                                             @if ($item->product)
+                                                                 <a href="{{ route('client.product.detail', ['slug' => $item->product->slug]) }}"
+                                                                     class="cart-item-name">
+                                                                     {{ \Illuminate\Support\Str::limit($item->product->name, 20) }}
+                                                                 </a>
+                                                             @else
+                                                                 <span class="cart-item-name text-muted">Sản phẩm không
+                                                                     tồn tại</span>
+                                                             @endif
+
                                                              <div class="cart-item-qty-price">
                                                                  {{ $item->quantity }} x
-                                                                 đ{{ number_format($item->price ?? $item->product->price, 2) }}
+                                                                 {{ number_format($item->price ?? $item->product->price, 0, ',', '.') }}
                                                              </div>
                                                          </div>
                                                          <button type="button" class="cart-item-remove"
@@ -252,7 +255,8 @@
                                                  class="cart-popup-total d-flex justify-content-between align-items-center">
                                                  <strong>Tổng: </strong>
                                                  <strong
-                                                     class="total-price">đ{{ number_format($totalPrice, 2) }}</strong>
+                                                     class="total-price">{{ number_format($totalPrice, 0, ',', '.') }}
+                                                 </strong>
                                              </div>
                                              <div class="cart-popup-actions d-flex justify-content-between mt-3">
                                                  <a href="{{ route('client.cart.index') }}"
@@ -433,7 +437,14 @@
                                                  let total = 0;
                                                  popup.querySelectorAll('.cart-items-list li').forEach(li => {
                                                      const qtyPriceText = li.querySelector('.cart-item-qty-price')?.textContent || '';
-                                                     const match = qtyPriceText.match(/(\d+)\s*x\s*\$(\d+(\.\d+)?)/);
+                                                     const match = qtyPriceText.match(/(\d+)\s*x\s*([\d\.]+)/);
+                                                     if (match) {
+                                                         const qty = parseInt(match[1]);
+                                                         const priceStr = match[2].replace(/\./g, ''); // bỏ dấu chấm ngăn cách hàng nghìn
+                                                         const price = parseInt(priceStr);
+                                                         total += qty * price;
+                                                     }
+
                                                      if (match) {
                                                          total += parseInt(match[1]) * parseFloat(match[2]);
                                                      }
@@ -1079,6 +1090,7 @@
                                                  thiệu
                                              </a>
                                          </li>
+
                                          <li class="nav-item dropdown new-nav-item">
                                              <a class="nav-link dropdown-toggle"
                                                  href="{{ route('client.lienhe') }}">Liên
@@ -1090,6 +1102,15 @@
                                                  href="{{ route('client.wishlist.index') }}">Yêu thích
                                              </a>
                                          </li>
+
+                                         <style>
+                                             a.nav-link::before {
+                                                 display: none !important;
+                                                 content: none !important;
+                                                 width: 0 !important;
+                                                 height: 0 !important;
+                                             }
+                                         </style>
                                          {{-- <li class="nav-item dropdown new-nav-item">
                                              <a class="nav-link dropdown-toggle" href="{{ route('blog') }}">Thanh
 
@@ -1231,7 +1252,7 @@
 
                      <div class="header-nav-right">
                          <button class="btn deal-button" data-bs-toggle="modal" data-bs-target="#deal-box">
-                             <i data-feather="zap"></i>
+                             <i class="ri-leaf-line"></i> <!-- icon lá cây từ Remix Icon -->
                              <span>Ưu đãi hôm nay</span>
                          </button>
                      </div>
