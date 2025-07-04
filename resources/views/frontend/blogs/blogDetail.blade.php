@@ -7,7 +7,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="breadscrumb-contain">
-                        {{-- <h2>Blog Details Page</h2> --}}
+                        <h2>Chi tiết tin tức</h2>
                         <nav>
                             <ol class="breadcrumb mb-0">
                                 <li class="breadcrumb-item">
