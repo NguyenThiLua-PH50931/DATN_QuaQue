@@ -19,11 +19,6 @@
             <ul class="sidebar-links" id="simple-bar">
                 <li class="back-btn"></li> <br><br><br><br>
                 {{-- <li class="sidebar-list">
-
-                    <a class="sidebar-link sidebar-title link-nav" href="{{ route('admin.dashboard') }}">
-                        <i class="ri-list-check"></i>
-                        <span>Báo cáo hệ thống</span>
-                    </a>
                 </li> --}}
                 <li class="sidebar-list">
                     <a class="sidebar-link" href="{{ url('/admin/reports') }}">
