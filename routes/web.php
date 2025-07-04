@@ -46,6 +46,8 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
         Route::get('/all', [ClientProductController::class, 'index'])->name('index');
         Route::get('/{slug}', [ClientProductController::class, 'show'])->name('detail');
         Route::post('/get-variant', [ClientProductController::class, 'getVariant'])->name('.getVariant');
+        Route::post('/reviews', [ClientProductController::class, 'storeReview'])->name('reviews.store');
+        Route::get('/{slug}/reviews', [ClientProductController::class, 'filterReviews'])->name('reviews.filter');
     });
 
 
