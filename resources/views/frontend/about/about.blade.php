@@ -1,5 +1,5 @@
 @extends('layouts.frontend')
-@section('title', 'About Us')
+@section('title', 'Giới thiệu')
 @section('contents')
 <style>
  .reviewer-box {
@@ -73,7 +73,7 @@
                         <div class="col-6">
                             <div class="fresh-image-2">
                                 <div>
-                                    <img src="../assets/images/inner-page/about-us/1.jpg" class="bg-img blur-up lazyload"
+                                    <img src="{{ asset('storage/banners/anh2.png') }}" class="bg-img blur-up lazyload"
                                         alt="" />
                                 </div>
                             </div>
@@ -82,7 +82,7 @@
                         <div class="col-6">
                             <div class="fresh-image">
                                 <div>
-                                    <img src="../assets/images/inner-page/about-us/2.jpg" class="bg-img blur-up lazyload"
+                                    <img src="{{ asset('storage/banners/anh1.png') }}" class="bg-img blur-up lazyload"
                                         alt="" />
                                 </div>
                             </div>
@@ -94,25 +94,17 @@
                     <div class="fresh-contain p-center-left">
                         <div>
                             <div class="review-title">
-                                <h2>We make Organic Food In Market</h2>
+                                <h2>Quà Quê - Đặc sản vùng miền Việt Nam</h2>
                             </div>
 
                             <div class="delivery-list">
                                 <p class="text-content">
-                                    Just a few seconds to measure your body
-                                    temperature. Up to 5 users! The battery
-                                    lasts up to 2 years. There are many
-                                    variations of passages of Lorem Ipsum
-                                    available.We started in 2019 and haven't
-                                    stopped smashing it since. A global
-                                    brand that doesn't sleep, we are 24/7
-                                    and always bringing something new with
-                                    over 100 new products dropping on the
-                                    monhtly, bringing you the latest looks
-                                    for less.
+                                   Quà Quê tự hào mang đến những sản phẩm đặc sản tươi ngon, thuần khiết từ các vùng miền quê hương Việt Nam.
+                                Chúng tôi cam kết chọn lọc kỹ càng, bảo tồn hương vị truyền thống và chất lượng tự nhiên của từng món quà quê,
+                                để mỗi sản phẩm là một câu chuyện, một phần ký ức thân thương gửi đến khách hàng.
                                 </p>
 
-                                <ul class="delivery-box">
+                                {{-- <ul class="delivery-box">
                                     <li>
                                         <div class="delivery-box">
                                             <div class="delivery-icon">
@@ -170,7 +162,7 @@
                                             </div>
                                         </div>
                                     </li>
-                                </ul>
+                                </ul> --}}
                             </div>
                         </div>
                     </div>
@@ -249,7 +241,7 @@
    <section class="review-section section-lg-space">
     <div class="container-fluid">
         <div class="about-us-title text-center">
-            <h2 class="center">Bình luận mới nhất từ Blog</h2>
+            <h2 class="center">Bình luận mới nhất</h2>
         </div>
 
         <div class="row">
