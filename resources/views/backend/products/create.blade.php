@@ -664,14 +664,13 @@
               <label class="form-label">Ảnh biến thể</label>
               <input type="file" name="variants[${idx}][image]" class="form-control" accept="image/*">
             </div>
-
+            <div class="col-12">
+              <label class="form-label">Mô tả biến thể</label>
+              <textarea name="variants[${idx}][description]" rows="2" class="form-control variant-description-editor"></textarea>
+            </div>
           </div>
         </div>
         `;
-                //  <div class="col-12">
-                //               <label class="form-label">Mô tả biến thể</label>
-                //               <textarea name="variants[${idx}][description]" rows="2" class="form-control variant-description-editor"></textarea>
-                //             </div>
                 variantArea.insertAdjacentHTML('beforeend', html);
             });
 
