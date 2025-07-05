@@ -85,6 +85,7 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
         Route::post('updateQuantity', [CartController::class, 'updateQuantity'])->name('updateQuantity');
         Route::delete('remove/{id}', [CartController::class, 'remove'])->name('remove');
         Route::post('update-variant', [CartController::class, 'updateVariant'])->name('updateVariant');
+        Route::post('checkout-selected', [CartController::class, 'proceedCheckout'])->name('proceedCheckout');
 
     });
 
@@ -101,6 +102,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/checkout/apply-discount', [CheckoutController::class, 'applyDiscount'])->name('checkout.applyDiscount');
     Route::post('/checkout/remove-discount', [CheckoutController::class, 'removeDiscount'])->name('checkout.removeDiscount');
     Route::post('/checkout/bank-confirm', [CheckoutController::class, 'bankConfirm'])->name('client.checkout.bankConfirm');
+    
 });
 Route::get('/checkout/success', function () {
     return view('frontend.checkout.checkoutsuccess');

@@ -86,11 +86,18 @@ input[type="radio"]:checked ~ .form-check-label {
                 </div>
             </div>
         </section>
+   
+
         <!-- Checkout section Start -->
         <section class="checkout-section-2 section-b-space">
             <div class="container-fluid-lg">
                 <form id="checkout-form" action="{{ route('client.checkout.process') }}" method="POST">
                     @csrf
+                   @foreach($selected_cart_item_ids ?? [] as $id)
+    <input type="hidden" name="selected_cart_item_ids[]" value="{{ $id }}">
+@endforeach
+
+
                     <div class="row g-sm-4 g-3">
                         <div class="col-lg-8">
                             <div class="left-sidebar-checkout">
@@ -355,7 +362,7 @@ input[type="radio"]:checked ~ .form-check-label {
                                     <div class="summery-header">
                                         <h3>Đơn hàng</h3>
                                     </div>
-                                    @if(count($cartItems))
+                                    @if($cartItems && count($cartItems))
                                     <ul class="summery-contain">
                                         @foreach ($cartItems as $item)
                                             @if (isset($item->product))
