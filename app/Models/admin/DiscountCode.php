@@ -68,4 +68,15 @@ class DiscountCode extends Model
     {
         return $this->hasMany(Order::class, 'discount_code_id');
     }
+   public function products()
+{
+    return $this->belongsToMany(
+        Product::class,
+        'coupon_product', // bảng trung gian đúng tên
+        'coupon_id',      // khóa ngoại tới bảng coupon_product (liên kết discount_code/coupon)
+        'product_id'      // khóa ngoại tới bảng product
+    );
+}
+
+
 }

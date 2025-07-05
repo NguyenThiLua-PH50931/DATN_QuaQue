@@ -211,7 +211,7 @@
                                          <div class="cart-popup">
                                              <ul class="cart-items-list">
                                                  @php $totalPrice = 0; @endphp
-                                                 @forelse ($cartItems as $item)
+                                                 @forelse ($globalCartItems as $item)
                                                      @php
                                                          $itemTotal =
                                                              ($item->price ?? $item->product->price) * $item->quantity;

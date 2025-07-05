@@ -501,18 +501,25 @@ document.addEventListener('DOMContentLoaded', function () {
     if (applyBtn) {
         applyBtn.addEventListener('click', function (e) {
             e.preventDefault();
-            const code = document.getElementById('discount_code_input').value.trim();
+            // Lấy tất cả mã được chọn trong select multiple
+            const select = document.getElementById('discount_code_select');
+            const selectedCodes = Array.from(select.selectedOptions).map(option => option.value);
 
-            const formData = new FormData();
-            formData.append('discount_code', code);
+            if (selectedCodes.length === 0) {
+                alert('Vui lòng chọn ít nhất một mã giảm giá!');
+                return;
+            }
 
             fetch("{{ route('client.checkout.applyDiscount') }}", {
                 method: 'POST',
                 headers: {
+                    'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
                     'X-Requested-With': 'XMLHttpRequest'
                 },
-                body: formData
+                body: JSON.stringify({
+                    discount_codes: selectedCodes
+                })
             })
             .then(res => res.json())
             .then(data => {
@@ -535,6 +542,7 @@ document.addEventListener('DOMContentLoaded', function () {
             fetch("{{ route('client.checkout.removeDiscount') }}", {
                 method: 'POST',
                 headers: {
+                    'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
                     'X-Requested-With': 'XMLHttpRequest'
                 }
@@ -550,6 +558,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
 
 </script>
 

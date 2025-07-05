@@ -253,7 +253,95 @@
                                 <div class="tab-pane fade" id="care" role="tabpanel"
                                     aria-labelledby="care-tab">
                                     <div class="information-box">
-                                        bình luận
+                                        <section class="blog-section section-b-space">
+                                            <div class="comment-box overflow-hidden">
+                                                <div class="leave-title">
+                                                    <h3>Bình luận</h3>
+                                                </div>
+
+                                                <div class="user-comment-box">
+                                                    <ul>
+                                                        <li>
+                                                            <div class="user-box border-color">
+                                                                <div class="reply-button">
+                                                                    <i
+                                                                        class="fa-solid fa-reply"></i>
+                                                                    <span class="theme-color">Reply</span>
+                                                                </div>
+                                                                <div class="user-iamge">
+                                                                    <img
+                                                                        src="../assets/images/inner-page/user/2.jpg"
+                                                                        class="img-fluid blur-up lazyload"
+                                                                        alt="" />
+                                                                    <div class="user-name">
+                                                                        <h6>30 Jan, 2022</h6>
+                                                                        <h5 class="text-content">
+                                                                            Glenn Greer
+                                                                        </h5>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="user-contain">
+                                                                    <p>
+                                                                        Nội dung bình luận
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+
+                                                        <li class="li-padding">
+                                                            <div class="user-box">
+                                                                <div class="reply-button">
+                                                                    <i
+                                                                        class="fa-solid fa-reply"></i>
+                                                                    <span class="theme-color">Reply</span>
+                                                                </div>
+                                                                <div class="user-iamge">
+                                                                    <img
+                                                                        src="../assets/images/inner-page/user/3.jpg"
+                                                                        class="img-fluid blur-up lazyload"
+                                                                        alt="" />
+                                                                    <div class="user-name">
+                                                                        <h6>30 Jan, 2022</h6>
+                                                                        <h5 class="text-content">
+                                                                            Glenn Greer
+                                                                        </h5>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="user-contain">
+                                                                    <p>
+                                                                        Nội dung trả lời
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+
+                                            <div class="leave-box">
+                                                <div class="leave-title mt-0">
+                                                    <h3>Để lại bình luận</h3>
+                                                </div>
+
+                                                <div class="leave-comment mb-3">
+                                                    <div class="col-12">
+                                                        <div class="blog-input">
+                                                            <textarea
+                                                                class="form-control"
+                                                                id="exampleFormControlTextarea1"
+                                                                rows="4"
+                                                                placeholder="Để lại bình luận..."></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <button
+                                                        class="btn btn-animation ms-xxl-auto mt-xxl-0 mt-3 btn-md fw-bold">
+                                                        Bình luận
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </section>
                                     </div>
                                 </div>
 
@@ -407,6 +495,7 @@
 
                                                         <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
                                                     </form>
+
                                                 </div>
                                             </div>
 
@@ -418,7 +507,13 @@
                                                         answers
                                                     </h4>
                                                 </div>
-
+                                                <label for="filter_star">Lọc theo số sao:</label>
+                                                <select id="filter_star" class="form-select w-auto d-inline-block">
+                                                    <option value="">Tất cả</option>
+                                                    @for ($i = 5; $i >= 1; $i--)
+                                                    <option value="{{ $i }}">{{ $i }} sao</option>
+                                                    @endfor
+                                                </select>
                                                 <div class="review-people" id="review-container">
                                                     <ul class="review-list">
                                                         @forelse ($reviews as $review)
@@ -469,6 +564,7 @@
                                     @endforelse
                                     </ul>
                                 </div>
+
                             </div>
                         </div>
                     </div>
@@ -546,10 +642,12 @@
 <!-- Product Left Sidebar End -->
 
 <!-- Releted Product Section Start -->
-<section class="product-list-section section-b-space">
+<section class="product-list-section section-b-space mt-3">
     <div class="container-fluid-lg">
         <div class="title">
-            <h2>Related Products</h2>
+            <h2>
+                {{ $relatedProducts->isEmpty() ? 'Sản phẩm mới nhất' : 'Sản phẩm liên quan' }}
+            </h2>
             <span class="title-leaf">
                 <svg class="icon-width">
                     <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
@@ -559,72 +657,84 @@
         <div class="row">
             <div class="col-12">
                 <div class="slider-6_1 product-wrapper">
+                    @forelse($relatedProducts as $product)
                     <div>
                         <div class="product-box-3 wow fadeInUp">
                             <div class="product-header">
                                 <div class="product-image">
-                                    <a href="product-left.htm">
-                                        <img src="../assets/images/cake/product/11.png"
-                                            class="img-fluid blur-up lazyload" alt="" />
+                                    <a href="{{ route('client.product.detail', ['slug' => $product->slug]) }}">
+                                        <img src="{{ asset('storage/' . $product->image) }}" class="img-fluid blur-up lazyload" alt="{{ $product->name }}" />
                                     </a>
-
                                     <ul class="product-option">
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
-                                            <a href="javascript:void(0)" data-bs-toggle="modal"
-                                                data-bs-target="#view">
-                                                <i data-feather="eye"></i>
+                                        <li
+                                            data-bs-toggle="tooltip"
+                                            data-bs-placement="top"
+                                            title="View">
+                                            <a
+                                                href="javascript:void(0)" class="quickview-btn" data-slug="{{ $product->slug }}" title="Xem nhanh">
+                                                <i
+                                                    data-feather="eye"></i>
                                             </a>
                                         </li>
-
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
-                                            <a href="compare.html">
-                                                <i data-feather="refresh-cw"></i>
-                                            </a>
+                                        <li data-bs-toggle="tooltip" data-bs-placement="top"
+                                            title="So sánh">
+                                            <a href="{{ url('compare') }}"><i
+                                                    data-feather="refresh-cw"></i></a>
                                         </li>
-
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
-                                            <a href="wishlist.html" class="notifi-wishlist">
-                                                <i data-feather="heart"></i>
-                                            </a>
+                                        <li data-bs-toggle="tooltip" data-bs-placement="top"
+                                            title="Yêu thích">
+                                            <form action="{{ route('client.wishlist.store') }}"
+                                                method="POST" style="display:inline-block;">
+                                                @csrf
+                                                <input type="hidden" name="product_id"
+                                                    value="{{ $product->id }}">
+                                                <button type="submit" class="notifi-wishlist btn p-0"
+                                                    style="border:none; background:none; width: 18px; height: 18px; margin-top: 10px">
+                                                    <i data-feather="heart"
+                                                        @if (auth()->check() && auth()->user()->wishlist()->where('product_id', $product->id)->exists()) class="text-red-500" @endif></i>
+                                                </button>
+                                            </form>
                                         </li>
                                     </ul>
                                 </div>
                             </div>
-
                             <div class="product-footer">
                                 <div class="product-detail">
-                                    <span class="span-name">Cake</span>
-                                    <a href="product-left-thumbnail.html">
-                                        <h5 class="name">
-                                            Chocolate Chip Cookies 250 g
-                                        </h5>
+                                    <span class="span-name">{{ $product->category->name ?? '' }}</span>
+                                    <a href="{{ route('client.product.detail', ['slug' => $product->slug]) }}">
+                                        <h5 class="name">{{ $product->name }}</h5>
                                     </a>
                                     <div class="product-rating mt-2">
                                         <ul class="rating">
-                                            <li>
-                                                <i data-feather="star" class="fill"></i>
-                                            </li>
-                                            <li>
-                                                <i data-feather="star" class="fill"></i>
-                                            </li>
-                                            <li>
-                                                <i data-feather="star" class="fill"></i>
-                                            </li>
-                                            <li>
-                                                <i data-feather="star" class="fill"></i>
-                                            </li>
-                                            <li>
-                                                <i data-feather="star" class="fill"></i>
-                                            </li>
+                                            @php
+                                            $avgRating = round($product->reviews->avg('rating') ?? 0);
+                                            @endphp
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                <li><i data-feather="star" class="{{ $i <= $avgRating ? 'fill' : '' }}"></i></li>
+                                                @endfor
                                         </ul>
-                                        <span>(5.0)</span>
+                                        <span>({{ number_format($product->reviews->avg('rating') ?? 0, 1) }})</span>
                                     </div>
-                                    <h6 class="unit">500 G</h6>
+                                    @php
+                                    $firstVariant = $product->variants->first();
+                                    @endphp
+
+                                    <h6 class="variant-name">
+                                        @if($firstVariant)
+                                        {{ $firstVariant->name }}
+                                        @else
+                                        Không có biến thể
+                                        @endif
+                                    </h6>
+
                                     <h5 class="price">
-                                        <span class="theme-color">$10.25</span>
-                                        <del>$12.57</del>
+                                        @if($firstVariant)
+                                        <span class="theme-color">{{ number_format($firstVariant->price) }}₫</span>
+                                        @else
+                                        <span class="theme-color">Liên hệ</span>
+                                        @endif
                                     </h5>
-                                    <div class="add-to-cart-box bg-white">
+                                    {{-- <div class="add-to-cart-box bg-white">
                                         <button class="btn btn-add-cart addcart-button">
                                             Add
                                             <span class="add-icon bg-light-gray">
@@ -633,32 +743,111 @@
                                         </button>
                                         <div class="cart_qty qty-box">
                                             <div class="input-group bg-white">
-                                                <button type="button" class="qty-left-minus bg-gray"
-                                                    data-type="minus" data-field="">
+                                                <button type="button" class="qty-left-minus bg-gray" data-type="minus" data-field="">
                                                     <i class="fa fa-minus" aria-hidden="true"></i>
                                                 </button>
-                                                <input class="form-control input-number qty-input" type="text"
-                                                    name="quantity" value="0" />
-                                                <button type="button" class="qty-right-plus bg-gray"
-                                                    data-type="plus" data-field="">
+                                                <input class="form-control input-number qty-input" type="text" name="quantity" value="0" />
+                                                <button type="button" class="qty-right-plus bg-gray" data-type="plus" data-field="">
                                                     <i class="fa fa-plus" aria-hidden="true"></i>
                                                 </button>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Add more related products as needed -->
-
+                    @empty
+                    <p>Không có sản phẩm nào để hiển thị.</p>
+                    @endforelse
                 </div>
             </div>
         </div>
     </div>
 </section>
 <!-- Releted Product Section End -->
+<!-- Quick View Modal Box Start -->
+<div
+    class="modal fade theme-modal view-modal"
+    id="quickviewModal"
+    tabindex="-1"
+    aria-labelledby="quickviewModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header p-0">
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-sm-4 g-2">
+                    <div class="col-lg-6">
+                        <div class="slider-image">
+                            <img
+                                src=""
+                                id="quickview-image"
+                                class="img-fluid blur-up lazyload"
+                                alt="Product Image" />
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="right-sidebar-modal">
+                            <h4 class="title-name" id="quickview-name">Tên sản phẩm</h4>
+                            <h4 class="price" id="quickview-price">Giá</h4>
+                            <div class="product-rating">
+                                <ul class="rating" id="quickview-rating">
+                                    <!-- JS render stars -->
+                                </ul>
+                                <span class="ms-2" id="quickview-review-count">0 Reviews</span>
+                            </div>
+
+                            <div class="product-detail">
+                                <h4>Mô tả sản phẩm:</h4>
+                                <div id="quickview-description"></div>
+                            </div>
+
+                            <ul class="brand-list">
+                                <li>
+                                    <div class="brand-box">
+                                        <h5>Danh mục:</h5>
+                                        <h6 id="quickview-category-name"></h6>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <div id="quickview-attributes-container" class="select-size">
+                                <!-- Thuộc tính biến thể render ở đây -->
+                            </div>
+
+                            <div class="modal-button">
+                                {{-- <button
+                                    id="quickview-add-to-cart"
+                                    class="btn btn-md add-cart-button icon">
+                                    Thêm vào giỏ hàng
+                                </button> --}}
+                                <button
+                                    id="quickview-view-details"
+                                    class="btn theme-bg-color view-button icon text-white fw-bold btn-md">
+                                    Xem chi tiết
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Quick View Modal Box End -->
+
 
 {{-- Sửa lỗi style lồng nhau và CSS sai cú pháp --}}
 <style>
@@ -674,7 +863,16 @@
         cursor: not-allowed !important;
         pointer-events: none !important;
     }
+
+    .section-b-space {
+        padding-top: 0px !important;
+    }
 </style>
+
+<script>
+    window.productVariants = @json($variantMap ?? []);
+</script>
+
 <script>
     document.getElementById('filter_star').addEventListener('change', function() {
         const star = this.value;
@@ -688,13 +886,6 @@
             });
     });
 </script>
-
-<script>
-    window.VARIANTS = {
-        !!json_encode($variantMap ?? [], JSON_HEX_TAG) !!
-    };
-</script>
-
 {{-- update số lượng trang detail --}}
 <script>
     const updateQuantityUrl = "{{ route('client.cart.updateQuantity') }}";
@@ -739,8 +930,7 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                            .getAttribute('content'),
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                     },
                     body: JSON.stringify({
                         cart_item_id: cartItemId,
@@ -980,26 +1170,7 @@
         updateVariantInput();
 
         // --- Phần tăng giảm số lượng ---
-        document.querySelectorAll('.qty-left-minus, .qty-right-plus').forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                const input = button.closest('.input-group').querySelector(
-                    'input[name="quantity"]');
-                if (!input) return;
 
-                let val = parseInt(input.value, 10) || 1;
-                const min = 1; // min cứng
-
-                if (button.classList.contains('qty-right-plus')) {
-                    val += 1;
-                } else if (button.classList.contains('qty-left-minus')) {
-                    val = val > min ? val - 1 : min;
-                }
-
-                input.value = val;
-                console.log('Quantity updated to:', val);
-            });
-        });
     });
 </script>
 <style>
@@ -1050,6 +1221,75 @@
             }
         });
         @endif
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.quickview-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const slug = this.dataset.slug;
+                if (!slug) return alert('Không có slug sản phẩm.');
+
+                const modal = document.getElementById('quickviewModal');
+                if (!modal) return alert('Modal Quick View chưa tồn tại trên trang.');
+
+                // Reset modal trước khi load dữ liệu mới
+                modal.querySelector('#quickview-image').src = '';
+                modal.querySelector('#quickview-name').textContent = '';
+                modal.querySelector('#quickview-price').textContent = '';
+                modal.querySelector('#quickview-description').innerHTML = '';
+                modal.querySelector('#quickview-category-name').textContent = '';
+                modal.querySelector('#quickview-review-count').textContent = '';
+                modal.querySelector('#quickview-rating').innerHTML = '';
+
+                // Mở modal Bootstrap
+                const bsModal = new bootstrap.Modal(modal);
+                bsModal.show();
+
+                fetch(`/client/san-pham/quickview/${slug}`)
+                    .then(res => {
+                        if (!res.ok) throw new Error(`Lỗi tải dữ liệu (${res.status})`);
+                        return res.json();
+                    })
+                    .then(data => {
+                        const product = data.product;
+
+                        modal.querySelector('#quickview-image').src = product.image || '/assets/images/no-image.png';
+                        modal.querySelector('#quickview-name').textContent = product.name;
+                        modal.querySelector('#quickview-description').innerHTML = product.description || '';
+                        modal.querySelector('#quickview-category-name').textContent = product.category_name || '';
+                        modal.querySelector('#quickview-review-count').textContent = `${product.review_count} Reviews`;
+
+                        // Biến thể đã là mảng chuẩn, lấy biến thể đầu tiên
+                        const variantsArray = product.variants || [];
+                        if (variantsArray.length > 0) {
+                            modal.querySelector('#quickview-price').textContent = Number(variantsArray[0].price).toLocaleString() + ' đ';
+                        } else {
+                            modal.querySelector('#quickview-price').textContent = 'Liên hệ';
+                        }
+
+                        // Render rating sao
+                        const ratingEl = modal.querySelector('#quickview-rating');
+                        ratingEl.innerHTML = '';
+                        for (let i = 1; i <= 5; i++) {
+                            ratingEl.innerHTML += `<li><i data-feather="star" class="${i <= product.avg_rating ? 'fill' : ''}"></i></li>`;
+                        }
+                        feather.replace();
+
+                        // Nút xem chi tiết chuyển đến trang chi tiết sản phẩm
+                        modal.querySelector('#quickview-view-details').onclick = () => {
+                            window.location.href = `/client/san-pham/${slug}`;
+                        };
+
+                        // TODO: Bạn có thể thêm xử lý chọn biến thể, cập nhật giá, thêm giỏ hàng tại đây
+                    })
+                    .catch(err => {
+                        console.error('Lỗi tải Quick View:', err);
+                        alert('Không thể tải thông tin sản phẩm, vui lòng thử lại sau.');
+                        bsModal.hide();
+                    });
+            });
+        });
     });
 </script>
 <style>
