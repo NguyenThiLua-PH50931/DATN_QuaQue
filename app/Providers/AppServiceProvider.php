@@ -22,15 +22,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-         View::composer('*', function ($view) {
-        $userId = Auth::id();
-        $cartItems = [];
+        View::composer(['frontend.header'], function ($view) {
+    $userId = Auth::id();
+    $globalCartItems = [];
+    if ($userId) {
+        $globalCartItems = CartItem::with('product')->where('user_id', $userId)->get();
+    }
+    $view->with('globalCartItems', $globalCartItems);
+});
 
-        if ($userId) {
-            $cartItems = CartItem::with('product')->where('user_id', $userId)->get();
-        }
-
-        $view->with('cartItems', $cartItems);
-    });
     }
 }

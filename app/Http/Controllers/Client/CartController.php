@@ -320,4 +320,26 @@ class CartController extends Controller
             'stock' => $newVariant->stock,
         ]);
     }
+public function proceedCheckout(Request $request)
+{
+    $selectedIds = $request->input('selected_items', []);
+
+    // Đảm bảo $selectedIds là mảng số nguyên duy nhất
+    if (!is_array($selectedIds)) {
+        $selectedIds = [$selectedIds];
+    }
+    $selectedIds = array_unique(array_map('intval', $selectedIds));
+
+    if (count($selectedIds) === 0) {
+        return back()->with('error', 'Bạn chưa chọn sản phẩm nào để đặt hàng!');
+    }
+
+    // Chuyển thành chuỗi IDs ngăn cách bởi dấu phẩy
+    $idsString = implode(',', $selectedIds);
+
+    return redirect()->route('client.checkout', ['selected_cart_item_ids' => $idsString]);
+}
+
+
+
 }
