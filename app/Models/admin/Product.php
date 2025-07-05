@@ -17,7 +17,7 @@ class Product extends Model
     use SoftDeletes;
 
     protected $table = 'products';
-    
+
     protected $fillable = [
         'seller_id',
         'category_id',
@@ -34,7 +34,8 @@ class Product extends Model
         'view_month',
         'active',
         'created_at',
-        'updated_at'
+        'updated_at',
+        'has_variants',
     ];
 
     // Relationships
@@ -116,11 +117,9 @@ class Product extends Model
         $variant = $this->first_variant;
         return $variant ? $variant->stock : 0;
     }
-public function firstImage()
-{
-    return $this->hasOne(ProductImage::class, 'product_id')->inRandomOrder();
 
-}
-
-
+    public function firstImage()
+    {
+        return $this->hasOne(ProductImage::class, 'product_id')->inRandomOrder();
+    }
 }

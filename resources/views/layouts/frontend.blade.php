@@ -9,6 +9,8 @@
     <meta name="description" content="Fastkart">
     <meta name="keywords" content="Fastkart">
     <meta name="author" content="Fastkart">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
 
     <!-- Favicon -->
     <link rel="icon" href="{{ asset('frontend/assets/images/favicon/icon.png') }}" type="image/x-icon">
@@ -43,9 +45,11 @@
     <link rel="stylesheet" href="{{ asset('frontend/assets/css/vendors/slick/slick-theme.css') }}">
     <link rel="stylesheet" href="{{ asset('frontend/assets/css/bulk-style.css') }}">
     <link rel="stylesheet" href="{{ asset('frontend/assets/css/vendors/animate.css') }}">
-
+    <link rel="stylesheet" href="{{ asset('frontend/assets/css/vendors/ion.rangeSlider.min.css') }}">
     <!-- Template Style -->
     <link id="color-link" rel="stylesheet" href="{{ asset('frontend/assets/css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
 
 <body class="bg-effect">
@@ -105,6 +109,7 @@
 
     <!-- Header -->
     @includeIf('frontend.header')
+
     <!-- mobile fix menu start -->
     <div class="mobile-menu d-md-none d-block mobile-cart">
         <ul>
@@ -149,109 +154,7 @@
     {{-- Contents --}}
     @yield('contents')
     @includeIf('frontend.footer')
-    <!-- Quick View Modal Box Start -->
-    <div class="modal fade theme-modal view-modal" id="view" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-xl modal-fullscreen-sm-down">
-            <div class="modal-content">
-                <div class="modal-header p-0">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="row g-sm-4 g-2">
-                        <div class="col-lg-6">
-                            <div class="slider-image">
-                                <img src="../frontend/assets/images/product/category/1.jpg"
-                                    class="img-fluid blur-up lazyload" alt="">
-                            </div>
-                        </div>
-
-                        <div class="col-lg-6">
-                            <div class="right-sidebar-modal">
-                                <h4 class="title-name">Peanut Butter Bite Premium Butter Cookies 600 g</h4>
-                                <h4 class="price">$36.99</h4>
-                                <div class="product-rating">
-                                    <ul class="rating">
-                                        <li>
-                                            <i data-feather="star" class="fill"></i>
-                                        </li>
-                                        <li>
-                                            <i data-feather="star" class="fill"></i>
-                                        </li>
-                                        <li>
-                                            <i data-feather="star" class="fill"></i>
-                                        </li>
-                                        <li>
-                                            <i data-feather="star" class="fill"></i>
-                                        </li>
-                                        <li>
-                                            <i data-feather="star"></i>
-                                        </li>
-                                    </ul>
-                                    <span class="ms-2">8 Reviews</span>
-                                    <span class="ms-2 text-danger">6 sold in last 16 hours</span>
-                                </div>
-
-                                <div class="product-detail">
-                                    <h4>Product Details :</h4>
-                                    <p>Candy canes sugar plum tart cotton candy chupa chups sugar plum chocolate I love.
-                                        Caramels marshmallow icing dessert candy canes I love soufflé I love toffee.
-                                        Marshmallow pie sweet sweet roll sesame snaps tiramisu jelly bear claw. Bonbon
-                                        muffin I love carrot cake sugar plum dessert bonbon.</p>
-                                </div>
-
-                                <ul class="brand-list">
-                                    <li>
-                                        <div class="brand-box">
-                                            <h5>Brand Name:</h5>
-                                            <h6>Black Forest</h6>
-                                        </div>
-                                    </li>
-
-                                    <li>
-                                        <div class="brand-box">
-                                            <h5>Product Code:</h5>
-                                            <h6>W0690034</h6>
-                                        </div>
-                                    </li>
-
-                                    <li>
-                                        <div class="brand-box">
-                                            <h5>Product Type:</h5>
-                                            <h6>White Cream Cake</h6>
-                                        </div>
-                                    </li>
-                                </ul>
-
-                                <div class="select-size">
-                                    <h4>Cake Size :</h4>
-                                    <select class="form-select select-form-size">
-                                        <option selected>Select Size</option>
-                                        <option value="1.2">1/2 KG</option>
-                                        <option value="0">1 KG</option>
-                                        <option value="1.5">1/5 KG</option>
-                                        <option value="red">Red Roses</option>
-                                        <option value="pink">With Pink Roses</option>
-                                    </select>
-                                </div>
-
-                                <div class="modal-button">
-                                    <button onclick="location.href = 'cart.html';"
-                                        class="btn btn-md add-cart-button icon">Add
-                                        To Cart</button>
-                                    <button onclick="location.href = 'product-left.html';"
-                                        class="btn theme-bg-color view-button icon text-white fw-bold btn-md">
-                                        View More Details</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Quick View Modal Box End -->
+    @include('frontend.wishlist.quickview')
 
     <!-- Location Modal Start -->
     <div class="modal location-modal fade theme-modal" id="locationModal" tabindex="-1">
@@ -263,90 +166,6 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal">
                         <i class="fa-solid fa-xmark"></i>
                     </button>
-                </div>
-                <div class="modal-body">
-                    <div class="location-list">
-                        <div class="search-input">
-                            <input type="search" class="form-control" placeholder="Search Your Area">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                        </div>
-
-                        <div class="disabled-box">
-                            <h6>Select a Location</h6>
-                        </div>
-
-                        <ul class="location-select custom-height">
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>Alabama</h6>
-                                    <span>Min: $130</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>Arizona</h6>
-                                    <span>Min: $150</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>California</h6>
-                                    <span>Min: $110</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>Colorado</h6>
-                                    <span>Min: $140</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>Florida</h6>
-                                    <span>Min: $160</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>Georgia</h6>
-                                    <span>Min: $120</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>Kansas</h6>
-                                    <span>Min: $170</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>Minnesota</h6>
-                                    <span>Min: $120</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>New York</h6>
-                                    <span>Min: $110</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>Washington</h6>
-                                    <span>Min: $130</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
                 </div>
             </div>
         </div>
@@ -552,11 +371,191 @@
 
     <!-- script js -->
     <script src="{{ asset('frontend/assets/js/script.js') }}"></script>
+<!-- SweetAlert2 CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- theme setting js -->
     <script src="{{ asset('frontend/assets/js/theme-setting.js') }}"></script>
-</body>
+     <script src="{{ asset('frontend/assets/js/jquery-3.6.0.min.js') }}"></script>
+    <script src="{{ asset('frontend/assets/js/ion.rangeSlider.min.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let locationsData = null;
 
+            const provinceSelect = document.getElementById('province');
+            const districtSelect = document.getElementById('district');
+            const wardSelect = document.getElementById('ward');
+
+            let selectedProvince = @json(old('province', $address->province ?? ''));
+            let selectedDistrict = @json(old('district', $address->district ?? ''));
+            let selectedWard = @json(old('ward', $address->ward ?? ''));
+
+            function loadWards(provinceName, districtName) {
+                wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
+                wardSelect.disabled = true;
+
+                const province = locationsData.find(p => p.Name === provinceName);
+                if (!province) return;
+
+                const district = province.Districts.find(d => d.Name === districtName);
+                if (!district) return;
+
+                district.Wards.forEach(ward => {
+                    const option = document.createElement('option');
+                    option.value = ward.Name;
+                    option.text = ward.Name;
+                    wardSelect.add(option);
+                });
+
+                wardSelect.disabled = false;
+
+                if (selectedWard) {
+                    setTimeout(() => {
+                        wardSelect.value = selectedWard;
+                    }, 0);
+                }
+            }
+
+            function loadDistricts(provinceName) {
+                districtSelect.innerHTML = '<option value="">Chọn quận/huyện</option>';
+                wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
+                districtSelect.disabled = true;
+                wardSelect.disabled = true;
+
+                const province = locationsData.find(p => p.Name === provinceName);
+                if (!province) return;
+
+                province.Districts.forEach(district => {
+                    const option = document.createElement('option');
+                    option.value = district.Name;
+                    option.text = district.Name;
+                    districtSelect.add(option);
+                });
+
+                districtSelect.disabled = false;
+
+                if (selectedDistrict) {
+                    setTimeout(() => {
+                        districtSelect.value = selectedDistrict;
+                        loadWards(provinceName, selectedDistrict);
+                    }, 0);
+                }
+            }
+
+            fetch('/data/vietnamAddress.json')
+                .then(response => response.json())
+                .then(data => {
+                    locationsData = data;
+                    console.log('Đã load JSON:', locationsData);
+
+                    // Load danh sách tỉnh
+                    locationsData.forEach(province => {
+                        const option = document.createElement('option');
+                        option.value = province.Name;
+                        option.text = province.Name;
+                        provinceSelect.add(option);
+                    });
+
+                    // Nếu có tỉnh đã chọn thì hiển thị luôn
+                    if (selectedProvince) {
+                        provinceSelect.value = selectedProvince;
+                        loadDistricts(selectedProvince);
+                    }
+                }).catch(e => {
+                    console.error('Lỗi load JSON:', e);
+                });
+
+            provinceSelect.addEventListener('change', function () {
+                selectedDistrict = '';
+                selectedWard = '';
+                loadDistricts(this.value);
+            });
+
+            districtSelect.addEventListener('change', function () {
+                selectedWard = '';
+                loadWards(provinceSelect.value, this.value);
+            });
+        });
+    </script>
+{{-- <script>
+document.querySelectorAll('input[name="shipping_method_id"]').forEach(function(radio) {
+    radio.addEventListener('change', function() {
+        document.getElementById('shipping-method-form').submit();
+    });
+});
+</script> --}}
+
+
+<script>
+    document.querySelectorAll('input[name="flexRadioDefault"]').forEach(function(radio){
+        radio.addEventListener('change', function(){
+            document.getElementById('payment_method_input').value = this.id === 'banking' ? 'bank' : 'cod';
+        });
+    });
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const applyBtn = document.getElementById('btn-apply-discount');
+    const removeBtn = document.getElementById('btn-remove-discount');
+
+    if (applyBtn) {
+        applyBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            const code = document.getElementById('discount_code_input').value.trim();
+
+            const formData = new FormData();
+            formData.append('discount_code', code);
+
+            fetch("{{ route('client.checkout.applyDiscount') }}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert(data.message || 'Áp dụng mã giảm giá thất bại!');
+                }
+            })
+            .catch(err => {
+                console.error('Lỗi áp dụng mã:', err);
+                alert('Lỗi xảy ra khi áp dụng mã giảm giá!');
+            });
+        });
+    }
+
+    if (removeBtn) {
+        removeBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            fetch("{{ route('client.checkout.removeDiscount') }}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                location.reload();
+            })
+            .catch(err => {
+                console.error('Lỗi xoá mã:', err);
+                alert('Lỗi xảy ra khi xoá mã giảm giá!');
+            });
+        });
+    }
+});
+
+</script>
+
+    @stack('scripts')
+</body>
+    @stack('scripts')
 </html>
 <style>
     .onhover-div-login {
@@ -602,5 +601,55 @@
     .user-box-name li a:hover {
         background-color: #e7e7e7;
         color: #000;
+    }
+
+    /* Tăng cỡ chữ modal lên 4-5px */
+    #view .modal-content,
+    #view .modal-content * {
+        font-size: 20px !important;
+    }
+
+    #view .title-name {
+        font-size: 28px !important;
+        font-weight: bold;
+    }
+
+    #view .price {
+        font-size: 24px !important;
+        color: #0da487;
+    }
+
+    #view .main-quickview-image {
+        width: 500px !important;
+        height: 350px !important;
+        aspect-ratio: 5/4;
+        object-fit: cover !important;
+        border-radius: 16px;
+        display: block;
+        margin: 0 auto;
+        background: #f8f8f8;
+    }
+
+    #view .description-thumbnails img {
+        width: 48px;
+        height: 48px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 2px solid #eee;
+        cursor: pointer;
+        transition: border 0.2s;
+        background: #f8f8f8;
+        margin-right: 8px;
+    }
+
+    #view .description-thumbnails img.active {
+        border: 2px solid #0da487;
+    }
+
+    #view .description-thumbnails {
+        margin-top: 16px;
+        justify-content: flex-start;
+        gap: 0;
+        flex-wrap: wrap;
     }
 </style>
