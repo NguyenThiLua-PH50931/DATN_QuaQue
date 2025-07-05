@@ -143,14 +143,14 @@
             <div class="col-lg-3">
                 <div class="bg-white rounded shadow-sm p-4">
                     <h4 class="fw-bold mb-3">Tổng tiền giỏ hàng</h4>
-                    <hr>
-                    <ul class="list-unstyled mb-4">
-                        {{-- <li class="d-flex justify-content-between mb-2">
+                    {{-- <hr> --}}
+                    {{-- <ul class="list-unstyled mb-4">
+                        <li class="d-flex justify-content-between mb-2">
                             <span>Tạm tính (đã chọn)</span>
                             <span id="selected-total">0 ₫</span>
-                        </li> --}}
+                        </li>
                        
-                    </ul>
+                    </ul> --}}
                     <div class="d-flex justify-content-between border-top pt-3 fw-bold fs-5 mb-4">
                         <span>Tổng cộng (VNĐ)</span>
                         <span id="selected-total" class="text-success">0 ₫</span>

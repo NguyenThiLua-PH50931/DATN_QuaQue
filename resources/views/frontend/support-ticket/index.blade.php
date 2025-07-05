@@ -1,5 +1,5 @@
 @extends('layouts.frontend')
-@section('title', 'Support Tickets')
+@section('title', 'Yêu cầu hỗ trợ')
 @section('contents')
     <!-- Breadcrumb Section Start -->
     <section class="breadscrumb-section pt-0">
@@ -7,7 +7,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="breadscrumb-contain">
-                        <h2>Support Tickets</h2>
+                        <h2>Yêu cầu hỗ trợ</h2>
                         <nav>
                             <ol class="breadcrumb mb-0">
                                 <li class="breadcrumb-item">
@@ -15,7 +15,7 @@
                                         <i class="fa-solid fa-house"></i>
                                     </a>
                                 </li>
-                                <li class="breadcrumb-item active" aria-current="page">Support Tickets</li>
+                                <li class="breadcrumb-item active" aria-current="page">Yêu cầu hỗ trợ</li>
                             </ol>
                         </nav>
                     </div>
@@ -33,14 +33,15 @@
                     <div class="left-sidebar-box">
                         <div class="row">
                             <div class="col-xl-12">
-                                <div class="contact-image">
-                                    <img src="{{ asset('assets/images/inner-page/support-ticket.png') }}"
-                                        class="img-fluid blur-up lazyloaded" alt="Support Ticket">
+                                <div class="contact-image text-center d-flex align-items-center justify-content-center"
+                                    style="min-height: 500px;">
+                                    <img src="uploads/anh3.png" class="img-fluid blur-up lazyloaded" alt=""
+                                        style="max-width: 600px; width: 100%; height: auto; margin: 0 auto; display: block;">
                                 </div>
                             </div>
                             <div class="col-xl-12">
                                 <div class="contact-title">
-                                    <h3>Get Support</h3>
+                                    <h3>Nhận hỗ trợ</h3>
                                 </div>
 
                                 <div class="contact-detail">
@@ -129,8 +130,8 @@
         <div class="container-fluid p-0">
             <div class="map-box">
                 <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m23!1m12!1m3!1d2994.3803116994895!2d55.29773782339708!3d25.222534631321!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m8!3e6!4m5!1s0x3e5f43496ad9c645%3A0xbde66e5084295162!2sDubai%20-%20United%20Arab%20Emirates!3m2!1d25.2048493!2d55.2707828!4m0!5e1!3m2!1sen!2sin!4v1652217109535!5m2!1sen!2sin"
-                    style="border:0;" allowfullscreen="" loading="lazy"
+                    src="https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d3723.863556662289!2d105.74468687445314!3d21.0381447623719!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1zVHLGsOG7nW5nIENhbyDEkeG6s25nIEZQVCBQb2x5dGVjaG5pYw!5e0!3m2!1svi!2s!4v1750352713751!5m2!1svi!2s"
+                    width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
                     referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
         </div>
