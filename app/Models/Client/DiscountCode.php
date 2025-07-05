@@ -36,12 +36,14 @@ class DiscountCode extends Model
 
     // Nếu có liên kết sản phẩm qua coupon_product (nếu có)
     public function products()
-    {
-        return $this->belongsToMany(
-            Product::class,
-            'coupon_product',
-            'coupon_id',
-            'product_id'
-        );
-    }
+{
+    return $this->belongsToMany(
+        Product::class,
+        'coupon_product', // bảng trung gian đúng tên
+        'coupon_id',      // khóa ngoại tới bảng coupon_product (liên kết discount_code/coupon)
+        'product_id'      // khóa ngoại tới bảng product
+    );
+}
+
+    
 }

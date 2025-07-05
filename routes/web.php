@@ -56,6 +56,8 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
         Route::get('/search', [AdminProductController::class, 'searchPage'])->name('search');
         Route::get('/{slug}', [ClientProductController::class, 'show'])->name('detail');
         Route::post('/get-variant', [ClientProductController::class, 'getVariant'])->name('.getVariant');
+        Route::get('/quickview/{slug}', [ClientProductController::class, 'quickView'])->name('quickview');
+
     });
 
 
