@@ -33,308 +33,166 @@
         <div class="container">
             <!-- Nội dung giỏ hàng và phần tổng tiền -->
             <section class="cart-section section-b-space">
-                <div class="container px-5">
-                    <div class="row gx-5">
-                        {{-- Các sản phẩm trong giỏ --}}
-                        <div class="col-lg-9">
-                            <div class="bg-white rounded shadow-sm p-4">
-                                <form action="{{ route('client.cart.bulkDelete') }}" method="POST" id="bulk-action-form">
-                                    @csrf
-                                    <table class="table table-hover">
-                                        {{-- <thead class="table-light">
-                                            <tr>
-                                                <th scope="col"></th>
-                                                <th scope="col"></th>
-                                                <th scope="col"></th>
-                                                <th scope="col" class="text-end"></th>
-                                                <th scope="col" style="width: 140px;" class="text-center"></th>
-                                                <th scope="col" class="text-end"></th>
-                                                <th scope="col" class="text-center"></th>
-                                            </tr>
-                                        </thead> --}}
-                                        <tbody>
-                                            @php $tongTienTamTinh = 0; @endphp
-                                            @forelse ($cartItems as $item)
-                                                @if (isset($item->product))
-                                                    @php
-                                                        $pricePerItem = $item->price ?? ($item->product->price ?? 0);
-                                                        $tongTien = $pricePerItem * $item->quantity;
-                                                        $tongTienTamTinh += $tongTien;
-                                                    @endphp
-                                                    <tr class="align-middle">
-                                                        <td><input type="checkbox" name="selected_items[]"
-                                                                value="{{ $item->id }}" data-price="{{ $tongTien }}"
-                                                                style="accent-color: #07a37f;"></td>
-                                                        <td class="d-flex align-items-center gap-3">
-                                                            <img src="{{ asset('storage/' . $item->product->image) }}"
-                                                                alt="{{ $item->product->name }}"
-                                                                style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
-                                                            <div>
-                                                                <h6 class="mb-1 fw-semibold text-truncate"
-                                                                    style="max-width: 300px;">{{ $item->product->name }}
-                                                                </h6>
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <button type="button"
-                                                                class="btn btn-outline-danger btn-sm open-variant-modal"
-                                                                data-bs-toggle="modal"
-                                                                data-bs-target="#variantModal{{ $item->id }}">
-                                                                {{ $item->variant->name ?? 'Chọn biến thể' }}
-                                                            </button>
-
-                                                            <!-- Modal biến thể -->
-                                                            <div class="modal fade" id="variantModal{{ $item->id }}"
-                                                                tabindex="-1"
-                                                                aria-labelledby="variantModalLabel{{ $item->id }}"
-                                                                aria-hidden="true">
-                                                                <div class="modal-dialog modal-dialog-centered"
-                                                                    style="max-width: 380px;">
-                                                                    <div class="modal-content rounded-3 shadow-sm">
-                                                                        <div class="modal-header border-0 pb-2">
-                                                                            <h5 class="modal-title fw-semibold fs-5"
-                                                                                id="variantModalLabel{{ $item->id }}">
-                                                                                Chọn biến thể</h5>
-                                                                            <button type="button"
-                                                                                class="btn-close btn-close-sm"
-                                                                                data-bs-dismiss="modal"
-                                                                                aria-label="Đóng"></button>
-                                                                        </div>
-                                                                        <div class="modal-body py-2">
-                                                                            <div
-                                                                                class="variant-btn-group d-flex flex-column gap-2">
-                                                                                @foreach ($item->product->variants as $variant)
-                                                                                    <button type="button"
-                                                                                        class="variant-btn btn btn-outline-secondary {{ $variant->id == $item->variant_id ? 'active' : '' }} text-start"
-                                                                                        data-variant-id="{{ $variant->id }}"
-                                                                                        style="font-size: 0.9rem; padding: 8px 14px; border-radius: 0.375rem;">
-                                                                                        {{ $variant->name }} —
-                                                                                       {{ number_format($variant->price, 0, ',', '.') }} ₫
-                                                                                    </button>
-                                                                                @endforeach
-                                                                            </div>
-                                                                        </div>
-                                                                        <div
-                                                                            class="modal-footer border-0 pt-2 justify-content-between">
-                                                                            <button type="button"
-                                                                                class="btn btn-sm btn-outline-danger"
-                                                                                data-bs-dismiss="modal">Trở lại</button>
-
-                                                                            <button type="button"
-                                                                                class="btn btn-sm btn-danger btn-confirm-variant"
-                                                                                data-cart-id="{{ $item->id }}">Xác
-                                                                                nhận</button>
-
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-
-                                                        </td>
-                                                        <td class="text-end fw-semibold">
-                                                          {{ number_format($pricePerItem, 0, ',', '.') }} ₫
-                                                        <td class="text-center">
-                                                            <div
-                                                                class="d-flex justify-content-center align-items-center gap-2">
-                                                                <button
-                                                                    class="btn btn-outline-secondary btn-sm btn-decrease px-2 py-0"
-                                                                    style="font-size: 0.85rem;"
-                                                                    data-id="{{ $item->id }}">−</button>
-                                                                <input type="text" value="{{ $item->quantity }}"
-                                                                    readonly
-                                                                    class="form-control form-control-sm text-center quantity-input"
-                                                                    data-id="{{ $item->id }}"
-                                                                    style="width: 45px; height: 30px; font-size: 0.9rem; padding: 0;">
-                                                                <button
-                                                                    class="btn btn-outline-secondary btn-sm btn-increase px-2 py-0"
-                                                                    style="font-size: 0.85rem;"
-                                                                    data-id="{{ $item->id }}">+</button>
-                                                            </div>
-                                                        </td>
-                                                        <td class="text-end fw-semibold">
-                                                          {{ number_format($tongTien, 0, ',', '.') }} ₫
-                                                        <td class="text-center">
-                                                            <button type="button"
-                                                                class="btn btn-link p-0 text-danger btn-delete-item"
-                                                                data-id="{{ $item->id }}">Xóa</button>
-                                                        </td>
-                                                    </tr>
-                                                @else
-                                                    <tr>
-                                                        <td colspan="7" class="text-center text-danger fw-semibold">Sản
-                                                            phẩm không tồn tại</td>
-                                                    </tr>
-                                                @endif
-                                            @empty
-                                                <tr>
-                                                    <td colspan="7" class="text-center">Giỏ hàng của bạn đang trống.
-                                                    </td>
-                                                </tr>
-                                            @endforelse
-                                        </tbody>
-                                    </table>
-
-                                    <button type="submit" aria-label="Xóa mục đã chọn" id="btn-bulk-delete"
-                                        class="btn-no-border">
-                                        Xóa mục đã chọn
-                                    </button>
-
-                                    <style>
-                                        .btn-no-border {
-                                            background-color: #0da487;
-                                            /* màu nền bạn muốn */
-                                            color: white;
-                                            /* màu chữ */
-                                            padding: 8px 16px;
-                                            border: none;
-                                            /* bỏ viền */
-                                            border-radius: 6px;
-                                            /* bo góc */
-                                            font-size: 14px;
-                                            cursor: pointer;
-                                            transition: background-color 0.3s ease;
-                                            font-weight: 400;
-                                        }
-
-                                        .btn-no-border:hover {
-                                            background-color: #07a37f;
-                                            /* màu nền khi hover */
-                                        }
-                                    </style>
-
-
-                                </form>
-                                <script>
-                                    document.getElementById('btn-bulk-delete').addEventListener('click', function(event) {
-                                        event.preventDefault(); // Ngăn form submit mặc định trước
-
-                                        // Mở modal thông báo xác nhận xóa
-                                        const modalBody = document.getElementById('notificationModalBody');
-                                        modalBody.textContent = 'Bạn có chắc chắn muốn xóa các mục đã chọn không?';
-
-                                        const modalEl = document.getElementById('notificationModal');
-                                        const modal = new bootstrap.Modal(modalEl);
-
-                                        modal.show();
-
-                                        // Tạo nút "Xác nhận" tạm thời để người dùng bấm đồng ý
-                                        const footer = modalEl.querySelector('.modal-footer');
-
-                                        // // Tạo nút xác nhận
-                                        let confirmBtn = document.createElement('button');
-                                        confirmBtn.className = 'btn btn-sm btn-danger'; // bạn có thể đổi style
-                                        confirmBtn.textContent = 'Xác nhận';
-
-                                        // Khi người dùng nhấn xác nhận thì submit form
-                                        confirmBtn.addEventListener('click', function() {
-                                            modal.hide();
-                                            document.getElementById('bulk-action-form').submit();
-                                        });
-
-                                        // Thêm nút xác nhận vào modal footer
-                                        footer.appendChild(confirmBtn);
-
-                                        // Khi modal đóng, loại bỏ nút xác nhận để không bị thừa khi mở lại
-                                        modalEl.addEventListener('hidden.bs.modal', function() {
-                                            confirmBtn.remove();
-                                        }, {
-                                            once: true
-                                        });
-                                    });
-                                </script>
-                                <script>
-                                    document.addEventListener('click', function(e) {
-                                        if (!e.target.classList.contains('btn-delete-item')) return;
-
-                                        // Lấy modal
-                                        const modalEl = document.getElementById('notificationModal');
-                                        const modalBody = document.getElementById('notificationModalBody');
-                                        const modalTitle = modalEl.querySelector('.modal-title');
-                                        const modalFooter = modalEl.querySelector('.modal-footer');
-
-                                        // Đưa nội dung xác nhận vào modal
-                                        modalTitle.textContent = 'Xác nhận';
-                                        modalBody.textContent = 'Bạn chắc chắn muốn xóa sản phẩm này?';
-
-                                        // Xóa footer cũ để thêm nút mới
-                                        modalFooter.innerHTML = `
-        <button type="button" class="btn btn-sm btn-success" data-bs-dismiss="modal">Hủy</button>
-        <button type="button" class="btn btn-sm btn-danger" id="confirmDeleteBtn">Xóa</button>
-    `;
-
-                                        // Hiển thị modal
-                                        const modal = new bootstrap.Modal(modalEl);
-                                        modal.show();
-
-                                        // Bắt sự kiện click nút Xóa trong modal
-                                        const confirmBtn = document.getElementById('confirmDeleteBtn');
-                                        confirmBtn.onclick = function() {
-                                            const id = e.target.dataset.id;
-                                            fetch(`/client/cart/delete/${id}`, {
-                                                    method: 'DELETE',
-                                                    headers: {
-                                                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                                        'Accept': 'application/json',
-                                                        'Content-Type': 'application/json'
-                                                    }
-                                                })
-                                                .then(res => res.json())
-                                                .then(data => {
-                                                    if (data.success) {
-                                                        location.reload();
-                                                    } else {
-                                                        showNotificationModal(data.message || 'Xóa thất bại');
-                                                    }
-                                                })
-                                                .catch(() => showNotificationModal('Lỗi hệ thống'));
-                                            modal.hide();
-                                        };
-                                    });
-                                </script>
-
-                            </div>
-                        </div>
-
-                        {{-- Tổng tiền giỏ hàng --}}
-                        <div class="col-lg-3">
-                            <div class="bg-white rounded shadow-sm p-4">
-                                <h4 class="fw-bold mb-3">Tổng tiền giỏ hàng</h4>
-                                <hr>
-                                
-                                <ul class="list-unstyled mb-4">
-                                    <li class="d-flex justify-content-between mb-2">
-                                        <span>Tạm tính (đã chọn)</span>
-                                        <span id="selected-total">0 ₫</span>
-                                    </li>
-                                    <li class="d-flex justify-content-between mb-2">
-                                        <span>Giảm giá</span>
-                                        <span>(-) 0 ₫</span>
-                                    </li>
-                                    <li class="d-flex justify-content-between mb-3">
-                                        <span>Phí vận chuyển</span>
-                                        <span>20.000 ₫</span>
-                                    </li>
-                                </ul>
-                                <div class="d-flex justify-content-between border-top pt-3 fw-bold fs-5 mb-4">
-                                    <span>Tổng cộng (VNĐ)</span>
-                                    <span id="total-amount" class="text-success">0 ₫</span>
-                                </div>
-                                <a
-    href="{{ $cartItems->count() > 0 ? route('client.checkout') : 'javascript:void(0);' }}"
-    class="btn btn-danger w-100 mb-3 {{ $cartItems->count() == 0 ? 'disabled' : '' }}"
-    @if($cartItems->count() == 0) onclick="Swal.fire({icon:'warning',title:'Thông báo',text:'Giỏ hàng của bạn đang trống!'})" @endif
->
-    Đặt hàng
-</a>
-
-                                <a href="{{ route('client.home') }}" class="btn btn-outline-secondary w-100">
-                                    <i class="fa-solid fa-arrow-left-long me-2"></i> Tiếp tục mua hàng
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+    <div class="container px-5">
+        <div class="row gx-5">
+            {{-- Các sản phẩm trong giỏ --}}
+            <div class="col-lg-9">
+                <div class="bg-white rounded shadow-sm p-4">
+                    <!-- FORM XÓA mục đã chọn -->
+                    <form action="{{ route('client.cart.bulkDelete') }}" method="POST" id="bulk-action-form">
+                        @csrf
+                        <table class="table table-hover">
+                            <tbody>
+                                @php $tongTienTamTinh = 0; @endphp
+                                @forelse ($cartItems as $item)
+                                    @if (isset($item->product))
+                                        @php
+                                            $pricePerItem = $item->price ?? ($item->product->price ?? 0);
+                                            $tongTien = $pricePerItem * $item->quantity;
+                                            $tongTienTamTinh += $tongTien;
+                                        @endphp
+                                        <tr class="align-middle">
+                                            <td>
+                                                <input type="checkbox" name="selected_items[]"
+                                                    value="{{ $item->id }}" data-price="{{ $tongTien }}"
+                                                    style="accent-color: #07a37f;">
+                                            </td>
+                                            <td class="d-flex align-items-center gap-3">
+                                                <img src="{{ asset('storage/' . $item->product->image) }}"
+                                                    alt="{{ $item->product->name }}"
+                                                    style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
+                                                <div>
+                                                    <h6 class="mb-1 fw-semibold text-truncate"
+                                                        style="max-width: 300px;">{{ $item->product->name }}
+                                                    </h6>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <button type="button"
+                                                    class="btn btn-outline-danger btn-sm open-variant-modal"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#variantModal{{ $item->id }}">
+                                                    {{ $item->variant->name ?? 'Chọn biến thể' }}
+                                                </button>
+                                                <!-- Modal biến thể (giữ nguyên nếu bạn đã có) -->
+                                            </td>
+                                            <td class="text-end fw-semibold">
+                                                {{ number_format($pricePerItem, 0, ',', '.') }} ₫
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="d-flex justify-content-center align-items-center gap-2">
+                                                    <button
+                                                        class="btn btn-outline-secondary btn-sm btn-decrease px-2 py-0"
+                                                        style="font-size: 0.85rem;"
+                                                        data-id="{{ $item->id }}">−</button>
+                                                    <input type="text" value="{{ $item->quantity }}"
+                                                        readonly
+                                                        class="form-control form-control-sm text-center quantity-input"
+                                                        data-id="{{ $item->id }}"
+                                                        style="width: 45px; height: 30px; font-size: 0.9rem; padding: 0;">
+                                                    <button
+                                                        class="btn btn-outline-secondary btn-sm btn-increase px-2 py-0"
+                                                        style="font-size: 0.85rem;"
+                                                        data-id="{{ $item->id }}">+</button>
+                                                </div>
+                                            </td>
+                                            <td class="text-end fw-semibold">
+                                                {{ number_format($tongTien, 0, ',', '.') }} ₫
+                                            </td>
+                                            <td class="text-center">
+                                                <button type="button"
+                                                    class="btn btn-link p-0 text-danger btn-delete-item"
+                                                    data-id="{{ $item->id }}">Xóa</button>
+                                            </td>
+                                        </tr>
+                                    @else
+                                        <tr>
+                                            <td colspan="7" class="text-center text-danger fw-semibold">Sản phẩm không tồn tại</td>
+                                        </tr>
+                                    @endif
+                                @empty
+                                    <tr>
+                                        <td colspan="7" class="text-center">Giỏ hàng của bạn đang trống.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                        <button type="submit" aria-label="Xóa mục đã chọn" id="btn-bulk-delete" class="btn-no-border">
+                            Xóa mục đã chọn
+                        </button>
+                        <style>
+                            .btn-no-border {
+                                background-color: #0da487;
+                                color: white;
+                                padding: 8px 16px;
+                                border: none;
+                                border-radius: 6px;
+                                font-size: 14px;
+                                cursor: pointer;
+                                transition: background-color 0.3s ease;
+                                font-weight: 400;
+                            }
+                            .btn-no-border:hover {
+                                background-color: #07a37f;
+                            }
+                        </style>
+                    </form>
                 </div>
-            </section>
+            </div>
+            {{-- Tổng tiền + Nút đặt hàng --}}
+            <div class="col-lg-3">
+                <div class="bg-white rounded shadow-sm p-4">
+                    <h4 class="fw-bold mb-3">Tổng tiền giỏ hàng</h4>
+                    <hr>
+                    <ul class="list-unstyled mb-4">
+                        {{-- <li class="d-flex justify-content-between mb-2">
+                            <span>Tạm tính (đã chọn)</span>
+                            <span id="selected-total">0 ₫</span>
+                        </li> --}}
+                       
+                    </ul>
+                    <div class="d-flex justify-content-between border-top pt-3 fw-bold fs-5 mb-4">
+                        <span>Tổng cộng (VNĐ)</span>
+                        <span id="selected-total" class="text-success">0 ₫</span>
+                    </div>
+                    <!-- Form đặt hàng sản phẩm đã chọn -->
+                    <form action="{{ route('client.cart.proceedCheckout') }}" method="POST" id="checkout-selected-form">
+    @csrf
+    <div id="selected-items-hidden"></div>
+    <button type="submit" class="btn btn-danger w-100">Đặt hàng</button>
+</form>
+                    <a href="{{ route('client.home') }}" class="btn btn-outline-secondary w-100 mt-3">
+                        <i class="fa-solid fa-arrow-left-long me-2"></i> Tiếp tục mua hàng
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{{-- Script đồng bộ selected checkbox cho đặt hàng --}}
+<script>
+document.getElementById('checkout-selected-form').addEventListener('submit', function(e) {
+    const hiddenDiv = document.getElementById('selected-items-hidden');
+    hiddenDiv.innerHTML = '';
+
+    const checked = document.querySelectorAll('#bulk-action-form input[type=checkbox][name="selected_items[]"]:checked');
+
+    checked.forEach(function(checkbox) {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'selected_items[]';
+        input.value = checkbox.value;
+        hiddenDiv.appendChild(input);
+    });
+
+    if (checked.length === 0) {
+        e.preventDefault();
+        Swal.fire({icon:'warning',title:'Thông báo',text:'Bạn chưa chọn sản phẩm nào để đặt hàng!'});
+    }
+});
+</script>
+
 
             <style>
                 .btn-custom {
