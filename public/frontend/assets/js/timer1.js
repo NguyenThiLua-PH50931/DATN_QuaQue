@@ -44,30 +44,42 @@
  }
 
  /***** DISPLAY THE CLOCK AND STOP IT WHEN IT REACHES ZERO *****/
- function initializeClock(id, endtime) {
-     var clock = document.getElementById(id);
-     var daysSpan = clock.querySelector('.days');
-     var hoursSpan = clock.querySelector('.hours');
-     var minutesSpan = clock.querySelector('.minutes');
-     var secondsSpan = clock.querySelector('.seconds');
+function initializeClock(id, endtime) {
+    console.log('initializeClock called with id:', id);
+    var clock = document.getElementById(id);
+    if (!clock) {
+        console.warn(`Không tìm thấy phần tử với id: ${id}`);
+        return; // Dừng hàm nếu không tìm thấy phần tử
+    }
 
-     function updateClock() {
-         var t = getTimeRemaining(endtime);
+    var daysSpan = clock.querySelector(".days");
+    var hoursSpan = clock.querySelector(".hours");
+    var minutesSpan = clock.querySelector(".minutes");
+    var secondsSpan = clock.querySelector(".seconds");
 
-         daysSpan.innerHTML = t.days;
-         hoursSpan.innerHTML = ('0' + t.hours).slice(-2);
-         minutesSpan.innerHTML = ('0' + t.minutes).slice(-2);
-         secondsSpan.innerHTML = ('0' + t.seconds).slice(-2);
+    // Kiểm tra các phần tử con này có tồn tại không
+    if (!daysSpan || !hoursSpan || !minutesSpan || !secondsSpan) {
+        console.warn(`Thiếu các phần tử cần thiết bên trong phần tử #${id}`);
+        return;
+    }
 
-         if (t.total <= 0) {
-             clearInterval(timeinterval);
-         }
-     }
+    function updateClock() {
+        var t = getTimeRemaining(endtime);
 
-     updateClock(); // run function once at first to avoid delay
-     var timeinterval = setInterval(updateClock, 1000);
- }
+        daysSpan.innerHTML = t.days;
+        hoursSpan.innerHTML = ("0" + t.hours).slice(-2);
+        minutesSpan.innerHTML = ("0" + t.minutes).slice(-2);
+        secondsSpan.innerHTML = ("0" + t.seconds).slice(-2);
+
+        if (t.total <= 0) {
+            clearInterval(timeinterval);
+        }
+    }
+
+    updateClock(); // chạy lần đầu để tránh delay
+    var timeinterval = setInterval(updateClock, 1000);
+}
 
  /***** SET A VALID END DATE *****/
- var deadline = new Date(Date.parse(new Date()) + 15 * 24 * 60 * 60 * 1000);
- initializeClock('clockdiv-1', deadline);
+//  var deadline = new Date(Date.parse(new Date()) + 15 * 24 * 60 * 60 * 1000);
+//  initializeClock('clockdiv-1', deadline);

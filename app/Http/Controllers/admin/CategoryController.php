@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\admin\Category;
 use App\Models\admin\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 
@@ -48,45 +49,68 @@ class CategoryController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:100|unique:categories',
+            'image' => 'nullable|image|max:2048', // Hỗ trợ upload ảnh, tối đa 2MB
+        ], [
+            'name.required' => 'Tên danh mục bắt buộc.',
+            'name.unique' => 'Tên danh mục đã tồn tại.',
+            'name.max' => 'Tên danh mục không được vượt quá 100 ký tự.',
+            'image.image' => 'File phải là ảnh.',
+            'image.max' => 'Kích thước ảnh không được vượt quá 2MB.',
         ]);
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        Category::create([
-            'name' => $request->name,
-            'slug' => Str::slug($request->name),
-        ]);
+        $data = $request->only('name');
+        $data['slug'] = Str::slug($request->name);
+
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('categories', 'public');
+        }
+
+        Category::create($data);
 
         session()->flash('success', 'Thêm danh mục thành công!');
 
         return redirect()->route('admin.categories.index');
     }
 
-    // Cập nhật category
     public function update(Request $request, $id)
     {
         $category = Category::findOrFail($id);
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:100',
+            'image' => 'nullable|image|max:2048',
+        ], [
+            'name.required' => 'Tên danh mục bắt buộc.',
+            'name.max' => 'Tên danh mục không được vượt quá 100 ký tự.',
+            'image.image' => 'File phải là ảnh.',
+            'image.max' => 'Kích thước ảnh không được vượt quá 2MB.',
         ]);
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $category->update([
-            'name' => $request->name,
-            'slug' => Str::slug($request->name),
-        ]);
+        $data = $request->only('name');
+        $data['slug'] = Str::slug($request->name);
+
+        if ($request->hasFile('image')) {
+            // Xóa ảnh cũ nếu tồn tại
+            if ($category->image && Storage::disk('public')->exists($category->image)) {
+                Storage::disk('public')->delete($category->image);
+            }
+            $data['image'] = $request->file('image')->store('categories', 'public');
+        }
+
+        $category->update($data);
 
         session()->flash('success', 'Cập nhật danh mục thành công!');
 
         return redirect()->route('admin.categories.index');
     }
-
     // Xóa mềm (soft delete)
     public function softDelete($id)
     {
