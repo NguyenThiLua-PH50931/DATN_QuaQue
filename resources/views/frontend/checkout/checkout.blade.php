@@ -245,25 +245,29 @@ input[type="radio"]:checked ~ .form-check-label {
                                                 </script>
                                         <!-- Mã giảm giá -->
                                         <li>
-                                            <div class="checkout-icon">...</div>
+                                            <div class="checkout-icon"></div>
                                             <div class="checkout-box">
                                                 <div class="checkout-title">
                                                     <h4>Mã giảm giá</h4>
                                                 </div>
-                                                <div class="checkout-detail">
-                                                    <div class="row g-4">
-                                                        <div class="mb-4 d-flex gap-2">
-                                                            <input type="text" id="discount_code_input" class="form-control"
-                                                                value="{{ old('discount_code', $discountCode->code ?? '') }}"
-                                                                placeholder="Nhập mã giảm giá"
-                                                                @if($discountCode) readonly @endif>
-                                                            @if(!$discountCode)
-                                                                <button type="button" id="btn-apply-discount" class="btn btn-success">Áp dụng</button>
-                                                            @else
-                                                                <button type="button" id="btn-remove-discount" class="btn btn-danger">Xoá mã</button>
-                                                            @endif
-                                                        </div>
-                                                    </div>
+                                                <div class="mb-4 d-flex gap-2 align-items-center">
+                                                    <select id="discount_code_select" name="discount_codes[]"
+                                                        class="form-control" multiple
+                                                        @if (isset($appliedDiscountCodes) && $appliedDiscountCodes->isNotEmpty()) disabled @endif
+                                                        style="min-width: 300px;">
+                                                        @foreach ($validDiscountCodes as $code)
+                                                            <option value="{{ $code->code }}"
+                                                                @if (isset($appliedDiscountCodes) && $appliedDiscountCodes->contains('code', $code->code)) selected @endif>
+                                                                {{ $code->code }} — {{ $code->description }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+
+                                                    @if (!isset($appliedDiscountCodes) || $appliedDiscountCodes->isEmpty())
+                                                        <button type="button" id="btn-apply-discount" class="btn btn-success">Áp dụng</button>
+                                                    @else
+                                                        <button type="button" id="btn-remove-discount" class="btn btn-danger">Xoá mã</button>
+                                                    @endif
                                                 </div>
                                             </div>
                                         </li>
@@ -396,15 +400,18 @@ input[type="radio"]:checked ~ .form-check-label {
                                             <h4>Phí vận chuyển</h4>
                                             <h4 id="shipping-fee" class="price">{{ number_format($shippingCost, 0, ',', '.') }} VNĐ</h4>
                                         </li>
-                                        <li>
+                                       <li>
                                             <h4>Mã giảm giá</h4>
                                             <h4 id="discount-amount" class="price text-danger">
                                                 -{{ number_format($discountAmount, 0, ',', '.') }} VNĐ
-                                                @if($discountCode)
-                                                    <span class="text-secondary">({{ $discountCode->code }})</span>
+                                                @if (isset($appliedDiscountCodes) && $appliedDiscountCodes->isNotEmpty() && $discountAmount > 0)
+                                                    <span class="text-secondary">
+                                                        ({{ $appliedDiscountCodes->pluck('code')->implode(', ') }})
+                                                    </span>
                                                 @endif
                                             </h4>
                                         </li>
+
                                         <li class="list-total">
                                             <h4>Tổng (VNĐ)</h4>
                                             <h4 id="total-amount" class="price text-success">{{ number_format($total, 0, ',', '.') }} VNĐ</h4>

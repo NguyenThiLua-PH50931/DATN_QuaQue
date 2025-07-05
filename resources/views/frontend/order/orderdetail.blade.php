@@ -73,7 +73,7 @@
                 @endif
             </li>
 
-                @if(in_array($order->status, ['pending', 'confirmed', 'processing']))
+               @if(in_array($order->status, ['pending', 'confirmed', 'processing']) && !($order->payment_method === 'bank' && $order->payment_status === 'paid'))
     <form id="cancelOrderForm" action="{{ route('client.orders.cancel', $order->id) }}" method="POST">
         @csrf
         <button type="button" id="btn-cancel-order" class="btn btn-danger btn-sm">
@@ -81,11 +81,7 @@
         </button>
     </form>
 @endif
-@if($order->status == 'cancelled')
-    <div class="alert alert-danger mt-2">
-        Đơn hàng này đã bị huỷ. Nếu có thắc mắc, vui lòng liên hệ chăm sóc khách hàng.
-    </div>
-@endif
+
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
