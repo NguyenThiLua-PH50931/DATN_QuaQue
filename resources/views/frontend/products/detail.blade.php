@@ -337,7 +337,7 @@
                                                     </div>
                                                     <button
                                                         class="btn btn-animation ms-xxl-auto mt-xxl-0 mt-3 btn-md fw-bold">
-                                                      Bình luận
+                                                        Bình luận
                                                     </button>
                                                 </div>
                                             </div>
@@ -474,18 +474,28 @@
                                                 </div>
 
                                                 <div class="row g-4">
+                                                    <form action="{{ route('client.product.reviews.store') }}" method="POST">
+                                                        @csrf
+                                                        <input type="hidden" name="product_id" value="{{ $product->id }}">
 
-                                                    <div class="col-12">
-                                                        <div class="form-floating theme-form-floating">
-                                                            <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2"
-                                                                style="
-                                                                            height: 150px;
-                                                                        "></textarea>
-                                                            <label for="floatingTextarea2">Write
-                                                                Your
-                                                                Comment</label>
+                                                        <div class="mb-3">
+                                                            <label for="rating">Đánh giá sao:</label>
+                                                            <select name="rating" class="form-select" required>
+                                                                <option value="">Chọn số sao</option>
+                                                                @for ($i = 5; $i >= 1; $i--)
+                                                                <option value="{{ $i }}">{{ $i }} sao</option>
+                                                                @endfor
+                                                            </select>
                                                         </div>
-                                                    </div>
+
+                                                        <div class="mb-3">
+                                                            <label for="comment">Nội dung đánh giá:</label>
+                                                            <textarea name="comment" class="form-control" rows="4" required placeholder="Viết đánh giá..."></textarea>
+                                                        </div>
+
+                                                        <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
+                                                    </form>
+
                                                 </div>
                                             </div>
 
@@ -497,139 +507,136 @@
                                                         answers
                                                     </h4>
                                                 </div>
-
-                                                <div class="review-people">
+                                                <label for="filter_star">Lọc theo số sao:</label>
+                                                <select id="filter_star" class="form-select w-auto d-inline-block">
+                                                    <option value="">Tất cả</option>
+                                                    @for ($i = 5; $i >= 1; $i--)
+                                                    <option value="{{ $i }}">{{ $i }} sao</option>
+                                                    @endfor
+                                                </select>
+                                                <div class="review-people" id="review-container">
                                                     <ul class="review-list">
+                                                        @forelse ($reviews as $review)
                                                         <li>
                                                             <div class="people-box">
                                                                 <div>
                                                                     <div class="people-image">
-                                                                        <img src="../assets/images/review/1.jpg"
+                                                                        <img src="{{ asset('assets/images/review/default.jpg') }}"
                                                                             class="img-fluid blur-up lazyload"
-                                                                            alt="" />
+                                                                            alt="{{ $review->user->name ?? 'User' }}" />
                                                                     </div>
                                                                 </div>
 
                                                                 <div class="people-comment">
-                                                                    <a class="name"
-                                                                        href="javascript:void(0)">Tracey</a>
+                                                                    <a class="name" href="javascript:void(0)">
+                                                                        {{ $review->user->name ?? 'Người dùng' }}
+                                                                    </a>
+
                                                                     <div class="date-time">
                                                                         <h6 class="text-content">
-                                                                            14
-                                                                            Jan,
-                                                                            2022
-                                                                            at
-                                                                            12.58
-                                                                            AM
+                                                                            {{ $review->created_at->format('d M, Y \a\t H:i') }}
                                                                         </h6>
 
                                                                         <div class="product-rating">
                                                                             <ul class="rating">
-                                                                                <li>
-                                                                                    <i data-feather="star"
-                                                                                        class="fill"></i>
-                                                                                </li>
-                                                                                <li>
-                                                                                    <i data-feather="star"
-                                                                                        class="fill"></i>
-                                                                                </li>
-                                                                                <li>
-                                                                                    <i data-feather="star"
-                                                                                        class="fill"></i>
-                                                                                </li>
-                                                                                <li>
-                                                                                    <i data-feather="star"></i>
-                                                                                </li>
-                                                                                <li>
-                                                                                    <i data-feather="star"></i>
-                                                                                </li>
-                                                                            </ul>
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="reply">
-                                                                        <p>
-                                                                            nội dung đánh giá.<a
-                                                                                href="javascript:void(0)">Reply</a>
-                                                                        </p>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
+                                                                                @for ($i = 1; $i <= 5; $i++)
+                                                                                    <li>
+                                                                                    <i data-feather="star" class="{{ $i <= $review->rating ? 'fill' : '' }}"></i>
                                                         </li>
+                                                        @endfor
                                                     </ul>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xxl-3 col-xl-4 col-lg-5 d-none d-lg-block wow fadeInUp">
-                <div class="right-sidebar-box">
 
-                    <!-- Trending Product -->
-                    <div class="pt-25">
-                        <div class="category-menu">
-                            <h3>Sản phẩm nổi bật</h3>
-                            <ul class="product-list product-right-sidebar border-0 p-0">
-                                @foreach ($topMonthlyProducts as $item)
-                                <li>
-                                    <div class="offer-product">
-                                        <a href="{{ route('client.product.detail', $item->slug) }}"
-                                            class="offer-image">
-                                            <img src="{{ asset('storage/' . ($item->image ?? 'default.png')) }}"
-                                                class="img-fluid blur-up lazyload" alt="{{ $item->name }}" />
-
-                                        </a>
-                                        <div class="offer-detail">
-                                            <div>
-                                                <a href="{{ route('client.product.detail', $item->slug) }}">
-                                                    <h6 class="name">{{ $item->name }}</h6>
-                                                </a>
-                                                <span>{{ $item->weight ?? '' }}</span> {{-- Nếu có trường weight --}}
-                                                <h6 class="price theme-color">
-                                                    {{ number_format($item->variants->min('price') ?? 0) }} đ
-                                                </h6>
+                                            <div class="reply">
+                                                <p>
+                                                    {{ $review->comment }}
+                                                    {{-- <a href="javascript:void(0)">Reply</a> --}}
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
-                                </li>
-                                @endforeach
-                            </ul>
-                        </div>
-
-                    </div>
-
-                    <!-- Banner Section -->
-                    <div class="ratio_156 pt-25">
-                        <div class="home-contain">
-                            <img src="../assets/images/vegetable/banner/8.jpg" class="bg-img blur-up lazyload"
-                                alt="" />
-                            <div class="home-detail p-top-left home-p-medium">
-                                <div>
-                                    <h6 class="text-yellow home-banner">
-                                        Seafood
-                                    </h6>
-                                    <h3 class="text-uppercase fw-normal">
-                                        <span class="theme-color fw-bold">Freshes</span>
-                                        Products
-                                    </h3>
-                                    <h3 class="fw-light">every hour</h3>
-                                    <button onclick="location.href = 'shop-left-sidebar.html';"
-                                        class="btn btn-animation btn-md fw-bold mend-auto">
-                                        Shop Now
-                                        <i class="fa-solid fa-arrow-right icon"></i>
-                                    </button>
+                                    </li>
+                                    @empty
+                                    <li>
+                                        <p class="text-muted">Chưa có đánh giá nào.</p>
+                                    </li>
+                                    @endforelse
+                                    </ul>
                                 </div>
+
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+    </div>
+    </div>
+    <div class="col-xxl-3 col-xl-4 col-lg-5 d-none d-lg-block wow fadeInUp">
+        <div class="right-sidebar-box">
+
+            <!-- Trending Product -->
+            <div class="pt-25">
+                <div class="category-menu">
+                    <h3>Sản phẩm nổi bật</h3>
+                    <ul class="product-list product-right-sidebar border-0 p-0">
+                        @foreach ($topMonthlyProducts as $item)
+                        <li>
+                            <div class="offer-product">
+                                <a href="{{ route('client.product.detail', $item->slug) }}"
+                                    class="offer-image">
+                                    <img src="{{ asset('storage/' . ($item->image ?? 'default.png')) }}"
+                                        class="img-fluid blur-up lazyload" alt="{{ $item->name }}" />
+
+                                </a>
+                                <div class="offer-detail">
+                                    <div>
+                                        <a href="{{ route('client.product.detail', $item->slug) }}">
+                                            <h6 class="name">{{ $item->name }}</h6>
+                                        </a>
+                                        <span>{{ $item->weight ?? '' }}</span> {{-- Nếu có trường weight --}}
+                                        <h6 class="price theme-color">
+                                            {{ number_format($item->variants->min('price') ?? 0) }} đ
+                                        </h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        @endforeach
+                    </ul>
+                </div>
+
+            </div>
+
+            <!-- Banner Section -->
+            <div class="ratio_156 pt-25">
+                <div class="home-contain">
+                    <img src="../assets/images/vegetable/banner/8.jpg" class="bg-img blur-up lazyload"
+                        alt="" />
+                    <div class="home-detail p-top-left home-p-medium">
+                        <div>
+                            <h6 class="text-yellow home-banner">
+                                Seafood
+                            </h6>
+                            <h3 class="text-uppercase fw-normal">
+                                <span class="theme-color fw-bold">Freshes</span>
+                                Products
+                            </h3>
+                            <h3 class="fw-light">every hour</h3>
+                            <button onclick="location.href = 'shop-left-sidebar.html';"
+                                class="btn btn-animation btn-md fw-bold mend-auto">
+                                Shop Now
+                                <i class="fa-solid fa-arrow-right icon"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
     </div>
 </section>
 <!-- Product Left Sidebar End -->
@@ -840,6 +847,8 @@
 
 
 <!-- Quick View Modal Box End -->
+
+
 {{-- Sửa lỗi style lồng nhau và CSS sai cú pháp --}}
 <style>
     .attribute-select.active2 {
@@ -854,6 +863,7 @@
         cursor: not-allowed !important;
         pointer-events: none !important;
     }
+
     .section-b-space {
         padding-top: 0px !important;
     }
@@ -863,7 +873,19 @@
     window.productVariants = @json($variantMap ?? []);
 </script>
 
+<script>
+    document.getElementById('filter_star').addEventListener('change', function() {
+        const star = this.value;
+        const slug = "{{ $product->slug }}";
 
+        fetch(`/client/san-pham/${slug}/reviews?star=${star}`)
+            .then(response => response.text())
+            .then(html => {
+                document.querySelector('#review-container .review-list').innerHTML = html;
+                feather.replace();
+            });
+    });
+</script>
 {{-- update số lượng trang detail --}}
 <script>
     const updateQuantityUrl = "{{ route('client.cart.updateQuantity') }}";
