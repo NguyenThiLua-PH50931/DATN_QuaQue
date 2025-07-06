@@ -1,5 +1,5 @@
 @extends('layouts.frontend')
-@section('title', 'Support Tickets')
+@section('title', 'Yêu cầu hỗ trợ')
 @section('contents')
     <!-- Breadcrumb Section Start -->
     <section class="breadscrumb-section pt-0">
@@ -7,7 +7,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="breadscrumb-contain">
-                        <h2>Support Tickets</h2>
+                        <h2>Yêu cầu hỗ trợ</h2>
                         <nav>
                             <ol class="breadcrumb mb-0">
                                 <li class="breadcrumb-item">
@@ -15,7 +15,7 @@
                                         <i class="fa-solid fa-house"></i>
                                     </a>
                                 </li>
-                                <li class="breadcrumb-item active" aria-current="page">Support Tickets</li>
+                                <li class="breadcrumb-item active" aria-current="page">Yêu cầu hỗ trợ</li>
                             </ol>
                         </nav>
                     </div>
@@ -33,14 +33,15 @@
                     <div class="left-sidebar-box">
                         <div class="row">
                             <div class="col-xl-12">
-                                <div class="contact-image">
-                                    <img src="{{ asset('assets/images/inner-page/support-ticket.png') }}"
-                                        class="img-fluid blur-up lazyloaded" alt="Support Ticket">
+                                <div class="contact-image text-center d-flex align-items-center justify-content-center"
+                                    style="min-height: 500px;">
+                                    <img src="uploads/anh3.png" class="img-fluid blur-up lazyloaded" alt=""
+                                        style="max-width: 600px; width: 100%; height: auto; margin: 0 auto; display: block;">
                                 </div>
                             </div>
                             <div class="col-xl-12">
                                 <div class="contact-title">
-                                    <h3>Get Support</h3>
+                                    <h3>Nhận hỗ trợ</h3>
                                 </div>
 
                                 <div class="contact-detail">
@@ -61,64 +62,84 @@
                 </div>
 
                 <div class="col-lg-6">
-                    <div class="title d-xxl-none d-block">
-                        <h2>Support Tickets</h2>
+                    <div class="title d-xxl-none d-block mb-3">
+                        <h2 class="fw-bold text-primary">Support Tickets</h2>
                     </div>
-                    <div class="right-sidebar-box">
-                        <div class="row">
+
+                    <div class="right-sidebar-box bg-white p-4 rounded shadow-sm">
+                        <div class="row gy-4">
                             @if (session('success'))
                                 <div class="alert alert-success">{{ session('success') }}</div>
                             @endif
 
                             <!-- Form Tạo Ticket Mới -->
                             <div class="col-12">
-                                <h4>Tạo Yêu Cầu Mới</h4>
+                                <h4 class="fw-semibold text-dark mb-3"><i class="fa-solid fa-plus me-2 text-success"></i>
+                                    Tạo Yêu Cầu Mới</h4>
                                 <form method="POST" action="{{ route('client.support-ticket.store') }}">
                                     @csrf
-                                    <div class="mb-md-4 mb-3 custom-form">
-                                        <label for="title" class="form-label">Tiêu đề</label>
-                                        <div class="custom-input">
+                                    <div class="mb-3">
+                                        <label for="title" class="form-label fw-medium">Tiêu đề</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light"><i
+                                                    class="fa-solid fa-heading"></i></span>
                                             <input type="text" name="title" class="form-control" id="title"
                                                 required placeholder="Nhập tiêu đề">
-                                            <i class="fa-solid fa-heading"></i>
                                         </div>
                                     </div>
-                                    <div class="mb-md-4 mb-3 custom-form">
-                                        <label for="content" class="form-label">Nội dung</label>
-                                        <div class="custom-textarea">
+                                    <div class="mb-3">
+                                        <label for="content" class="form-label fw-medium">Nội dung</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light"><i
+                                                    class="fa-solid fa-message"></i></span>
                                             <textarea name="content" class="form-control" id="content" required placeholder="Nhập nội dung" rows="4"></textarea>
-                                            <i class="fa-solid fa-message"></i>
                                         </div>
                                     </div>
-                                    <button type="submit" class="btn btn-animation btn-md fw-bold ms-auto">Gửi Yêu
-                                        Cầu</button>
+                                    <div class="text-end">
+                                        <button type="submit" class="btn btn-danger fw-bold px-4">
+                                            <i class="fa-solid fa-paper-plane me-1"></i> Gửi Yêu Cầu
+                                        </button>
+                                    </div>
                                 </form>
                             </div>
 
                             <!-- Danh sách Ticket -->
-                            <div class="col-12 mt-4">
-                                <h4>Danh Sách Yêu Cầu</h4>
+                            <div class="col-12">
+                                <h4 class="fw-semibold text-dark mb-3"><i class="fa-solid fa-list-check me-2 text-info"></i>
+                                    Danh Sách Yêu Cầu</h4>
                                 @forelse ($tickets as $ticket)
-                                    <div class="contact-detail-box mb-3">
-                                        <div class="contact-detail-title">
-                                            <h5>{{ $ticket->title }} <span
-                                                    class="badge bg-{{ $ticket->status == 'pending' ? 'warning' : 'success' }}">{{ $ticket->status == 'pending' ? 'Chờ xử lý' : 'Đã giải quyết' }}</span>
+                                    <div class="card shadow-sm border-0 mb-3">
+                                        <div class="card-body">
+                                            <h5 class="card-title d-flex justify-content-between align-items-center">
+                                                {{ $ticket->title }}
+                                                <span
+                                                    class="badge bg-{{ $ticket->status == 'pending' ? 'warning' : 'success' }}">
+                                                    {{ $ticket->status == 'pending' ? 'Chờ xử lý' : 'Đã giải quyết' }}
+                                                </span>
                                             </h5>
-                                        </div>
-                                        <div class="contact-detail-contain">
-                                            <p>Ngày tạo: {{ $ticket->created_at->format('d/m/Y H:i') }}</p>
+                                            <p class="card-text text-muted mb-2">
+                                                <i class="fa-regular fa-clock me-1"></i>
+                                                Ngày tạo: {{ $ticket->created_at->format('d/m/Y H:i') }}
+                                            </p>
                                             <a href="{{ route('client.support-ticket.show', $ticket->id) }}"
-                                                class="btn btn-sm btn-primary">Xem chi tiết</a>
+                                                class="btn btn-outline-warning btn-sm">
+                                                <i class="fa-solid fa-eye me-1"></i> Xem chi tiết
+                                            </a>
                                         </div>
                                     </div>
                                 @empty
-                                    <p>Không có yêu cầu nào.</p>
+                                    <p class="text-muted fst-italic">Không có yêu cầu nào.</p>
                                 @endforelse
-                                {{ $tickets->links() }}
+
+                                <!-- Phân trang -->
+                                <div class="mt-3">
+                                    {{ $tickets->links() }}
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </section>
@@ -129,8 +150,8 @@
         <div class="container-fluid p-0">
             <div class="map-box">
                 <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m23!1m12!1m3!1d2994.3803116994895!2d55.29773782339708!3d25.222534631321!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m8!3e6!4m5!1s0x3e5f43496ad9c645%3A0xbde66e5084295162!2sDubai%20-%20United%20Arab%20Emirates!3m2!1d25.2048493!2d55.2707828!4m0!5e1!3m2!1sen!2sin!4v1652217109535!5m2!1sen!2sin"
-                    style="border:0;" allowfullscreen="" loading="lazy"
+                    src="https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d3723.863556662289!2d105.74468687445314!3d21.0381447623719!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1zVHLGsOG7nW5nIENhbyDEkeG6s25nIEZQVCBQb2x5dGVjaG5pYw!5e0!3m2!1svi!2s!4v1750352713751!5m2!1svi!2s"
+                    width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
                     referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
         </div>
