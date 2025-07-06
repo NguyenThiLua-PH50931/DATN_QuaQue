@@ -79,9 +79,29 @@
                                             @enderror
                                         </div>
                                     </div>
+                                    {{-- Miễn phí vận chuyển --}}
+                                    {{-- Loại mã (giảm giá / freeship) --}}
+                                    <div class="mb-4 row align-items-center">
+                                        <label class="form-label-title col-lg-2 col-md-3 mb-0">Loại mã</label>
+                                        <div class="col-md-9 col-lg-10">
+                                            <select class="form-select" name="type" required>
+                                                <option value="order_discount"
+                                                    {{ old('type', $coupon->type) == 'order_discount' ? 'selected' : '' }}>
+                                                    Giảm giá đơn hàng
+                                                </option>
+                                                <option value="free_shipping"
+                                                    {{ old('type', $coupon->type) == 'free_shipping' ? 'selected' : '' }}>
+                                                    Miễn phí vận chuyển
+                                                </option>
+                                            </select>
+                                            @error('type')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
 
                                     {{-- Loại giảm giá --}}
-                                    <div class="mb-4 row align-items-center">
+                                    <div class="mb-4 row align-items-center discount-field">
                                         <label class="form-label-title col-lg-2 col-md-3 mb-0">Loại giảm giá</label>
                                         <div class="col-md-9 col-lg-10">
                                             <select class="form-select" name="discount_type">
@@ -106,11 +126,12 @@
                                     </div>
 
                                     {{-- Giá trị giảm --}}
-                                    <div class="mb-4 row align-items-center">
+                                    <div class="mb-4 row align-items-center discount-field">
                                         <label class="form-label-title col-lg-2 col-md-3 mb-0">Giá trị giảm</label>
                                         <div class="col-md-9 col-lg-10">
                                             <input class="form-control" type="number" step="0.01" name="discount_value"
-                                                value="{{ old('discount_value', $coupon->discount_value) }}">
+                                                value="{{ old('discount_value', $coupon->discount_value !== null ? number_format($coupon->discount_value, 2, '.', '') : '') }}">
+
                                             @error('discount_value')
                                                 <div class="text-danger">{{ $message }}</div>
                                             @enderror
@@ -168,42 +189,6 @@
                                         </div>
                                     </div>
 
-                                    <div class="mb-4 row align-items-start">
-                                        <label class="form-label-title col-lg-2 col-md-3 mb-2">Sản phẩm đã chọn</label>
-                                        <div class="col-md-9 col-lg-10">
-                                            {{-- Hiển thị sản phẩm đã chọn dưới dạng badge --}}
-                                            @if (!empty($coupon->products) && $coupon->products->count() > 0)
-                                                <div class="mb-3">
-                                                    @foreach ($coupon->products as $p)
-                                                        <span class="badge bg-primary me-2 mb-2"
-                                                            style="font-size: 0.9rem;">
-                                                            {{ $p->name }}
-                                                        </span>
-                                                    @endforeach
-                                                </div>
-                                            @else
-                                                <p class="mb-3 text-muted fst-italic">Chưa có sản phẩm nào được chọn.</p>
-                                            @endif
-
-                                            {{-- Label và select chọn thêm sản phẩm --}}
-                                            <label for="product_ids" class="form-label fw-semibold">Chọn thêm sản phẩm áp
-                                                dụng:</label>
-                                            <select name="product_ids[]" multiple class="form-control" size="6"
-                                                aria-label="Chọn sản phẩm áp dụng">
-                                                @foreach ($products as $product)
-                                                    <option value="{{ $product->id }}"
-                                                        @if ($coupon->products && $coupon->products->contains('id', $product->id)) selected @endif>
-                                                        {{ $product->name }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-
-                                            {{-- Hiển thị lỗi validate --}}
-                                            @error('product_ids')
-                                                <div class="text-danger mt-1">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    </div>
 
 
                                     {{-- Nút submit --}}
@@ -223,6 +208,29 @@
             </div>
         </div>
     </div>
+    @push('scripts')
+        @push('scripts')
+            <script>
+                function toggleDiscountFields() {
+                    const type = document.querySelector('select[name="type"]').value;
+                    const discountFields = document.querySelectorAll('.discount-field');
+
+                    discountFields.forEach(field => {
+                        if (type === 'order_discount') {
+                            field.style.display = ''; // hiện lại
+                        } else {
+                            field.style.display = 'none'; // ẩn
+                        }
+                    });
+                }
+
+                document.addEventListener('DOMContentLoaded', () => {
+                    toggleDiscountFields();
+                    document.querySelector('select[name="type"]').addEventListener('change', toggleDiscountFields);
+                });
+            </script>
+        @endpush
+    @endpush
 
     @includeIf('backend.footer')
 @endsection

@@ -69,7 +69,7 @@
                         <h3>{{ $item->title }}</h3>
                     </a>
                     <button onclick="location.href='{{ route('client.blogs-detail', ['id' => $item->id]) }}'" class="blog-button">
-                        Read More <i class="fa-solid fa-right-long"></i>
+                        Đọc thêm <i class="fa-solid fa-right-long"></i>
                     </button>                                        
                 </div>
             </div>

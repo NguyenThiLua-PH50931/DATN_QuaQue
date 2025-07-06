@@ -62,64 +62,84 @@
                 </div>
 
                 <div class="col-lg-6">
-                    <div class="title d-xxl-none d-block">
-                        <h2>Support Tickets</h2>
+                    <div class="title d-xxl-none d-block mb-3">
+                        <h2 class="fw-bold text-primary">Support Tickets</h2>
                     </div>
-                    <div class="right-sidebar-box">
-                        <div class="row">
+
+                    <div class="right-sidebar-box bg-white p-4 rounded shadow-sm">
+                        <div class="row gy-4">
                             @if (session('success'))
                                 <div class="alert alert-success">{{ session('success') }}</div>
                             @endif
 
                             <!-- Form Tạo Ticket Mới -->
                             <div class="col-12">
-                                <h4>Tạo Yêu Cầu Mới</h4>
+                                <h4 class="fw-semibold text-dark mb-3"><i class="fa-solid fa-plus me-2 text-success"></i>
+                                    Tạo Yêu Cầu Mới</h4>
                                 <form method="POST" action="{{ route('client.support-ticket.store') }}">
                                     @csrf
-                                    <div class="mb-md-4 mb-3 custom-form">
-                                        <label for="title" class="form-label">Tiêu đề</label>
-                                        <div class="custom-input">
+                                    <div class="mb-3">
+                                        <label for="title" class="form-label fw-medium">Tiêu đề</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light"><i
+                                                    class="fa-solid fa-heading"></i></span>
                                             <input type="text" name="title" class="form-control" id="title"
                                                 required placeholder="Nhập tiêu đề">
-                                            <i class="fa-solid fa-heading"></i>
                                         </div>
                                     </div>
-                                    <div class="mb-md-4 mb-3 custom-form">
-                                        <label for="content" class="form-label">Nội dung</label>
-                                        <div class="custom-textarea">
+                                    <div class="mb-3">
+                                        <label for="content" class="form-label fw-medium">Nội dung</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light"><i
+                                                    class="fa-solid fa-message"></i></span>
                                             <textarea name="content" class="form-control" id="content" required placeholder="Nhập nội dung" rows="4"></textarea>
-                                            <i class="fa-solid fa-message"></i>
                                         </div>
                                     </div>
-                                    <button type="submit" class="btn btn-animation btn-md fw-bold ms-auto">Gửi Yêu
-                                        Cầu</button>
+                                    <div class="text-end">
+                                        <button type="submit" class="btn btn-danger fw-bold px-4">
+                                            <i class="fa-solid fa-paper-plane me-1"></i> Gửi Yêu Cầu
+                                        </button>
+                                    </div>
                                 </form>
                             </div>
 
                             <!-- Danh sách Ticket -->
-                            <div class="col-12 mt-4">
-                                <h4>Danh Sách Yêu Cầu</h4>
+                            <div class="col-12">
+                                <h4 class="fw-semibold text-dark mb-3"><i class="fa-solid fa-list-check me-2 text-info"></i>
+                                    Danh Sách Yêu Cầu</h4>
                                 @forelse ($tickets as $ticket)
-                                    <div class="contact-detail-box mb-3">
-                                        <div class="contact-detail-title">
-                                            <h5>{{ $ticket->title }} <span
-                                                    class="badge bg-{{ $ticket->status == 'pending' ? 'warning' : 'success' }}">{{ $ticket->status == 'pending' ? 'Chờ xử lý' : 'Đã giải quyết' }}</span>
+                                    <div class="card shadow-sm border-0 mb-3">
+                                        <div class="card-body">
+                                            <h5 class="card-title d-flex justify-content-between align-items-center">
+                                                {{ $ticket->title }}
+                                                <span
+                                                    class="badge bg-{{ $ticket->status == 'pending' ? 'warning' : 'success' }}">
+                                                    {{ $ticket->status == 'pending' ? 'Chờ xử lý' : 'Đã giải quyết' }}
+                                                </span>
                                             </h5>
-                                        </div>
-                                        <div class="contact-detail-contain">
-                                            <p>Ngày tạo: {{ $ticket->created_at->format('d/m/Y H:i') }}</p>
+                                            <p class="card-text text-muted mb-2">
+                                                <i class="fa-regular fa-clock me-1"></i>
+                                                Ngày tạo: {{ $ticket->created_at->format('d/m/Y H:i') }}
+                                            </p>
                                             <a href="{{ route('client.support-ticket.show', $ticket->id) }}"
-                                                class="btn btn-sm btn-primary">Xem chi tiết</a>
+                                                class="btn btn-outline-warning btn-sm">
+                                                <i class="fa-solid fa-eye me-1"></i> Xem chi tiết
+                                            </a>
                                         </div>
                                     </div>
                                 @empty
-                                    <p>Không có yêu cầu nào.</p>
+                                    <p class="text-muted fst-italic">Không có yêu cầu nào.</p>
                                 @endforelse
-                                {{ $tickets->links() }}
+
+                                <!-- Phân trang -->
+                                <div class="mt-3">
+                                    {{ $tickets->links() }}
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </section>
