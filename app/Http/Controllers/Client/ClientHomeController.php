@@ -9,13 +9,14 @@ use App\Models\Admin\Category;
 use App\Models\Admin\Product;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ClientHomeController extends Controller
 {
     public function home()
     {
         $now = Carbon::now();
- $blogs = Blog::latest()->take(6)->get();
+        $blogs = Blog::latest()->take(6)->get();
 
         // Lấy banner chính
         $mainHeroBanner = Banner::where('location', 'main_hero_banner')
@@ -147,9 +148,13 @@ class ClientHomeController extends Controller
             })
             ->first();
 
+            // Sản phẩm bán chạy: (lấy theo tổng số sản phẩm được bán ra)
         $bestSellingProducts = Product::with('category')
-            ->where('active', 1)
-            ->orderBy('view_total', 'desc')
+            ->select('products.*', DB::raw('SUM(order_items.quantity) as total_sold'))
+            ->join('order_items', 'order_items.product_id', '=', 'products.id')
+            ->where('products.active', 1)
+            ->groupBy('products.id')
+            ->orderByDesc('total_sold')
             ->take(12)
             ->get();
 
@@ -184,4 +189,3 @@ class ClientHomeController extends Controller
         return view('frontend.products.detail', compact('product'));
     }
 }
-
