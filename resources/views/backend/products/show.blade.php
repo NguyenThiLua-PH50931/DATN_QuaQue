@@ -158,11 +158,12 @@
                                         {{-- <th><input type="checkbox" id="select-all-variants"></th> --}}
                                         <th>Tên biến thể</th>
                                         <th>Mô tả</th>
-                                        <th>Giá</th>
-                                        <th>Số lượng</th>
-                                        <th>SKU</th>
-                                        <th>Trạng thái</th>
-                                        {{-- <th>Actions</th> --}}
+                                        <<<<<<< HEAD=======>>>>>>> 7e0fa514fc2c3966c7a3f4fbdcd9a0eadb78a45a
+                                            <th>Giá</th>
+                                            <th>Số lượng</th>
+                                            <th>SKU</th>
+                                            <th>Trạng thái</th>
+                                            {{-- <th>Actions</th> --}}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -330,26 +331,26 @@
 
     @push('styles')
         <link rel="stylesheet" href="//cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
-        {{-- <style>
+        <style>
             /* .gallery-container {
-                        display: flex;
-                        gap: 12px;
-                        max-width: 465px;
-                        height: 350px;
-                    }
+                                display: flex;
+                                gap: 12px;
+                                max-width: 465px;
+                                height: 350px;
+                            }
 
-                    .thumb-swiper {
-                        height: 350px;
-                        width: 85px;
-                    }
+                            .thumb-swiper {
+                                height: 350px;
+                                width: 85px;
+                            }
 
-                    .thumb-swiper .swiper-slide img {
-                        width: 80px;
-                        height: 60px;
-                        object-fit: cover;
-                        border-radius: 7px;
-                        border: 2px solid #ccc;
-                    } */
+                            .thumb-swiper .swiper-slide img {
+                                width: 80px;
+                                height: 60px;
+                                object-fit: cover;
+                                border-radius: 7px;
+                                border: 2px solid #ccc;
+                            } */
 
             .main-image-wrapper {
                 flex: 1;
@@ -454,7 +455,7 @@
             .bulk-delete-btn:not([disabled]):hover {
                 background: #aac4e7 !important;
             }
-        </style> --}}
+        </style>
     @endpush
 
     @push('scripts')
@@ -627,7 +628,8 @@
                     thumb.addEventListener('click', () => {
                         const idx = parseInt(thumb.getAttribute('data-index'));
                         console.log('Thumbnail clicked, index:', idx, 'Gallery length:', gallery
-                        .length);
+                            .length);
+
                         if (idx >= 0 && idx < gallery.length && gallery[idx]) {
                             mainImage.src = gallery[idx]; // Thay ảnh chính
                             setActiveThumbnail(idx);

@@ -51,22 +51,13 @@
                                  <i class="fa-solid fa-bars"></i>
                              </span>
                          </button>
-                         <a href="{{ url('/') }}" class="web-logo nav-logo">
+                         <a href="{{ url('/client/home') }}" class="web-logo nav-logo">
                              <img src="{{ asset('/storage/banners/logo/logo.png') }}" class="img-fluid blur-up lazyload"
                                  alt="Logo Quà Quê" style="height: 50px;">
                          </a>
                          {{-- TÌM KIẾM SẢN PHẨM --}}
                          <div class="middle-box">
-                             <div class="location-box">
-                                 <button class="btn location-button" data-bs-toggle="modal"
-                                     data-bs-target="#locationModal">
-                                     <span class="location-arrow">
-                                         <i data-feather="map-pin"></i>
-                                     </span>
-                                     <span class="locat-name">Vị trí</span>
-                                     <i class="fa-solid fa-angle-down"></i>
-                                 </button>
-                             </div>
+
                              <div class="search-box">
                                  <div class="input-group">
                                      <input type="search" class="form-control" id="searchInput"
@@ -213,13 +204,14 @@
                                          <i data-feather="heart"></i>
                                      </a>
                                  </li>
+                                 
                                  <li class="right-side">
                                      <div class="header-badge">
                                          <i data-feather="shopping-cart"></i>
                                          <div class="cart-popup">
                                              <ul class="cart-items-list">
                                                  @php $totalPrice = 0; @endphp
-                                                 @forelse ($cartItems as $item)
+                                                 @forelse ($globalCartItems as $item)
                                                      @php
                                                          $itemTotal =
                                                              ($item->price ?? $item->product->price) * $item->quantity;
@@ -462,12 +454,19 @@
                                          });
                                      </script>
                                  </li>
+                                 <li class="right-side">
+                                    <a href="{{ route('client.orders.index') }}" class="btn p-0 position-relative" title="Đơn hàng của tôi">
+                                        <i data-feather="package"></i>
+                                        {{-- Có thể thay "package" bằng "clipboard-list" hoặc "shopping-bag" tuỳ bộ icon --}}
+                                    </a>
+                                </li>
+
                                  <li class="right-side onhover-dropdown">
                                      <div class="delivery-login-box">
                                          @if (Auth::check())
                                              <div class="delivery-icon">
                                                  <i data-feather="user"></i>
-                                                 <strong>Xin chào, {{ Auth::user()->name }}</strong>
+                                                 <strong>{{ Auth::user()->name }}</strong>
                                              </div>
                                          @else
                                              <div class="delivery-icon">
@@ -1094,7 +1093,7 @@
 
                                          <li class="nav-item dropdown new-nav-item">
                                              <a class="nav-link dropdown-toggle"
-                                                 href="{{ route('client.lienhe') }}">Liên
+                                                 href="{{ route('client.support-ticket.index') }}">Liên
                                                  hệ
                                              </a>
                                          </li>
@@ -1253,7 +1252,7 @@
 
                      <div class="header-nav-right">
                          <button class="btn deal-button" data-bs-toggle="modal" data-bs-target="#deal-box">
-                             <i data-feather="zap"></i>
+                             <i class="ri-leaf-line"></i> <!-- icon lá cây từ Remix Icon -->
                              <span>Ưu đãi hôm nay</span>
                          </button>
                      </div>

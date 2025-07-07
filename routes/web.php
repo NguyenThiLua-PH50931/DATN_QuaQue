@@ -36,6 +36,9 @@ use App\Http\Controllers\Client\ForgotController;
 use App\Http\Controllers\Client\ProfileClientController;
 use App\Http\Controllers\Client\ResetPasswordController;
 use App\Http\Controllers\Client\WishlistController;
+use App\Http\Controllers\Client\CheckoutController;
+use App\Http\Controllers\LocationController;
+use App\Http\Controllers\Client\OrdersController;
 use Illuminate\Support\Facades\Route;
 // use App\Http\Controllers\ProductController as GlobalProductController; // Nếu cần dùng controller gốc ngoài admin/client
 
@@ -51,8 +54,11 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
     Route::group(['prefix' => 'san-pham', 'as' => 'product.'], function () {
         Route::get('/all', [ClientProductController::class, 'index'])->name('index');
         Route::get('/search', [AdminProductController::class, 'searchPage'])->name('search');
+        Route::get('/{slug}/reviews', [ClientProductController::class, 'filterReviews'])->name('reviews.filter');
         Route::get('/{slug}', [ClientProductController::class, 'show'])->name('detail');
         Route::post('/get-variant', [ClientProductController::class, 'getVariant'])->name('.getVariant');
+        Route::post('/reviews', [ClientProductController::class, 'storeReview'])->name('reviews.store');
+        Route::get('/quickview/{slug}', [ClientProductController::class, 'quickView'])->name('quickview');
     });
 
 
@@ -82,14 +88,35 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
         Route::post('updateQuantity', [CartController::class, 'updateQuantity'])->name('updateQuantity');
         Route::delete('remove/{id}', [CartController::class, 'remove'])->name('remove');
         Route::post('update-variant', [CartController::class, 'updateVariant'])->name('updateVariant');
-
+        Route::post('checkout-selected', [CartController::class, 'proceedCheckout'])->name('proceedCheckout');
     });
 
 
-    //  Thanh toán
-    Route::get('/checkout', function () {
-        return view('frontend.checkout.checkout');
+    // ✅ Đặt trong group 'client' lớn phía trên, không lồng thêm 'client' lần nữa
+    Route::middleware('auth')->group(function () {
+        Route::get('/checkout', [CheckoutController::class, 'checkout'])->name('checkout');
+        Route::post('/checkout/process', [CheckoutController::class, 'processOrder'])->name('checkout.process');
+        Route::post('/checkout/address/save', [CheckoutController::class, 'saveAddress'])->name('checkout.address.save');
+        Route::post('/checkout/address/{id}/update', [CheckoutController::class, 'updateAddress'])->name('checkout.address.update');
+
+        // 👉 Route cập nhật phương thức vận chuyển
+        Route::post('/checkout/shipping-method', [CheckoutController::class, 'updateShippingMethod'])->name('checkout.updateShippingMethod');
+        Route::post('/checkout/apply-discount', [CheckoutController::class, 'applyDiscount'])->name('checkout.applyDiscount');
+        Route::post('/checkout/remove-discount', [CheckoutController::class, 'removeDiscount'])->name('checkout.removeDiscount');
+        Route::post('/checkout/bank-confirm', [CheckoutController::class, 'bankConfirm'])->name('client.checkout.bankConfirm');
     });
+    Route::get('/checkout/success', function () {
+        return view('frontend.checkout.checkoutsuccess');
+    })->name('checkout.success');
+
+
+
+    Route::middleware('auth')->group(function () {
+        Route::get('/orders', [OrdersController::class, 'index'])->name('orders.index');
+        Route::get('/orders/{order}', [OrdersController::class, 'show'])->name('orders.show');
+        Route::post('/orders/{order}/cancel', [OrdersController::class, 'cancel'])->name('orders.cancel');
+    });
+
 
 
     // Thanh toán mua hàng:
@@ -123,9 +150,7 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
 
     //Giới thiêu
 
-Route::get('/about', [AboutController::class, 'index'])->name('about');
-
-
+    Route::get('/about', [AboutController::class, 'index'])->name('about');
 });
 
 //----------------------------------------------------------
@@ -406,4 +431,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         Route::get('edit/{id}', [CouponsController::class, 'edit'])->name('edit');
         Route::put('update/{id}', [CouponsController::class, 'update'])->name('update');
     });
+    Route::get('/api/provinces', [LocationController::class, 'provinces']);
+    Route::get('/api/districts', [LocationController::class, 'districts']);
+    Route::get('/api/wards', [LocationController::class, 'wards']);
 });

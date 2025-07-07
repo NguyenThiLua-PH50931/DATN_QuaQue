@@ -33,6 +33,9 @@ public function index(Request $request)
     if ($request->filled('payment_method')) {
         $query->where('payment_method', $request->payment_method);
     }
+if ($request->filled('bank_transfer_confirmed')) {
+    $query->where('bank_transfer_confirmed', $request->bank_transfer_confirmed);
+}
 
     if ($request->filled('date_from')) {
         $query->whereDate('created_at', '>=', $request->date_from);

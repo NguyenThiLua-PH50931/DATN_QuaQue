@@ -9,16 +9,18 @@ class Address extends Model
     protected $table = 'addresses';
 
     protected $fillable = [
-        'user_id',
-        'recipient_name',
-        'phone',
-        'address',
-        'province',
-        'district',
-        'is_default',
-        'created_at',
-        'updated_at'
-    ];
+    'user_id',
+    'recipient_name',
+    'phone',
+    'address',
+    'province',
+    'district',
+    'ward', // ✅ thêm dòng này
+    'is_default',
+    'created_at',
+    'updated_at'
+];
+
 
     // Một địa chỉ thuộc về 1 user
     public function user()
