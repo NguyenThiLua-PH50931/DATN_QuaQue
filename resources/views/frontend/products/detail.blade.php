@@ -752,6 +752,316 @@
                                                 </button>
                                             </div>
                                         </div>
+
+
+                                        <!-- Input ẩn lưu dữ liệu biến thể, JS sẽ cập nhật giá trị này khi người dùng chọn biến thể -->
+                                        <input type="hidden" id="variant_attributes" name="variant_attributes"
+                                            value="" />
+
+                                        <button type="submit" class="btn btn-md bg-dark cart-button text-white w-100">
+                                            Thêm vào giỏ hàng
+                                        </button>
+                                    </div>
+                                </form>
+                                <div class="buy-box">
+                                    <a href="wishlist.html">
+                                        <i data-feather="heart"></i>
+                                        <span>Add To Wishlist</span>
+                                    </a>
+                                </div>
+
+                                <div class="pickup-box">
+
+                                    <div class="product-info">
+                                        <ul class="product-info-list product-info-list-2">
+                                            <li>SKU : <a href="javascript:void(0)" id="product-sku">—</a></li>
+                                            <li>Số lượng : <a href="javascript:void(0)" id="product-stock">—</a></li>
+                                            <li>Tags : <a
+                                                    href="javascript:void(0)">{{ $product->category->name ?? '' }}</a></li>
+                                        </ul>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="product-section-box">
+                                <ul class="nav nav-tabs custom-nav" id="myTab" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="description-tab" data-bs-toggle="tab"
+                                            data-bs-target="#description" type="button" role="tab"
+                                            aria-controls="description" aria-selected="true">
+                                            Mô tả
+                                        </button>
+                                    </li>
+
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="info-tab" data-bs-toggle="tab"
+                                            data-bs-target="#info" type="button" role="tab" aria-controls="info"
+                                            aria-selected="false">
+                                            Mô tả Biến thể
+                                        </button>
+                                    </li>
+
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="care-tab" data-bs-toggle="tab"
+                                            data-bs-target="#care" type="button" role="tab" aria-controls="care"
+                                            aria-selected="false">
+                                            Bình luận
+                                        </button>
+                                    </li>
+
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="review-tab" data-bs-toggle="tab"
+                                            data-bs-target="#review" type="button" role="tab"
+                                            aria-controls="review" aria-selected="false">
+                                            Review
+                                        </button>
+                                    </li>
+                                </ul>
+
+                                <div class="tab-content custom-tab" id="myTabContent">
+                                    <div class="tab-pane fade show active" id="description" role="tabpanel"
+                                        aria-labelledby="description-tab">
+                                        <div class="product-description">
+                                            {!! $product->description !!}
+                                        </div>
+                                    </div>
+
+                                    <div class="tab-pane fade" id="info" role="tabpanel"
+                                        aria-labelledby="info-tab">
+                                        <div class="table-responsive">
+                                            <div class="table-responsive" id="variant-description">
+                                                {!! $product->variants[0]->description ?? '<p>Chưa có mô tả biến thể</p>' !!}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="tab-pane fade" id="care" role="tabpanel"
+                                        aria-labelledby="care-tab">
+                                        <div class="information-box">
+                                            bình luận
+                                        </div>
+                                    </div>
+
+                                    <div class="tab-pane fade" id="review" role="tabpanel"
+                                        aria-labelledby="review-tab">
+                                        <div class="review-box">
+                                            <div class="row g-4">
+                                                <div class="col-xl-6">
+                                                    <div class="review-title">
+                                                        <h4 class="fw-500">
+                                                            Đánh giá
+                                                        </h4>
+                                                    </div>
+
+                                                    <div class="d-flex">
+                                                        <div class="product-rating">
+                                                            <ul class="rating">
+                                                                <li>
+                                                                    <i data-feather="star" class="fill"></i>
+                                                                </li>
+                                                                <li>
+                                                                    <i data-feather="star" class="fill"></i>
+                                                                </li>
+                                                                <li>
+                                                                    <i data-feather="star" class="fill"></i>
+                                                                </li>
+                                                                <li>
+                                                                    <i data-feather="star"></i>
+                                                                </li>
+                                                                <li>
+                                                                    <i data-feather="star"></i>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                        <h6 class="ms-3">
+                                                            4.2 Out Of 5
+                                                        </h6>
+                                                    </div>
+
+                                                    <div class="rating-box">
+                                                        <ul>
+                                                            <li>
+                                                                <div class="rating-list">
+                                                                    <h5>
+                                                                        5
+                                                                        Star
+                                                                    </h5>
+                                                                    <div class="progress">
+                                                                        <div class="progress-bar" role="progressbar"
+                                                                            style="width: 68%;" aria-valuenow="100"
+                                                                            aria-valuemin="0" aria-valuemax="100">
+                                                                            68%
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+
+                                                            <li>
+                                                                <div class="rating-list">
+                                                                    <h5>
+                                                                        4
+                                                                        Star
+                                                                    </h5>
+                                                                    <div class="progress">
+                                                                        <div class="progress-bar" role="progressbar"
+                                                                            style="width: 67%;" aria-valuenow="100"
+                                                                            aria-valuemin="0" aria-valuemax="100">
+                                                                            67%
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+
+                                                            <li>
+                                                                <div class="rating-list">
+                                                                    <h5>
+                                                                        3
+                                                                        Star
+                                                                    </h5>
+                                                                    <div class="progress">
+                                                                        <div class="progress-bar" role="progressbar"
+                                                                            style="width: 42%;" aria-valuenow="100"
+                                                                            aria-valuemin="0" aria-valuemax="100">
+                                                                            42%
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+
+                                                            <li>
+                                                                <div class="rating-list">
+                                                                    <h5>
+                                                                        2
+                                                                        Star
+                                                                    </h5>
+                                                                    <div class="progress">
+                                                                        <div class="progress-bar" role="progressbar"
+                                                                            style="width: 30%;" aria-valuenow="100"
+                                                                            aria-valuemin="0" aria-valuemax="100">
+                                                                            30%
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+
+                                                            <li>
+                                                                <div class="rating-list">
+                                                                    <h5>
+                                                                        1
+                                                                        Star
+                                                                    </h5>
+                                                                    <div class="progress">
+                                                                        <div class="progress-bar" role="progressbar"
+                                                                            style="width: 24%;" aria-valuenow="100"
+                                                                            aria-valuemin="0" aria-valuemax="100">
+                                                                            24%
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xl-6">
+                                                    <div class="review-title">
+                                                        <h4 class="fw-500">
+                                                            Add a review
+                                                        </h4>
+                                                    </div>
+
+                                                    <div class="row g-4">
+
+                                                        <div class="col-12">
+                                                            <div class="form-floating theme-form-floating">
+                                                                <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2"
+                                                                    style="
+                                                                            height: 150px;
+                                                                        "></textarea>
+                                                                <label for="floatingTextarea2">Write
+                                                                    Your
+                                                                    Comment</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12">
+                                                    <div class="review-title">
+                                                        <h4 class="fw-500">
+                                                            Customer
+                                                            questions &
+                                                            answers
+                                                        </h4>
+                                                    </div>
+
+                                                    <div class="review-people">
+                                                        <ul class="review-list">
+                                                            <li>
+                                                                <div class="people-box">
+                                                                    <div>
+                                                                        <div class="people-image">
+                                                                            <img src="../assets/images/review/1.jpg"
+                                                                                class="img-fluid blur-up lazyload"
+                                                                                alt="" />
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="people-comment">
+                                                                        <a class="name"
+                                                                            href="javascript:void(0)">Tracey</a>
+                                                                        <div class="date-time">
+                                                                            <h6 class="text-content">
+                                                                                14
+                                                                                Jan,
+                                                                                2022
+                                                                                at
+                                                                                12.58
+                                                                                AM
+                                                                            </h6>
+
+                                                                            <div class="product-rating">
+                                                                                <ul class="rating">
+                                                                                    <li>
+                                                                                        <i data-feather="star"
+                                                                                            class="fill"></i>
+                                                                                    </li>
+                                                                                    <li>
+                                                                                        <i data-feather="star"
+                                                                                            class="fill"></i>
+                                                                                    </li>
+                                                                                    <li>
+                                                                                        <i data-feather="star"
+                                                                                            class="fill"></i>
+                                                                                    </li>
+                                                                                    <li>
+                                                                                        <i data-feather="star"></i>
+                                                                                    </li>
+                                                                                    <li>
+                                                                                        <i data-feather="star"></i>
+                                                                                    </li>
+                                                                                </ul>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <div class="reply">
+                                                                            <p>
+                                                                                nội dung đánh giá.<a
+                                                                                    href="javascript:void(0)">Reply</a>
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     </div> --}}
                                 </div>
                             </div>
