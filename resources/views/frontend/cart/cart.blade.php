@@ -71,50 +71,10 @@
                                                             <button type="button"
                                                                 class="btn btn-outline-danger btn-sm open-variant-modal"
                                                                 data-bs-toggle="modal"
-                                                                data-bs-target="#variantModal{{ $item->id }}">
+                                                                data-bs-target="#variantModal{{ $item->id }}"
+                                                                data-cart-id="{{ $item->id }}">
                                                                 {{ $item->variant->name ?? 'Chọn biến thể' }}
                                                             </button>
-                                                            <!-- Modal biến thể (giữ nguyên nếu bạn đã có) -->
-                                                            @foreach ($cartItems as $item)
-                                                                <!-- Modal biến thể cho mỗi sản phẩm -->
-                                                                <div class="modal fade" id="variantModal{{ $item->id }}"
-                                                                    tabindex="-1"
-                                                                    aria-labelledby="variantModalLabel{{ $item->id }}"
-                                                                    aria-hidden="true">
-                                                                    <div class="modal-dialog modal-dialog-centered">
-                                                                        <div class="modal-content">
-                                                                            <div class="modal-header">
-                                                                                <h5 class="modal-title"
-                                                                                    id="variantModalLabel{{ $item->id }}">
-                                                                                    Chọn biến thể</h5>
-                                                                                <button type="button" class="btn-close"
-                                                                                    data-bs-dismiss="modal"
-                                                                                    aria-label="Đóng"></button>
-                                                                            </div>
-                                                                            <div class="modal-body">
-                                                                                <div class="variant-btn-group">
-                                                                                    @foreach ($item->product->variants as $variant)
-                                                                                        <button type="button"
-                                                                                            class="variant-btn"
-                                                                                            data-variant-id="{{ $variant->id }}">
-                                                                                            {{ $variant->name }}
-                                                                                        </button>
-                                                                                    @endforeach
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="modal-footer">
-                                                                                <button type="button"
-                                                                                    class="btn btn-secondary"
-                                                                                    data-bs-dismiss="modal">Trở lại</button>
-                                                                                <button type="button"
-                                                                                    class="btn btn-primary btn-confirm-variant"
-                                                                                    data-cart-id="{{ $item->id }}">Xác
-                                                                                    nhận</button>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            @endforeach
 
                                                         </td>
                                                         <td class="text-end fw-semibold">
@@ -158,7 +118,44 @@
                                                     <td colspan="7" class="text-center">Giỏ hàng của bạn đang trống.</td>
                                                 </tr>
                                             @endforelse
+
                                         </tbody>
+                                        {{-- Modal bién thể --}}
+                                        @foreach ($cartItems as $item)
+                                            <!-- Modal biến thể cho mỗi sản phẩm -->
+                                            <div class="modal fade" id="variantModal{{ $item->id }}" tabindex="-1"
+                                                aria-labelledby="variantModalLabel{{ $item->id }}" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title"
+                                                                id="variantModalLabel{{ $item->id }}">Chọn biến thể
+                                                            </h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                                aria-label="Đóng"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div class="variant-btn-group">
+                                                                @foreach ($item->product->variants as $variant)
+                                                                    <button type="button" class="variant-btn"
+                                                                        data-variant-id="{{ $variant->id }}">
+                                                                        {{ $variant->name }}
+                                                                    </button>
+                                                                @endforeach
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-bs-dismiss="modal">Trở lại</button>
+                                                            <button type="button"
+                                                                class="btn btn-primary btn-confirm-variant"
+                                                                data-cart-id="{{ $item->id }}">Xác nhận</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+
                                     </table>
                                     <button type="submit" aria-label="Xóa mục đã chọn" id="btn-bulk-delete"
                                         class="btn-no-border">
@@ -207,7 +204,7 @@
                                     <div id="selected-items-hidden"></div>
                                     <button type="submit" class="btn btn-danger w-100">Đặt hàng</button>
                                 </form>
-                                <a href="{{ route('client.home') }}" class="btn btn-outline-secondary w-100 mt-3">
+                                <a href="{{ route('client.product.index') }}" class="btn btn-outline-secondary w-100 mt-3">
                                     <i class="fa-solid fa-arrow-left-long me-2"></i> Tiếp tục mua hàng
                                 </a>
                             </div>
@@ -468,73 +465,103 @@
                 });
             </script>
             <script>
-                // Cập nhập biến thể:
-                document.querySelectorAll('.variant-btn').forEach(button => {
-                    button.addEventListener('click', function() {
-                        // Bỏ active hết các button cùng nhóm
-                        const group = this.parentNode;
-                        group.querySelectorAll('.variant-btn').forEach(btn => btn.classList.remove('active'));
-                        // Active button được chọn
-                        this.classList.add('active');
-                    });
-                });
+                document.addEventListener('click', function(event) {
+                    const btn = event.target.closest('.btn-confirm-variant');
+                    if (!btn) return;
 
-                document.querySelectorAll('.btn-confirm-variant').forEach(button => {
-                    button.addEventListener('click', function() {
-                        const modal = this.closest('.modal');
-                        const cartId = this.dataset.cartId;
-                        // Lấy variant id đang active
-                        const activeBtn = modal.querySelector('.variant-btn.active');
-                        if (!activeBtn) {
-                            showNotificationModal('Vui lòng chọn biến thể');
-                            return;
-                        }
-                        const newVariantId = activeBtn.dataset.variantId;
+                    const modal = btn.closest('.modal');
+                    const cartId = btn.dataset.cartId;
 
-                        fetch('{{ route('client.cart.updateVariant') }}', {
-                                method: 'POST',
-                                headers: {
-                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                    'Content-Type': 'application/json',
-                                    'Accept': 'application/json',
-                                },
-                                body: JSON.stringify({
-                                    cart_item_id: cartId,
-                                    variant_id: newVariantId
-                                }),
-                            })
-                            .then(res => res.json())
-                            .then(data => {
-                                if (data.success) {
-                                    // Cập nhật UI trong bảng
-                                    const row = document.querySelector(`button[data-cart-id="${cartId}"]`)
-                                        .closest('tr');
-                                    // Cập nhật nút mở modal (tên biến thể mới)
-                                    const variantBtn = row.querySelector('.open-variant-modal');
-                                    if (variantBtn) {
-                                        variantBtn.textContent = data.newVariantName || 'Biến thể đã chọn';
+                    // Lấy variant id đang active
+                    const activeBtn = modal.querySelector('.variant-btn.active');
+
+                    if (!activeBtn) {
+                        showNotificationModal('Vui lòng chọn biến thể');
+                        return;
+                    }
+                    const newVariantId = activeBtn.dataset.variantId;
+
+                    fetch('{{ route('client.cart.updateVariant') }}', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                cart_item_id: cartId,
+                                variant_id: newVariantId
+                            }),
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                const variantButton = document.querySelector(
+                                    `button.open-variant-modal[data-cart-id="${cartId}"]`);
+
+                                if (!variantButton) {
+                                    console.warn('Không tìm thấy button với cartId:', cartId);
+                                    return;
+                                }
+                                const row = variantButton.closest('tr');
+                                if (!row) {
+                                    console.warn('Không tìm thấy hàng tương ứng');
+                                    return;
+                                }
+
+                                // Cập nhật tên biến thể trên nút mở modal
+                                const variantBtn = row.querySelector('.open-variant-modal');
+                                if (variantBtn) {
+                                    variantBtn.textContent = data.newVariantName || 'Biến thể đã chọn';
+                                }
+
+                                // Cập nhật giá và tổng tiền
+                                const priceCell = row.querySelector('td:nth-child(4)');
+                                const totalCell = row.querySelector('td:nth-child(6)');
+
+                                if (priceCell) priceCell.textContent = formatVND(data.newPrice);
+                                if (totalCell) totalCell.textContent = formatVND(data.newPrice * data.quantity);
+
+                                // Cập nhật thuộc tính data-price của checkbox
+                                const checkbox = row.querySelector('input[name="selected_items[]"]');
+                                if (checkbox) {
+                                    checkbox.setAttribute('data-price', data.newPrice * data.quantity);
+                                }
+
+                                updateTotals();
+
+                                // Đóng modal - sửa lại đoạn này:
+                                const modalInstance = bootstrap.Modal.getInstance(modal) || new bootstrap.Modal(modal);
+                                if (modal) {
+                                    let modalInstance = bootstrap.Modal.getInstance(modal);
+                                    if (!modalInstance) {
+                                        modalInstance = new bootstrap.Modal(modal);
                                     }
-
-                                    // Cập nhật giá, tổng tiền
-                                    row.querySelector('td:nth-child(4)').textContent = formatVND(data.newPrice);
-                                    row.querySelector('td:nth-child(6)').textContent = formatVND(data
-                                        .newPrice * data.quantity);
-
-                                    // Cập nhật checkbox data-price
-                                    const checkbox = row.querySelector('input[name="selected_items[]"]');
-                                    if (checkbox) checkbox.setAttribute('data-price', data.newPrice * data
-                                        .quantity);
-
-                                    updateTotals();
-
-                                    // Đóng modal
-                                    var modalInstance = bootstrap.Modal.getInstance(modal);
                                     modalInstance.hide();
                                 } else {
-                                    showNotificationModal(data.message || 'Cập nhật biến thể thất bại');
+                                    console.warn('Modal không tồn tại để đóng');
                                 }
-                            });
 
+
+                            } else {
+                                showNotificationModal(data.message || 'Cập nhật biến thể thất bại');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Lỗi khi cập nhật biến thể:', error);
+                            showNotificationModal('Đã có lỗi xảy ra khi cập nhật biến thể.');
+                        });
+                });
+            </script>
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    document.querySelectorAll('.variant-btn').forEach(button => {
+                        button.addEventListener('click', function() {
+                            const group = this.parentNode;
+                            group.querySelectorAll('.variant-btn').forEach(btn => btn.classList.remove(
+                                'active'));
+                            this.classList.add('active');
+                        });
                     });
                 });
             </script>
@@ -614,9 +641,9 @@
 
                 /* Khi active */
                 .variant-btn.active {
-                    background-color: #0da487;
+                    background-color: #f1a661;
                     color: white;
-                    border-color: #0da487;
+                    border-color: #f1a661;
                 }
 
                 /* Footer modal */
@@ -631,47 +658,58 @@
                 .modal-footer .btn-secondary {
                     background-color: transparent;
                     border: none;
-                    color: #666;
+                    color: #060606;
                     font-weight: 600;
                     padding: 6px 20px;
                     border-radius: 4px;
                 }
 
-                .modal-footer .btn-secondary:hover {
+                /* .modal-footer .btn-secondary:hover {
                     color: #fdfefe;
-                }
+                } */
 
                 /* Nút Xác nhận */
                 .modal-footer .btn-primary {
-                    background-color: #0da487;
+                    background-color: #f1a661;
                     border: none;
                     font-weight: 700;
                     padding: 6px 20px;
                     border-radius: 4px;
+                    color: white
                 }
-
-                .modal-footer .btn-primary:hover {
-                    background-color: #0da487;
-                }
-
-
                 .open-variant-modal {
                     position: relative;
                     background: transparent !important;
                     color: #212529;
-                    /* Màu chữ */
                     border: none !important;
                     box-shadow: none !important;
                     padding-right: 20px;
-                    /* Khoảng cách để chứa mũi tên */
                     font-weight: normal;
                     cursor: pointer;
-                    font-size: 1rem;
-                    /* Bạn có thể điều chỉnh size chữ nếu cần */
+                    font-size: 0.9rem;
+                    /* giảm size */
+                    max-width: 160px;
+                    /* giới hạn chiều rộng */
+                    white-space: nowrap;
+                    /* không xuống dòng */
+                    overflow: hidden;
+                    /* ẩn phần chữ tràn */
+                    text-overflow: ellipsis;
+                    /* hiển thị ... nếu chữ dài */
                     line-height: 1.5;
-                    /* Đảm bảo chiều cao dòng */
+                    display: inline-block;
+                    /* đảm bảo tính khối để giới hạn chiều rộng */
+                    vertical-align: middle;
                 }
 
+                /* Đồng thời kiểm tra phần cột chứa nút, ví dụ: */
+                td:nth-child(3) {
+                    max-width: 180px;
+                    /* hoặc theo chiều rộng bạn muốn */
+                    white-space: nowrap;
+                    /* không cho cột xuống dòng */
+                    overflow: hidden;
+                }
                 .open-variant-modal:hover {
                     background-color: transparent !important;
                     color: #212529 !important;
@@ -759,4 +797,6 @@
                     modal.show();
                 }
             </script>
+
+
         @endsection
