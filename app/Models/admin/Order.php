@@ -25,7 +25,10 @@ class Order extends Model
     'payment_method',
     'payment_status',
     'is_hidden',
-    'bank_transfer_confirmed',   // <-- thêm dòng này!
+    'bank_transfer_confirmed', 
+    'recipient_name',
+    'phone',
+    'full_address',  // <-- thêm dòng này!
 ];
 
 
