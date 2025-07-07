@@ -151,6 +151,9 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
     //Giới thiêu
 
     Route::get('/about', [AboutController::class, 'index'])->name('about');
+
+    // AI Chatbot
+
 });
 
 //----------------------------------------------------------
