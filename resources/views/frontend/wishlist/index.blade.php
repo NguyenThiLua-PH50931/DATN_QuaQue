@@ -150,35 +150,13 @@
                                         <h6 class="unit mt-1">{{ $item->product->origin }}</h6>
                                         <h5 class="price">
                                             <span class="theme-color">
-                                                {{ number_format($item->product->variants->first()->price ?? 0, 2) }}₫
+                                               {{ number_format($item->product->variants->first()->price ?? 0, 0, ',', '.') }}₫
                                             </span>
                                             @if ($item->product->variants->first()->original_price ?? false)
                                                 <del>{{ number_format($item->product->variants->first()->original_price, 2) }}</del>
                                             @endif
                                         </h5>
-                                        <div class="add-to-cart-box bg-white mt-2">
-                                            <form action="#" method="POST">
-                                                @csrf
-                                                <input type="hidden" name="product_id" value="{{ $item->product_id }}">
-                                                <input type="hidden" name="quantity" value="1">
-                                                <button type="submit" class="btn btn-add-cart addcart-button">Add
-                                                    <span class="add-icon bg-light-gray">
-                                                        <i class="fa-solid fa-plus"></i>
-                                                    </span>
-                                                </button>
-                                            </form>
-                                            <div class="cart_qty qty-box">
-                                                <div class="input-group bg-white">
-                                                    <button type="button" class="qty-left-minus bg-gray" data-type="minus" data-field="">
-                                                        <i class="fa fa-minus" aria-hidden="true"></i>
-                                                    </button>
-                                                    <input class="form-control input-number qty-input" type="text" name="quantity" value="1">
-                                                    <button type="button" class="qty-right-plus bg-gray" data-type="plus" data-field="">
-                                                        <i class="fa fa-plus" aria-hidden="true"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        
                                     </div>
                                 </div>
                             </div>

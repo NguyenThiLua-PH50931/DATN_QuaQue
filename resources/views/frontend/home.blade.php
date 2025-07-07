@@ -413,10 +413,10 @@
                                                             <h6 class="theme-color">In Stock</h6>
                                                         </div>
                                                         <div class="add-to-cart-box">
-                                                            <button class="btn btn-add-cart addcart-button">Add
+                                                            {{-- <button class="btn btn-add-cart addcart-button">Add
                                                                 <span class="add-icon"><i
                                                                         class="fa-solid fa-plus"></i></span>
-                                                            </button>
+                                                            </button> --}}
                                                             <div class="cart_qty qty-box">
                                                                 <div class="input-group">
                                                                     <button type="button" class="qty-left-minus"

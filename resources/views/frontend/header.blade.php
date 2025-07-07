@@ -53,7 +53,7 @@
                          </button>
                          <a href="{{ url('/') }}" class="web-logo nav-logo">
                              <img src="{{ asset('/storage/banners/logo/logo.png') }}" class="img-fluid blur-up lazyload"
-                                 alt="Logo Quà Quê" style="width: 150px; height: auto;">
+                                 alt="Logo Quà Quê" style="height: 50px;">
                          </a>
                          {{-- TÌM KIẾM SẢN PHẨM --}}
                          <div class="middle-box">
@@ -122,14 +122,18 @@
                                                  },
                                                  success: function(response) {
                                                      $('#searchResults').empty();
+
                                                      if (response.length > 0) {
-                                                         // Giới hạn hiển thị 3 sản phẩm
-                                                         response.slice(0, 3).forEach(product => {
-                                                             $('#searchResults').append(
-                                                                 `<a href="/client/san-pham/${product.slug}" class="list-group-item list-group-item-action d-flex align-items-center">
-                                            <img src="${product.image ? '/storage/' + product.image : '/images/default.jpg'}" alt="${product.name}" style="width: 50px; height: 50px; margin-right: 10px; object-fit: cover;"> ${product.name}
-                                        </a>`
-                                                             );
+                                                         response.forEach(product => {
+                                                             $('#searchResults').append(`
+            <a href="/products/${product.slug}" class="list-group-item list-group-item-action d-flex align-items-center">
+                <img src="${product.image ? '/storage/' + product.image : '/images/default.jpg'}" 
+                     alt="${product.name}" 
+                     style="width: 50px; height: 50px; margin-right: 10px; object-fit: cover;" />
+                ${product.name}
+            </a>
+        `);
+
                                                          });
                                                          // Thêm liên kết "Xem thêm" nếu có hơn 3 sản phẩm
                                                          if (response.length > 3) {
@@ -145,6 +149,7 @@
                                                              '<div class="list-group-item">Không tìm thấy sản phẩm.</div>'
                                                          ).show();
                                                      }
+
                                                  },
                                                  error: function(xhr) {
                                                      $('#searchResults').append(
@@ -209,70 +214,253 @@
                                      </a>
                                  </li>
                                  <li class="right-side">
-                                     <div class="onhover-dropdown header-badge">
-                                         <button type="button" class="btn p-0 position-relative header-wishlist">
-                                             <i data-feather="shopping-cart"></i>
-                                             <span class="position-absolute top-0 start-100 translate-middle badge">2
-                                                 <span class="visually-hidden">Tin nhắn chưa đọc</span>
-                                             </span>
-                                         </button>
+                                     <div class="header-badge">
+                                         <i data-feather="shopping-cart"></i>
+                                         <div class="cart-popup">
+                                             <ul class="cart-items-list">
+                                                 @php $totalPrice = 0; @endphp
+                                                 @forelse ($cartItems as $item)
+                                                     @php
+                                                         $itemTotal =
+                                                             ($item->price ?? $item->product->price) * $item->quantity;
+                                                         $totalPrice += $itemTotal;
+                                                     @endphp
+                                                     <li class="cart-item d-flex align-items-center">
+                                                         @if ($item->product && $item->product->image)
+                                                             <img src="{{ asset('storage/' . $item->product->image) }}"
+                                                                 alt="{{ $item->product->name }}" class="cart-item-img">
+                                                         @else
+                                                             <img src="{{ asset('images/default-product.png') }}"
+                                                                 alt="Sản phẩm không tồn tại" class="cart-item-img">
+                                                         @endif
 
-                                         <div class="onhover-div">
-                                             <ul class="cart-list">
-                                                 <li class="product-box-contain">
-                                                     <div class="drop-cart">
-                                                         <a href="product-left-thumbnail.html" class="drop-image">
-                                                             <img src="../frontend/assets/images/vegetable/product/1.png"
-                                                                 class="blur-up lazyload" alt="">
-                                                         </a>
+                                                         <div class="cart-item-info">
+                                                             @if ($item->product)
+                                                                 <a href="{{ route('client.product.detail', ['slug' => $item->product->slug]) }}"
+                                                                     class="cart-item-name">
+                                                                     {{ \Illuminate\Support\Str::limit($item->product->name, 20) }}
+                                                                 </a>
+                                                             @else
+                                                                 <span class="cart-item-name text-muted">Sản phẩm không
+                                                                     tồn tại</span>
+                                                             @endif
 
-                                                         <div class="drop-contain">
-                                                             <a href="product-left-thumbnail.html">
-                                                                 <h5>Fantasy Crunchy Choco Chip Cookies</h5>
-                                                             </a>
-                                                             <h6><span>1 x</span> $80.58</h6>
-                                                             <button class="close-button close_button">
-                                                                 <i class="fa-solid fa-xmark"></i>
-                                                             </button>
+                                                             <div class="cart-item-qty-price">
+                                                                 {{ $item->quantity }} x
+                                                                 {{ number_format($item->price ?? $item->product->price, 0, ',', '.') }}
+                                                             </div>
                                                          </div>
-                                                     </div>
-                                                 </li>
-
-                                                 <li class="product-box-contain">
-                                                     <div class="drop-cart">
-                                                         <a href="product-left-thumbnail.html" class="drop-image">
-                                                             <img src="../frontend/assets/images/vegetable/product/2.png"
-                                                                 class="blur-up lazyload" alt="">
-                                                         </a>
-
-                                                         <div class="drop-contain">
-                                                             <a href="product-left-thumbnail.html">
-                                                                 <h5>Peanut Butter Bite Premium Butter Cookies 600 g
-                                                                 </h5>
-                                                             </a>
-                                                             <h6><span>1 x</span> $25.68</h6>
-                                                             <button class="close-button close_button">
-                                                                 <i class="fa-solid fa-xmark"></i>
-                                                             </button>
-                                                         </div>
-                                                     </div>
-                                                 </li>
+                                                         <button type="button" class="cart-item-remove"
+                                                             data-id="{{ $item->id }}" aria-label="Remove item">
+                                                             &times;
+                                                         </button>
+                                                     </li>
+                                                 @empty
+                                                     <li class="text-center p-3 text-muted">Giỏ hàng trống</li>
+                                                 @endforelse
                                              </ul>
-
-                                             <div class="price-box">
-                                                 <h5>Total :</h5>
-                                                 <h4 class="theme-color fw-bold">$106.58</h4>
+                                             <div
+                                                 class="cart-popup-total d-flex justify-content-between align-items-center">
+                                                 <strong>Tổng: </strong>
+                                                 <strong
+                                                     class="total-price">{{ number_format($totalPrice, 0, ',', '.') }}
+                                                 </strong>
                                              </div>
-
-                                             <div class="button-group">
-                                                 <a href="{{ url('/cart') }}" class="btn btn-sm cart-button">View
-                                                     Cart</a>
-                                                 <a href="{{ url('/checkout') }}"
-                                                     class="btn btn-sm cart-button theme-bg-color
-                                                        text-white">Checkout</a>
+                                             <div class="cart-popup-actions d-flex justify-content-between mt-3">
+                                                 <a href="{{ route('client.cart.index') }}"
+                                                     class="btn btn-outline-danger btn-sm">Xem giỏ</a>
                                              </div>
                                          </div>
                                      </div>
+
+                                     <style>
+                                         .cart-popup {
+                                             width: 320px;
+                                             background: #fff;
+                                             border-radius: 10px;
+                                             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+                                             padding: 15px;
+                                             position: absolute;
+                                             right: 0;
+                                             top: 100%;
+                                             z-index: 1100;
+                                             display: none;
+                                             /* mặc định ẩn, bật hiển thị khi hover */
+                                         }
+
+                                         .cart-items-list {
+                                             list-style: none;
+                                             padding: 0;
+                                             margin: 0 0 15px 0;
+                                             max-height: 280px;
+                                             overflow-y: auto;
+                                         }
+
+                                         .cart-item {
+                                             gap: 10px;
+                                             border-bottom: 1px solid #f0f0f0;
+                                             padding: 8px 0;
+                                         }
+
+                                         .cart-item:last-child {
+                                             border-bottom: none;
+                                         }
+
+                                         .cart-item-img {
+                                             width: 60px;
+                                             height: 60px;
+                                             object-fit: cover;
+                                             border-radius: 6px;
+                                             flex-shrink: 0;
+                                         }
+
+                                         .cart-item-info {
+                                             flex-grow: 1;
+                                         }
+
+                                         .cart-item-name {
+                                             display: block;
+                                             font-weight: 600;
+                                             font-size: 0.95rem;
+                                             color: #00897B;
+                                             /* màu xanh giống mẫu */
+                                             text-decoration: none;
+                                             white-space: nowrap;
+                                             overflow: hidden;
+                                             text-overflow: ellipsis;
+                                         }
+
+                                         .cart-item-name:hover {
+                                             text-decoration: underline;
+                                         }
+
+                                         .cart-item-qty-price {
+                                             color: #666;
+                                             font-size: 0.85rem;
+                                             margin-top: 3px;
+                                         }
+
+                                         .cart-item-remove {
+                                             border: none;
+                                             background: transparent;
+                                             font-size: 1.3rem;
+                                             color: #999;
+                                             cursor: pointer;
+                                             padding: 0 6px;
+                                             line-height: 1;
+                                             transition: color 0.3s;
+                                         }
+
+                                         .cart-item-remove:hover {
+                                             color: #d32f2f;
+                                         }
+
+                                         .cart-popup-total {
+                                             font-size: 1.1rem;
+                                             color: #00897B;
+                                             font-weight: 700;
+                                         }
+
+                                         .cart-popup-actions .btn {
+                                             width: 48%;
+                                             font-size: 0.9rem;
+                                             padding: 6px 0;
+                                             border-radius: 6px;
+                                         }
+                                     </style>
+
+                                     <script>
+                                         document.addEventListener('DOMContentLoaded', function() {
+                                             // Hiển thị popup khi hover vào icon giỏ hàng
+                                             const cartBadge = document.querySelector('.header-badge');
+                                             const popup = cartBadge.querySelector('.cart-popup');
+
+                                             cartBadge.addEventListener('mouseenter', () => {
+                                                 popup.style.display = 'block';
+                                             });
+                                             cartBadge.addEventListener('mouseleave', () => {
+                                                 popup.style.display = 'none';
+                                             });
+
+                                             // Xử lý xóa sản phẩm
+                                             popup.querySelectorAll('.cart-item-remove').forEach(button => {
+                                                 button.addEventListener('click', function() {
+                                                     const itemId = this.getAttribute('data-id');
+                                                     if (!itemId) return;
+
+                                                     const modalEl = document.getElementById('notificationModal');
+                                                     const modalBody = document.getElementById('notificationModalBody');
+                                                     const modalFooter = modalEl.querySelector('.modal-footer');
+
+                                                     modalBody.textContent = 'Bạn chắc chắn muốn xóa sản phẩm này?';
+
+                                                     // Reset footer nút
+                                                     modalFooter.innerHTML = `
+            <button type="button" class="btn btn-sm btn-success" data-bs-dismiss="modal">Hủy</button>
+            <button type="button" class="btn btn-sm btn-danger" id="confirmDeleteBtn">Xóa</button>
+        `;
+
+                                                     const modal = new bootstrap.Modal(modalEl);
+                                                     modal.show();
+
+                                                     const confirmBtn = document.getElementById('confirmDeleteBtn');
+
+                                                     confirmBtn.onclick = () => {
+                                                         fetch('/client/cart/remove/' + itemId, {
+                                                                 method: 'DELETE',
+                                                                 headers: {
+                                                                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                                                     'Accept': 'application/json'
+                                                                 }
+                                                             })
+                                                             .then(res => {
+                                                                 if (!res.ok) throw new Error('Lỗi server');
+                                                                 return res.json();
+                                                             })
+                                                             .then(data => {
+                                                                 if (data.success) {
+                                                                     // Xóa phần tử cart-item khỏi DOM
+                                                                     const cartItemElem = button.closest('.cart-item');
+                                                                     if (cartItemElem) cartItemElem.remove();
+
+                                                                     // Cập nhật tổng tiền nếu có hàm updateTotal
+                                                                     if (typeof updateTotal === 'function') updateTotal();
+
+                                                                     modal.hide();
+                                                                 } else {
+                                                                     alert(data.message || 'Xóa thất bại');
+                                                                 }
+                                                             })
+                                                             .catch(err => {
+                                                                 console.error(err);
+                                                                 alert('Lỗi xảy ra, vui lòng thử lại');
+                                                             });
+                                                     };
+                                                 });
+                                             });
+
+
+
+                                             function updateTotal() {
+                                                 let total = 0;
+                                                 popup.querySelectorAll('.cart-items-list li').forEach(li => {
+                                                     const qtyPriceText = li.querySelector('.cart-item-qty-price')?.textContent || '';
+                                                     const match = qtyPriceText.match(/(\d+)\s*x\s*([\d\.]+)/);
+                                                     if (match) {
+                                                         const qty = parseInt(match[1]);
+                                                         const priceStr = match[2].replace(/\./g, ''); // bỏ dấu chấm ngăn cách hàng nghìn
+                                                         const price = parseInt(priceStr);
+                                                         total += qty * price;
+                                                     }
+
+                                                     if (match) {
+                                                         total += parseInt(match[1]) * parseFloat(match[2]);
+                                                     }
+                                                 });
+                                                 popup.querySelector('.total-price').textContent = 'đ' + total.toFixed(2);
+                                             }
+                                         });
+                                     </script>
                                  </li>
                                  <li class="right-side onhover-dropdown">
                                      <div class="delivery-login-box">
@@ -801,50 +989,10 @@
                                                 </ul>
                                             </li> --}}
 
-                                         <li class="nav-item dropdown">
-                                             <a class="nav-link dropdown-toggle" href="javascript:void(0)"
-                                                 data-bs-toggle="dropdown">Sản phẩm</a>
-                                             <ul class="dropdown-menu">
-                                                 <li>
-                                                     <a class="dropdown-item"
-                                                         href="{{ route('client.product.index') }}">Tất cả sản
-                                                         phẩm</a>
-                                                 </li>
-                                                 <li class="sub-dropdown-hover">
-                                                     <a href="javascript:void(0)" class="dropdown-item">Product
-                                                         Thumbnail</a>
-                                                     <ul class="sub-menu">
-                                                         <li>
-                                                             <a href="product-left-thumbnail.html">Left
-                                                                 Thumbnail</a>
-                                                         </li>
-
-                                                         <li>
-                                                             <a href="product-right-thumbnail.html">Right
-                                                                 Thumbnail</a>
-                                                         </li>
-
-                                                         <li>
-                                                             <a href="product-bottom-thumbnail.html">Bottom
-                                                                 Thumbnail</a>
-                                                         </li>
-                                                     </ul>
-                                                 </li>
-                                                 <li>
-                                                     <a href="product-bundle.html" class="dropdown-item">Product
-                                                         Bundle</a>
-                                                 </li>
-                                                 <li>
-                                                     <a href="product-slider.html" class="dropdown-item">Product
-                                                         Slider</a>
-                                                 </li>
-                                                 <li>
-                                                     <a href="product-sticky.html" class="dropdown-item">Product
-                                                         Sticky</a>
-                                                 </li>
-                                             </ul>
+                                         <li class="nav-item">
+                                             <a class="nav-link" href="{{ route('client.product.index') }}">Sản
+                                                 phẩm</a>
                                          </li>
-
                                          {{-- <li class="nav-item dropdown dropdown-mega">
                                                 <a class="nav-link dropdown-toggle ps-xl-2 ps-0"
                                                     href="javascript:void(0)" data-bs-toggle="dropdown">Menu mở
@@ -932,15 +1080,18 @@
                                             </li> --}}
 
                                          <li class="nav-item dropdown new-nav-item">
-                                             <a class="nav-link dropdown-toggle" href="{{ route('client.blog') }}">Tin
+                                             <a class="nav-link dropdown-toggle"
+                                                 href="{{ route('client.blog') }}">Tin
                                                  tức</a>
                                          </li>
 
                                          <li class="nav-item dropdown new-nav-item">
-                                             <a class="nav-link dropdown-toggle" href="{{ route('client.about') }}">Giới
+                                             <a class="nav-link dropdown-toggle"
+                                                 href="{{ route('client.about') }}">Giới
                                                  thiệu
                                              </a>
                                          </li>
+
                                          <li class="nav-item dropdown new-nav-item">
                                              <a class="nav-link dropdown-toggle"
                                                  href="{{ route('client.lienhe') }}">Liên
@@ -948,15 +1099,25 @@
                                              </a>
                                          </li>
                                          <li class="nav-item dropdown new-nav-item">
-                                             <a class="nav-link dropdown-toggle" href="{{ route('client.blog') }}">Giỏ
-                                                 hàng
+                                             <a class="nav-link dropdown-toggle"
+                                                 href="{{ route('client.wishlist.index') }}">Yêu thích
                                              </a>
                                          </li>
-                                         <li class="nav-item dropdown new-nav-item">
-                                             <a class="nav-link dropdown-toggle" href="{{ route('client.blog') }}">Thanh
+
+                                         <style>
+                                             a.nav-link::before {
+                                                 display: none !important;
+                                                 content: none !important;
+                                                 width: 0 !important;
+                                                 height: 0 !important;
+                                             }
+                                         </style>
+                                         {{-- <li class="nav-item dropdown new-nav-item">
+                                             <a class="nav-link dropdown-toggle" href="{{ route('blog') }}">Thanh
+
                                                  toán
                                              </a>
-                                         </li>
+                                         </li> --}}
 
                                          {{-- <li class="nav-item dropdown new-nav-item">
                                                 <label class="new-dropdown">Mới</label>
@@ -1100,4 +1261,91 @@
              </div>
          </div>
      </div>
+
+     {{-- 
+     <script>
+         document.addEventListener('DOMContentLoaded', () => {
+             document.querySelectorAll('.close_button').forEach(button => {
+                 button.addEventListener('click', function(event) {
+                     event.preventDefault();
+                     const cartItemId = this.getAttribute('data-id');
+                     if (!cartItemId) {
+                         alert('Không tìm thấy sản phẩm cần xóa.');
+                         return;
+                     }
+                     if (confirm('Bạn chắc chắn muốn xóa sản phẩm này?')) {
+                         fetch('/cart/remove/' + cartItemId, {
+                                 method: 'DELETE',
+                                 headers: {
+                                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                     'Accept': 'application/json',
+                                 }
+                             })
+                             .then(res => {
+                                 if (!res.ok) throw new Error('Server lỗi');
+                                 return res.json();
+                             })
+                             .then(data => {
+                                 if (data.success) {
+                                     this.closest('li').remove();
+                                     updateCartTotal();
+                                     alert('Xóa thành công');
+                                 } else {
+                                     alert('Xóa thất bại: ' + (data.message || ''));
+                                 }
+                             })
+                             .catch(err => {
+                                 console.error(err);
+                                 alert('Có lỗi xảy ra, vui lòng thử lại');
+                             });
+                     }
+                 });
+             });
+         });
+
+         function updateCartTotal() {
+             let total = 0;
+             document.querySelectorAll('.cart-list li').forEach(li => {
+                 const qtySpan = li.querySelector('small');
+                 if (!qtySpan) return;
+                 const quantityText = qtySpan.textContent.trim(); // ví dụ: "1 x $80.58"
+                 const match = quantityText.match(/(\d+)\s*x\s*\$(\d+(\.\d+)?)/);
+                 if (match) {
+                     const qty = parseInt(match[1]);
+                     const price = parseFloat(match[2]);
+                     total += qty * price;
+                 }
+             });
+             const totalElement = document.querySelector('.price-box h4');
+             if (totalElement) totalElement.textContent = '$' + total.toFixed(2);
+         }
+     </script>
+
+     <style>
+         .onhover-dropdown {
+             position: relative;
+             display: inline-block;
+         }
+
+         .onhover-div {
+             display: none;
+             position: absolute;
+             right: 0;
+             top: 100%;
+             width: 320px;
+             background: #fff;
+             border: 1px solid #ddd;
+             padding: 15px;
+             z-index: 1000;
+             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+             border-radius: 4px;
+         }
+
+         /* Hiển thị dropdown khi hover vào phần cha hoặc chính dropdown */
+         .onhover-dropdown:hover .onhover-div,
+         .onhover-div:hover {
+             display: block;
+         }
+     </style> --}}
+
  </header>
