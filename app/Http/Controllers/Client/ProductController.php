@@ -9,6 +9,8 @@ use App\Models\Client\ProductVariant;
 use Carbon\Carbon;
 use App\Models\Admin\Banner;
 use App\Models\Admin\Product as AdminProduct;
+use App\Models\Client\Review;
+use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
@@ -186,6 +188,7 @@ class ProductController extends Controller
             ->orderByDesc('view_month')
             ->limit(4)
             ->get();
+        $reviews = $product->reviews()->with('user')->latest()->get();
 
         return view('frontend.products.detail', [
             'product'                 => $product,
@@ -196,6 +199,7 @@ class ProductController extends Controller
             'relatedTitle'            => $relatedTitle,
             'topMonthlyProducts'      => $topMonthlyProducts,
             'productSectionPromoLeftTop' => $productSectionPromoLeftTop,
+            'reviews'    => $reviews,
             'topViewedProducts'       => $topViewedProducts,
         ]);
     }
@@ -231,17 +235,17 @@ class ProductController extends Controller
         }
 
         // Mapping variant (dùng cho JS, AJAX tìm variant theo tổ hợp value id)
-$variantMap = $variants->map(function ($v) {
-    return [
-        'id' => $v->id,
-        'sku' => $v->sku,
-        'stock' => $v->stock,
-        'price' => $v->price,
-        'image' => $v->image ? asset('storage/' . $v->image) : null,
-        'value_ids' => $v->attributeValues->pluck('id')->map(fn($id) => (int)$id)->sort()->values()->all(),
-        'active' => (int) $v->active,
-    ];
-})->values();
+        $variantMap = $variants->map(function ($v) {
+            return [
+                'id' => $v->id,
+                'sku' => $v->sku,
+                'stock' => $v->stock,
+                'price' => $v->price,
+                'image' => $v->image ? asset('storage/' . $v->image) : null,
+                'value_ids' => $v->attributeValues->pluck('id')->map(fn($id) => (int)$id)->sort()->values()->all(),
+                'active' => (int) $v->active,
+            ];
+        })->values();
 
         $avgRating = round($product->reviews->avg('rating') ?? 0);
 
@@ -333,5 +337,41 @@ $variantMap = $variants->map(function ($v) {
                 ];
             })
         ]);
+    }
+    public function storeReview(Request $request)
+    {
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'comment'    => 'required|string',
+            'rating'     => 'required|integer|min:1|max:5',
+        ]);
+
+        $user = Auth::user();
+
+        Review::create([
+            'product_id' => $request->product_id,
+            'user_id'    => $user?->id,
+            'rating'     => $request->rating,
+            'comment'    => $request->comment,
+        ]);
+
+        return redirect()->back()->with('success', 'Đánh giá của bạn đã được gửi.');
+    }
+    public function filterReviews(Request $request, $slug)
+    {
+        $ratingFilter = $request->query('star');
+
+        $product = Product::where('slug', $slug)
+            ->where('active', 1)
+            ->whereNull('deleted_at')
+            ->firstOrFail();
+
+        $reviews = $product->reviews()
+            ->with('user')
+            ->when($ratingFilter, fn($q) => $q->where('rating', $ratingFilter))
+            ->latest()
+            ->get();
+
+        return view('frontend.products.review-items', compact('reviews'));
     }
 }

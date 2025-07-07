@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CartItem extends Model
 {
-        use SoftDeletes;
+    use SoftDeletes;
     protected $table = 'cart_items';
 
     // Thêm 'variant_attributes' vào fillable để có thể mass assign được
@@ -22,10 +22,14 @@ class CartItem extends Model
         return $this->belongsTo(Product::class);
     }
 
-        public function variant()
+    public function variant()
     {
         // Giả sử bảng product_variants có khóa chính là id
         // và khóa ngoại trong cart_items là variant_id (hoặc tên trường tương ứng)
         return $this->belongsTo(ProductVariant::class, 'variant_id');
+    }
+    protected function getOrderTotal()
+    {
+        return CartItem::subtotal(0, '', ''); // trả về số tiền kiểu số, chưa format
     }
 }

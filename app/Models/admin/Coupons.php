@@ -2,6 +2,7 @@
 
 namespace App\Models\admin;
 
+use App\Models\Client\CartItem;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -40,8 +41,10 @@ class Coupons extends Model
         'active' => 'boolean',
     ];
 
-    public function products()
-    {
-        return $this->belongsToMany(Product::class, 'coupon_product', 'coupon_id', 'product_id');
-    }
+    // public function products()
+    // {
+    //     return $this->belongsToMany(Product::class, 'coupon_product', 'coupon_id', 'product_id');
+    // }
+
+      
 }

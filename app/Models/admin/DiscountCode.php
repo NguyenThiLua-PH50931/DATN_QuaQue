@@ -23,6 +23,7 @@ class DiscountCode extends Model
         'usage_limit',
         'used_count',
         'active',
+        'type',   
     ];
 
     protected $casts = [
