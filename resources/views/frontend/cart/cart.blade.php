@@ -194,7 +194,7 @@
                             <span>Tạm tính (đã chọn)</span>
                             <span id="selected-total">0 ₫</span>
                         </li>
-                       
+
                     </ul> --}}
                                 <div class="d-flex justify-content-between border-top pt-3 fw-bold fs-5 mb-4">
                                     <span>Tổng cộng (VNĐ)</span>
