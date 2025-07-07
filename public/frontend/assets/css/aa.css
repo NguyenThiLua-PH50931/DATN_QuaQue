@@ -106,3 +106,14 @@
 .coupon-code {
   text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.75);
 }
+
+.label-tagg-top {
+    background: linear-gradient(135deg, #21f38a, #00bcd4); /* xanh dương sang xanh ngọc */
+    border: 2px solid #1976d2; /* viền xanh dương đậm */
+    color: #fff;
+}
+.label-tagg-hot {
+    background: linear-gradient(135deg, #ff5722, #e91e63); /* cam sang hồng */
+    border: 2px solid #d32f2f; /* viền đỏ đậm */
+    color: #fff;
+}
