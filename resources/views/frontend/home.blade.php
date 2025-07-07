@@ -108,7 +108,8 @@
                                                 style="filter:none !important; mix-blend-mode:normal !important; opacity:1 !important;"
                                                 class="w-20 h-20 object-cover">
                                             <h5>
-                                                <a href="{{ route('client.product.index', ['category_id' => $category->id]) }}">{{ $category->name }}</a>
+                                                <a
+                                                    href="{{ route('client.product.index', ['category_id' => $category->id]) }}">{{ $category->name }}</a>
                                             </h5>
                                         </div>
                                     </li>
@@ -292,8 +293,8 @@
                                         @foreach ($chunk as $product)
                                             <div class="col-md-3 col-sm-6 col-12 mb-4">
                                                 <div class="product-box" style="position: relative;">
-                                                    <div class="label-tagg">
-                                                        <span>HOT</span>
+                                                    <div class="label-tagg label-tagg-top">
+                                                        <span>TOP</span>
                                                     </div>
                                                     <div class="product-image">
                                                         <a
@@ -454,7 +455,8 @@
                     <div class="category-slider-2 product-wrapper no-arrow">
                         @forelse ($categories as $category)
                             <div>
-                                <a href="{{ route('client.product.index', ['category_id' => $category->id]) }}" class="category-box category-dark">
+                                <a href="{{ route('client.product.index', ['category_id' => $category->id]) }}"
+                                    class="category-box category-dark">
                                     <div>
                                         <img src="{{ asset('storage/' . $category->image) }}"
                                             alt="{{ $category->name }}"
@@ -544,7 +546,8 @@
                                                             }
                                                         }
                                                     @endphp
-                                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="Xenh nhanh">
+                                                    <li data-bs-toggle="tooltip" data-bs-placement="top"
+                                                        title="Xenh nhanh">
                                                         @php
                                                             $variantMap = $product->variants->map(function ($v) {
                                                                 return [
@@ -718,120 +721,95 @@
                             @endif
                         </div>
                     </div>
-                    <div class="title d-block">
-                        <div>
-                            <h2>Sản phẩm bán chạy</h2>
-                            <span class="title-leaf">
-                                <svg class="icon-width">
-                                    <use xlink:href="../frontend/assets/svg/leaf.svg#leaf"></use>
-                                </svg>
-                            </span>
-                            <p>Trợ lý ảo thu thập các sản phẩm từ danh sách của bạn</p>
-                        </div>
+                    <div class="title d-block" id="latest-products">
+                        <h2>Sản phẩm bán chạy</h2>
+                        <span class="title-leaf">
+                            <svg class="icon-width">
+                                <use xlink:href="../frontend/assets/svg/leaf.svg#leaf"></use>
+                            </svg>
+                        </span>
+                        <p>Trợ lý ảo thu thập các sản phẩm từ danh sách của bạn</p>
+                    </div>
+                    @php
+                        $chunks = $bestSellingProducts->chunk(4);
+                    @endphp
+                    <div class="section-b-space">
+                        <div class="product-border overflow-hidden">
+                            <div class="container">
+                                @foreach ($chunks as $chunk)
+                                    <div class="row">
+                                        @foreach ($chunk as $product)
+                                            <div class="col-md-3 col-sm-6 col-12 mb-4">
+                                                <div class="product-box" style="position: relative;">
+                                                    <div class="label-tagg label-tagg-hot">
+                                                        <span>HOT</span>
+                                                    </div>
+                                                    <div class="product-image">
+                                                        <a
+                                                            href="{{ route('client.product.detail', ['slug' => $product->slug]) }}">
+                                                            <img src="{{ asset('storage/' . $product->image) }}"
+                                                                alt="{{ $product->name }}">
+                                                        </a>
+                                                        <ul class="product-option">
+                                                            <li data-bs-toggle="tooltip" data-bs-placement="top"
+                                                                title="Xem nhanh">
+                                                                <a href="javascript:void(0)" data-bs-toggle="modal"
+                                                                    data-bs-target="#view">
+                                                                    <i data-feather="eye"></i>
+                                                                </a>
+                                                            </li>
+                                                            <li data-bs-toggle="tooltip" data-bs-placement="top"
+                                                                title="So sánh">
+                                                                <a href="{{ url('compare') }}">
+                                                                    <i data-feather="refresh-cw"></i>
+                                                                </a>
+                                                            </li>
+                                                            <li data-bs-toggle="tooltip" data-bs-placement="top"
+                                                                title="Yêu thích">
+                                                                <form action="{{ route('client.wishlist.store') }}"
+                                                                    method="POST">
+                                                                    @csrf
+                                                                    <input type="hidden" name="product_id"
+                                                                        value="{{ $product->id }}">
+                                                                    <button type="submit"
+                                                                        class="notifi-wishlist btn p-0">
+                                                                        <i data-feather="heart"
+                                                                            @if (auth()->check() && auth()->user()->wishlist()->where('product_id', $product->id)->exists()) class="text-red-500" @endif></i>
+                                                                    </button>
+                                                                </form>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
 
-                        <div class="best-selling-slider product-wrapper wow fadeInUp">
-                            @php
-                                // Lấy tối đa 12 sản phẩm từ $bestSellingProducts (giữ nguyên collection)
-                                $products = $bestSellingProducts->take(12);
-                                // Chia thành 3 nhóm, mỗi nhóm tối đa 4 sản phẩm (dùng collection chunk)
-                                $chunks = $products->chunk(4);
-                            @endphp
+                                                    <div class="product-detail">
+                                                        <a
+                                                            href="{{ route('client.product.detail', ['slug' => $product->slug]) }}">
+                                                            <h6 class="name">{{ $product->name }}</h6>
+                                                        </a>
+                                                        <h5 class="sold text-content">
+                                                            <span
+                                                                class="theme-color price">{{ number_format($product->price) }}₫</span>
+                                                        </h5>
+                                                        <p class="text-muted small">Đã bán:
+                                                            {{ $product->total_sold ?? 0 }}</p> <!-- ✅ dòng mới -->
+                                                        <div class="product-rating mt-sm-2 mt-1">
+                                                            <ul class="rating">
+                                                                <li><i data-feather="star" class="fill"></i></li>
+                                                                <li><i data-feather="star" class="fill"></i></li>
+                                                                <li><i data-feather="star" class="fill"></i></li>
+                                                                <li><i data-feather="star" class="fill"></i></li>
+                                                                <li><i data-feather="star"></i></li>
+                                                            </ul>
+                                                            <h6 class="theme-color">Còn hàng</h6>
+                                                        </div>
+                                                    </div>
 
-                            @if ($chunks->isEmpty())
-                                <p>Không có sản phẩm nào để hiển thị.</p>
-                            @else
-                                @foreach ($chunks as $index => $chunk)
-                                    @if ($index < 3)
-                                        <!-- Giới hạn tối đa 3 ô -->
-                                        <div>
-                                            <ul class="product-list">
-                                                @foreach ($chunk as $product)
-                                                    <li>
-                                                        <div class="offer-product">
-                                                            <a href="{{ route('client.product.detail', ['slug' => $product->slug]) }}"
-                                                                class="offer-image">
-                                                                <img src="{{ asset('storage/' . $product->image) }}"
-                                                                    class="blur-up lazyload" alt="{{ $product->name }}">
-                                                            </a>
-                                                            <div class="offer-detail">
-                                                                <div>
-                                                                    <a href="{{ route('client.product.detail', ['slug' => $product->slug]) }}"
-                                                                        class="text-title">
-                                                                        <h6 class="name">{{ $product->name }}</h6>
-                                                                    </a>
-                                                                    <span>{{ $product->weight ?? '' }}</span>
-                                                                    <h6 class="price theme-color">
-                                                                        {{ number_format($product->price) }}₫
-                                                                    </h6>
-                                                                </div>
-                                                            </div>
-                                                    </li>
-                                                @endforeach
-                                            </ul>
-                                        </div>
-                                    @endif
+                                                </div> <!-- .product-box -->
+                                            </div>
+                                        @endforeach
+                                    </div>
                                 @endforeach
-                            @endif
-                        </div>
-                        {{-- Last page promo banner --}}
-                        @if ($lastPagePromoBanner)
-                            <div class="section-t-space">
-                                <div class="banner-contain hover-effect" style="min-height: 250px;">
-                                    <img src="{{ asset('storage/' . $lastPagePromoBanner->image) }}"
-                                        class="bg-img blur-up lazyload" alt="{{ $lastPagePromoBanner->title }}">
-                                    <div class="banner-details p-center banner-b-space w-100 text-center">
-                                        <div>
-                                            <h6 class="ls-expanded theme-color mb-sm-3 mb-1">{!! $lastPagePromoBanner->title !!}</h6>
-                                            {{-- <h2 class="banner-title">{!! $lastPagePromoBanner->link !!}</h2> --}}
-                                            {{-- <button onclick="location.href = '{{ $lastPagePromoBanner->link ?? '#' }}';"
-                                            class="btn btn-animation btn-sm mx-auto mt-sm-3 mt-2">Shop Now <i
-                                                class="fa-solid fa-arrow-right icon"></i></button> --}}
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
-                        @endif
-
-                        <div class="title section-t-space">
-                            <h2>Tin tức nổi bật</h2>
-
-                            <span class="title-leaf">
-                                <svg class="icon-width">
-                                    <use xlink:href="../frontend/assets/svg/leaf.svg#leaf"></use>
-                                </svg>
-                            </span>
-                            <p>A virtual assistant collects the products from your list</p>
-                        </div>
-
-                        <div class="slider-3-blog ratio_65 no-arrow product-wrapper">
-                            @foreach ($blogs as $item)
-                                <div>
-                                    <div class="blog-box wow fadeInUp" data-wow-delay="0.1s">
-                                        <div class="blog-box-image">
-                                            <a href="{{ route('client.blogs-detail', ['id' => $item->id]) }}"
-                                                class="blog-image">
-                                                @if (!empty($item->thumbnail) && file_exists(public_path($item->thumbnail)))
-                                                    <img src="{{ asset($item->thumbnail) }}" alt="{{ $item->title }}"
-                                                        class="bg-img blur-up lazyload w-100">
-                                                @else
-                                                    <img src="{{ asset('images/default-blog.jpg') }}" alt="No image"
-                                                        class="bg-img blur-up lazyload w-100">
-                                                @endif
-                                            </a>
-                                        </div>
-
-                                        <div class="blog-detail px-2 pt-3">
-                                            <h6 class="text-muted">
-                                                <i data-feather="clock" class="me-1"></i>
-                                                {{ $item->created_at ? $item->created_at->format('F d, Y') : 'Chưa có ngày tạo' }}
-                                            </h6>
-                                            <a href="{{ route('client.blogs-detail', ['id' => $item->id]) }}">
-                                                <h5 class="mt-2 mb-3">{{ $item->title }}</h5>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
                         </div>
                     </div>
                 </div>
