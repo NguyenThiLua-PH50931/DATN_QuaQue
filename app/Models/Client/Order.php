@@ -31,7 +31,10 @@ class Order extends Model
         'created_at',
         'updated_at',
         'deleted_at',
-        'bank_transfer_confirmed',   // <-- thêm dòng này!
+        'bank_transfer_confirmed',
+         'recipient_name',
+    'phone',
+    'full_address',   // <-- thêm dòng này!
     ];
 
 

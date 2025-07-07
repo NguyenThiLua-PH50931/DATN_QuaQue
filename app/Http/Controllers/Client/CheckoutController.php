@@ -252,20 +252,32 @@ class CheckoutController extends Controller
 
         // Lưu đơn hàng
         // dd($freeShippingCode, $freeShippingCodeStr);
-        $order = Order::create([
-            'user_id' => $user->id,
-            'address_id' => $address->id,
-            'shipping_method_id' => $shipping_method_id,
-            'payment_method' => $payment_method,
-            'subtotal' => $subtotal,
-            'shipping_cost' => $shippingCost,
-            'discount_code_id' => $orderDiscountCode ? $orderDiscountCode->id : null,
-            'free_shipping_code_id' => $freeShippingCode ? $freeShippingCode->id : null,
-            'discount_amount' => $discountAmount,
-            'total_amount' => $total,
-            'status' => 'pending',
-            'bank_transfer_confirmed' => ($payment_method === 'bank' && $bankTransferConfirmed) ? 1 : 0,
-        ]);
+ $order = Order::create([
+    'user_id' => $user->id,
+
+    // ✨ Snapshot địa chỉ
+    'recipient_name' => $address->recipient_name,
+    'phone' => $address->phone,
+    'full_address' => $address->address . ', '
+        . ($address->ward ?? '') . ', '
+        . $address->district . ', '
+        . $address->province,
+
+    'shipping_method_id' => $shipping_method_id,
+    'payment_method' => $payment_method,
+    'discount_code_id' => $orderDiscountCode ? $orderDiscountCode->id : null,
+    'free_shipping_code_id' => $freeShippingCode ? $freeShippingCode->id : null,
+    'discount_amount' => $discountAmount,
+    'total_amount' => $total,
+    'shipping_cost' => $shippingCost,
+    'status' => 'pending',
+    'bank_transfer_confirmed' => ($payment_method === 'bank' && $bankTransferConfirmed) ? 1 : 0,
+
+    // Thêm nếu cần
+    // 'payment_status' => $payment_method === 'cod' ? 'unpaid' : 'paid',
+    // 'is_hidden' => 0,
+]);
+
 
         // Chi tiết sản phẩm
         foreach ($cartItems as $item) {

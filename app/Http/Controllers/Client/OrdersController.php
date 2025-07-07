@@ -48,7 +48,7 @@ class OrdersController extends Controller
             'items.productVariant',
             'discountCode',
             'freeShippingCode',
-            'address',
+
             'statusLogs'
         ])
             ->where('user_id', $user->id)
@@ -64,7 +64,7 @@ class OrdersController extends Controller
         $order = Order::with([
             'items.productVariant',
             'discountCode',
-            'address',
+
             'statusLogs' // <- Thêm dòng này
         ])
             ->where('user_id', $user->id)
