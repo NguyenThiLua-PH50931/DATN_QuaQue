@@ -9,6 +9,8 @@
     <meta name="description" content="Fastkart">
     <meta name="keywords" content="Fastkart">
     <meta name="author" content="Fastkart">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
 
     <!-- Favicon -->
     <link rel="icon" href="{{ asset('frontend/assets/images/favicon/icon.png') }}" type="image/x-icon">
@@ -46,6 +48,8 @@
     <link rel="stylesheet" href="{{ asset('frontend/assets/css/vendors/ion.rangeSlider.min.css') }}">
     <!-- Template Style -->
     <link id="color-link" rel="stylesheet" href="{{ asset('frontend/assets/css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
 
 <body class="bg-effect">
@@ -105,6 +109,7 @@
 
     <!-- Header -->
     @includeIf('frontend.header')
+
     <!-- mobile fix menu start -->
     <div class="mobile-menu d-md-none d-block mobile-cart">
         <ul>
@@ -374,7 +379,7 @@
 
     @stack('scripts')
 </body>
-
+    @stack('scripts')
 </html>
 <style>
     .onhover-div-login {
