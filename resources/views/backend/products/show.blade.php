@@ -158,12 +158,11 @@
                                         {{-- <th><input type="checkbox" id="select-all-variants"></th> --}}
                                         <th>Tên biến thể</th>
                                         <th>Mô tả</th>
-                                        <<<<<<< HEAD=======>>>>>>> 7e0fa514fc2c3966c7a3f4fbdcd9a0eadb78a45a
-                                            <th>Giá</th>
-                                            <th>Số lượng</th>
-                                            <th>SKU</th>
-                                            <th>Trạng thái</th>
-                                            {{-- <th>Actions</th> --}}
+                                        <th>Giá</th>
+                                        <th>Số lượng</th>
+                                        <th>SKU</th>
+                                        <th>Trạng thái</th>
+                                        {{-- <th>Actions</th> --}}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -332,25 +331,25 @@
     @push('styles')
         <link rel="stylesheet" href="//cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
         <style>
-            /* .gallery-container {
-                                display: flex;
-                                gap: 12px;
-                                max-width: 465px;
-                                height: 350px;
-                            }
+            .gallery-container {
+                display: flex;
+                gap: 12px;
+                max-width: 465px;
+                height: 350px;
+            }
 
-                            .thumb-swiper {
-                                height: 350px;
-                                width: 85px;
-                            }
+            .thumb-swiper {
+                height: 350px;
+                width: 85px;
+            }
 
-                            .thumb-swiper .swiper-slide img {
-                                width: 80px;
-                                height: 60px;
-                                object-fit: cover;
-                                border-radius: 7px;
-                                border: 2px solid #ccc;
-                            } */
+            .thumb-swiper .swiper-slide img {
+                width: 80px;
+                height: 60px;
+                object-fit: cover;
+                border-radius: 7px;
+                border: 2px solid #ccc;
+            }
 
             .main-image-wrapper {
                 flex: 1;
