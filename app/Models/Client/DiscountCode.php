@@ -23,6 +23,7 @@ class DiscountCode extends Model
         'usage_limit',
         'used_count',
         'active',
+        'type',
         'created_at',
         'updated_at',
         'deleted_at'
@@ -39,9 +40,9 @@ class DiscountCode extends Model
     {
         return $this->belongsToMany(
             Product::class,
-            'coupon_product',
-            'coupon_id',
-            'product_id'
+            'coupon_product', // bảng trung gian đúng tên
+            'coupon_id',      // khóa ngoại tới bảng coupon_product (liên kết discount_code/coupon)
+            'product_id'      // khóa ngoại tới bảng product
         );
     }
 }

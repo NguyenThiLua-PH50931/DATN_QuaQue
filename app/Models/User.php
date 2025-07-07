@@ -62,7 +62,8 @@ class User extends Authenticatable
 ];
 public function addresses()
 {
-    return $this->hasMany(\App\Models\admin\Address::class);
+    return $this->hasMany(\App\Models\Client\Address::class, 'user_id');
 }
+
 
 }

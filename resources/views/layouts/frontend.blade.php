@@ -371,11 +371,196 @@
 
     <!-- script js -->
     <script src="{{ asset('frontend/assets/js/script.js') }}"></script>
+<!-- SweetAlert2 CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- theme setting js -->
     <script src="{{ asset('frontend/assets/js/theme-setting.js') }}"></script>
      <script src="{{ asset('frontend/assets/js/jquery-3.6.0.min.js') }}"></script>
     <script src="{{ asset('frontend/assets/js/ion.rangeSlider.min.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let locationsData = null;
+
+            const provinceSelect = document.getElementById('province');
+            const districtSelect = document.getElementById('district');
+            const wardSelect = document.getElementById('ward');
+
+            let selectedProvince = @json(old('province', $address->province ?? ''));
+            let selectedDistrict = @json(old('district', $address->district ?? ''));
+            let selectedWard = @json(old('ward', $address->ward ?? ''));
+
+            function loadWards(provinceName, districtName) {
+                wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
+                wardSelect.disabled = true;
+
+                const province = locationsData.find(p => p.Name === provinceName);
+                if (!province) return;
+
+                const district = province.Districts.find(d => d.Name === districtName);
+                if (!district) return;
+
+                district.Wards.forEach(ward => {
+                    const option = document.createElement('option');
+                    option.value = ward.Name;
+                    option.text = ward.Name;
+                    wardSelect.add(option);
+                });
+
+                wardSelect.disabled = false;
+
+                if (selectedWard) {
+                    setTimeout(() => {
+                        wardSelect.value = selectedWard;
+                    }, 0);
+                }
+            }
+
+            function loadDistricts(provinceName) {
+                districtSelect.innerHTML = '<option value="">Chọn quận/huyện</option>';
+                wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
+                districtSelect.disabled = true;
+                wardSelect.disabled = true;
+
+                const province = locationsData.find(p => p.Name === provinceName);
+                if (!province) return;
+
+                province.Districts.forEach(district => {
+                    const option = document.createElement('option');
+                    option.value = district.Name;
+                    option.text = district.Name;
+                    districtSelect.add(option);
+                });
+
+                districtSelect.disabled = false;
+
+                if (selectedDistrict) {
+                    setTimeout(() => {
+                        districtSelect.value = selectedDistrict;
+                        loadWards(provinceName, selectedDistrict);
+                    }, 0);
+                }
+            }
+
+            fetch('/data/vietnamAddress.json')
+                .then(response => response.json())
+                .then(data => {
+                    locationsData = data;
+                    console.log('Đã load JSON:', locationsData);
+
+                    // Load danh sách tỉnh
+                    locationsData.forEach(province => {
+                        const option = document.createElement('option');
+                        option.value = province.Name;
+                        option.text = province.Name;
+                        provinceSelect.add(option);
+                    });
+
+                    // Nếu có tỉnh đã chọn thì hiển thị luôn
+                    if (selectedProvince) {
+                        provinceSelect.value = selectedProvince;
+                        loadDistricts(selectedProvince);
+                    }
+                }).catch(e => {
+                    console.error('Lỗi load JSON:', e);
+                });
+
+            provinceSelect.addEventListener('change', function () {
+                selectedDistrict = '';
+                selectedWard = '';
+                loadDistricts(this.value);
+            });
+
+            districtSelect.addEventListener('change', function () {
+                selectedWard = '';
+                loadWards(provinceSelect.value, this.value);
+            });
+        });
+    </script>
+{{-- <script>
+document.querySelectorAll('input[name="shipping_method_id"]').forEach(function(radio) {
+    radio.addEventListener('change', function() {
+        document.getElementById('shipping-method-form').submit();
+    });
+});
+</script> --}}
+
+
+<script>
+    document.querySelectorAll('input[name="flexRadioDefault"]').forEach(function(radio){
+        radio.addEventListener('change', function(){
+            document.getElementById('payment_method_input').value = this.id === 'banking' ? 'bank' : 'cod';
+        });
+    });
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const applyBtn = document.getElementById('btn-apply-discount');
+    const removeBtn = document.getElementById('btn-remove-discount');
+
+    if (applyBtn) {
+        applyBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            // Lấy tất cả mã được chọn trong select multiple
+            const select = document.getElementById('discount_code_select');
+            const selectedCodes = Array.from(select.selectedOptions).map(option => option.value);
+
+            if (selectedCodes.length === 0) {
+                alert('Vui lòng chọn ít nhất một mã giảm giá!');
+                return;
+            }
+
+            fetch("{{ route('client.checkout.applyDiscount') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({
+                    discount_codes: selectedCodes
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert(data.message || 'Áp dụng mã giảm giá thất bại!');
+                }
+            })
+            .catch(err => {
+                console.error('Lỗi áp dụng mã:', err);
+                alert('Lỗi xảy ra khi áp dụng mã giảm giá!');
+            });
+        });
+    }
+
+    if (removeBtn) {
+        removeBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            fetch("{{ route('client.checkout.removeDiscount') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                location.reload();
+            })
+            .catch(err => {
+                console.error('Lỗi xoá mã:', err);
+                alert('Lỗi xảy ra khi xoá mã giảm giá!');
+            });
+        });
+    }
+});
+
+
+</script>
 
     @stack('scripts')
 </body>

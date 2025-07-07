@@ -9,6 +9,8 @@ use App\Models\Client\ProductVariant;
 use Carbon\Carbon;
 use App\Models\Admin\Banner;
 use App\Models\Admin\Product as AdminProduct;
+use App\Models\Client\Review;
+use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
@@ -94,6 +96,7 @@ class ProductController extends Controller
             ->where('active', 1)
             ->whereNull('deleted_at')
             ->firstOrFail();
+
         $this->increaseView($product);
 
         $variants = $product->variants()->where('active', 1)
@@ -125,19 +128,37 @@ class ProductController extends Controller
                 'image' => $v->image ? asset('storage/' . $v->image) : null,
                 // Ép kiểu int cho các value_ids và sort
                 'value_ids' => $v->attributeValues->pluck('id')->map(fn($id) => (int)$id)->sort()->values()->all(),
-                'active' => (int) $v->active,  // lấy trường active đúng kiểu int
+                'active' => (int) $v->active,
             ];
         });
 
-
-        // Lấy sản phẩm liên quan (option)
-        $related = Product::with('images')
+        // Lấy sản phẩm cùng danh mục, active = 1, không lấy sp đang xem
+        $relatedProducts = Product::with(['images', 'variants' => function ($query) {
+            $query->where('active', 1);
+        }])
             ->where('category_id', $product->category_id)
-            ->where('id', '!=', $product->id)
             ->where('active', 1)
+            ->where('id', '!=', $product->id)
             ->whereNull('deleted_at')
-            ->limit(8)
+            ->limit(15)
             ->get();
+
+        // Nếu không có sản phẩm cùng danh mục thì lấy 15 sp random active, cũng eager load variants active = 1
+        if ($relatedProducts->isEmpty()) {
+            $relatedProducts = Product::with(['images', 'variants' => function ($query) {
+                $query->where('active', 1);
+            }])
+                ->where('active', 1)
+                ->where('id', '!=', $product->id)
+                ->whereNull('deleted_at')
+                ->inRandomOrder()
+                ->limit(15)
+                ->get();
+        }
+
+        $relatedTitle = $relatedProducts->isEmpty()
+            ? 'Các sản phẩm nổi bật khác'
+            : 'Sản phẩm cùng danh mục';
 
         // Lấy sản phẩm thịnh hành (topViewedProducts)
         $topViewedProducts = AdminProduct::with('category')
@@ -160,20 +181,86 @@ class ProductController extends Controller
                 });
             })
             ->first();
+
         // top sp thang sidebar
         $topMonthlyProducts = Product::where('active', 1)
             ->where('id', '!=', $product->id)
             ->orderByDesc('view_month')
             ->limit(4)
             ->get();
+        $reviews = $product->reviews()->with('user')->latest()->get();
+
         return view('frontend.products.detail', [
-            'product'    => $product,
-            'variants'   => $variants,
-            'attributes' => $attributeOptions,
-            'variantMap' => $variantMap,
-            'related'    => $related,
-            'topMonthlyProducts' => $topMonthlyProducts,
+            'product'                 => $product,
+            'variants'                => $variants,
+            'attributes'              => $attributeOptions,
+            'variantMap'              => $variantMap,
+            'relatedProducts'         => $relatedProducts,
+            'relatedTitle'            => $relatedTitle,
+            'topMonthlyProducts'      => $topMonthlyProducts,
             'productSectionPromoLeftTop' => $productSectionPromoLeftTop,
+            'reviews'    => $reviews,
+            'topViewedProducts'       => $topViewedProducts,
+        ]);
+    }
+    public function quickView($slug)
+    {
+        $product = Product::with([
+            'images',
+            'category',
+            'variants.attributeValues.attribute',
+            'reviews'
+        ])
+            ->where('slug', $slug)
+            ->where('active', 1)
+            ->whereNull('deleted_at')
+            ->firstOrFail();
+
+        $variants = $product->variants->where('active', 1);
+
+        // Group các thuộc tính (attribute) + value
+        $attributeOptions = [];
+        foreach ($variants as $variant) {
+            foreach ($variant->attributeValues as $value) {
+                $attrId = $value->attribute->id;
+                $attrName = $value->attribute->name;
+                if (!isset($attributeOptions[$attrId])) {
+                    $attributeOptions[$attrId] = [
+                        'name' => $attrName,
+                        'values' => []
+                    ];
+                }
+                $attributeOptions[$attrId]['values'][$value->id] = $value->value;
+            }
+        }
+
+        // Mapping variant (dùng cho JS, AJAX tìm variant theo tổ hợp value id)
+        $variantMap = $variants->map(function ($v) {
+            return [
+                'id' => $v->id,
+                'sku' => $v->sku,
+                'stock' => $v->stock,
+                'price' => $v->price,
+                'image' => $v->image ? asset('storage/' . $v->image) : null,
+                'value_ids' => $v->attributeValues->pluck('id')->map(fn($id) => (int)$id)->sort()->values()->all(),
+                'active' => (int) $v->active,
+            ];
+        })->values();
+
+        $avgRating = round($product->reviews->avg('rating') ?? 0);
+
+        return response()->json([
+            'product' => [
+                'id' => $product->id,
+                'name' => $product->name,
+                'description' => $product->description,
+                'category_name' => $product->category->name ?? '',
+                'image' => $product->image ? asset('storage/' . $product->image) : null, // Ảnh product
+                'variants' => $variantMap, // Mảng variant
+                'attributes' => $attributeOptions,
+                'avg_rating' => $avgRating,
+                'review_count' => $product->reviews->count(),
+            ]
         ]);
     }
 
@@ -250,5 +337,41 @@ class ProductController extends Controller
                 ];
             })
         ]);
+    }
+    public function storeReview(Request $request)
+    {
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'comment'    => 'required|string',
+            'rating'     => 'required|integer|min:1|max:5',
+        ]);
+
+        $user = Auth::user();
+
+        Review::create([
+            'product_id' => $request->product_id,
+            'user_id'    => $user?->id,
+            'rating'     => $request->rating,
+            'comment'    => $request->comment,
+        ]);
+
+        return redirect()->back()->with('success', 'Đánh giá của bạn đã được gửi.');
+    }
+    public function filterReviews(Request $request, $slug)
+    {
+        $ratingFilter = $request->query('star');
+
+        $product = Product::where('slug', $slug)
+            ->where('active', 1)
+            ->whereNull('deleted_at')
+            ->firstOrFail();
+
+        $reviews = $product->reviews()
+            ->with('user')
+            ->when($ratingFilter, fn($q) => $q->where('rating', $ratingFilter))
+            ->latest()
+            ->get();
+
+        return view('frontend.products.review-items', compact('reviews'));
     }
 }

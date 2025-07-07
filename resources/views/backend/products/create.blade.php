@@ -158,8 +158,11 @@
                                                             @enderror
                                                         </div>
                                                         <div class="col-md-6">
-                                                            <label class="form-label">Khối lượng (hiển thị ở tên biến thể)</label>
-                                                            <input type="text" name="variant_name" class="form-control" value="{{ old('variant_name') }}" placeholder="Nhập khối lượng, ví dụ: 500g, 1kg...">
+                                                            <label class="form-label">Khối lượng (hiển thị ở tên biến
+                                                                thể)</label>
+                                                            <input type="text" name="variant_name"
+                                                                class="form-control" value="{{ old('variant_name') }}"
+                                                                placeholder="Nhập khối lượng, ví dụ: 500g, 1kg...">
                                                             @error('variant_name')
                                                                 <small class="text-danger">{{ $message }}</small>
                                                             @enderror
@@ -670,7 +673,12 @@
             </div>
           </div>
         </div>
-        `;
+
+
+                 <div class="col-12">
+                              <label class="form-label">Mô tả biến thể</label>
+                              <textarea name="variants[${idx}][description]" rows="2" class="form-control variant-description-editor"></textarea>
+                            </div> `;
                 variantArea.insertAdjacentHTML('beforeend', html);
             });
 
@@ -709,7 +717,7 @@
                     if (attrSpan) {
                         // Lấy 6 ký tự đầu của tên thuộc tính, không dấu, viết hoa, không khoảng trắng
                         const suffix = attrSpan.textContent.trim().replace(/\s+/g, '').toUpperCase().substring(0,
-                        6);
+                            6);
                         sku = `PRD-${timestamp}-${suffix}-${index}`;
                     } else {
                         sku = `PRD-${timestamp}-MANUAL-${Math.floor(Math.random() * 1000)}`;
@@ -1035,18 +1043,18 @@
         <div class="collapse show" id="attr-${data.attribute_id}">
             <div class="values-list" style="max-height: 150px; overflow-y:auto; border:1px solid #ddd; padding:8px; border-radius:4px;">
                 ${data.attributeValues.map(val => `
-                        <label class="form-check form-check-inline d-block">
-                            <input
-                                class="form-check-input attribute-value-checkbox"
-                                type="checkbox"
-                                data-attrid="${data.attribute_id}"
-                                value="${val.id}"
-                                name="attribute_values_checkbox[${data.attribute_id}][]"
-                                checked
-                            >
-                            <span class="form-check-label">${val.value}</span>
-                        </label>
-                    `).join('')}
+                            <label class="form-check form-check-inline d-block">
+                                <input
+                                    class="form-check-input attribute-value-checkbox"
+                                    type="checkbox"
+                                    data-attrid="${data.attribute_id}"
+                                    value="${val.id}"
+                                    name="attribute_values_checkbox[${data.attribute_id}][]"
+                                    checked
+                                >
+                                <span class="form-check-label">${val.value}</span>
+                            </label>
+                        `).join('')}
             </div>
         </div>
     `;
