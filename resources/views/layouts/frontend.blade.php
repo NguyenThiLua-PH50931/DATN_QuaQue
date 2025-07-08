@@ -558,13 +558,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
-
-
-</script>
-
-    @stack('scripts')
-</body>
-    @stack('scripts')
 </html>
 <style>
     .onhover-div-login {
