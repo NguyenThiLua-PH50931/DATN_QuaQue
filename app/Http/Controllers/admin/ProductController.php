@@ -45,10 +45,11 @@ class ProductController extends Controller
         $rating = $request->input('rating');
         $sort = $request->input('sort');
 
-        $productsQuery = AdminProduct::with([
+        // Sử dụng model phía client
+        $productsQuery = \App\Models\Client\Product::with([
             'category',
             'region',
-            'product_images',
+            'images',
             'variants' => function ($q) {
                 $q->where('active', 1)->orderBy('id');
             },
@@ -104,12 +105,12 @@ class ProductController extends Controller
         $products = $productsQuery->paginate(12)->appends($request->except('page'));
 
         // Lấy min/max giá cho slider
-        $allPrices = \App\Models\admin\ProductVariant::where('active', 1)->pluck('price');
+        $allPrices = \App\Models\Client\ProductVariant::where('active', 1)->pluck('price');
         $priceMinAll = $allPrices->min() ?? 0;
         $priceMaxAll = $allPrices->max() ?? 10000000;
 
-        $categories = AdminCategory::all();
-        $regions = AdminRegion::all();
+        $categories = \App\Models\Client\Category::all();
+        $regions = \App\Models\Client\Region::all();
 
         return view('frontend.products.search', [
             'products' => $products,
