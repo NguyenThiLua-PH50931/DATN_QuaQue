@@ -204,7 +204,7 @@
                                          <i data-feather="heart"></i>
                                      </a>
                                  </li>
-                                 
+
                                  <li class="right-side">
                                      <div class="header-badge">
                                          <i data-feather="shopping-cart"></i>
@@ -380,54 +380,37 @@
                                                      const itemId = this.getAttribute('data-id');
                                                      if (!itemId) return;
 
-                                                     const modalEl = document.getElementById('notificationModal');
-                                                     const modalBody = document.getElementById('notificationModalBody');
-                                                     const modalFooter = modalEl.querySelector('.modal-footer');
+                                                     // Hiện popup xác nhận đơn giản của trình duyệt
+                                                     const isConfirmed = confirm('Bạn chắc chắn muốn xóa sản phẩm này?');
+                                                     if (!isConfirmed) return;
 
-                                                     modalBody.textContent = 'Bạn chắc chắn muốn xóa sản phẩm này?';
+                                                     fetch('/client/cart/remove/' + itemId, {
+                                                             method: 'DELETE',
+                                                             headers: {
+                                                                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                                                 'Accept': 'application/json'
+                                                             }
+                                                         })
+                                                         .then(res => {
+                                                             if (!res.ok) throw new Error('Lỗi server');
+                                                             return res.json();
+                                                         })
+                                                         .then(data => {
+                                                             if (data.success) {
+                                                                 // Xóa phần tử cart-item khỏi DOM
+                                                                 const cartItemElem = button.closest('.cart-item');
+                                                                 if (cartItemElem) cartItemElem.remove();
 
-                                                     // Reset footer nút
-                                                     modalFooter.innerHTML = `
-            <button type="button" class="btn btn-sm btn-success" data-bs-dismiss="modal">Hủy</button>
-            <button type="button" class="btn btn-sm btn-danger" id="confirmDeleteBtn">Xóa</button>
-        `;
-
-                                                     const modal = new bootstrap.Modal(modalEl);
-                                                     modal.show();
-
-                                                     const confirmBtn = document.getElementById('confirmDeleteBtn');
-
-                                                     confirmBtn.onclick = () => {
-                                                         fetch('/client/cart/remove/' + itemId, {
-                                                                 method: 'DELETE',
-                                                                 headers: {
-                                                                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                                                     'Accept': 'application/json'
-                                                                 }
-                                                             })
-                                                             .then(res => {
-                                                                 if (!res.ok) throw new Error('Lỗi server');
-                                                                 return res.json();
-                                                             })
-                                                             .then(data => {
-                                                                 if (data.success) {
-                                                                     // Xóa phần tử cart-item khỏi DOM
-                                                                     const cartItemElem = button.closest('.cart-item');
-                                                                     if (cartItemElem) cartItemElem.remove();
-
-                                                                     // Cập nhật tổng tiền nếu có hàm updateTotal
-                                                                     if (typeof updateTotal === 'function') updateTotal();
-
-                                                                     modal.hide();
-                                                                 } else {
-                                                                     alert(data.message || 'Xóa thất bại');
-                                                                 }
-                                                             })
-                                                             .catch(err => {
-                                                                 console.error(err);
-                                                                 alert('Lỗi xảy ra, vui lòng thử lại');
-                                                             });
-                                                     };
+                                                                 // Cập nhật tổng tiền nếu có hàm updateTotal
+                                                                 if (typeof updateTotal === 'function') updateTotal();
+                                                             } else {
+                                                                 alert(data.message || 'Xóa thất bại');
+                                                             }
+                                                         })
+                                                         .catch(err => {
+                                                             console.error(err);
+                                                             alert('Lỗi xảy ra, vui lòng thử lại');
+                                                         });
                                                  });
                                              });
 
@@ -455,11 +438,12 @@
                                      </script>
                                  </li>
                                  <li class="right-side">
-                                    <a href="{{ route('client.orders.index') }}" class="btn p-0 position-relative" title="Đơn hàng của tôi">
-                                        <i data-feather="package"></i>
-                                        {{-- Có thể thay "package" bằng "clipboard-list" hoặc "shopping-bag" tuỳ bộ icon --}}
-                                    </a>
-                                </li>
+                                     <a href="{{ route('client.orders.index') }}" class="btn p-0 position-relative"
+                                         title="Đơn hàng của tôi">
+                                         <i data-feather="package"></i>
+                                         {{-- Có thể thay "package" bằng "clipboard-list" hoặc "shopping-bag" tuỳ bộ icon --}}
+                                     </a>
+                                 </li>
 
                                  <li class="right-side onhover-dropdown">
                                      <div class="delivery-login-box">
@@ -1346,5 +1330,20 @@
              display: block;
          }
      </style> --}}
+
+     {{-- modal xóa trong giỏ ở trang home --}}
+     <!-- Modal xác nhận xóa sản phẩm tự tạo -->
+     <div id="customConfirmModal"
+         style="display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); 
+    justify-content: center; align-items: center; z-index: 9999;">
+         <div
+             style="background: white; padding: 20px; border-radius: 8px; max-width: 320px; width: 90%; text-align: center;">
+             <p id="customConfirmMessage" style="margin-bottom: 20px;">Bạn chắc chắn muốn xóa sản phẩm này?</p>
+             <button id="customConfirmCancel" style="margin-right: 10px; padding: 6px 12px;">Hủy</button>
+             <button id="customConfirmOk"
+                 style="padding: 6px 12px; background: #d32f2f; color: white; border: none; border-radius: 4px;">Xóa</button>
+         </div>
+     </div>
+
 
  </header>

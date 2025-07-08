@@ -29,21 +29,26 @@ class ProductController extends Controller
             $query->where('region_id', $request->region_id);
         }
         // Filter theo giá
-        if ($request->filled('price_min')) {
-            $query->whereHas('variants', function ($q) use ($request) {
-                $q->where('price', '>=', $request->price_min);
+        $priceMin = $request->filled('price_min') ? (int)$request->price_min : 0;
+        $priceMax = $request->filled('price_max') ? (int)$request->price_max : 10000000;
+
+        if ($request->filled('price_min') && $request->filled('price_max')) {
+            $query->whereHas('variants', function ($q) use ($priceMin, $priceMax) {
+                $q->whereBetween('price', [$priceMin, $priceMax]);
             });
-        }
-        if ($request->filled('price_max')) {
-            $query->whereHas('variants', function ($q) use ($request) {
-                $q->where('price', '<=', $request->price_max);
+        } elseif ($request->filled('price_min')) {
+            $query->whereHas('variants', function ($q) use ($priceMin) {
+                $q->where('price', '>=', $priceMin);
+            });
+        } elseif ($request->filled('price_max')) {
+            $query->whereHas('variants', function ($q) use ($priceMax) {
+                $q->where('price', '<=', $priceMax);
             });
         }
         // Filter theo rating trung bình
         if ($request->filled('rating')) {
-            $query->whereHas('reviews', function ($q) use ($request) {
-                $q->havingRaw('AVG(rating) >= ?', [$request->rating]);
-            });
+            $query->withAvg('reviews', 'rating')
+                  ->having('reviews_avg_rating', '>=', $request->rating);
         }
         // Sắp xếp
         if ($request->filled('sort')) {
@@ -76,7 +81,7 @@ class ProductController extends Controller
         $categories = \App\Models\admin\Category::all();
         $regions = \App\Models\admin\Region::all();
 
-        return view('frontend.products.index', compact('products', 'categories', 'regions'));
+        return view('frontend.products.index', compact('products', 'categories', 'regions', 'priceMin', 'priceMax'));
     }
     /**
      * Hiển thị chi tiết sản phẩm.
