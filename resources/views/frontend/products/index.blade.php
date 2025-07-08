@@ -161,6 +161,7 @@
                     @forelse($products as $product)
                         @php
                             $variantInRange = $product->variants->where('price', '>=', $priceMin)->where('price', '<=', $priceMax)->first();
+                            $minPrice = $product->variants->min('price');
                         @endphp
                         @if($variantInRange)
                             <div class="col">
@@ -225,7 +226,7 @@
                                             </div>
                                             <h6 class="unit">{{ $variantInRange->weight ?? '' }}</h6>
                                             <h5 class="price"><span
-                                                    class="theme-color">{{ number_format($variantInRange->price ?? 0) }}₫</span>
+                                                    class="theme-color">{{ number_format($minPrice ?? 0) }}₫</span>
                                             </h5>
                                         </div>
                                     </div>
