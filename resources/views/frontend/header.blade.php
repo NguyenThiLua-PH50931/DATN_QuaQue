@@ -84,12 +84,18 @@
                              <script>
                                  $(document).ready(function() {
                                      $('#button-addon2').on('click', function() {
-                                         performSearch();
+                                         const query = $('#searchInput').val().trim();
+                                         if (query.length > 0) {
+                                             window.location.href = '/client/san-pham/search?search=' + encodeURIComponent(query);
+                                         }
                                      });
 
                                      $('#searchInput').on('keypress', function(e) {
                                          if (e.which == 13) { // Enter key
-                                             performSearch();
+                                             const query = $('#searchInput').val().trim();
+                                             if (query.length > 0) {
+                                                 window.location.href = '/client/san-pham/search?search=' + encodeURIComponent(query);
+                                             }
                                          }
                                      });
 
@@ -106,7 +112,7 @@
                                          const query = $('#searchInput').val().trim();
                                          if (query.length > 0) {
                                              $.ajax({
-                                                 url: '/admin/products/search',
+                                                 url: '/client/san-pham/search-ajax',
                                                  type: 'GET',
                                                  data: {
                                                      q: query
@@ -117,9 +123,9 @@
                                                      if (response.length > 0) {
                                                          response.forEach(product => {
                                                              $('#searchResults').append(`
-            <a href="/products/${product.slug}" class="list-group-item list-group-item-action d-flex align-items-center">
-                <img src="${product.image ? '/storage/' + product.image : '/images/default.jpg'}" 
-                     alt="${product.name}" 
+            <a href="/client/san-pham/${product.slug}" class="list-group-item list-group-item-action d-flex align-items-center">
+                <img src="${product.image ? '/storage/' + product.image : '/images/default.jpg'}"
+                     alt="${product.name}"
                      style="width: 50px; height: 50px; margin-right: 10px; object-fit: cover;" />
                 ${product.name}
             </a>
@@ -204,7 +210,7 @@
                                          <i data-feather="heart"></i>
                                      </a>
                                  </li>
-                                 
+
                                  <li class="right-side">
                                      <div class="header-badge">
                                          <i data-feather="shopping-cart"></i>
@@ -455,11 +461,12 @@
                                      </script>
                                  </li>
                                  <li class="right-side">
-                                    <a href="{{ route('client.orders.index') }}" class="btn p-0 position-relative" title="Đơn hàng của tôi">
-                                        <i data-feather="package"></i>
-                                        {{-- Có thể thay "package" bằng "clipboard-list" hoặc "shopping-bag" tuỳ bộ icon --}}
-                                    </a>
-                                </li>
+                                     <a href="{{ route('client.orders.index') }}" class="btn p-0 position-relative"
+                                         title="Đơn hàng của tôi">
+                                         <i data-feather="package"></i>
+                                         {{-- Có thể thay "package" bằng "clipboard-list" hoặc "shopping-bag" tuỳ bộ icon --}}
+                                     </a>
+                                 </li>
 
                                  <li class="right-side onhover-dropdown">
                                      <div class="delivery-login-box">
@@ -1261,7 +1268,7 @@
          </div>
      </div>
 
-     {{-- 
+     {{--
      <script>
          document.addEventListener('DOMContentLoaded', () => {
              document.querySelectorAll('.close_button').forEach(button => {

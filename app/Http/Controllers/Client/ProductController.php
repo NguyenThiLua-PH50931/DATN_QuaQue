@@ -57,7 +57,7 @@ class ProductController extends Controller
                     $query->orderByRaw('(SELECT MIN(price) FROM product_variants WHERE product_id = products.id) ASC');
                     break;
                 case 'price_desc':
-                    $query->orderByRaw('(SELECT MAX(price) FROM product_variants WHERE product_id = products.id) DESC');
+                    $query->orderByRaw('(SELECT MIN(price) FROM product_variants WHERE product_id = products.id) DESC');
                     break;
                 case 'rating':
                     $query->withAvg('reviews', 'rating')->orderByDesc('reviews_avg_rating');
@@ -378,5 +378,25 @@ class ProductController extends Controller
             ->get();
 
         return view('frontend.products.review-items', compact('reviews'));
+    }
+
+    // AJAX search cho header
+    public function searchAjax(Request $request)
+    {
+        $query = $request->input('q');
+        $products = Product::where('active', 1)
+            ->where(function($q) use ($query) {
+                $q->where('name', 'like', "%$query%")
+                  ->orWhereHas('category', function($cat) use ($query) {
+                      $cat->where('name', 'like', "%$query%") ;
+                  })
+                  ->orWhereHas('region', function($reg) use ($query) {
+                      $reg->where('name', 'like', "%$query%") ;
+                  });
+            })
+            ->select('id', 'name', 'slug', 'image')
+            ->limit(10)
+            ->get();
+        return response()->json($products);
     }
 }
