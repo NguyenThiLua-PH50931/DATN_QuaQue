@@ -48,7 +48,7 @@ class ProductController extends Controller
         // Filter theo rating trung bình
         if ($request->filled('rating')) {
             $query->withAvg('reviews', 'rating')
-                  ->having('reviews_avg_rating', '>=', $request->rating);
+                  ->havingRaw('ROUND(reviews_avg_rating) = ?', [$request->rating]);
         }
         // Sắp xếp
         if ($request->filled('sort')) {
