@@ -79,7 +79,7 @@ class ProductController extends Controller
         // Lọc theo rating trung bình
         if ($rating) {
             $productsQuery->withAvg('reviews', 'rating')
-                ->having('reviews_avg_rating', '>=', $rating);
+                ->havingRaw('ROUND(reviews_avg_rating) = ?', [$rating]);
         }
         // Sắp xếp
         switch ($sort) {
