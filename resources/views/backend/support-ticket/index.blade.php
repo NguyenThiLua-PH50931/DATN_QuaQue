@@ -54,11 +54,12 @@
                         <table class="table table-striped table-hover">
                             <thead>
                                 <tr>
-                                    <th>Ticket Number</th>
-                                    <th>Date</th>
-                                    <th>Subject</th>
-                                    <th>Status</th>
-                                    <th>Options</th>
+                                    <th>ID</th>
+                                    <th>Ngày</th>
+                                    <th>Chủ đề</th>
+                                    <th>Trạng thái</th>
+                                    <th>Tùy chọn</th>
+
                                 </tr>
                             </thead>
                             <tbody>
@@ -78,9 +79,8 @@
                                         <td>
                                             <div style="display: flex; gap: 6px; align-items: center;">
                                                 <a href="{{ route('admin.support-ticket.show', $ticket->id) }}"
-                                                    class="btn btn-primary btn-sm" title="Xem chi tiết"
                                                     style="width: 36px; height: 36px; padding: 0; display: flex; justify-content: center; align-items: center;">
-                                                    <i class="fa fa-eye"></i>
+                                                    <i class="ri-pencil-line"></i>
                                                 </a>
 
                                                 <form method="POST"
@@ -88,12 +88,31 @@
                                                     style="margin: 0;">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm" title="Xóa"
-                                                        onclick="return confirm('Bạn có chắc muốn xóa?')"
-                                                        style="width: 36px; height: 36px; padding: 0; display: flex; justify-content: center; align-items: center;">
-                                                        <i class="fa fa-trash"></i>
+                                                    <button type="submit" onclick="return confirm('Bạn có chắc muốn xóa?')"
+                                                        class="icon-btn-delete" aria-label="Xóa">
+                                                        <i class="ri-delete-bin-line"></i>
                                                     </button>
                                                 </form>
+                                                <style>
+                                                    .icon-btn-delete {
+                                                        border: none;
+                                                        background: none;
+                                                        cursor: pointer;
+                                                        color: #dc3545;
+                                                        font-size: 18px;
+                                                        /* giảm kích thước icon xuống */
+                                                        padding: 2px;
+                                                        /* giảm padding */
+                                                        display: flex;
+                                                        align-items: center;
+                                                        justify-content: center;
+                                                        transition: color 0.3s ease;
+                                                    }
+
+                                                    .icon-btn-delete:hover {
+                                                        color: #a71d2a;
+                                                    }
+                                                </style>
                                             </div>
                                         </td>
                                     </tr>
