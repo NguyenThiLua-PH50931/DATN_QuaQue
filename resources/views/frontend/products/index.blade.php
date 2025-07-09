@@ -100,16 +100,16 @@
                                 <div class="filter-title" style="margin-bottom: 2em;">
                                     <h2 style="font-weight: bold; font-size: 1.5rem;">Đánh Giá</h2>
                                 </div>
-                                <ul>
+                                <ul style="display:block;">
                                     @for ($i = 5; $i >= 1; $i--)
-                                        <li>
-                                            <label style="font-size: 1.1rem; font-weight: normal;">
-                                                <input type="radio" name="rating" value="{{ $i }}"
-                                                    {{ request('rating') == $i ? 'checked' : '' }}>
-                                                @for ($j = 1; $j <= 5; $j++)
-                                                    <i class="fa fa-star{{ $j <= $i ? ' text-warning' : '' }}"></i>
-                                                @endfor
-                                                trở lên
+                                        <li style="margin-bottom: 0.5em; display: flex; align-items: center;">
+                                            <label style="font-size: 1.1rem; font-weight: normal; display: flex; align-items: center; gap: 8px;">
+                                                <input type="radio" name="rating" value="{{ $i }}" {{ request('rating') == $i ? 'checked' : '' }}>
+                                                <span>
+                                                    @for ($j = 1; $j <= 5; $j++)
+                                                        <i class="fa fa-star{{ $j <= $i ? ' text-warning' : '' }}"></i>
+                                                    @endfor
+                                                </span>
                                             </label>
                                         </li>
                                     @endfor
