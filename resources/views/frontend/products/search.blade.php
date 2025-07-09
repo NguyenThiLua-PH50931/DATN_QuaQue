@@ -167,9 +167,9 @@
                     class="row g-sm-4 g-3 row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-1 product-list-section">
                     @forelse($products as $product)
                         @php
-                            $variantInRange = $product->variants->where('price', '>=', $priceMin ?? 0)->where('price', '<=', $priceMax ?? 10000000)->first();
+                            $minPrice = $product->variants->min('price');
                         @endphp
-                        @if($variantInRange)
+                        @if($minPrice)
                             <div class="col">
                                 <div class="product-box-3 h-100 wow fadeInUp">
                                     <div class="product-header">
@@ -185,7 +185,7 @@
                                                     <a href="javascript:void(0)" data-bs-toggle="modal"
                                                         data-bs-target="#view" class="quickview-btn"
                                                         data-name="{{ $product->name }}"
-                                                        data-price="{{ number_format(optional($product->variants->first())->price ?? 0) }}đ"
+                                                        data-price="{{ number_format($minPrice) }}đ"
                                                         data-rating="{{ $product->reviews->avg('rating') ?? '' }}"
                                                         data-description="{{ e(strip_tags($product->description)) }}"
                                                         data-code="{{ $product->variants->first()->sku ?? '' }}"
@@ -230,10 +230,8 @@
                                                 </ul>
                                                 <span>({{ number_format($product->reviews->avg('rating'), 1) }})</span>
                                             </div>
-                                            <h6 class="unit">{{ $variantInRange->weight ?? '' }}</h6>
-                                            <h5 class="price"><span
-                                                    class="theme-color">{{ number_format($variantInRange->price ?? 0) }}₫</span>
-                                            </h5>
+                                            <h6 class="unit">{{ $product->variants->first()->weight ?? '' }}</h6>
+                                            <h5 class="price"><span class="theme-color">{{ number_format($minPrice) }}₫</span></h5>
                                         </div>
                                     </div>
                                 </div>
