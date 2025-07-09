@@ -84,12 +84,19 @@
                              <script>
                                  $(document).ready(function() {
                                      $('#button-addon2').on('click', function() {
-                                         performSearch();
+                                         const query = $('#searchInput').val().trim();
+                                         if (query.length > 0) {
+                                             window.location.href = '/client/san-pham/search?search=' + encodeURIComponent(query);
+                                         }
                                      });
 
                                      $('#searchInput').on('keypress', function(e) {
                                          if (e.which == 13) { // Enter key
-                                             performSearch();
+                                             const query = $('#searchInput').val().trim();
+                                             if (query.length > 0) {
+                                                 window.location.href = '/client/san-pham/search?search=' + encodeURIComponent(
+                                                     query);
+                                             }
                                          }
                                      });
 
@@ -106,7 +113,7 @@
                                          const query = $('#searchInput').val().trim();
                                          if (query.length > 0) {
                                              $.ajax({
-                                                 url: '/admin/products/search',
+                                                 url: '/client/san-pham/search-ajax',
                                                  type: 'GET',
                                                  data: {
                                                      q: query
@@ -117,9 +124,9 @@
                                                      if (response.length > 0) {
                                                          response.forEach(product => {
                                                              $('#searchResults').append(`
-            <a href="/products/${product.slug}" class="list-group-item list-group-item-action d-flex align-items-center">
-                <img src="${product.image ? '/storage/' + product.image : '/images/default.jpg'}" 
-                     alt="${product.name}" 
+            <a href="/client/san-pham/${product.slug}" class="list-group-item list-group-item-action d-flex align-items-center">
+                <img src="${product.image ? '/storage/' + product.image : '/images/default.jpg'}"
+                     alt="${product.name}"
                      style="width: 50px; height: 50px; margin-right: 10px; object-fit: cover;" />
                 ${product.name}
             </a>
@@ -361,81 +368,7 @@
                                          }
                                      </style>
 
-                                     <script>
-                                         document.addEventListener('DOMContentLoaded', function() {
-                                             // Hiển thị popup khi hover vào icon giỏ hàng
-                                             const cartBadge = document.querySelector('.header-badge');
-                                             const popup = cartBadge.querySelector('.cart-popup');
 
-                                             cartBadge.addEventListener('mouseenter', () => {
-                                                 popup.style.display = 'block';
-                                             });
-                                             cartBadge.addEventListener('mouseleave', () => {
-                                                 popup.style.display = 'none';
-                                             });
-
-                                             // Xử lý xóa sản phẩm
-                                             popup.querySelectorAll('.cart-item-remove').forEach(button => {
-                                                 button.addEventListener('click', function() {
-                                                     const itemId = this.getAttribute('data-id');
-                                                     if (!itemId) return;
-
-                                                     // Hiện popup xác nhận đơn giản của trình duyệt
-                                                     const isConfirmed = confirm('Bạn chắc chắn muốn xóa sản phẩm này?');
-                                                     if (!isConfirmed) return;
-
-                                                     fetch('/client/cart/remove/' + itemId, {
-                                                             method: 'DELETE',
-                                                             headers: {
-                                                                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                                                 'Accept': 'application/json'
-                                                             }
-                                                         })
-                                                         .then(res => {
-                                                             if (!res.ok) throw new Error('Lỗi server');
-                                                             return res.json();
-                                                         })
-                                                         .then(data => {
-                                                             if (data.success) {
-                                                                 // Xóa phần tử cart-item khỏi DOM
-                                                                 const cartItemElem = button.closest('.cart-item');
-                                                                 if (cartItemElem) cartItemElem.remove();
-
-                                                                 // Cập nhật tổng tiền nếu có hàm updateTotal
-                                                                 if (typeof updateTotal === 'function') updateTotal();
-                                                             } else {
-                                                                 alert(data.message || 'Xóa thất bại');
-                                                             }
-                                                         })
-                                                         .catch(err => {
-                                                             console.error(err);
-                                                             alert('Lỗi xảy ra, vui lòng thử lại');
-                                                         });
-                                                 });
-                                             });
-
-
-
-                                             function updateTotal() {
-                                                 let total = 0;
-                                                 popup.querySelectorAll('.cart-items-list li').forEach(li => {
-                                                     const qtyPriceText = li.querySelector('.cart-item-qty-price')?.textContent || '';
-                                                     const match = qtyPriceText.match(/(\d+)\s*x\s*([\d\.]+)/);
-                                                     if (match) {
-                                                         const qty = parseInt(match[1]);
-                                                         const priceStr = match[2].replace(/\./g, ''); // bỏ dấu chấm ngăn cách hàng nghìn
-                                                         const price = parseInt(priceStr);
-                                                         total += qty * price;
-                                                     }
-
-                                                     if (match) {
-                                                         total += parseInt(match[1]) * parseFloat(match[2]);
-                                                     }
-                                                 });
-                                                 popup.querySelector('.total-price').textContent = 'đ' + total.toFixed(2);
-                                             }
-                                         });
-                                     </script>
                                  </li>
                                  <li class="right-side">
                                      <a href="{{ route('client.orders.index') }}" class="btn p-0 position-relative"
@@ -1245,7 +1178,7 @@
          </div>
      </div>
 
-     {{-- 
+     {{--
      <script>
          document.addEventListener('DOMContentLoaded', () => {
              document.querySelectorAll('.close_button').forEach(button => {
@@ -1302,7 +1235,7 @@
              const totalElement = document.querySelector('.price-box h4');
              if (totalElement) totalElement.textContent = '$' + total.toFixed(2);
          }
-     </script>
+     </scrip>
 
      <style>
          .onhover-dropdown {
@@ -1339,11 +1272,102 @@
          <div
              style="background: white; padding: 20px; border-radius: 8px; max-width: 320px; width: 90%; text-align: center;">
              <p id="customConfirmMessage" style="margin-bottom: 20px;">Bạn chắc chắn muốn xóa sản phẩm này?</p>
-             <button id="customConfirmCancel" style="margin-right: 10px; padding: 6px 12px;">Hủy</button>
+             <button id="customConfirmCancel"
+                 style="padding: 6px 12px; background: #0da487; color: white; border: none; border-radius: 4px;">Hủy</button>
              <button id="customConfirmOk"
                  style="padding: 6px 12px; background: #d32f2f; color: white; border: none; border-radius: 4px;">Xóa</button>
          </div>
      </div>
+     <script>
+         document.addEventListener('DOMContentLoaded', function() {
+             const cartBadge = document.querySelector('.header-badge');
+             const popup = cartBadge.querySelector('.cart-popup');
 
+             const customConfirmModal = document.getElementById('customConfirmModal');
+             const customConfirmCancel = document.getElementById('customConfirmCancel');
+             const customConfirmOk = document.getElementById('customConfirmOk');
+
+             let currentDeleteButton = null;
+
+             // Hiển thị popup giỏ hàng khi hover vào icon giỏ hàng
+             cartBadge.addEventListener('mouseenter', () => {
+                 popup.style.display = 'block';
+                 updateTotal();
+             });
+
+             cartBadge.addEventListener('mouseleave', () => {
+                 popup.style.display = 'none';
+             });
+
+             // Ủy quyền sự kiện click nút xóa sản phẩm trong popup giỏ hàng
+             popup.addEventListener('click', function(event) {
+                 if (event.target.classList.contains('cart-item-remove')) {
+                     currentDeleteButton = event.target;
+                     customConfirmModal.style.display = 'flex';
+                 }
+             });
+
+             // Nút Hủy trong modal xác nhận
+             customConfirmCancel.addEventListener('click', () => {
+                 customConfirmModal.style.display = 'none';
+                 currentDeleteButton = null;
+             });
+
+             // Nút Xóa trong modal xác nhận
+             customConfirmOk.addEventListener('click', () => {
+                 if (!currentDeleteButton) return;
+
+                 const itemId = currentDeleteButton.getAttribute('data-id');
+                 if (!itemId) return;
+
+                 fetch('/client/cart/remove/' + itemId, {
+                         method: 'DELETE',
+                         headers: {
+                             'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                             'Accept': 'application/json'
+                         }
+                     })
+                     .then(res => {
+                         if (!res.ok) throw new Error('Lỗi server');
+                         return res.json();
+                     })
+                     .then(data => {
+                         if (data.success) {
+                             const cartItemElem = currentDeleteButton.closest('.cart-item');
+                             if (cartItemElem) cartItemElem.remove();
+                             updateTotal();
+                         } else {
+                             alert(data.message || 'Xóa thất bại');
+                         }
+                     })
+                     .catch(err => {
+                         console.error(err);
+                         alert('Lỗi xảy ra, vui lòng thử lại');
+                     })
+                     .finally(() => {
+                         customConfirmModal.style.display = 'none';
+                         currentDeleteButton = null;
+                     });
+             });
+
+             function updateTotal() {
+                 let total = 0;
+                 popup.querySelectorAll('.cart-items-list li.cart-item').forEach(li => {
+                     const qtyPriceText = li.querySelector('.cart-item-qty-price')?.textContent || '';
+                     const match = qtyPriceText.match(/(\d+)\s*x\s*([\d\.]+)/);
+                     if (match) {
+                         const qty = parseInt(match[1]);
+                         const priceStr = match[2].replace(/\./g, '');
+                         const price = parseInt(priceStr);
+                         total += qty * price;
+                     }
+                 });
+                 popup.querySelector('.total-price').textContent = total.toLocaleString('vi-VN', {
+                     style: 'currency',
+                     currency: 'VND'
+                 });
+             }
+         });
+     </script>
 
  </header>
