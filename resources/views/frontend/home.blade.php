@@ -209,13 +209,13 @@
 
                         <div class="section-t-space">
                             <div class="category-menu">
-                                <h3>Nhận xét của khách hàng</h3>
+                                <h3>Nhận xét của khách hàng</h3> <!-- Tiêu đề phần -->
                                 <div class="review-box">
                                     <div class="review-contain">
-                                        <h5 class="w-75">We Care About Our Customer Experience</h5>
-                                        <p>In publishing and graphic design, Lorem ipsum is a placeholder text commonly
-                                            used to demonstrate the visual form of a document or a typeface without
-                                            relying on meaningful content.</p>
+                                        <h5 class="w-75">Chúng tôi quan tâm đến trải nghiệm của khách hàng</h5>
+                                        <!-- Thay đổi tiêu đề con -->
+                                        <p>Chúng tôi luôn nỗ lực để mang lại trải nghiệm tốt nhất cho khách hàng. Cảm ơn bạn
+                                            đã tin tưởng và đồng hành cùng chúng tôi.</p> <!-- Thay đổi đoạn văn bản -->
                                     </div>
 
                                     <div class="review-profile">
@@ -224,13 +224,14 @@
                                                 class="img-fluid blur-up lazyload" alt="">
                                         </div>
                                         <div class="review-detail">
-                                            <h5>Tina Mcdonnale</h5>
-                                            <h6>Sale Manager</h6>
+                                            <h5>Tina Mcdonnale</h5> <!-- Tên người đánh giá -->
+                                            <h6>Giám đốc bán hàng</h6> <!-- Chức vụ -->
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
 
@@ -296,6 +297,14 @@
                                                     <div class="label-tagg label-tagg-top">
                                                         <span>TOP</span>
                                                     </div>
+                                                    <style>
+                                                        .label-tagg-top {
+                                                            border: none;
+                                                            /* bỏ viền */
+                                                            box-shadow: none;
+                                                            /* bỏ bóng viền */
+                                                        }
+                                                    </style>
                                                     <div class="product-image">
                                                         <a
                                                             href="{{ route('client.product.detail', ['slug' => $product->slug]) }}">
