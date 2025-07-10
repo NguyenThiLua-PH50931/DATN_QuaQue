@@ -420,7 +420,7 @@
                                                                 <li><i data-feather="star" class="fill"></i></li>
                                                                 <li><i data-feather="star"></i></li>
                                                             </ul>
-                                                            <h6 class="theme-color">In Stock</h6>
+                                                            <h6 class="theme-color">Còn hàng</h6>
                                                         </div>
                                                         <div class="add-to-cart-box">
                                                             {{-- <button class="btn btn-add-cart addcart-button">Add
@@ -644,7 +644,7 @@
                                                         @endfor
                                                     </ul>
                                                     <h6 class="theme-color">
-                                                        {{ $product->stock > 0 ? 'In Stock' : 'Out of Stock' }}</h6>
+                                                        {{ $product->stock > 0 ? 'Còn hàng' : 'Out of Stock' }}</h6>
                                                 </div>
                                                 <div class="add-to-cart-box">
                                                     {{-- <button class="btn btn-add-cart addcart-button">Add
@@ -835,14 +835,14 @@
                         <div class="row">
                             <div class="col-xxl-4 col-lg-5 col-md-7 col-sm-9 offset-xxl-2 offset-md-1">
                                 <div class="newsletter-detail">
-                                    <h2>Join our newsletter and get...</h2>
-                                    <h5>$20 discount for your first order</h5>
+                                    <h2>Đăng ký nhận bản tin của chúng tôi và nhận...</h2>
+                                    <h5>Giảm giá 20 đô la cho đơn hàng đầu tiên của bạn</h5>
                                     <div class="input-box">
                                         <input type="email" class="form-control" id="exampleFormControlInput1"
-                                            placeholder="Enter Your Email">
+                                            placeholder="Nhập email của bạn" required>
                                         <i class="fa-solid fa-envelope arrow"></i>
                                         <button class="sub-btn  btn-animation">
-                                            <span class="d-sm-block d-none">Subscribe</span>
+                                            <span class="d-sm-block d-none">Đăng ký</span>
                                             <i class="fa-solid fa-arrow-right icon"></i>
                                         </button>
                                     </div>
