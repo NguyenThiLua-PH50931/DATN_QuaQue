@@ -94,7 +94,8 @@
                                          if (e.which == 13) { // Enter key
                                              const query = $('#searchInput').val().trim();
                                              if (query.length > 0) {
-                                                 window.location.href = '/client/san-pham/search?search=' + encodeURIComponent(query);
+                                                 window.location.href = '/client/san-pham/search?search=' + encodeURIComponent(
+                                                 query);
                                              }
                                          }
                                      });
@@ -123,14 +124,12 @@
                                                      if (response.length > 0) {
                                                          response.forEach(product => {
                                                              $('#searchResults').append(`
-            <a href="/client/san-pham/${product.slug}" class="list-group-item list-group-item-action d-flex align-items-center">
-                <img src="${product.image ? '/storage/' + product.image : '/images/default.jpg'}"
-                     alt="${product.name}"
-                     style="width: 50px; height: 50px; margin-right: 10px; object-fit: cover;" />
-                ${product.name}
-            </a>
-        `);
-
+                                                                <a href="/client/san-pham/${product.slug}" class="list-group-item list-group-item-action d-flex align-items-center">
+                                                                    <img src="${product.image ? '/storage/' + product.image : '/images/default.jpg'}"
+                                                                        alt="${product.name}"
+                                                                        style="width: 50px; height: 50px; margin-right: 10px; object-fit: cover;" />
+                                                                    ${product.name}
+                                                                </a>`);
                                                          });
                                                          // Thêm liên kết "Xem thêm" nếu có hơn 3 sản phẩm
                                                          if (response.length > 3) {
@@ -393,11 +392,9 @@
                                                      modalBody.textContent = 'Bạn chắc chắn muốn xóa sản phẩm này?';
 
                                                      // Reset footer nút
-                                                     modalFooter.innerHTML = `
-            <button type="button" class="btn btn-sm btn-success" data-bs-dismiss="modal">Hủy</button>
-            <button type="button" class="btn btn-sm btn-danger" id="confirmDeleteBtn">Xóa</button>
-        `;
-
+                                                     modalFooter.innerHTML =
+                                                         `<button type="button" class="btn btn-sm btn-success" data-bs-dismiss="modal">Hủy</button>
+                                                        <button type="button" class="btn btn-sm btn-danger" id="confirmDeleteBtn">Xóa</button>`;
                                                      const modal = new bootstrap.Modal(modalEl);
                                                      modal.show();
 
