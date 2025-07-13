@@ -95,7 +95,7 @@
                                              const query = $('#searchInput').val().trim();
                                              if (query.length > 0) {
                                                  window.location.href = '/client/san-pham/search?search=' + encodeURIComponent(
-                                                     query);
+                                                 query);
                                              }
                                          }
                                      });
@@ -124,14 +124,12 @@
                                                      if (response.length > 0) {
                                                          response.forEach(product => {
                                                              $('#searchResults').append(`
-            <a href="/client/san-pham/${product.slug}" class="list-group-item list-group-item-action d-flex align-items-center">
-                <img src="${product.image ? '/storage/' + product.image : '/images/default.jpg'}"
-                     alt="${product.name}"
-                     style="width: 50px; height: 50px; margin-right: 10px; object-fit: cover;" />
-                ${product.name}
-            </a>
-        `);
-
+                                                                <a href="/client/san-pham/${product.slug}" class="list-group-item list-group-item-action d-flex align-items-center">
+                                                                    <img src="${product.image ? '/storage/' + product.image : '/images/default.jpg'}"
+                                                                        alt="${product.name}"
+                                                                        style="width: 50px; height: 50px; margin-right: 10px; object-fit: cover;" />
+                                                                    ${product.name}
+                                                                </a>`);
                                                          });
                                                          // Thêm liên kết "Xem thêm" nếu có hơn 3 sản phẩm
                                                          if (response.length > 3) {
@@ -368,7 +366,91 @@
                                          }
                                      </style>
 
+                                        <script>
+                                             cartBadge.addEventListener('mouseenter', () => {
+                                                 popup.style.display = 'block';
+                                             });
+                                             cartBadge.addEventListener('mouseleave', () => {
+                                                 popup.style.display = 'none';
+                                             });
 
+                                             // Xử lý xóa sản phẩm
+                                             popup.querySelectorAll('.cart-item-remove').forEach(button => {
+                                                 button.addEventListener('click', function() {
+                                                     const itemId = this.getAttribute('data-id');
+                                                     if (!itemId) return;
+
+                                                     const modalEl = document.getElementById('notificationModal');
+                                                     const modalBody = document.getElementById('notificationModalBody');
+                                                     const modalFooter = modalEl.querySelector('.modal-footer');
+
+                                                     modalBody.textContent = 'Bạn chắc chắn muốn xóa sản phẩm này?';
+
+                                                     // Reset footer nút
+                                                     modalFooter.innerHTML =
+                                                         `<button type="button" class="btn btn-sm btn-success" data-bs-dismiss="modal">Hủy</button>
+                                                        <button type="button" class="btn btn-sm btn-danger" id="confirmDeleteBtn">Xóa</button>`;
+                                                     const modal = new bootstrap.Modal(modalEl);
+                                                     modal.show();
+
+                                                     const confirmBtn = document.getElementById('confirmDeleteBtn');
+
+                                                     confirmBtn.onclick = () => {
+                                                         fetch('/client/cart/remove/' + itemId, {
+                                                                 method: 'DELETE',
+                                                                 headers: {
+                                                                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                                                     'Accept': 'application/json'
+                                                                 }
+                                                             })
+                                                             .then(res => {
+                                                                 if (!res.ok) throw new Error('Lỗi server');
+                                                                 return res.json();
+                                                             })
+                                                             .then(data => {
+                                                                 if (data.success) {
+                                                                     // Xóa phần tử cart-item khỏi DOM
+                                                                     const cartItemElem = button.closest('.cart-item');
+                                                                     if (cartItemElem) cartItemElem.remove();
+
+                                                                     // Cập nhật tổng tiền nếu có hàm updateTotal
+                                                                     if (typeof updateTotal === 'function') updateTotal();
+
+                                                                     modal.hide();
+                                                                 } else {
+                                                                     alert(data.message || 'Xóa thất bại');
+                                                                 }
+                                                             })
+                                                             .catch(err => {
+                                                                 console.error(err);
+                                                                 alert('Lỗi xảy ra, vui lòng thử lại');
+                                                             });
+                                                     };
+                                                 });
+                                             });
+
+
+
+                                             function updateTotal() {
+                                                 let total = 0;
+                                                 popup.querySelectorAll('.cart-items-list li').forEach(li => {
+                                                     const qtyPriceText = li.querySelector('.cart-item-qty-price')?.textContent || '';
+                                                     const match = qtyPriceText.match(/(\d+)\s*x\s*([\d\.]+)/);
+                                                     if (match) {
+                                                         const qty = parseInt(match[1]);
+                                                         const priceStr = match[2].replace(/\./g, ''); // bỏ dấu chấm ngăn cách hàng nghìn
+                                                         const price = parseInt(priceStr);
+                                                         total += qty * price;
+                                                     }
+
+                                                     if (match) {
+                                                         total += parseInt(match[1]) * parseFloat(match[2]);
+                                                     }
+                                                 });
+                                                 popup.querySelector('.total-price').textContent = 'đ' + total.toFixed(2);
+                                             }
+                                         });
+                                     </script>
                                  </li>
                                  <li class="right-side">
                                      <a href="{{ route('client.orders.index') }}" class="btn p-0 position-relative"
@@ -1170,12 +1252,12 @@
                          </div>
                      </div>
 
-                     <div class="header-nav-right">
+                     {{-- <div class="header-nav-right">
                          <button class="btn deal-button" data-bs-toggle="modal" data-bs-target="#deal-box">
                              <i class="ri-leaf-line"></i> <!-- icon lá cây từ Remix Icon -->
                              <span>Ưu đãi hôm nay</span>
                          </button>
-                     </div>
+                     </div> --}}
                  </div>
              </div>
          </div>
@@ -1270,7 +1352,7 @@
      {{-- modal xóa trong giỏ ở trang home --}}
      <!-- Modal xác nhận xóa sản phẩm tự tạo -->
      <div id="customConfirmModal"
-         style="display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); 
+         style="display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
     justify-content: center; align-items: center; z-index: 9999;">
          <div
              style="background: white; padding: 20px; border-radius: 8px; max-width: 320px; width: 90%; text-align: center;">

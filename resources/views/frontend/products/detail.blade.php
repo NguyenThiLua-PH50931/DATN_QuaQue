@@ -611,7 +611,7 @@
             </div>
 
             <!-- Banner Section -->
-            <div class="ratio_156 pt-25">
+            {{-- <div class="ratio_156 pt-25">
                 <div class="home-contain">
                     <img src="../assets/images/vegetable/banner/8.jpg" class="bg-img blur-up lazyload"
                         alt="" />
@@ -633,7 +633,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         </div>
     </div>
     </div>

@@ -29,9 +29,7 @@ class CheckAdminMiddleware
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json(['message' => 'Bạn phải đăng nhập trước'], 401);
             }
-            return redirect()->back()->with([
-                'msg' => 'Bạn phải đăng nhập trước'
-            ]);
+            return redirect()->route('login')->with('msg', 'Bạn phải đăng nhập trước');
         }
     }
 }
