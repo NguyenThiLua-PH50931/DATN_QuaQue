@@ -69,9 +69,25 @@ class Product extends Model
         return $this->hasMany(ProductImage::class, 'product_id', 'id');
     }
 
+    
+     // Quan hệ với Comment
     public function comments()
     {
         return $this->hasMany(Comment::class);
+    }
+
+    // Sự kiện xóa sản phẩm
+    protected static function booted()
+    {
+        static::deleting(function ($product) {
+            // Xóa tất cả bình luận liên quan
+            foreach ($product->comments as $comment) {
+                // Xóa các phản hồi của bình luận
+                $comment->replies()->delete();
+                // Xóa bình luận
+                $comment->delete();
+            }
+        });
     }
 
     // Scopes
