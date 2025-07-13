@@ -11,6 +11,7 @@ use App\Models\Admin\Banner;
 use App\Models\Admin\Product as AdminProduct;
 use App\Models\Client\Review;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -48,7 +49,7 @@ class ProductController extends Controller
         // Filter theo rating trung bình
         if ($request->filled('rating')) {
             $query->withAvg('reviews', 'rating')
-                  ->havingRaw('ROUND(reviews_avg_rating) = ?', [$request->rating]);
+                ->havingRaw('ROUND(reviews_avg_rating) = ?', [$request->rating]);
         }
         // Sắp xếp
         if ($request->filled('sort')) {
@@ -80,6 +81,8 @@ class ProductController extends Controller
         // Lấy danh sách danh mục và vùng miền cho filter
         $categories = \App\Models\admin\Category::all();
         $regions = \App\Models\admin\Region::all();
+
+
 
         return view('frontend.products.index', compact('products', 'categories', 'regions', 'priceMin', 'priceMax'));
     }
@@ -194,7 +197,17 @@ class ProductController extends Controller
             ->limit(4)
             ->get();
         $reviews = $product->reviews()->with('user')->latest()->get();
+        $user = Auth::user();
+        $canReview = false;
 
+        if ($user) {
+            $canReview = DB::table('order_items')
+                ->join('orders', 'order_items.order_id', '=', 'orders.id')
+                ->where('orders.user_id', $user->id)
+                ->where('orders.status', 'delivered')
+                ->whereIn('order_items.product_variant_value_id', $variants->pluck('id'))
+                ->exists();
+        }
         return view('frontend.products.detail', [
             'product'                 => $product,
             'variants'                => $variants,
@@ -206,6 +219,7 @@ class ProductController extends Controller
             'productSectionPromoLeftTop' => $productSectionPromoLeftTop,
             'reviews'    => $reviews,
             'topViewedProducts'       => $topViewedProducts,
+            'canReview'               => $canReview,
         ]);
     }
     public function quickView($slug)
@@ -346,22 +360,37 @@ class ProductController extends Controller
     public function storeReview(Request $request)
     {
         $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'comment'    => 'required|string',
-            'rating'     => 'required|integer|min:1|max:5',
+            'product_variant_id' => 'required|exists:product_variants,id',
+            'comment' => 'required|string',
+            'rating'  => 'required|integer|min:1|max:5',
         ]);
 
         $user = Auth::user();
 
+        // Kiểm tra xem user đã mua biến thể này và đơn hàng đã được giao chưa
+        $hasDeliveredVariant = DB::table('order_items')
+            ->join('orders', 'order_items.order_id', '=', 'orders.id')
+            ->where('order_items.product_variant_id', $request->product_variant_id)
+            ->where('orders.user_id', $user->id)
+            ->where('orders.status', 'delivered') // giả sử status 'delivered' là đã giao
+            ->exists();
+
+        if (!$hasDeliveredVariant) {
+            return redirect()->back()->withErrors(['Bạn chỉ có thể đánh giá sản phẩm sau khi đã nhận hàng.']);
+        }
+
+        // Lưu đánh giá
         Review::create([
-            'product_id' => $request->product_id,
-            'user_id'    => $user?->id,
-            'rating'     => $request->rating,
-            'comment'    => $request->comment,
+            'product_id'          => DB::table('product_variants')->where('id', $request->product_variant_id)->value('product_id'),
+            'product_variant_id'  => $request->product_variant_id,
+            'user_id'             => $user->id,
+            'rating'              => $request->rating,
+            'comment'             => $request->comment,
         ]);
 
         return redirect()->back()->with('success', 'Đánh giá của bạn đã được gửi.');
     }
+
     public function filterReviews(Request $request, $slug)
     {
         $ratingFilter = $request->query('star');
@@ -385,14 +414,14 @@ class ProductController extends Controller
     {
         $query = $request->input('q');
         $products = Product::where('active', 1)
-            ->where(function($q) use ($query) {
+            ->where(function ($q) use ($query) {
                 $q->where('name', 'like', "%$query%")
-                  ->orWhereHas('category', function($cat) use ($query) {
-                      $cat->where('name', 'like', "%$query%") ;
-                  })
-                  ->orWhereHas('region', function($reg) use ($query) {
-                      $reg->where('name', 'like', "%$query%") ;
-                  });
+                    ->orWhereHas('category', function ($cat) use ($query) {
+                        $cat->where('name', 'like', "%$query%");
+                    })
+                    ->orWhereHas('region', function ($reg) use ($query) {
+                        $reg->where('name', 'like', "%$query%");
+                    });
             })
             ->select('id', 'name', 'slug', 'image')
             ->limit(10)
