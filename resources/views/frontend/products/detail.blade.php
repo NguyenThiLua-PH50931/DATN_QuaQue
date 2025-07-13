@@ -157,8 +157,7 @@
                                                 data-field="">
                                                 <i class="fa fa-minus" aria-hidden="true"></i>
                                             </button>
-                                            <input class="form-control input-number qty-input" type="text"
-                                                name="quantity" value="1" min="1" />
+                                            <input class="form-control input-number qty-input" type="text" name="quantity" value="1" min="1" data-stock="{{ $variant->stock ?? 999999 }}" data-cart-item-id="{{ $cartItemId ?? '' }}" />
                                             <button type="button" class="qty-right-plus" data-type="plus"
                                                 data-field="">
                                                 <i class="fa fa-plus" aria-hidden="true"></i>
@@ -472,31 +471,36 @@
                                                         Add a review
                                                     </h4>
                                                 </div>
+                                                @if($canReview)
+                                                {{-- Form đánh giá --}}
 
-                                                <div class="row g-4">
-                                                    <form action="{{ route('client.product.reviews.store') }}" method="POST">
-                                                        @csrf
-                                                        <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                                <form action="{{ route('client.product.reviews.store') }}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                                    {{-- Nếu bạn cần đánh giá theo biến thể cụ thể, thêm input hidden cho variant_id --}}
 
-                                                        <div class="mb-3">
-                                                            <label for="rating">Đánh giá sao:</label>
-                                                            <select name="rating" class="form-select" required>
-                                                                <option value="">Chọn số sao</option>
-                                                                @for ($i = 5; $i >= 1; $i--)
-                                                                <option value="{{ $i }}">{{ $i }} sao</option>
-                                                                @endfor
-                                                            </select>
-                                                        </div>
+                                                    <div class="mb-3">
+                                                        <label for="rating">Đánh giá sao:</label>
+                                                        <select name="rating" class="form-select" required>
+                                                            <option value="">Chọn số sao</option>
+                                                            @for ($i = 5; $i >= 1; $i--)
+                                                            <option value="{{ $i }}">{{ $i }} sao</option>
+                                                            @endfor
+                                                        </select>
+                                                    </div>
 
-                                                        <div class="mb-3">
-                                                            <label for="comment">Nội dung đánh giá:</label>
-                                                            <textarea name="comment" class="form-control" rows="4" required placeholder="Viết đánh giá..."></textarea>
-                                                        </div>
+                                                    <div class="mb-3">
+                                                        <label for="comment">Nội dung đánh giá:</label>
+                                                        <textarea name="comment" class="form-control" rows="4" required placeholder="Viết đánh giá..."></textarea>
+                                                    </div>
 
-                                                        <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
-                                                    </form>
-
+                                                    <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
+                                                </form>
+                                                @else
+                                                <div class="alert alert-warning">
+                                                    Bạn chỉ có thể đánh giá sau khi đã nhận được sản phẩm.
                                                 </div>
+                                                @endif
                                             </div>
 
                                             <div class="col-12">
@@ -778,301 +782,301 @@
                                             <li>Số lượng : <a href="javascript:void(0)" id="product-stock">—</a></li>
                                             <li>Tags : <a
                                                     href="javascript:void(0)">{{ $product->category->name ?? '' }}</a></li>
-                                        </ul>
-                                    </div>
-
+                                    </ul>
                                 </div>
-                            </div>
-                        </div>
 
-                        <div class="col-12">
-                            <div class="product-section-box">
-                                <ul class="nav nav-tabs custom-nav" id="myTab" role="tablist">
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link active" id="description-tab" data-bs-toggle="tab"
-                                            data-bs-target="#description" type="button" role="tab"
-                                            aria-controls="description" aria-selected="true">
-                                            Mô tả
-                                        </button>
-                                    </li>
-
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link" id="info-tab" data-bs-toggle="tab"
-                                            data-bs-target="#info" type="button" role="tab" aria-controls="info"
-                                            aria-selected="false">
-                                            Mô tả Biến thể
-                                        </button>
-                                    </li>
-
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link" id="care-tab" data-bs-toggle="tab"
-                                            data-bs-target="#care" type="button" role="tab" aria-controls="care"
-                                            aria-selected="false">
-                                            Bình luận
-                                        </button>
-                                    </li>
-
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link" id="review-tab" data-bs-toggle="tab"
-                                            data-bs-target="#review" type="button" role="tab"
-                                            aria-controls="review" aria-selected="false">
-                                            Review
-                                        </button>
-                                    </li>
-                                </ul>
-
-                                <div class="tab-content custom-tab" id="myTabContent">
-                                    <div class="tab-pane fade show active" id="description" role="tabpanel"
-                                        aria-labelledby="description-tab">
-                                        <div class="product-description">
-                                            {!! $product->description !!}
-                                        </div>
-                                    </div>
-
-                                    <div class="tab-pane fade" id="info" role="tabpanel"
-                                        aria-labelledby="info-tab">
-                                        <div class="table-responsive">
-                                            <div class="table-responsive" id="variant-description">
-                                                {!! $product->variants[0]->description ?? '<p>Chưa có mô tả biến thể</p>' !!}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="tab-pane fade" id="care" role="tabpanel"
-                                        aria-labelledby="care-tab">
-                                        <div class="information-box">
-                                            bình luận
-                                        </div>
-                                    </div>
-
-                                    <div class="tab-pane fade" id="review" role="tabpanel"
-                                        aria-labelledby="review-tab">
-                                        <div class="review-box">
-                                            <div class="row g-4">
-                                                <div class="col-xl-6">
-                                                    <div class="review-title">
-                                                        <h4 class="fw-500">
-                                                            Đánh giá
-                                                        </h4>
-                                                    </div>
-
-                                                    <div class="d-flex">
-                                                        <div class="product-rating">
-                                                            <ul class="rating">
-                                                                <li>
-                                                                    <i data-feather="star" class="fill"></i>
-                                                                </li>
-                                                                <li>
-                                                                    <i data-feather="star" class="fill"></i>
-                                                                </li>
-                                                                <li>
-                                                                    <i data-feather="star" class="fill"></i>
-                                                                </li>
-                                                                <li>
-                                                                    <i data-feather="star"></i>
-                                                                </li>
-                                                                <li>
-                                                                    <i data-feather="star"></i>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                        <h6 class="ms-3">
-                                                            4.2 Out Of 5
-                                                        </h6>
-                                                    </div>
-
-                                                    <div class="rating-box">
-                                                        <ul>
-                                                            <li>
-                                                                <div class="rating-list">
-                                                                    <h5>
-                                                                        5
-                                                                        Star
-                                                                    </h5>
-                                                                    <div class="progress">
-                                                                        <div class="progress-bar" role="progressbar"
-                                                                            style="width: 68%;" aria-valuenow="100"
-                                                                            aria-valuemin="0" aria-valuemax="100">
-                                                                            68%
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </li>
-
-                                                            <li>
-                                                                <div class="rating-list">
-                                                                    <h5>
-                                                                        4
-                                                                        Star
-                                                                    </h5>
-                                                                    <div class="progress">
-                                                                        <div class="progress-bar" role="progressbar"
-                                                                            style="width: 67%;" aria-valuenow="100"
-                                                                            aria-valuemin="0" aria-valuemax="100">
-                                                                            67%
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </li>
-
-                                                            <li>
-                                                                <div class="rating-list">
-                                                                    <h5>
-                                                                        3
-                                                                        Star
-                                                                    </h5>
-                                                                    <div class="progress">
-                                                                        <div class="progress-bar" role="progressbar"
-                                                                            style="width: 42%;" aria-valuenow="100"
-                                                                            aria-valuemin="0" aria-valuemax="100">
-                                                                            42%
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </li>
-
-                                                            <li>
-                                                                <div class="rating-list">
-                                                                    <h5>
-                                                                        2
-                                                                        Star
-                                                                    </h5>
-                                                                    <div class="progress">
-                                                                        <div class="progress-bar" role="progressbar"
-                                                                            style="width: 30%;" aria-valuenow="100"
-                                                                            aria-valuemin="0" aria-valuemax="100">
-                                                                            30%
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </li>
-
-                                                            <li>
-                                                                <div class="rating-list">
-                                                                    <h5>
-                                                                        1
-                                                                        Star
-                                                                    </h5>
-                                                                    <div class="progress">
-                                                                        <div class="progress-bar" role="progressbar"
-                                                                            style="width: 24%;" aria-valuenow="100"
-                                                                            aria-valuemin="0" aria-valuemax="100">
-                                                                            24%
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-xl-6">
-                                                    <div class="review-title">
-                                                        <h4 class="fw-500">
-                                                            Add a review
-                                                        </h4>
-                                                    </div>
-
-                                                    <div class="row g-4">
-
-                                                        <div class="col-12">
-                                                            <div class="form-floating theme-form-floating">
-                                                                <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2"
-                                                                    style="
-                                                                            height: 150px;
-                                                                        "></textarea>
-                                                                <label for="floatingTextarea2">Write
-                                                                    Your
-                                                                    Comment</label>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-12">
-                                                    <div class="review-title">
-                                                        <h4 class="fw-500">
-                                                            Customer
-                                                            questions &
-                                                            answers
-                                                        </h4>
-                                                    </div>
-
-                                                    <div class="review-people">
-                                                        <ul class="review-list">
-                                                            <li>
-                                                                <div class="people-box">
-                                                                    <div>
-                                                                        <div class="people-image">
-                                                                            <img src="../assets/images/review/1.jpg"
-                                                                                class="img-fluid blur-up lazyload"
-                                                                                alt="" />
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="people-comment">
-                                                                        <a class="name"
-                                                                            href="javascript:void(0)">Tracey</a>
-                                                                        <div class="date-time">
-                                                                            <h6 class="text-content">
-                                                                                14
-                                                                                Jan,
-                                                                                2022
-                                                                                at
-                                                                                12.58
-                                                                                AM
-                                                                            </h6>
-
-                                                                            <div class="product-rating">
-                                                                                <ul class="rating">
-                                                                                    <li>
-                                                                                        <i data-feather="star"
-                                                                                            class="fill"></i>
-                                                                                    </li>
-                                                                                    <li>
-                                                                                        <i data-feather="star"
-                                                                                            class="fill"></i>
-                                                                                    </li>
-                                                                                    <li>
-                                                                                        <i data-feather="star"
-                                                                                            class="fill"></i>
-                                                                                    </li>
-                                                                                    <li>
-                                                                                        <i data-feather="star"></i>
-                                                                                    </li>
-                                                                                    <li>
-                                                                                        <i data-feather="star"></i>
-                                                                                    </li>
-                                                                                </ul>
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <div class="reply">
-                                                                            <p>
-                                                                                nội dung đánh giá.<a
-                                                                                    href="javascript:void(0)">Reply</a>
-                                                                            </p>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    </div> --}}
-                                </div>
                             </div>
                         </div>
                     </div>
-                    @empty
-                    <p>Không có sản phẩm nào để hiển thị.</p>
-                    @endforelse
+
+                    <div class="col-12">
+                        <div class="product-section-box">
+                            <ul class="nav nav-tabs custom-nav" id="myTab" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="description-tab" data-bs-toggle="tab"
+                                        data-bs-target="#description" type="button" role="tab"
+                                        aria-controls="description" aria-selected="true">
+                                        Mô tả
+                                    </button>
+                                </li>
+
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="info-tab" data-bs-toggle="tab"
+                                        data-bs-target="#info" type="button" role="tab" aria-controls="info"
+                                        aria-selected="false">
+                                        Mô tả Biến thể
+                                    </button>
+                                </li>
+
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="care-tab" data-bs-toggle="tab"
+                                        data-bs-target="#care" type="button" role="tab" aria-controls="care"
+                                        aria-selected="false">
+                                        Bình luận
+                                    </button>
+                                </li>
+
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="review-tab" data-bs-toggle="tab"
+                                        data-bs-target="#review" type="button" role="tab"
+                                        aria-controls="review" aria-selected="false">
+                                        Review
+                                    </button>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content custom-tab" id="myTabContent">
+                                <div class="tab-pane fade show active" id="description" role="tabpanel"
+                                    aria-labelledby="description-tab">
+                                    <div class="product-description">
+                                        {!! $product->description !!}
+                                    </div>
+                                </div>
+
+                                <div class="tab-pane fade" id="info" role="tabpanel"
+                                    aria-labelledby="info-tab">
+                                    <div class="table-responsive">
+                                        <div class="table-responsive" id="variant-description">
+                                            {!! $product->variants[0]->description ?? '<p>Chưa có mô tả biến thể</p>' !!}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="tab-pane fade" id="care" role="tabpanel"
+                                    aria-labelledby="care-tab">
+                                    <div class="information-box">
+                                        bình luận
+                                    </div>
+                                </div>
+
+                                <div class="tab-pane fade" id="review" role="tabpanel"
+                                    aria-labelledby="review-tab">
+                                    <div class="review-box">
+                                        <div class="row g-4">
+                                            <div class="col-xl-6">
+                                                <div class="review-title">
+                                                    <h4 class="fw-500">
+                                                        Đánh giá
+                                                    </h4>
+                                                </div>
+
+                                                <div class="d-flex">
+                                                    <div class="product-rating">
+                                                        <ul class="rating">
+                                                            <li>
+                                                                <i data-feather="star" class="fill"></i>
+                                                            </li>
+                                                            <li>
+                                                                <i data-feather="star" class="fill"></i>
+                                                            </li>
+                                                            <li>
+                                                                <i data-feather="star" class="fill"></i>
+                                                            </li>
+                                                            <li>
+                                                                <i data-feather="star"></i>
+                                                            </li>
+                                                            <li>
+                                                                <i data-feather="star"></i>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                    <h6 class="ms-3">
+                                                        4.2 Out Of 5
+                                                    </h6>
+                                                </div>
+
+                                                <div class="rating-box">
+                                                    <ul>
+                                                        <li>
+                                                            <div class="rating-list">
+                                                                <h5>
+                                                                    5
+                                                                    Star
+                                                                </h5>
+                                                                <div class="progress">
+                                                                    <div class="progress-bar" role="progressbar"
+                                                                        style="width: 68%;" aria-valuenow="100"
+                                                                        aria-valuemin="0" aria-valuemax="100">
+                                                                        68%
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+
+                                                        <li>
+                                                            <div class="rating-list">
+                                                                <h5>
+                                                                    4
+                                                                    Star
+                                                                </h5>
+                                                                <div class="progress">
+                                                                    <div class="progress-bar" role="progressbar"
+                                                                        style="width: 67%;" aria-valuenow="100"
+                                                                        aria-valuemin="0" aria-valuemax="100">
+                                                                        67%
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+
+                                                        <li>
+                                                            <div class="rating-list">
+                                                                <h5>
+                                                                    3
+                                                                    Star
+                                                                </h5>
+                                                                <div class="progress">
+                                                                    <div class="progress-bar" role="progressbar"
+                                                                        style="width: 42%;" aria-valuenow="100"
+                                                                        aria-valuemin="0" aria-valuemax="100">
+                                                                        42%
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+
+                                                        <li>
+                                                            <div class="rating-list">
+                                                                <h5>
+                                                                    2
+                                                                    Star
+                                                                </h5>
+                                                                <div class="progress">
+                                                                    <div class="progress-bar" role="progressbar"
+                                                                        style="width: 30%;" aria-valuenow="100"
+                                                                        aria-valuemin="0" aria-valuemax="100">
+                                                                        30%
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+
+                                                        <li>
+                                                            <div class="rating-list">
+                                                                <h5>
+                                                                    1
+                                                                    Star
+                                                                </h5>
+                                                                <div class="progress">
+                                                                    <div class="progress-bar" role="progressbar"
+                                                                        style="width: 24%;" aria-valuenow="100"
+                                                                        aria-valuemin="0" aria-valuemax="100">
+                                                                        24%
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xl-6">
+                                                <div class="review-title">
+                                                    <h4 class="fw-500">
+                                                        Add a review
+                                                    </h4>
+                                                </div>
+
+                                                <div class="row g-4">
+
+                                                    <div class="col-12">
+                                                        <div class="form-floating theme-form-floating">
+                                                            <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2"
+                                                                style="
+                                                                            height: 150px;
+                                                                        "></textarea>
+                                                            <label for="floatingTextarea2">Write
+                                                                Your
+                                                                Comment</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-12">
+                                                <div class="review-title">
+                                                    <h4 class="fw-500">
+                                                        Customer
+                                                        questions &
+                                                        answers
+                                                    </h4>
+                                                </div>
+
+                                                <div class="review-people">
+                                                    <ul class="review-list">
+                                                        <li>
+                                                            <div class="people-box">
+                                                                <div>
+                                                                    <div class="people-image">
+                                                                        <img src="../assets/images/review/1.jpg"
+                                                                            class="img-fluid blur-up lazyload"
+                                                                            alt="" />
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="people-comment">
+                                                                    <a class="name"
+                                                                        href="javascript:void(0)">Tracey</a>
+                                                                    <div class="date-time">
+                                                                        <h6 class="text-content">
+                                                                            14
+                                                                            Jan,
+                                                                            2022
+                                                                            at
+                                                                            12.58
+                                                                            AM
+                                                                        </h6>
+
+                                                                        <div class="product-rating">
+                                                                            <ul class="rating">
+                                                                                <li>
+                                                                                    <i data-feather="star"
+                                                                                        class="fill"></i>
+                                                                                </li>
+                                                                                <li>
+                                                                                    <i data-feather="star"
+                                                                                        class="fill"></i>
+                                                                                </li>
+                                                                                <li>
+                                                                                    <i data-feather="star"
+                                                                                        class="fill"></i>
+                                                                                </li>
+                                                                                <li>
+                                                                                    <i data-feather="star"></i>
+                                                                                </li>
+                                                                                <li>
+                                                                                    <i data-feather="star"></i>
+                                                                                </li>
+                                                                            </ul>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="reply">
+                                                                        <p>
+                                                                            nội dung đánh giá.<a
+                                                                                href="javascript:void(0)">Reply</a>
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> --}}
+                        </div>
+                    </div>
                 </div>
             </div>
+            @empty
+            <p>Không có sản phẩm nào để hiển thị.</p>
+            @endforelse
         </div>
+    </div>
+    </div>
     </div>
 </section>
 <!-- Releted Product Section End -->
@@ -1198,73 +1202,6 @@
 </script>
 {{-- update số lượng trang detail --}}
 <script>
-    const updateQuantityUrl = "{{ route('client.cart.updateQuantity') }}";
-
-    document.querySelectorAll('.qty-left-minus, .qty-right-plus').forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-
-            const input = button.closest('.input-group').querySelector('input[name="quantity"]');
-            if (!input) return;
-
-            let val = parseInt(input.value, 10) || 1;
-            const min = 1;
-            const maxStock = parseInt(input.getAttribute('data-stock'), 10) || 999999;
-
-            const cartItemId = input.getAttribute('data-cart-item-id');
-            if (!cartItemId) {
-                console.error('cart_item_id not found');
-                return;
-            }
-
-            let action;
-
-            if (button.classList.contains('qty-right-plus')) {
-                if (val < maxStock) {
-                    val++;
-                    action = 'increase';
-                } else {
-                    alert('Số lượng đã đạt tối đa trong kho!');
-                    return;
-                }
-            } else if (button.classList.contains('qty-left-minus')) {
-                if (val > min) {
-                    val--;
-                    action = 'decrease';
-                } else {
-                    return; // không giảm nữa
-                }
-            }
-
-            fetch(updateQuantityUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    },
-                    body: JSON.stringify({
-                        cart_item_id: cartItemId,
-                        action: action
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        input.value = data.quantity; // cập nhật số lượng mới lên input
-                        console.log('Quantity updated to:', data.quantity);
-                    } else {
-                        alert(data.message || 'Cập nhật số lượng thất bại');
-                    }
-                })
-                .catch(error => {
-                    console.error('Fetch error:', error);
-                    alert('Có lỗi xảy ra, vui lòng thử lại');
-                });
-        });
-    });
-</script>
-
-<script>
     window.VARIANTS = @json($variantMap ?? []);
 
     let selected = {};
@@ -1375,26 +1312,181 @@
         });
     });
 </script>
+{{-- cộng trừ số lượng giỏ  --}}
+<script>
+    const updateQuantityUrl = "{{ route('client.cart.updateQuantity') }}";
 
+    document.querySelectorAll('.qty-left-minus, .qty-right-plus').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            // Tổng số thuộc tính cần chọn
+            const totalAttributes = Object.keys(@json($attributes)).length;
+
+            // Đếm số biến thể đã chọn (class active2)
+            const selectedCount = document.querySelectorAll('.attribute-select.active2').length;
+
+            if (selectedCount !== totalAttributes) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Thông báo',
+                    text: 'Vui lòng chọn đầy đủ biến thể sản phẩm trước khi thêm số lượng.',
+                    confirmButtonColor: '#0da487',
+                    confirmButtonText: 'OK',
+                    width: 350,
+                    padding: '1rem 1.5rem'
+                });
+                return;
+            }
+
+            // Lấy input số lượng
+            const input = button.closest('.input-group').querySelector('input[name="quantity"]');
+            if (!input) return;
+
+            // Lấy giá trị biến thể đã chọn (value_ids)
+            let selected = {};
+            document.querySelectorAll('.attribute-select.active2').forEach(el => {
+                selected[el.getAttribute('data-attr')] = parseInt(el.getAttribute('data-value'), 10);
+            });
+
+            // Chuẩn bị mảng value_ids đã chọn (đã sort)
+            const selectedValueIds = Object.values(selected).sort((a, b) => a - b);
+
+            // Tìm biến thể tương ứng trong window.VARIANTS
+            let foundVariant = window.VARIANTS.find(v =>
+                v.value_ids.length === selectedValueIds.length &&
+                v.value_ids.every((id, i) => id === selectedValueIds[i]) &&
+                Number(v.active) === 1
+            );
+
+            // Lấy tồn kho của biến thể tìm được, hoặc mặc định lớn nếu không tìm thấy
+            const maxStock = foundVariant ? parseInt(foundVariant.stock, 10) || 999999 : 999999;
+
+            let val = parseInt(input.value, 10) || 1;
+            const min = parseInt(input.min, 10) || 1;
+
+            let action;
+
+            if (button.classList.contains('qty-right-plus')) {
+                if (val < maxStock) {
+                    val++;
+                    action = 'increase';
+                } else {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Thông báo',
+                        text: 'Số lượng đã đạt tối đa trong kho!',
+                        confirmButtonColor: '#0da487',
+                        confirmButtonText: 'OK',
+                        width: 400,
+                        padding: '1rem 1.5rem'
+                    });
+                    return;
+                }
+            } else if (button.classList.contains('qty-left-minus')) {
+                if (val > min) {
+                    val--;
+                    action = 'decrease';
+                } else {
+                    return; // không giảm nữa
+                }
+            }
+
+            input.value = val; // Cập nhật số lượng lên input
+
+            // Gọi API cập nhật nếu có cart_item_id (ở trang giỏ hàng)
+            const cartItemId = input.getAttribute('data-cart-item-id');
+            if (!cartItemId) {
+                // Không có cartItemId, chỉ update local (ví dụ trang chi tiết)
+                return;
+            }
+
+            fetch(updateQuantityUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    },
+                    body: JSON.stringify({
+                        cart_item_id: cartItemId,
+                        action: action
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        input.value = data.quantity; // cập nhật số lượng theo server trả về
+                        console.log('Quantity updated to:', data.quantity);
+                    } else {
+                        alert(data.message || 'Cập nhật số lượng thất bại');
+                    }
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                    alert('Có lỗi xảy ra, vui lòng thử lại');
+                });
+        });
+    });
+</script>
+<!-- xử lý thêm vào giỏ -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const form = document.querySelector('.add-to-cart-form');
         const variantInput = document.getElementById('variant_attributes');
 
-        // Lấy số lượng thuộc tính cần chọn (dựa vào dữ liệu attributes truyền từ backend)
+        // Số lượng thuộc tính cần chọn (dựa vào backend truyền qua blade)
         const attributesCount = Object.keys(@json($attributes)).length;
 
-        // Biến lưu trạng thái lựa chọn
+        // Biến lưu trạng thái lựa chọn biến thể (attrId -> valueId)
         let selected = {};
+        const qtyInput = document.querySelector('input[name="quantity"]');
+        if (qtyInput) {
+            ['blur', 'change'].forEach(evt => {
+                qtyInput.addEventListener(evt, function() {
+                    const maxStock = parseInt(qtyInput.getAttribute('data-stock'), 10) || 999999;
+                    let val = parseInt(qtyInput.value, 10);
 
-        // Hàm cập nhật input ẩn và log (bạn có thể tắt console.log khi cần)
+                    if (isNaN(val) || val < 1) {
+                        qtyInput.value = 1;
+                        return;
+                    }
+
+                    if (val > maxStock) {
+                        qtyInput.value = maxStock;
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Thông báo',
+                            text: `Số lượng tối đa là ${maxStock}`,
+                            confirmButtonColor: '#0da487',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                });
+            });
+        }
+        // Hàm cập nhật input ẩn variant_attributes
         function updateVariantInput() {
             if (Object.keys(selected).length === 0) {
-                variantInput.value = null; // hoặc variantInput.value = '';
+                variantInput.value = null;
             } else {
                 variantInput.value = JSON.stringify(selected);
             }
             console.log('Updated variant_attributes:', variantInput.value);
+        }
+
+        // Hàm cập nhật tồn kho cho input số lượng
+        function updateStockOfInput(foundVariant) {
+            const input = document.querySelector('input[name="quantity"]');
+            if (!input) return;
+
+            const stock = foundVariant.stock ?? 999999;
+            input.setAttribute('data-stock', stock);
+            input.setAttribute('max', stock);
+
+            let val = parseInt(input.value, 10) || 1;
+            if (val > stock) {
+                input.value = stock;
+            }
         }
 
         // Gán sự kiện click cho từng lựa chọn biến thể
@@ -1417,34 +1509,45 @@
                 // Cập nhật input ẩn
                 updateVariantInput();
 
-                // Cập nhật thông tin biến thể (giá, sku, stock) nếu chọn đủ biến thể
+                // Nếu chọn đủ biến thể thì tìm biến thể phù hợp
                 if (Object.keys(selected).length === attributesCount) {
-                    let attrValueIds = Object.values(selected).map(Number).sort((a, b) => a -
-                        b);
+                    let attrValueIds = Object.values(selected).map(Number).sort((a, b) => a - b);
+
+                    // Tìm biến thể trùng
                     let found = window.VARIANTS.find(v =>
                         v.value_ids.length === attrValueIds.length &&
-                        v.value_ids.slice().sort((a, b) => a - b).every((id, i) => id ===
-                            attrValueIds[i])
+                        v.value_ids.slice().sort((a, b) => a - b).every((id, i) => id === attrValueIds[i])
                     );
 
                     if (found) {
                         document.getElementById('product-sku').textContent = found.sku || 'N/A';
-                        document.getElementById('product-stock').textContent = found.stock ??
-                            'N/A';
-                        document.getElementById('product-price').textContent = found.price ? (
-                            Number(found.price).toLocaleString() + ' đ') : 'Liên hệ';
+                        document.getElementById('product-stock').textContent = found.stock ?? 'N/A';
+                        document.getElementById('product-price').textContent = found.price ? (Number(found.price).toLocaleString() + ' đ') : 'Liên hệ';
                         document.getElementById('variant-price').value = found.price || '';
+
+                        // Cập nhật tồn kho cho input số lượng
+                        updateStockOfInput(found);
                     } else {
                         document.getElementById('product-sku').textContent = 'Không tồn tại';
                         document.getElementById('product-stock').textContent = 'Không tồn tại';
                         document.getElementById('product-price').textContent = 'Không tồn tại';
                         document.getElementById('variant-price').value = '';
+
+                        // Reset tồn kho lớn
+                        updateStockOfInput({
+                            stock: 999999
+                        });
                     }
                 } else {
+                    // Chưa chọn đủ biến thể => reset hiển thị và tồn kho
                     document.getElementById('product-sku').textContent = '—';
                     document.getElementById('product-stock').textContent = '—';
                     document.getElementById('product-price').textContent = '—';
                     document.getElementById('variant-price').value = '';
+
+                    updateStockOfInput({
+                        stock: 999999
+                    });
                 }
             });
         });
@@ -1460,29 +1563,25 @@
                         text: 'Vui lòng chọn đầy đủ biến thể sản phẩm trước khi thêm vào giỏ hàng.',
                         confirmButtonText: 'OK',
                         confirmButtonColor: '#0da487',
-                        width: 300, // nhỏ hơn nữa
+                        width: 300,
                         padding: '0.8rem 1rem',
                         customClass: {
                             title: 'swal2-title-smaller',
                             content: 'swal2-content-smaller'
                         }
                     });
-
                     return false;
                 }
-                // Cập nhật lại input ẩn lần cuối trước khi submit
                 updateVariantInput();
             });
         }
 
-
-        // Khởi tạo giá trị input ẩn ban đầu
+        // Khởi tạo input ẩn lần đầu
         updateVariantInput();
-
-        // --- Phần tăng giảm số lượng ---
-
     });
 </script>
+
+
 <style>
     .swal2-title-smaller {
         font-size: 14px !important;
@@ -1501,7 +1600,7 @@
         @if(session('error'))
         Swal.fire({
             icon: 'error', // hoặc 'success'
-            title: 'Lỗi',
+            title: 'Lỗi vượt quá số lượng tồn kho',
             text: '{{ session('
             error ') }}',
             confirmButtonColor: '#0da487',
