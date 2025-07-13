@@ -168,28 +168,38 @@
                                                     <div class="row gx-2 gy-2">
                                                         <div class="col-md-6">
                                                             <label class="form-label">Giá bán</label>
-                                                            <input type="number" name="price" min="0" step="0.01" class="form-control" value="{{ old('price', $product->variants->first()->price ?? '') }}">
+                                                            <input type="number" name="price" min="0"
+                                                                step="0.01" class="form-control"
+                                                                value="{{ old('price', $product->variants->first()->price ?? '') }}">
                                                             @error('price')
                                                                 <small class="text-danger">{{ $message }}</small>
                                                             @enderror
                                                         </div>
                                                         <div class="col-md-6">
-                                                            <label class="form-label">Khối lượng (hiển thị ở tên biến thể)</label>
-                                                            <input type="text" name="variant_name" class="form-control" value="{{ old('variant_name', $product->variants->first()->name ?? '') }}" placeholder="Nhập khối lượng, ví dụ: 500g, 1kg...">
+                                                            <label class="form-label">Khối lượng (hiển thị ở tên biến
+                                                                thể)</label>
+                                                            <input type="text" name="variant_name"
+                                                                class="form-control"
+                                                                value="{{ old('variant_name', $product->variants->first()->name ?? '') }}"
+                                                                placeholder="Nhập khối lượng, ví dụ: 500g, 1kg...">
                                                             @error('variant_name')
                                                                 <small class="text-danger">{{ $message }}</small>
                                                             @enderror
                                                         </div>
                                                         <div class="col-md-6">
                                                             <label class="form-label">Tồn kho</label>
-                                                            <input type="number" name="stock" min="0" class="form-control" value="{{ old('stock', $product->variants->first()->stock ?? '') }}">
+                                                            <input type="number" name="stock" min="0"
+                                                                class="form-control"
+                                                                value="{{ old('stock', $product->variants->first()->stock ?? '') }}">
                                                             @error('stock')
                                                                 <small class="text-danger">{{ $message }}</small>
                                                             @enderror
                                                         </div>
                                                         <div class="col-md-6">
                                                             <label class="form-label">SKU (Mã kho)</label>
-                                                            <input type="text" name="sku" class="form-control" value="{{ old('sku', $product->variants->first()->sku ?? '') }}" placeholder="Tự động nếu để trống">
+                                                            <input type="text" name="sku" class="form-control"
+                                                                value="{{ old('sku', $product->variants->first()->sku ?? '') }}"
+                                                                placeholder="Tự động nếu để trống">
                                                             @error('sku')
                                                                 <small class="text-danger">{{ $message }}</small>
                                                             @enderror
@@ -408,67 +418,76 @@
                                                                                 class="text-danger">{{ $message }}</small>
                                                                         @enderror
                                                                     </div>
-                                                                    <div class="col-6 col-md-3">
-                                                                        <label class="form-label">Ảnh biến thể hiện
-                                                                            tại</label>
-                                                                        @if (!empty($variant['image'] ?? ''))
-                                                                            <div class="mb-2">
-                                                                                <img src="{{ asset('storage/' . $variant['image']) }}"
-                                                                                    alt="Ảnh biến thể"
-                                                                                    style="max-width: 100px;">
-                                                                            </div>
-                                                                        @endif
-                                                                        <input type="hidden"
-                                                                            name="variants[{{ $i }}][old_image]"
-                                                                            value="{{ old("variants.$i.old_image", $variant['image'] ?? '') }}">
-                                                                        <label class="form-label">Thay đổi ảnh biến
-                                                                            thể</label>
-                                                                        <input type="file"
-                                                                            name="variants[{{ $i }}][image]"
-                                                                            class="form-control mb-3" accept="image/*">
-                                                                        @error("variants.$i.image")
+                                                                    <div class="col-12">
+                                                                        <label class="form-label">Mô tả biến thể</label>
+                                                                        <textarea name="variants[{{ $i }}][description]" rows="2"
+                                                                            class="form-control variant-description-editor">{{ old("variants.$i.description", $variant['description'] ?? '') }}</textarea>
+                                                                        @error("variants.$i.description")
                                                                             <small
                                                                                 class="text-danger">{{ $message }}</small>
                                                                         @enderror
                                                                     </div>
                                                                 </div>
-                                                                {{-- <div class="col-12">
+                                                                <div class="col-6 col-md-3">
+                                                                    <label class="form-label">Ảnh biến thể hiện
+                                                                        tại</label>
+                                                                    @if (!empty($variant['image'] ?? ''))
+                                                                        <div class="mb-2">
+                                                                            <img src="{{ asset('storage/' . $variant['image']) }}"
+                                                                                alt="Ảnh biến thể"
+                                                                                style="max-width: 100px;">
+                                                                        </div>
+                                                                    @endif
+                                                                    <input type="hidden"
+                                                                        name="variants[{{ $i }}][old_image]"
+                                                                        value="{{ old("variants.$i.old_image", $variant['image'] ?? '') }}">
+                                                                    <label class="form-label">Thay đổi ảnh biến
+                                                                        thể</label>
+                                                                    <input type="file"
+                                                                        name="variants[{{ $i }}][image]"
+                                                                        class="form-control mb-3" accept="image/*">
+                                                                    @error("variants.$i.image")
+                                                                        <small class="text-danger">{{ $message }}</small>
+                                                                    @enderror
+                                                                </div>
+                                                            </div>
+                                                            {{-- <div class="col-12">
                                                                 <label class="form-label">Mô tả biến thể</label>
                                                                 <textarea name="variants[{{$i}}][description]" rows="2" class="form-control variant-description-editor">{{ old("variants.$i.description", $variant['description'] ?? '') }}</textarea>
                                                                 @error("variants.$i.description")<small class="text-danger">{{ $message }}</small>@enderror
                                                             </div>
                                                         </div> --}}
-                                                            </div>
-                                                        @endforeach
                                                     </div>
+                                                    @endforeach
                                                 </div>
                                             </div>
                                         </div>
-
-                                        {{-- Trạng thái --}}
-                                        <div class="mb-3">
-                                            <label class="form-label">Kích hoạt</label>
-                                            <select name="active" class="form-select">
-                                                <option value="1"
-                                                    {{ old('active', $product->active) == 1 ? 'selected' : '' }}>Có
-                                                </option>
-                                                <option value="0"
-                                                    {{ old('active', $product->active) == 0 ? 'selected' : '' }}>Không
-                                                </option>
-                                            </select>
-                                        </div>
-                                        <button type="submit" class="btn btn-primary mt-2">Cập nhật sản phẩm</button>
-                                    </form>
                                 </div>
+
+                                {{-- Trạng thái --}}
+                                <div class="mb-3">
+                                    <label class="form-label">Kích hoạt</label>
+                                    <select name="active" class="form-select">
+                                        <option value="1"
+                                            {{ old('active', $product->active) == 1 ? 'selected' : '' }}>Có
+                                        </option>
+                                        <option value="0"
+                                            {{ old('active', $product->active) == 0 ? 'selected' : '' }}>Không
+                                        </option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary mt-2">Cập nhật sản phẩm</button>
+                                </form>
                             </div>
-                            @includeIf('backend.footer')
                         </div>
+                        @includeIf('backend.footer')
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        @includeIf('backend.footer')
+    @includeIf('backend.footer')
     </div>
     {{-- Modal thêm danh mục --}}
     <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryLabel" aria-hidden="true">
@@ -1261,18 +1280,18 @@
         <div class="collapse show" id="attr-${attributeId}">
             <div class="values-list" style="max-height: 150px; overflow-y:auto; border:1px solid #ddd; padding:8px; border-radius:4px;">
                 ${attributeValues.map(val => `
-                            <label class="form-check form-check-inline d-block">
-                                <input
-                                    class="form-check-input attribute-value-checkbox"
-                                    type="checkbox"
-                                    data-attrid="${attributeId}"
-                                    value="${val.id}"
-                                    name="attribute_values_checkbox[${attributeId}][]"
-                                    checked
-                                >
-                                <span class="form-check-label">${val.value}</span>
-                            </label>
-                        `).join('')}
+                                <label class="form-check form-check-inline d-block">
+                                    <input
+                                        class="form-check-input attribute-value-checkbox"
+                                        type="checkbox"
+                                        data-attrid="${attributeId}"
+                                        value="${val.id}"
+                                        name="attribute_values_checkbox[${attributeId}][]"
+                                        checked
+                                    >
+                                    <span class="form-check-label">${val.value}</span>
+                                </label>
+                            `).join('')}
             </div>
         </div>
     `;
@@ -1362,7 +1381,7 @@
                                         xhr);
                                     alert(
                                         'Có lỗi xảy ra khi xóa ảnh. Vui lòng thử lại!'
-                                        );
+                                    );
                                 }
                             });
                         }
