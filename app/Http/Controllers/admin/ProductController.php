@@ -55,16 +55,16 @@ class ProductController extends Controller
             },
             'reviews'
         ])
-        ->where('active', 1)
-        ->where(function ($q) use ($queryText) {
-            $q->where('name', 'like', "%$queryText%")
-              ->orWhereHas('region', function ($regionQuery) use ($queryText) {
-                  $regionQuery->where('name', 'like', "%$queryText%");
-              })
-              ->orWhereHas('category', function ($categoryQuery) use ($queryText) {
-                  $categoryQuery->where('name', 'like', "%$queryText%");
-              });
-        });
+            ->where('active', 1)
+            ->where(function ($q) use ($queryText) {
+                $q->where('name', 'like', "%$queryText%")
+                    ->orWhereHas('region', function ($regionQuery) use ($queryText) {
+                        $regionQuery->where('name', 'like', "%$queryText%");
+                    })
+                    ->orWhereHas('category', function ($categoryQuery) use ($queryText) {
+                        $categoryQuery->where('name', 'like', "%$queryText%");
+                    });
+            });
 
         if ($categoryId) {
             $productsQuery->where('category_id', $categoryId);
@@ -199,16 +199,46 @@ class ProductController extends Controller
     public function destroy($id)
     {
         $product = AdminProduct::findOrFail($id);
-        $product->delete(); // Soft delete
-        return back()->with('success_modal', 'Đã xóa mềm sản phẩm "' . $product->name . '"!');
+
+        // Xóa mềm bình luận và phản hồi liên quan
+        foreach ($product->comments as $comment) {
+            $comment->replies()->delete(); // Xóa mềm các phản hồi
+            $comment->delete(); // Xóa mềm bình luận
+        }
+
+        $product->delete(); // Xóa mềm sản phẩm
+        return back()->with('success_modal', 'Đã xóa mềm sản phẩm "' . $product->name . '" và các bình luận liên quan!');
     }
 
     // Xóa mềm nhiều sản phẩm
     public function bulkDelete(Request $request)
     {
         $ids = explode(',', $request->ids);
-        AdminProduct::whereIn('id', $ids)->delete();
-        return back()->with('success_modal', 'Đã xóa mềm ' . count($ids) . ' sản phẩm đã chọn!');
+        $ids = array_filter($ids, 'is_numeric');
+
+        if (empty($ids)) {
+            return back()->with('error', 'Không có sản phẩm nào được chọn hoặc ID không hợp lệ.');
+        }
+
+        DB::beginTransaction();
+        try {
+            $products = AdminProduct::whereIn('id', $ids)->get();
+
+            foreach ($products as $product) {
+                // Xóa mềm bình luận và phản hồi liên quan
+                foreach ($product->comments as $comment) {
+                    $comment->replies()->delete(); // Xóa mềm các phản hồi
+                    $comment->delete(); // Xóa mềm bình luận
+                }
+                $product->delete(); // Xóa mềm sản phẩm
+            }
+
+            DB::commit();
+            return back()->with('success_modal', 'Đã xóa mềm ' . count($ids) . ' sản phẩm và các bình luận liên quan!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Lỗi xóa mềm hàng loạt: ' . $e->getMessage());
+        }
     }
 
     // Khôi phục một sản phẩm đã xóa mềm
@@ -233,6 +263,12 @@ class ProductController extends Controller
         DB::beginTransaction();
         try {
             $product = AdminProduct::withTrashed()->findOrFail($id);
+
+            // Xóa tất cả bình luận và phản hồi liên quan
+            foreach ($product->comments()->withTrashed()->get() as $comment) {
+                $comment->replies()->withTrashed()->forceDelete(); // Xóa cứng các phản hồi
+                $comment->forceDelete(); // Xóa cứng bình luận
+            }
 
             // Xóa tất cả ảnh mô tả liên quan
             foreach ($product->product_images as $image) {
@@ -259,7 +295,7 @@ class ProductController extends Controller
             $product->forceDelete(); // Xóa cứng sản phẩm chính
 
             DB::commit();
-            return back()->with('success', 'Đã xóa vĩnh viễn sản phẩm "' . $product->name . '"!');
+            return back()->with('success', 'Đã xóa vĩnh viễn sản phẩm "' . $product->name . '" và các bình luận liên quan!');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Lỗi xóa vĩnh viễn sản phẩm: ' . $e->getMessage());
@@ -272,7 +308,6 @@ class ProductController extends Controller
         DB::beginTransaction();
         try {
             $ids = explode(',', $request->ids);
-            // Đảm bảo $ids là một mảng các số nguyên hợp lệ
             $ids = array_filter($ids, 'is_numeric');
 
             if (empty($ids)) {
@@ -286,6 +321,12 @@ class ProductController extends Controller
             }
 
             foreach ($products as $product) {
+                // Xóa cứng bình luận và phản hồi liên quan
+                foreach ($product->comments()->withTrashed()->get() as $comment) {
+                    $comment->replies()->withTrashed()->forceDelete(); // Xóa cứng các phản hồi
+                    $comment->forceDelete(); // Xóa cứng bình luận
+                }
+
                 // Xóa tất cả ảnh mô tả liên quan
                 foreach ($product->product_images as $image) {
                     if (Storage::disk('public')->exists($image->image_url)) {
@@ -311,7 +352,7 @@ class ProductController extends Controller
             }
 
             DB::commit();
-            return back()->with('success', 'Đã xóa vĩnh viễn ' . count($ids) . ' sản phẩm đã chọn!');
+            return back()->with('success', 'Đã xóa vĩnh viễn ' . count($ids) . ' sản phẩm và các bình luận liên quan!');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Lỗi xóa vĩnh viễn hàng loạt: ' . $e->getMessage());
