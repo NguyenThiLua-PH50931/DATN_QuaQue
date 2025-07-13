@@ -14,27 +14,27 @@ class ReviewController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+    public function index(Request $request, ReviewFilter $filter)
+    {
+        $products = Product::all();
+        $users = \App\Models\User::where('role', 'member')->get();
+
  
-public function index(Request $request, ReviewFilter $filter)
-{
-    $products = Product::all();
-    $users = \App\Models\User::where('role', 'member')->get();
+        $reviewsQuery = Review::with(['user', 'product']);
 
-    $reviewsQuery = Review::with(['user', 'product'])
-        ->whereHas('user', function ($query) {
-            $query->where('role', 'member');
-        });
+        if (!empty(array_filter($request->all()))) {
+            $reviewsQuery->whereHas('user', function ($query) {
+                $query->where('role', 'member');
+            })->filter($filter);
+        }
 
+        $reviews = $reviewsQuery->latest()
+            ->paginate($request->query('per_page', 10));
 
-    if (!empty(array_filter($request->all()))) { 
-        $reviewsQuery->filter($filter);
+        return view('backend.product-review.index', compact('reviews', 'products', 'users'));
     }
 
-    $reviews = $reviewsQuery->latest()
-        ->paginate($request->query('per_page', 10));
-
-    return view('backend.product-review.index', compact('reviews', 'products', 'users'));
-}
 
 
     /**
