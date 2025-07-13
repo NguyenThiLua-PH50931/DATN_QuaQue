@@ -49,6 +49,8 @@
     <!-- Template Style -->
     <link id="color-link" rel="stylesheet" href="{{ asset('frontend/assets/css/style.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+
 
 </head>
 
@@ -97,14 +99,14 @@
         });
     </script>
     <!-- Loader Start -->
-    <!-- <div class="fullpage-loader">
+    <div class="fullpage-loader">
         <span></span>
         <span></span>
         <span></span>
         <span></span>
         <span></span>
         <span></span>
-    </div> -->
+    </div>
     <!-- Loader End -->
 
     <!-- Header -->
@@ -172,7 +174,7 @@
     </div>
     <!-- Location Modal End -->
 
-    <!-- Cookie Bar Box Start -->
+    {{-- <!-- Cookie Bar Box Start -->
     <div class="cookie-bar-box">
         <div class="cookie-box">
             <div class="cookie-image">
@@ -190,7 +192,7 @@
             <button class="btn ok-button">OK</button>
         </div>
     </div>
-    <!-- Cookie Bar Box End -->
+    <!-- Cookie Bar Box End --> --}}
 
     <!-- Deal Box Modal Start -->
     <div class="modal fade theme-modal deal-modal" id="deal-box" tabindex="-1">

@@ -4,7 +4,7 @@
 
     <!-- Fixed Logo Header -->
     <div class="logo-wrapper logo-wrapper-center">
-        <a href="{{ url('/admin/report') }}" title="">
+        <a href="{{ route('client.home') }}" title="">
             <img class="img-fluid for-white" src="{{ asset('storage/banners/logo/logo_1.png') }}" alt="logo" style="margin-top: -20px">
         </a>
         <div class="back-btn" style="display:none;">
