@@ -471,31 +471,36 @@
                                                         Add a review
                                                     </h4>
                                                 </div>
+                                                @if($canReview)
+                                                {{-- Form đánh giá --}}
 
-                                                <div class="row g-4">
-                                                    <form action="{{ route('client.product.reviews.store') }}" method="POST">
-                                                        @csrf
-                                                        <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                                <form action="{{ route('client.product.reviews.store') }}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                                    {{-- Nếu bạn cần đánh giá theo biến thể cụ thể, thêm input hidden cho variant_id --}}
 
-                                                        <div class="mb-3">
-                                                            <label for="rating">Đánh giá sao:</label>
-                                                            <select name="rating" class="form-select" required>
-                                                                <option value="">Chọn số sao</option>
-                                                                @for ($i = 5; $i >= 1; $i--)
-                                                                <option value="{{ $i }}">{{ $i }} sao</option>
-                                                                @endfor
-                                                            </select>
-                                                        </div>
+                                                    <div class="mb-3">
+                                                        <label for="rating">Đánh giá sao:</label>
+                                                        <select name="rating" class="form-select" required>
+                                                            <option value="">Chọn số sao</option>
+                                                            @for ($i = 5; $i >= 1; $i--)
+                                                            <option value="{{ $i }}">{{ $i }} sao</option>
+                                                            @endfor
+                                                        </select>
+                                                    </div>
 
-                                                        <div class="mb-3">
-                                                            <label for="comment">Nội dung đánh giá:</label>
-                                                            <textarea name="comment" class="form-control" rows="4" required placeholder="Viết đánh giá..."></textarea>
-                                                        </div>
+                                                    <div class="mb-3">
+                                                        <label for="comment">Nội dung đánh giá:</label>
+                                                        <textarea name="comment" class="form-control" rows="4" required placeholder="Viết đánh giá..."></textarea>
+                                                    </div>
 
-                                                        <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
-                                                    </form>
-
+                                                    <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
+                                                </form>
+                                                @else
+                                                <div class="alert alert-warning">
+                                                    Bạn chỉ có thể đánh giá sau khi đã nhận được sản phẩm.
                                                 </div>
+                                                @endif
                                             </div>
 
                                             <div class="col-12">
