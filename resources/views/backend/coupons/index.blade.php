@@ -22,6 +22,17 @@
                                 </div>
                             </div>
 
+                            @if ($errors->any())
+                                <div class="alert alert-danger">
+                                    <ul class="mb-0">
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
+
+
                             {{--  Form lọc --}}
                             <form method="GET" action="{{ route('admin.coupon.index') }}" class="mb-4">
                                 <div class="row g-3">
@@ -35,10 +46,22 @@
                                                 Không hiện</option>
                                         </select>
                                     </div>
+                                    <!-- Lọc theo loại mã -->
+                                    <div class="col-md-2">
+                                        <select name="type" class="form-control">
+                                            <option value="">--Loại mã--</option>
+                                            <option value="order_discount"
+                                                {{ request('type') == 'order_discount' ? 'selected' : '' }}>Giảm giá đơn
+                                                hàng</option>
+                                            <option value="free_shipping"
+                                                {{ request('type') == 'free_shipping' ? 'selected' : '' }}>Miễn phí vận
+                                                chuyển</option>
+                                        </select>
+                                    </div>
                                     <!-- Lọc từ ngày -->
                                     <div class="col-md-2">
                                         <input type="date" name="date_from" class="form-control"
-                                             value="{{ $filterDateFrom }}">
+                                            value="{{ $filterDateFrom }}">
                                     </div>
                                     <!-- Lọc đến ngày -->
                                     <div class="col-md-2">
@@ -59,6 +82,7 @@
                                             <tr>
                                                 <th>Mã giảm giá</th>
                                                 <th>Loại giảm giá</th>
+                                                <th>Loại áp dụng</th>
                                                 <th>Giá trị giảm</th>
                                                 <th>Ngày bắt đầu</th>
                                                 <th>Ngày kết thúc</th>
@@ -71,9 +95,37 @@
                                             @foreach ($coupons as $coupon)
                                                 <tr>
                                                     <td>{{ $coupon->code }}</td>
-                                                    <td>{{ ucfirst($coupon->discount_type) }}</td>
-                                                    <td>{{ $coupon->discount_value }}{{ $coupon->discount_type == 'Phần trăm' ? '%' : ' đ' }}
+                                                    <td>
+                                                        @if ($coupon->type === 'free_shipping')
+                                                            <span class="badge bg-danger">Miễn phí vận chuyển</span>
+                                                        @elseif ($coupon->discount_type === 'percent')
+                                                            <span class="badge bg-danger">Phần trăm</span>
+                                                        @elseif ($coupon->discount_type === 'fixed')
+                                                            <span class="badge bg-secondary">Tiền cố định</span>
+                                                        @else
+                                                            <span class="badge bg-warning">Không xác định</span>
+                                                        @endif
                                                     </td>
+
+                                                    <td>
+                                                        @if ($coupon->type === 'free_shipping')
+                                                            <span class="badge bg-success">Miễn phí vận chuyển</span>
+                                                        @else
+                                                            <span class="badge bg-success">Giảm giá đơn hàng</span>
+                                                        @endif
+
+                                                    </td>
+
+                                                    <td>
+                                                        @if ($coupon->type === 'free_shipping')
+                                                            -
+                                                        @elseif ($coupon->discount_type === 'percent')
+                                                            {{ $coupon->discount_value }}%
+                                                        @else
+                                                            {{ number_format($coupon->discount_value, 0, ',', '.') }} đ
+                                                        @endif
+                                                    </td>
+
                                                     <td>{{ \Carbon\Carbon::parse($coupon->start_date)->format('d/m/Y') }}
                                                     </td>
                                                     <td>{{ \Carbon\Carbon::parse($coupon->end_date)->format('d/m/Y') }}

@@ -9,10 +9,22 @@ class OrderItem extends Model
     protected $table = 'order_items';
 
     protected $fillable = [
-        'order_id', 'product_id', 'product_name', 'product_variant_value_id',
-        'variant_id', 'variant_name', 'product_variant_value_name',
-        'product_sku', 'barcode', 'product_image',
-        'quantity', 'price', 'discount', 'total', 'status', 'note'
+        'order_id',
+        'product_id',
+        'product_name',
+        'product_variant_value_id',
+        'variant_id',
+        'variant_name',
+        'product_variant_value_name',
+        'product_sku',
+        'barcode',
+        'product_image',
+        'quantity',
+        'price',
+        'discount',
+        'total',
+        'status',
+        'note'
     ];
 
     public function order()
@@ -24,10 +36,8 @@ class OrderItem extends Model
     {
         return $this->belongsTo(Product::class);
     }
-public function productVariant()
-{
-    return $this->belongsTo(ProductVariant::class, 'product_variant_value_id');
-}
-
-
+    public function productVariant()
+    {
+        return $this->belongsTo(ProductVariant::class, 'product_variant_value_id');
+    }
 }

@@ -37,34 +37,89 @@ class ProductController extends Controller
 
     public function searchPage(Request $request)
     {
-        $query = $request->input('search');
+        $queryText = $request->input('search');
+        $categoryId = $request->input('category_id');
+        $regionId = $request->input('region_id');
+        $priceMin = $request->input('price_min', 0);
+        $priceMax = $request->input('price_max', 10000000);
+        $rating = $request->input('rating');
+        $sort = $request->input('sort');
 
-        $products = AdminProduct::with([
+        // Sử dụng model phía client
+        $productsQuery = \App\Models\Client\Product::with([
             'category',
             'region',
-            'product_images',
+            'images',
             'variants' => function ($q) {
                 $q->where('active', 1)->orderBy('id');
             },
             'reviews'
         ])
-        ->where(function ($q) use ($query) {
-            $q->where('name', 'like', "%$query%")
-              ->orWhereHas('region', function ($regionQuery) use ($query) {
-                  $regionQuery->where('name', 'like', "%$query%");
+        ->where('active', 1)
+        ->where(function ($q) use ($queryText) {
+            $q->where('name', 'like', "%$queryText%")
+              ->orWhereHas('region', function ($regionQuery) use ($queryText) {
+                  $regionQuery->where('name', 'like', "%$queryText%");
               })
-              ->orWhereHas('category', function ($categoryQuery) use ($query) {
-                  $categoryQuery->where('name', 'like', "%$query%");
+              ->orWhereHas('category', function ($categoryQuery) use ($queryText) {
+                  $categoryQuery->where('name', 'like', "%$queryText%");
               });
-        })
-        ->where('active', 1) // Chỉ lấy sản phẩm đang hoạt động
-        ->paginate(12); // Phân trang, hiển thị 12 sản phẩm mỗi trang
+        });
 
-        // Lấy danh sách categories và regions cho sidebar filter
-        $categories = AdminCategory::all();
-        $regions = AdminRegion::all();
+        if ($categoryId) {
+            $productsQuery->where('category_id', $categoryId);
+        }
+        if ($regionId) {
+            $productsQuery->where('region_id', $regionId);
+        }
+        // Lọc theo khoảng giá (dựa vào variants)
+        $productsQuery->whereHas('variants', function ($q) use ($priceMin, $priceMax) {
+            $q->whereBetween('price', [$priceMin, $priceMax]);
+        });
+        // Lọc theo rating trung bình
+        if ($rating) {
+            $productsQuery->withAvg('reviews', 'rating')
+                ->havingRaw('ROUND(reviews_avg_rating) = ?', [$rating]);
+        }
+        // Sắp xếp
+        switch ($sort) {
+            case 'price_asc':
+                $productsQuery->orderByRaw('(SELECT MIN(price) FROM product_variants WHERE product_variants.product_id = products.id) ASC');
+                break;
+            case 'price_desc':
+                $productsQuery->orderByRaw('(SELECT MAX(price) FROM product_variants WHERE product_variants.product_id = products.id) DESC');
+                break;
+            case 'rating':
+                $productsQuery->withAvg('reviews', 'rating')->orderByDesc('reviews_avg_rating');
+                break;
+            case 'name_asc':
+                $productsQuery->orderBy('name', 'asc');
+                break;
+            case 'name_desc':
+                $productsQuery->orderBy('name', 'desc');
+                break;
+            default:
+                $productsQuery->orderByDesc('id');
+        }
 
-        return view('frontend.products.search', compact('products', 'query', 'categories', 'regions'));
+        $products = $productsQuery->paginate(12)->appends($request->except('page'));
+
+        // Lấy min/max giá cho slider
+        $allPrices = \App\Models\Client\ProductVariant::where('active', 1)->pluck('price');
+        $priceMinAll = $allPrices->min() ?? 0;
+        $priceMaxAll = $allPrices->max() ?? 10000000;
+
+        $categories = \App\Models\Client\Category::all();
+        $regions = \App\Models\Client\Region::all();
+
+        return view('frontend.products.search', [
+            'products' => $products,
+            'query' => $queryText,
+            'categories' => $categories,
+            'regions' => $regions,
+            'priceMin' => $priceMinAll,
+            'priceMax' => $priceMaxAll,
+        ]);
     }
     // Trang danh sách sản phẩm (sơ lược)
     public function index(Request $request)
