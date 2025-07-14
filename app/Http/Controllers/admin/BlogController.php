@@ -250,7 +250,12 @@ class BlogController extends Controller
     public function bulkRestore(Request $request)
     {
         $ids = collect($request->input('ids'))->filter()->values();
-        Blog::onlyTrashed()->whereIn('id', $ids)->restore();
+        // Blog::onlyTrashed()->whereIn('id', $ids)->restore();
+        $blogs = Blog::onlyTrashed()->whereIn('id', $ids)->get();
+
+        foreach ($blogs as $blog) {
+            $blog->restore();
+        }
 
         return response()->json([
             'message' => 'Đã khôi phục các blog đã chọn thành công.',
