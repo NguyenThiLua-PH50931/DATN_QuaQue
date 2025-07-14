@@ -252,95 +252,7 @@
                                 <div class="tab-pane fade" id="care" role="tabpanel"
                                     aria-labelledby="care-tab">
                                     <div class="information-box">
-                                        <section class="blog-section section-b-space">
-                                            <div class="comment-box overflow-hidden">
-                                                <div class="leave-title">
-                                                    <h3>Bình luận</h3>
-                                                </div>
-
-                                                <div class="user-comment-box">
-                                                    <ul>
-                                                        <li>
-                                                            <div class="user-box border-color">
-                                                                <div class="reply-button">
-                                                                    <i
-                                                                        class="fa-solid fa-reply"></i>
-                                                                    <span class="theme-color">Reply</span>
-                                                                </div>
-                                                                <div class="user-iamge">
-                                                                    <img
-                                                                        src="../assets/images/inner-page/user/2.jpg"
-                                                                        class="img-fluid blur-up lazyload"
-                                                                        alt="" />
-                                                                    <div class="user-name">
-                                                                        <h6>30 Jan, 2022</h6>
-                                                                        <h5 class="text-content">
-                                                                            Glenn Greer
-                                                                        </h5>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="user-contain">
-                                                                    <p>
-                                                                        Nội dung bình luận
-                                                                    </p>
-                                                                </div>
-                                                            </div>
-                                                        </li>
-
-                                                        <li class="li-padding">
-                                                            <div class="user-box">
-                                                                <div class="reply-button">
-                                                                    <i
-                                                                        class="fa-solid fa-reply"></i>
-                                                                    <span class="theme-color">Reply</span>
-                                                                </div>
-                                                                <div class="user-iamge">
-                                                                    <img
-                                                                        src="../assets/images/inner-page/user/3.jpg"
-                                                                        class="img-fluid blur-up lazyload"
-                                                                        alt="" />
-                                                                    <div class="user-name">
-                                                                        <h6>30 Jan, 2022</h6>
-                                                                        <h5 class="text-content">
-                                                                            Glenn Greer
-                                                                        </h5>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="user-contain">
-                                                                    <p>
-                                                                        Nội dung trả lời
-                                                                    </p>
-                                                                </div>
-                                                            </div>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-
-                                            <div class="leave-box">
-                                                <div class="leave-title mt-0">
-                                                    <h3>Để lại bình luận</h3>
-                                                </div>
-
-                                                <div class="leave-comment mb-3">
-                                                    <div class="col-12">
-                                                        <div class="blog-input">
-                                                            <textarea
-                                                                class="form-control"
-                                                                id="exampleFormControlTextarea1"
-                                                                rows="4"
-                                                                placeholder="Để lại bình luận..."></textarea>
-                                                        </div>
-                                                    </div>
-                                                    <button
-                                                        class="btn btn-animation ms-xxl-auto mt-xxl-0 mt-3 btn-md fw-bold">
-                                                        Bình luận
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </section>
+                                        @includeIf('frontend.products.comment', ['comments' => $comments])
                                     </div>
                                 </div>
 
@@ -615,7 +527,7 @@
             </div>
 
             <!-- Banner Section -->
-            <div class="ratio_156 pt-25">
+            {{-- <div class="ratio_156 pt-25">
                 <div class="home-contain">
                     <img src="../assets/images/vegetable/banner/8.jpg" class="bg-img blur-up lazyload"
                         alt="" />
@@ -637,7 +549,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         </div>
     </div>
     </div>
@@ -1580,7 +1492,6 @@
         updateVariantInput();
     });
 </script>
-
 
 <style>
     .swal2-title-smaller {

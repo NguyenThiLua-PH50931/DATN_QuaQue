@@ -62,6 +62,12 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
         Route::post('/get-variant', [ClientProductController::class, 'getVariant'])->name('.getVariant');
         Route::post('/reviews', [ClientProductController::class, 'storeReview'])->name('reviews.store');
         Route::get('/quickview/{slug}', [ClientProductController::class, 'quickView'])->name('quickview');
+        Route::post('/san-pham/{product}/comment', [ClientProductController::class, 'comment'])->name('product.comment.ajax');
+        Route::post('/comment/{comment}/reply', [ClientProductController::class, 'commentReply'])->name('product.comment.reply.ajax');
+        Route::delete('/comment/{comment}', [ClientProductController::class, 'deleteComment'])->name('comment.delete');
+        Route::put('/comment/{comment}', [ClientProductController::class, 'updateComment'])->name('comment.update');
+        Route::put('/reply/{reply}', [ClientProductController::class, 'updateReply'])->name('reply.update');
+        Route::delete('/reply/{reply}', [ClientProductController::class, 'deleteReply'])->name('reply.delete');
     });
 
 
@@ -151,16 +157,16 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
     Route::middleware('auth')->group(function () {
         Route::post('/blog/comments', [ClientBlogCommentController::class, 'store'])->name('blog.comments.store');
     });
-// Route::middleware('auth')->group(function () {
-//     Route::group(['prefix' => 'order', 'as' => 'order.'], function () {
-//         Route::post('/place-from-pending', [OrderController::class, 'placeFromPending'])->name('placeFromPending');
-//     });
-// });
-Route::middleware('auth')->group(function () {
-    Route::group(['prefix' => 'order', 'as' => 'order.'], function () {
-        Route::post('/place-from-pending', [OrdersController::class, 'placeFromPending'])->name('placeFromPending');
+    // Route::middleware('auth')->group(function () {
+    //     Route::group(['prefix' => 'order', 'as' => 'order.'], function () {
+    //         Route::post('/place-from-pending', [OrderController::class, 'placeFromPending'])->name('placeFromPending');
+    //     });
+    // });
+    Route::middleware('auth')->group(function () {
+        Route::group(['prefix' => 'order', 'as' => 'order.'], function () {
+            Route::post('/place-from-pending', [OrdersController::class, 'placeFromPending'])->name('placeFromPending');
+        });
     });
-});
 
 
     //Giới thiêu
