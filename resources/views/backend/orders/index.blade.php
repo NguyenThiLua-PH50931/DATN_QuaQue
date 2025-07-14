@@ -264,6 +264,7 @@ ul {
     font-size: 0.85rem !important; /* cỡ chữ nhỏ */
     font-weight: normal !important; /* bỏ in đậm */
 }
+
 </style>
 <div class="page-body">
     <div class="container-fluid">
@@ -298,25 +299,22 @@ ul {
                             <select name="payment_method" class="form-select form-select-sm" style="width: 140px;">
                                 <option value="">-- Phương thức TT --</option>
                                 <option value="cod" {{ request('payment_method') == 'cod' ? 'selected' : '' }}>COD</option>
-                                <option value="bank" {{ request('payment_method') == 'bank' ? 'selected' : '' }}>Chuyển khoản</option>
-                                <option value="wallet" {{ request('payment_method') == 'wallet' ? 'selected' : '' }}>Ví điện tử</option>
+                                {{-- <option value="bank" {{ request('payment_method') == 'bank' ? 'selected' : '' }}>Chuyển khoản</option> --}}
+                                <option value="momo" {{ request('payment_method') == 'momo' ? 'selected' : '' }}>Ví điện tử momo</option>
                             </select>
                             
-                            <select name="bank_transfer_confirmed" class="form-select form-select-sm" style="width: 150px;">
+                            {{-- <select name="bank_transfer_confirmed" class="form-select form-select-sm" style="width: 150px;">
                                 <option value="">-- XN chuyển khoản --</option>
                                 <option value="1" {{ request('bank_transfer_confirmed') === '1' ? 'selected' : '' }}>Đã xác nhận</option>
                                 <option value="0" {{ request('bank_transfer_confirmed') === '0' ? 'selected' : '' }}>Chưa xác nhận</option>
-                            </select>
+                            </select> --}}
 
 
                             <input type="date" name="date_from" class="form-control form-control-sm" style="width: 130px;" value="{{ request('date_from') }}" placeholder="Từ ngày">
 
                             <input type="date" name="date_to" class="form-control form-control-sm" style="width: 130px;" value="{{ request('date_to') }}" placeholder="Đến ngày">
 
-                            <select name="is_hidden" class="form-select form-select-sm" style="width: 140px;">
-                                <option value="0" {{ request('is_hidden') === '0' ? 'selected' : '' }}>-- Hiển thị --</option>
-                                <option value="1" {{ request('is_hidden') === '1' ? 'selected' : '' }}>-- Đã ẩn --</option>
-                            </select>
+                       
                             <input type="text" name="keyword" class="form-control form-control-sm" style="width: 160px;" value="{{ request('keyword') }}" placeholder="Mã đơn / Người đặt">                            
 
 
@@ -333,7 +331,6 @@ ul {
                                         <th>Ngày đặt</th>
                                         <th>MĐH</th>
                                         <th>Số tiền</th>
-                                        <th>XN CK</th>
                                         <th>PTTT</th>
                                         <th>TTTT</th>
                                         <th>TT đơn hàng</th>
@@ -366,17 +363,7 @@ ul {
                                             {{-- 👉 Số tiền lên trước --}}
                                             <td>{{ number_format($order->total_amount, 0, ',', '.') }} VNĐ</td>
                                             {{-- Xác nhận chuyển khoản --}}
-                                            <td>
-                                                @if($order->payment_method === 'bank')
-                                                    @if($order->bank_transfer_confirmed)
-                                                        <span class="badge bg-success">Đã xác nhận</span>
-                                                    @else
-                                                        <span class="badge bg-warning text-dark">Chưa xác nhận</span>
-                                                    @endif
-                                                @else
-                                                    <span class="text-muted">-</span>
-                                                @endif
-                                            </td>
+        
 
                                             {{-- PTTT --}}
                                             <td>{{ $order->payment_method ?? 'N/A' }}</td>
@@ -385,33 +372,36 @@ ul {
                                             <td>
                                                 @php
                                                     $paymentClass = 'payment-status-label payment-' . $order->payment_status;
-
                                                     if ($order->payment_method === 'cod' && $order->status === 'delivered') {
                                                         $paymentClass = 'payment-status-label payment-paid';
                                                     }
-
+                                                    if ($order->payment_method === 'momo' && $order->payment_status === 'paid') {
+                                                        $paymentClass = 'payment-status-label payment-paid-momo';
+                                                    }
                                                     if ($order->payment_method === 'bank' && $order->payment_status === 'paid') {
                                                         $paymentSelectClass = 'payment-status-select payment-paid-bank';
                                                     } else {
                                                         $paymentSelectClass = 'payment-status-select';
                                                     }
                                                 @endphp
+
                                                 @if($order->payment_method === 'bank')
                                                     <select
-                                                    class="form-select payment-status-select {{ $paymentSelectClass }}"
-                                                    data-order-id="{{ $order->id }}"
-                                                >
-                                                    <option value="unpaid" title="Chưa thanh toán" {{ $order->payment_status === 'unpaid' ? 'selected' : '' }}>Chưa thanh...</option>
-                                                    <option value="paid" title="Đã thanh toán" {{ $order->payment_status === 'paid' ? 'selected' : '' }}>Đã thanh...</option>
-                                                </select>
+                                                        class="form-select payment-status-select {{ $paymentSelectClass }}"
+                                                        data-order-id="{{ $order->id }}"
+                                                    >
+                                                        <option value="unpaid" title="Chưa thanh toán" {{ $order->payment_status === 'unpaid' ? 'selected' : '' }}>Chưa thanh...</option>
+                                                        <option value="paid" title="Đã thanh toán" {{ $order->payment_status === 'paid' ? 'selected' : '' }}>Đã thanh...</option>
+                                                    </select>
                                                 @else
-                                                    <span id="payment-status-{{ $order->id }}" 
-                                                    class="{{ $paymentClass }}" 
-                                                    data-payment-method="{{ $order->payment_method }}">
-                                                    {{ $order->payment_status === 'paid' || ($order->payment_method === 'cod' && $order->status === 'delivered') ? 'Đã thanh toán' : 'Chưa thanh toán' }}
-                                                </span>
+                                                    <span id="payment-status-{{ $order->id }}"
+                                                        class="{{ $paymentClass }}"
+                                                        data-payment-method="{{ $order->payment_method }}">
+                                                        {{ $order->payment_status === 'paid' || ($order->payment_method === 'cod' && $order->status === 'delivered') ? 'Đã thanh toán' : 'Chưa thanh toán' }}
+                                                    </span>
                                                 @endif
                                             </td>
+
                                             {{-- Trạng thái đơn hàng --}}
                                             <td>
                                                 <form id="status-form-{{ $order->id }}"
@@ -435,46 +425,21 @@ ul {
                                                 </form>
                                             </td>
                                             {{-- Tuỳ chọn --}}
-                                            <td>
-                                                <ul>
-                                                    <li>
-                                                        <a href="{{ route('admin.orders.show', $order->id) }}">
-                                                            <i class="ri-eye-line"></i>
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="{{ route('admin.orders.tracking', $order->id) }}">
-                                                            <i class="ri-map-pin-line"></i>
-                                                        </a>
-                                                    </li>
-                                                    
-                                                    {{-- Đơn chưa ẩn → hiện nút ẩn --}}
-                                                    @if ($order->is_hidden == false && in_array($order->status, ['delivered', 'cancelled', 'failed_delivery']))
-                                                        <li>
-                                                            <form action="{{ route('admin.orders.hide', $order->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn ẩn đơn hàng này không?');">
-                                                                @csrf
-                                                                @method('PATCH')
-                                                                <button type="submit" class="border-0 bg-transparent" title="Ẩn">
-                                                                    <i class="ri-eye-off-line text-warning"></i>
-                                                                </button>
-                                                            </form>
-                                                        </li>
-                                                    @endif
+                                           <td>
+                                            <ul>
+                                                <li>
+                                                    <a href="{{ route('admin.orders.show', $order->id) }}">
+                                                        <i class="ri-eye-line"></i>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="{{ route('admin.orders.tracking', $order->id) }}">
+                                                        <i class="ri-map-pin-line"></i>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </td>
 
-                                                    {{-- Đơn đã bị ẩn → hiện nút xóa cứng --}}
-                                                    @if ($order->is_hidden == true)
-                                                        <li>
-                                                            <form action="{{ route('admin.orders.destroy', $order->id) }}" method="POST" onsubmit="return confirm('Xóa vĩnh viễn đơn hàng này?');">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button type="submit" class="border-0 bg-transparent" title="Xóa vĩnh viễn">
-                                                                    <i class="ri-delete-bin-line text-danger"></i>
-                                                                </button>
-                                                            </form>
-                                                        </li>
-                                                    @endif
-                                                </ul>
-                                            </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -491,24 +456,22 @@ ul {
                     <!-- Table End -->
 
                     <!-- Pagination Box Start -->
-                    <div class="pagination-box">
+                    {{-- <div class="pagination-box">
                         <nav class="ms-auto me-auto" aria-label="...">
                             <ul class="pagination pagination-primary">
-                                {{-- Previous Page Link --}}
+                      
                                 @if ($orders->onFirstPage())
                                     <li class="page-item disabled"><a class="page-link" href="javascript:void(0)">Previous</a></li>
                                 @else
                                     <li class="page-item"><a class="page-link" href="{{ $orders->previousPageUrl() }}">Previous</a></li>
                                 @endif
 
-                                {{-- Pagination Elements --}}
                                 @foreach ($orders->getUrlRange(1, $orders->lastPage()) as $page => $url)
                                     <li class="page-item {{ $orders->currentPage() == $page ? 'active' : '' }}">
                                         <a class="page-link" href="{{ $url }}">{{ $page }}</a>
                                     </li>
                                 @endforeach
 
-                                {{-- Next Page Link --}}
                                 @if ($orders->hasMorePages())
                                     <li class="page-item"><a class="page-link" href="{{ $orders->nextPageUrl() }}">Next</a></li>
                                 @else
@@ -516,7 +479,7 @@ ul {
                                 @endif
                             </ul>
                         </nav>
-                    </div>
+                    </div> --}}
                     <!-- Pagination Box End -->
                 </div>
             </div>
