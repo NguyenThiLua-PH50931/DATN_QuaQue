@@ -340,7 +340,10 @@ class CheckoutController extends Controller
 
         $subtotal = 0;
         foreach ($cartItems as $item) {
-            $subtotal += ($item->price ?? 0) * ($item->quantity ?? 1);
+            $subtotal = $cartItems->sum(function ($item) {
+                $price = $item->price ?? $item->product->price ?? 0;
+                return $price * ($item->quantity ?? 1);
+            });
         }
 
         // Lấy mã giảm giá và miễn phí vận chuyển từ DB dựa trên session mới lưu
@@ -414,21 +417,17 @@ class CheckoutController extends Controller
             'free_shipping_code' => 'nullable|string',
         ]);
 
-        $codesInput = [];
+        $orderCodeInput = strtoupper(trim($request->input('order_discount_code', '')));
+        $shippingCodeInput = strtoupper(trim($request->input('free_shipping_code', '')));
 
-        if ($request->filled('order_discount_code')) {
-            $codesInput[] = strtoupper(trim($request->input('order_discount_code')));
+        // Nếu không có mã nào được chọn → xóa session và trả về
+        if (empty($orderCodeInput) && empty($shippingCodeInput)) {
+            session()->forget(['order_discount_code', 'free_shipping_code']);
+            return response()->json(['success' => true]);
         }
 
-        if ($request->filled('free_shipping_code')) {
-            $codesInput[] = strtoupper(trim($request->input('free_shipping_code')));
-        }
-
-        if (empty($codesInput)) {
-            return response()->json(['success' => false, 'message' => 'Chưa chọn mã nào']);
-        }
-
-        $validCodes = DiscountCode::whereIn('code', $codesInput)
+        // Tìm các mã hợp lệ
+        $validCodes = DiscountCode::whereIn('code', array_filter([$orderCodeInput, $shippingCodeInput]))
             ->where('active', 1)
             ->where(function ($query) {
                 $now = now();
@@ -444,9 +443,9 @@ class CheckoutController extends Controller
             return response()->json(['success' => false, 'message' => 'Không có mã hợp lệ']);
         }
 
-        // Lưu vào session theo loại mã
-        $orderCode = $validCodes->firstWhere('code', strtoupper($request->input('order_discount_code')));
-        $shippingCode = $validCodes->firstWhere('code', strtoupper($request->input('free_shipping_code')));
+        // Gán vào session nếu hợp lệ
+        $orderCode = $validCodes->firstWhere('code', $orderCodeInput);
+        $shippingCode = $validCodes->firstWhere('code', $shippingCodeInput);
 
         if ($orderCode && $orderCode->type !== 'order_discount') {
             return response()->json(['success' => false, 'message' => 'Mã giảm giá đơn hàng không hợp lệ']);
@@ -456,13 +455,24 @@ class CheckoutController extends Controller
             return response()->json(['success' => false, 'message' => 'Mã miễn phí vận chuyển không hợp lệ']);
         }
 
-        session([
-            'order_discount_code' => $orderCode ? $orderCode->code : null,
-            'free_shipping_code' => $shippingCode ? $shippingCode->code : null,
-        ]);
+        if ($orderCode) {
+            session(['order_discount_code' => $orderCode->code]);
+        } else {
+            session()->forget('order_discount_code');
+        }
+
+        if ($shippingCode) {
+            session(['free_shipping_code' => $shippingCode->code]);
+        } else {
+            session()->forget('free_shipping_code');
+        }
+
+        session()->save();
 
         return response()->json(['success' => true]);
     }
+
+
 
     public function removeDiscount(Request $request)
     {

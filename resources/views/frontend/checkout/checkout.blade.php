@@ -663,10 +663,67 @@
         }
 
         // Gọi khi chọn mã giảm giá hoặc miễn phí vận chuyển
-        document.getElementById('order_discount_code').addEventListener('change', updateOrderSummary);
-        document.getElementById('free_shipping_code').addEventListener('change', updateOrderSummary);
+        // document.getElementById('order_discount_code').addEventListener('change', syncDiscountSession);
+        // document.getElementById('free_shipping_code').addEventListener('change', syncDiscountSession);
+
         document.querySelectorAll('input[name="shipping_method_id"]').forEach(radio => {
             radio.addEventListener('change', updateOrderSummary);
+        });
+    </script>
+    <script>
+        async function syncDiscountSessionAndUpdate() {
+            const orderDiscountCode = document.getElementById('order_discount_code').value || null;
+            const freeShippingCode = document.getElementById('free_shipping_code').value || null;
+
+            try {
+                const res = await fetch("{{ route('client.checkout.applyDiscount') }}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        order_discount_code: orderDiscountCode,
+                        free_shipping_code: freeShippingCode
+                    })
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    // Đợi 1 chút để session được lưu xong (nếu cần delay)
+                    setTimeout(() => {
+                        updateOrderSummary();
+
+                        // Cập nhật lại tên mã nếu cần hiển thị
+                        const discountCodeOption = document.querySelector(
+                        '#order_discount_code option:checked');
+                        const shippingCodeOption = document.querySelector('#free_shipping_code option:checked');
+
+                        const discountText = discountCodeOption && discountCodeOption.value ?
+                            `<span class="text-secondary"> (${discountCodeOption.textContent.split('—')[0].trim()})</span>` :
+                            '';
+
+                        const discountAmountEl = document.getElementById('discount-amount');
+                        const currentAmountText = discountAmountEl?.innerText?.match(/-?\d[\d.,]*/)?.[0] || '0';
+
+                        if (discountAmountEl) {
+                            discountAmountEl.innerHTML = `-${currentAmountText} VNĐ ${discountText}`;
+                        }
+                    }, 300); // 200ms delay nhỏ nếu cần
+                } else {
+                    alert(data.message || 'Áp dụng mã giảm giá thất bại.');
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Lỗi khi áp dụng mã giảm giá.');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const orderSelect = document.getElementById('order_discount_code');
+            const freeSelect = document.getElementById('free_shipping_code');
+            if (orderSelect) orderSelect.addEventListener('change', syncDiscountSessionAndUpdate);
+            if (freeSelect) freeSelect.addEventListener('change', syncDiscountSessionAndUpdate);
         });
     </script>
 @endsection
