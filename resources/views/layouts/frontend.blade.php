@@ -386,95 +386,101 @@
             const districtSelect = document.getElementById('district');
             const wardSelect = document.getElementById('ward');
 
-            let selectedProvince = @json(old('province', $address->province ?? ''));
-            let selectedDistrict = @json(old('district', $address->district ?? ''));
-            let selectedWard = @json(old('ward', $address->ward ?? ''));
+            if (provinceSelect && districtSelect && wardSelect) {
+                let selectedProvince = @json(old('province', $address->province ?? ''));
+                let selectedDistrict = @json(old('district', $address->district ?? ''));
+                let selectedWard = @json(old('ward', $address->ward ?? ''));
 
-            function loadWards(provinceName, districtName) {
-                wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
-                wardSelect.disabled = true;
+                function loadWards(provinceName, districtName) {
+                    wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
+                    wardSelect.disabled = true;
 
-                const province = locationsData.find(p => p.Name === provinceName);
-                if (!province) return;
+                    const province = locationsData.find(p => p.Name === provinceName);
+                    if (!province) return;
 
-                const district = province.Districts.find(d => d.Name === districtName);
-                if (!district) return;
+                    const district = province.Districts.find(d => d.Name === districtName);
+                    if (!district) return;
 
-                district.Wards.forEach(ward => {
-                    const option = document.createElement('option');
-                    option.value = ward.Name;
-                    option.text = ward.Name;
-                    wardSelect.add(option);
-                });
-
-                wardSelect.disabled = false;
-
-                if (selectedWard) {
-                    setTimeout(() => {
-                        wardSelect.value = selectedWard;
-                    }, 0);
-                }
-            }
-
-            function loadDistricts(provinceName) {
-                districtSelect.innerHTML = '<option value="">Chọn quận/huyện</option>';
-                wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
-                districtSelect.disabled = true;
-                wardSelect.disabled = true;
-
-                const province = locationsData.find(p => p.Name === provinceName);
-                if (!province) return;
-
-                province.Districts.forEach(district => {
-                    const option = document.createElement('option');
-                    option.value = district.Name;
-                    option.text = district.Name;
-                    districtSelect.add(option);
-                });
-
-                districtSelect.disabled = false;
-
-                if (selectedDistrict) {
-                    setTimeout(() => {
-                        districtSelect.value = selectedDistrict;
-                        loadWards(provinceName, selectedDistrict);
-                    }, 0);
-                }
-            }
-
-            fetch('/data/vietnamAddress.json')
-                .then(response => response.json())
-                .then(data => {
-                    locationsData = data;
-                    console.log('Đã load JSON:', locationsData);
-
-                    // Load danh sách tỉnh
-                    locationsData.forEach(province => {
+                    district.Wards.forEach(ward => {
                         const option = document.createElement('option');
-                        option.value = province.Name;
-                        option.text = province.Name;
-                        provinceSelect.add(option);
+                        option.value = ward.Name;
+                        option.text = ward.Name;
+                        wardSelect.add(option);
                     });
 
-                    // Nếu có tỉnh đã chọn thì hiển thị luôn
-                    if (selectedProvince) {
-                        provinceSelect.value = selectedProvince;
-                        loadDistricts(selectedProvince);
+                    wardSelect.disabled = false;
+
+                    if (selectedWard) {
+                        setTimeout(() => {
+                            wardSelect.value = selectedWard;
+                        }, 0);
                     }
-                }).catch(e => {
-                    console.error('Lỗi load JSON:', e);
-                });
+                }
 
-            provinceSelect.addEventListener('change', function () {
-                selectedDistrict = '';
-                selectedWard = '';
-                loadDistricts(this.value);
-            });
+                function loadDistricts(provinceName) {
+                    districtSelect.innerHTML = '<option value="">Chọn quận/huyện</option>';
+                    wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
+                    districtSelect.disabled = true;
+                    wardSelect.disabled = true;
 
-            districtSelect.addEventListener('change', function () {
-                selectedWard = '';
-                loadWards(provinceSelect.value, this.value);
-            });
+                    const province = locationsData.find(p => p.Name === provinceName);
+                    if (!province) return;
+
+                    province.Districts.forEach(district => {
+                        const option = document.createElement('option');
+                        option.value = district.Name;
+                        option.text = district.Name;
+                        districtSelect.add(option);
+                    });
+
+                    districtSelect.disabled = false;
+
+                    if (selectedDistrict) {
+                        setTimeout(() => {
+                            districtSelect.value = selectedDistrict;
+                            loadWards(provinceName, selectedDistrict);
+                        }, 0);
+                    }
+                }
+
+                fetch('/data/vietnamAddress.json')
+                    .then(response => response.json())
+                    .then(data => {
+                        locationsData = data;
+                        console.log('Đã load JSON:', locationsData);
+
+                        // Load danh sách tỉnh
+                        locationsData.forEach(province => {
+                            const option = document.createElement('option');
+                            option.value = province.Name;
+                            option.text = province.Name;
+                            provinceSelect.add(option);
+                        });
+
+                        // Nếu có tỉnh đã chọn thì hiển thị luôn
+                        if (selectedProvince) {
+                            provinceSelect.value = selectedProvince;
+                            loadDistricts(selectedProvince);
+                        }
+                    }).catch(e => {
+                        console.error('Lỗi load JSON:', e);
+                    });
+
+                if (provinceSelect) {
+                    provinceSelect.addEventListener('change', function () {
+                        selectedDistrict = '';
+                        selectedWard = '';
+                        loadDistricts(this.value);
+                    });
+                }
+
+                if (districtSelect) {
+                    districtSelect.addEventListener('change', function () {
+                        selectedWard = '';
+                        loadWards(provinceSelect.value, this.value);
+                    });
+                }
+            }
         });
     </script>
 {{-- <script>
@@ -558,13 +564,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
-
-
-</script>
-
-    @stack('scripts')
-</body>
-    @stack('scripts')
 </html>
 <style>
     .onhover-div-login {
@@ -661,4 +660,43 @@ document.addEventListener('DOMContentLoaded', function () {
         gap: 0;
         flex-wrap: wrap;
     }
+
+    #view .right-sidebar-modal, #view .right-sidebar-modal * {
+        font-size: 20px !important;
+    }
+    #view .description-text {
+        font-size: 23px !important;
+    }
+    #view .product-detail h4 {
+        font-size: 27px !important;
+    }
+    #view .brand-list h5, #view .brand-list h6 {
+        font-size: 20px !important;
+    }
+    #view .modal-button .btn {
+        font-size: 20px !important;
+    }
 </style>
+    @stack('scripts')
+    <style>
+    #view .right-sidebar-modal, #view .right-sidebar-modal * {
+        font-size: 20px !important;
+    }
+    #view .description-text {
+        font-size: 23px !important;
+    }
+    #view .product-detail h4 {
+        font-size: 27px !important;
+    }
+    #view .brand-list h5, #view .brand-list h6 {
+        font-size: 20px !important;
+    }
+    #view .modal-button .btn {
+        font-size: 20px !important;
+    }
+
+</style>
+</script>
+    @stack('scripts')
+</body>
+</body>

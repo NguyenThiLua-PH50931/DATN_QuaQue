@@ -158,7 +158,6 @@
                                         {{-- <th><input type="checkbox" id="select-all-variants"></th> --}}
                                         <th>Tên biến thể</th>
                                         <th>Mô tả</th>
-
                                         <th>Giá</th>
                                         <th>Số lượng</th>
                                         <th>SKU</th>
@@ -178,16 +177,13 @@
                                                     {{ $variant->name }}
                                                 </a>
                                             </td>
-
                                             <td>
-
                                                 <span class="text-truncate description-short text-primary"
                                                     style="max-width: 250px; cursor: pointer;" data-bs-toggle="modal"
                                                     data-bs-target="#descriptionModal"
                                                     data-variant-id="{{ $variant->id }}">
                                                     {!! Str::limit(strip_tags($variant->description), 50) ?: '<em>(Chưa có mô tả)</em>' !!}
                                                 </span>
-
                                             </td>
                                             <td>{{ number_format($variant->price, 0, ',', '.') }}₫</td>
                                             <td>{{ $variant->stock }}</td>
@@ -334,29 +330,26 @@
 
     @push('styles')
         <link rel="stylesheet" href="//cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
-
-       
-
         <style>
-            /* .gallery-container {
-                        display: flex;
-                        gap: 12px;
-                        max-width: 465px;
-                        height: 350px;
-                    }
+            .gallery-container {
+                display: flex;
+                gap: 12px;
+                max-width: 465px;
+                height: 350px;
+            }
 
-                    .thumb-swiper {
-                        height: 350px;
-                        width: 85px;
-                    }
+            .thumb-swiper {
+                height: 350px;
+                width: 85px;
+            }
 
-                    .thumb-swiper .swiper-slide img {
-                        width: 80px;
-                        height: 60px;
-                        object-fit: cover;
-                        border-radius: 7px;
-                        border: 2px solid #ccc;
-                    } */
+            .thumb-swiper .swiper-slide img {
+                width: 80px;
+                height: 60px;
+                object-fit: cover;
+                border-radius: 7px;
+                border: 2px solid #ccc;
+            }
 
             .main-image-wrapper {
                 flex: 1;
@@ -462,7 +455,6 @@
                 background: #aac4e7 !important;
             }
         </style>
-
     @endpush
 
     @push('scripts')

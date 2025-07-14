@@ -37,34 +37,89 @@ class ProductController extends Controller
 
     public function searchPage(Request $request)
     {
-        $query = $request->input('search');
+        $queryText = $request->input('search');
+        $categoryId = $request->input('category_id');
+        $regionId = $request->input('region_id');
+        $priceMin = $request->input('price_min', 0);
+        $priceMax = $request->input('price_max', 10000000);
+        $rating = $request->input('rating');
+        $sort = $request->input('sort');
 
-        $products = AdminProduct::with([
+        // Sử dụng model phía client
+        $productsQuery = \App\Models\Client\Product::with([
             'category',
             'region',
-            'product_images',
+            'images',
             'variants' => function ($q) {
                 $q->where('active', 1)->orderBy('id');
             },
             'reviews'
         ])
-        ->where(function ($q) use ($query) {
-            $q->where('name', 'like', "%$query%")
-              ->orWhereHas('region', function ($regionQuery) use ($query) {
-                  $regionQuery->where('name', 'like', "%$query%");
-              })
-              ->orWhereHas('category', function ($categoryQuery) use ($query) {
-                  $categoryQuery->where('name', 'like', "%$query%");
-              });
-        })
-        ->where('active', 1) // Chỉ lấy sản phẩm đang hoạt động
-        ->paginate(12); // Phân trang, hiển thị 12 sản phẩm mỗi trang
+            ->where('active', 1)
+            ->where(function ($q) use ($queryText) {
+                $q->where('name', 'like', "%$queryText%")
+                    ->orWhereHas('region', function ($regionQuery) use ($queryText) {
+                        $regionQuery->where('name', 'like', "%$queryText%");
+                    })
+                    ->orWhereHas('category', function ($categoryQuery) use ($queryText) {
+                        $categoryQuery->where('name', 'like', "%$queryText%");
+                    });
+            });
 
-        // Lấy danh sách categories và regions cho sidebar filter
-        $categories = AdminCategory::all();
-        $regions = AdminRegion::all();
+        if ($categoryId) {
+            $productsQuery->where('category_id', $categoryId);
+        }
+        if ($regionId) {
+            $productsQuery->where('region_id', $regionId);
+        }
+        // Lọc theo khoảng giá (dựa vào variants)
+        $productsQuery->whereHas('variants', function ($q) use ($priceMin, $priceMax) {
+            $q->whereBetween('price', [$priceMin, $priceMax]);
+        });
+        // Lọc theo rating trung bình
+        if ($rating) {
+            $productsQuery->withAvg('reviews', 'rating')
+                ->havingRaw('ROUND(reviews_avg_rating) = ?', [$rating]);
+        }
+        // Sắp xếp
+        switch ($sort) {
+            case 'price_asc':
+                $productsQuery->orderByRaw('(SELECT MIN(price) FROM product_variants WHERE product_variants.product_id = products.id) ASC');
+                break;
+            case 'price_desc':
+                $productsQuery->orderByRaw('(SELECT MAX(price) FROM product_variants WHERE product_variants.product_id = products.id) DESC');
+                break;
+            case 'rating':
+                $productsQuery->withAvg('reviews', 'rating')->orderByDesc('reviews_avg_rating');
+                break;
+            case 'name_asc':
+                $productsQuery->orderBy('name', 'asc');
+                break;
+            case 'name_desc':
+                $productsQuery->orderBy('name', 'desc');
+                break;
+            default:
+                $productsQuery->orderByDesc('id');
+        }
 
-        return view('frontend.products.search', compact('products', 'query', 'categories', 'regions'));
+        $products = $productsQuery->paginate(12)->appends($request->except('page'));
+
+        // Lấy min/max giá cho slider
+        $allPrices = \App\Models\Client\ProductVariant::where('active', 1)->pluck('price');
+        $priceMinAll = $allPrices->min() ?? 0;
+        $priceMaxAll = $allPrices->max() ?? 10000000;
+
+        $categories = \App\Models\Client\Category::all();
+        $regions = \App\Models\Client\Region::all();
+
+        return view('frontend.products.search', [
+            'products' => $products,
+            'query' => $queryText,
+            'categories' => $categories,
+            'regions' => $regions,
+            'priceMin' => $priceMinAll,
+            'priceMax' => $priceMaxAll,
+        ]);
     }
     // Trang danh sách sản phẩm (sơ lược)
     public function index(Request $request)
@@ -144,16 +199,46 @@ class ProductController extends Controller
     public function destroy($id)
     {
         $product = AdminProduct::findOrFail($id);
-        $product->delete(); // Soft delete
-        return back()->with('success_modal', 'Đã xóa mềm sản phẩm "' . $product->name . '"!');
+
+        // Xóa mềm bình luận và phản hồi liên quan
+        foreach ($product->comments as $comment) {
+            $comment->replies()->delete(); // Xóa mềm các phản hồi
+            $comment->delete(); // Xóa mềm bình luận
+        }
+
+        $product->delete(); // Xóa mềm sản phẩm
+        return back()->with('success_modal', 'Đã xóa mềm sản phẩm "' . $product->name . '" và các bình luận liên quan!');
     }
 
     // Xóa mềm nhiều sản phẩm
     public function bulkDelete(Request $request)
     {
         $ids = explode(',', $request->ids);
-        AdminProduct::whereIn('id', $ids)->delete();
-        return back()->with('success_modal', 'Đã xóa mềm ' . count($ids) . ' sản phẩm đã chọn!');
+        $ids = array_filter($ids, 'is_numeric');
+
+        if (empty($ids)) {
+            return back()->with('error', 'Không có sản phẩm nào được chọn hoặc ID không hợp lệ.');
+        }
+
+        DB::beginTransaction();
+        try {
+            $products = AdminProduct::whereIn('id', $ids)->get();
+
+            foreach ($products as $product) {
+                // Xóa mềm bình luận và phản hồi liên quan
+                foreach ($product->comments as $comment) {
+                    $comment->replies()->delete(); // Xóa mềm các phản hồi
+                    $comment->delete(); // Xóa mềm bình luận
+                }
+                $product->delete(); // Xóa mềm sản phẩm
+            }
+
+            DB::commit();
+            return back()->with('success_modal', 'Đã xóa mềm ' . count($ids) . ' sản phẩm và các bình luận liên quan!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Lỗi xóa mềm hàng loạt: ' . $e->getMessage());
+        }
     }
 
     // Khôi phục một sản phẩm đã xóa mềm
@@ -178,6 +263,12 @@ class ProductController extends Controller
         DB::beginTransaction();
         try {
             $product = AdminProduct::withTrashed()->findOrFail($id);
+
+            // Xóa tất cả bình luận và phản hồi liên quan
+            foreach ($product->comments()->withTrashed()->get() as $comment) {
+                $comment->replies()->withTrashed()->forceDelete(); // Xóa cứng các phản hồi
+                $comment->forceDelete(); // Xóa cứng bình luận
+            }
 
             // Xóa tất cả ảnh mô tả liên quan
             foreach ($product->product_images as $image) {
@@ -204,7 +295,7 @@ class ProductController extends Controller
             $product->forceDelete(); // Xóa cứng sản phẩm chính
 
             DB::commit();
-            return back()->with('success', 'Đã xóa vĩnh viễn sản phẩm "' . $product->name . '"!');
+            return back()->with('success', 'Đã xóa vĩnh viễn sản phẩm "' . $product->name . '" và các bình luận liên quan!');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Lỗi xóa vĩnh viễn sản phẩm: ' . $e->getMessage());
@@ -217,7 +308,6 @@ class ProductController extends Controller
         DB::beginTransaction();
         try {
             $ids = explode(',', $request->ids);
-            // Đảm bảo $ids là một mảng các số nguyên hợp lệ
             $ids = array_filter($ids, 'is_numeric');
 
             if (empty($ids)) {
@@ -231,6 +321,12 @@ class ProductController extends Controller
             }
 
             foreach ($products as $product) {
+                // Xóa cứng bình luận và phản hồi liên quan
+                foreach ($product->comments()->withTrashed()->get() as $comment) {
+                    $comment->replies()->withTrashed()->forceDelete(); // Xóa cứng các phản hồi
+                    $comment->forceDelete(); // Xóa cứng bình luận
+                }
+
                 // Xóa tất cả ảnh mô tả liên quan
                 foreach ($product->product_images as $image) {
                     if (Storage::disk('public')->exists($image->image_url)) {
@@ -256,7 +352,7 @@ class ProductController extends Controller
             }
 
             DB::commit();
-            return back()->with('success', 'Đã xóa vĩnh viễn ' . count($ids) . ' sản phẩm đã chọn!');
+            return back()->with('success', 'Đã xóa vĩnh viễn ' . count($ids) . ' sản phẩm và các bình luận liên quan!');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Lỗi xóa vĩnh viễn hàng loạt: ' . $e->getMessage());

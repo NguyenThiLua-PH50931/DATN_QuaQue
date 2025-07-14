@@ -1,7 +1,9 @@
 @extends('layouts.frontend')
 @section('title', 'Giỏ hàng')
 @section('contents')
+
         <style>
+
                 /* Modal content */
                 .modal-content {
                     border-radius: 12px;
@@ -77,9 +79,9 @@
 
                 /* Khi active */
                 .variant-btn.active {
-                    background-color: #0da487;
+                    background-color: #f1a661;
                     color: white;
-                    border-color: #0da487;
+                    border-color: #f1a661;
                 }
 
                 /* Footer modal */
@@ -94,47 +96,58 @@
                 .modal-footer .btn-secondary {
                     background-color: transparent;
                     border: none;
-                    color: #666;
+                    color: #060606;
                     font-weight: 600;
                     padding: 6px 20px;
                     border-radius: 4px;
                 }
 
-                .modal-footer .btn-secondary:hover {
+                /* .modal-footer .btn-secondary:hover {
                     color: #fdfefe;
-                }
+                } */
 
                 /* Nút Xác nhận */
                 .modal-footer .btn-primary {
-                    background-color: #0da487;
+                    background-color: #f1a661;
                     border: none;
                     font-weight: 700;
                     padding: 6px 20px;
                     border-radius: 4px;
+                    color: white
                 }
-
-                .modal-footer .btn-primary:hover {
-                    background-color: #0da487;
-                }
-
-
                 .open-variant-modal {
                     position: relative;
                     background: transparent !important;
                     color: #212529;
-                    /* Màu chữ */
                     border: none !important;
                     box-shadow: none !important;
                     padding-right: 20px;
-                    /* Khoảng cách để chứa mũi tên */
                     font-weight: normal;
                     cursor: pointer;
-                    font-size: 1rem;
-                    /* Bạn có thể điều chỉnh size chữ nếu cần */
+                    font-size: 0.9rem;
+                    /* giảm size */
+                    max-width: 160px;
+                    /* giới hạn chiều rộng */
+                    white-space: nowrap;
+                    /* không xuống dòng */
+                    overflow: hidden;
+                    /* ẩn phần chữ tràn */
+                    text-overflow: ellipsis;
+                    /* hiển thị ... nếu chữ dài */
                     line-height: 1.5;
-                    /* Đảm bảo chiều cao dòng */
+                    display: inline-block;
+                    /* đảm bảo tính khối để giới hạn chiều rộng */
+                    vertical-align: middle;
                 }
 
+                /* Đồng thời kiểm tra phần cột chứa nút, ví dụ: */
+                td:nth-child(3) {
+                    max-width: 180px;
+                    /* hoặc theo chiều rộng bạn muốn */
+                    white-space: nowrap;
+                    /* không cho cột xuống dòng */
+                    overflow: hidden;
+                }
                 .open-variant-modal:hover {
                     background-color: transparent !important;
                     color: #212529 !important;
@@ -1227,5 +1240,4 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
             <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-
         @endsection

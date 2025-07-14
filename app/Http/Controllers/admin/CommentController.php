@@ -111,28 +111,27 @@ class CommentController extends Controller
     }
 
     public function storeReply(Request $request, $id)
-    {
-        $request->validate([
-            'reply' => ['required', 'string', 'max:1000'],
-        ]);
+{
+    $request->validate([
+        'reply' => ['required', 'string', 'max:1000'],
+    ]);
 
-        $comment = Comment::findOrFail($id);
-        CommentReply::create([
-            'comment_id' => $id,
-           'admin_id' => auth()->id(),
-            'admin_id' => auth()->id(),
-            'reply' => $request->reply,
-        ]);
+    $comment = Comment::findOrFail($id);
+    CommentReply::create([
+        'comment_id' => $id,
+        'admin_id' => auth()->id(),
+        'reply' => $request->reply,
+    ]);
 
-        try {
-            Mail::to($comment->user->email)->send(new CommentReplied($comment, $request->reply));
-            \Log::info('Reply email sent to: ' . $comment->user->email);
-        } catch (\Exception $e) {
-            \Log::error('Failed to send reply email for comment ' . $id . ': ' . $e->getMessage());
-        }
-
-        return redirect()->route('admin.comments.reply', $id)->with('success', 'Phản hồi đã được gửi!');
+    try {
+        Mail::to($comment->user->email)->send(new CommentReplied($comment, $request->reply));
+        \Log::info('Reply email sent to: ' . $comment->user->email);
+    } catch (\Exception $e) {
+        \Log::error('Failed to send reply email for comment ' . $id . ': ' . $e->getMessage());
     }
+
+    return redirect()->route('admin.comments.reply', $id)->with('success', 'Phản hồi đã được gửi!');
+}
     public function editReply($id, $replyId)
     {
         $comment = Comment::with('replies')->findOrFail($id);
