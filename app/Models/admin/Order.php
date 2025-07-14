@@ -3,13 +3,11 @@
 namespace App\Models\admin;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\admin\OrderStatusLog; // thêm ở đầu file nếu chưa có
 
 
 class Order extends Model
 {
-    use SoftDeletes;
 
     protected $table = 'orders';
     protected $fillable = [
@@ -22,10 +20,10 @@ class Order extends Model
     'total_amount',
     'shipping_cost',
     'status',
+    'cancel_reason',
     'payment_method',
     'payment_status',
-    'is_hidden',
-    'bank_transfer_confirmed', 
+    // 'bank_transfer_confirmed', 
     'recipient_name',
     'phone',
     'full_address',  // <-- thêm dòng này!
@@ -62,16 +60,25 @@ class Order extends Model
 }
 
     // Bạn có thể thêm các quan hệ khác tương tự nếu cần
+
+public function statusLogs()
+{
+    return $this->hasMany(OrderStatusLog::class, 'order_id');
+}
+public function freeShippingCode()
+    {
+        return $this->belongsTo(DiscountCode::class, 'free_shipping_code_id');
+    }
     protected static function boot()
 {
     parent::boot();
 
     static::creating(function ($order) {
-        $order->order_code = 'QQ' . date('Ymd') . '-' . mt_rand(1000, 9999);
+        // Chỉ set nếu chưa có, tránh đè giá trị custom nếu có truyền vào
+        if (empty($order->order_code)) {
+            $order->order_code = 'QQ' . date('Ymd') . '-' . mt_rand(1000, 9999);
+        }
     });
 }
-public function statusLogs()
-{
-    return $this->hasMany(OrderStatusLog::class, 'order_id');
-}
+
 }

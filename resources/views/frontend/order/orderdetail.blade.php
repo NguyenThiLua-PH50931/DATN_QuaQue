@@ -77,11 +77,11 @@
                     </li>
                 
                     @if (in_array($order->status, ['pending', 'confirmed', 'processing']) &&
-                        !($order->payment_method === 'bank' && $order->payment_status === 'paid'))
+                       !(in_array($order->payment_method, ['momo', 'bank']) && $order->payment_status === 'paid'))
 
                         <!-- Nút chỉ mở modal -->
                         <button type="button" id="btn-cancel-order" class="btn btn-danger btn-sm">
-                            <i class="fa fa-times"></i> Huỷ đơn hàng
+                            <i class="fa fa-times"></i>Huỷ đơn hàng
                         </button>
                     @endif
 
