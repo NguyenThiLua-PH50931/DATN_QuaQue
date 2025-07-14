@@ -10,9 +10,14 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+<<<<<<< HEAD
         "doctrine/dbal": "^4.2",
+=======
+        "guzzlehttp/guzzle": "^7.9",
+>>>>>>> b0ea716e023dcd1f046afb04b9e7f353f5a86ec9
         "laravel/framework": "^12.0",
-        "laravel/tinker": "^2.10.1"
+        "laravel/tinker": "^2.10.1",
+        "openai-php/client": "^0.14.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
