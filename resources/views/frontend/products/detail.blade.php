@@ -185,8 +185,16 @@
 
                                 <div class="product-info">
                                     <ul class="product-info-list product-info-list-2">
-                                        <li>SKU : <a href="javascript:void(0)" id="product-sku">—</a></li>
-                                        <li>Số lượng : <a href="javascript:void(0)" id="product-stock">—</a></li>
+                                        @php
+                                        $firstVariant = $product->variants[0] ?? null;
+                                        @endphp
+                                        <li>SKU : <a href="javascript:void(0)" id="product-sku">
+                                                {{ $firstVariant ? ($firstVariant->sku ?? 'N/A') : '—' }}
+                                            </a></li>
+                                        <li>Số lượng : <a href="javascript:void(0)" id="product-stock">
+                                                {{ $firstVariant ? ($firstVariant->stock ?? 'N/A') : '—' }}
+                                            </a></li>
+
                                         <li>Tags : <a
                                                 href="javascript:void(0)">{{ $product->category->name ?? '' }}</a></li>
                                     </ul>
@@ -207,6 +215,7 @@
                                     </button>
                                 </li>
 
+                                @if ($product->variants->count() > 1)
                                 <li class="nav-item" role="presentation">
                                     <button class="nav-link" id="info-tab" data-bs-toggle="tab"
                                         data-bs-target="#info" type="button" role="tab" aria-controls="info"
@@ -214,6 +223,7 @@
                                         Mô tả Biến thể
                                     </button>
                                 </li>
+                                @endif
 
                                 <li class="nav-item" role="presentation">
                                     <button class="nav-link" id="care-tab" data-bs-toggle="tab"
