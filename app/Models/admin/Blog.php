@@ -33,4 +33,23 @@ class Blog extends Model
     {
         return $this->hasMany(BlogComment::class, 'blog_id');
     }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($blog) {
+            if ($blog->isForceDeleting()) {
+                $blog->comments()->forceDelete();
+            } else {
+                $blog->comments()->delete();
+            }
+        });
+
+        static::restoring(function ($blog) {
+            BlogComment::onlyTrashed()
+                ->where('blog_id', $blog->id)
+                ->restore();
+        });        
+    }
 }
