@@ -42,6 +42,7 @@ use App\Http\Controllers\Client\OrdersController;
 use App\Http\Controllers\Client\PaymentController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Client\ChatbotController;
 // use App\Http\Controllers\ProductController as GlobalProductController; // Nếu cần dùng controller gốc ngoài admin/client
 
 
@@ -51,6 +52,9 @@ Route::redirect('/', '/client/home');
 
 Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
     Route::get('home', [ClientHomeController::class, 'home'])->name('home');
+
+    // AI CHAT BOT
+    Route::post('chatbot', [ChatbotController::class, 'chat'])->name('chatbot.send');
 
     // Sản phẩm:
     Route::group(['prefix' => 'san-pham', 'as' => 'product.'], function () {
@@ -62,12 +66,6 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
         Route::post('/get-variant', [ClientProductController::class, 'getVariant'])->name('.getVariant');
         Route::post('/reviews', [ClientProductController::class, 'storeReview'])->name('reviews.store');
         Route::get('/quickview/{slug}', [ClientProductController::class, 'quickView'])->name('quickview');
-        Route::post('/san-pham/{product}/comment', [ClientProductController::class, 'comment'])->name('product.comment.ajax');
-        Route::post('/comment/{comment}/reply', [ClientProductController::class, 'commentReply'])->name('product.comment.reply.ajax');
-        Route::delete('/comment/{comment}', [ClientProductController::class, 'deleteComment'])->name('comment.delete');
-        Route::put('/comment/{comment}', [ClientProductController::class, 'updateComment'])->name('comment.update');
-        Route::put('/reply/{reply}', [ClientProductController::class, 'updateReply'])->name('reply.update');
-        Route::delete('/reply/{reply}', [ClientProductController::class, 'deleteReply'])->name('reply.delete');
     });
 
 
