@@ -72,6 +72,16 @@
                 </footer>
             </div>
             <!-- Footer End -->
+            <!-- Loader Start -->
+            <div class="fullpage-loader">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <!-- Loader End -->
         </div>
     </div>
     <!-- Logout Modal -->
@@ -176,106 +186,109 @@
     @stack('scripts')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
 
-   <script>
-    // Xử lý chuyển trạng thái đơn hàng (có alert thành công, disable đúng option theo luồng trạng thái)
-    document.querySelectorAll('.status-select').forEach(function(select) {
+    <script>
+        // Xử lý chuyển trạng thái đơn hàng (có alert thành công, disable đúng option theo luồng trạng thái)
+        document.querySelectorAll('.status-select').forEach(function(select) {
 
-        // Hàm kiểm soát các trạng thái được phép chuyển tiếp
-        function updateStatusOptions() {
-            const current = select.value;
-            let allowed = [];
+            // Hàm kiểm soát các trạng thái được phép chuyển tiếp
+            function updateStatusOptions() {
+                const current = select.value;
+                let allowed = [];
 
-            switch(current) {
-                case 'pending':
-                    allowed = ['confirmed'];
-                    break;
-                case 'confirmed':
-                    allowed = ['processing'];
-                    break;
-                case 'processing':
-                    allowed = ['shipped'];
-                    break;
-                case 'shipped':
-                    allowed = ['in_transit'];
-                    break;
-                case 'in_transit':
-                    allowed = ['delivered', 'failed_delivery'];
-                    break;
-                default:
-                    allowed = [];
+                switch (current) {
+                    case 'pending':
+                        allowed = ['confirmed'];
+                        break;
+                    case 'confirmed':
+                        allowed = ['processing'];
+                        break;
+                    case 'processing':
+                        allowed = ['shipped'];
+                        break;
+                    case 'shipped':
+                        allowed = ['in_transit'];
+                        break;
+                    case 'in_transit':
+                        allowed = ['delivered', 'failed_delivery'];
+                        break;
+                    default:
+                        allowed = [];
+                }
+
+                Array.from(select.options).forEach(opt => {
+                    // Luôn enable option hiện tại để không gây lỗi giao diện
+                    if (opt.value !== current && !allowed.includes(opt.value)) {
+                        opt.disabled = true;
+                    } else {
+                        opt.disabled = false;
+                    }
+                });
             }
 
-            Array.from(select.options).forEach(opt => {
-                // Luôn enable option hiện tại để không gây lỗi giao diện
-                if (opt.value !== current && !allowed.includes(opt.value)) {
-                    opt.disabled = true;
-                } else {
-                    opt.disabled = false;
-                }
-            });
-        }
+            // Gọi hàm này khi trang vừa load xong
+            updateStatusOptions();
 
-        // Gọi hàm này khi trang vừa load xong
-        updateStatusOptions();
+            // Xử lý khi user đổi trạng thái
+            select.addEventListener('change', function() {
+                const orderId = this.getAttribute('data-order-id');
+                const newStatus = this.value;
+                const form = document.getElementById('status-form-' + orderId);
+                const token = form.querySelector('input[name="_token"]').value;
+                const currentStatus = this.getAttribute('data-current-status');
+                const tr = form.closest('tr');
+                const ul = tr.querySelector('td:last-child ul');
 
-        // Xử lý khi user đổi trạng thái
-        select.addEventListener('change', function() {
-            const orderId = this.getAttribute('data-order-id');
-            const newStatus = this.value;
-            const form = document.getElementById('status-form-' + orderId);
-            const token = form.querySelector('input[name="_token"]').value;
-            const currentStatus = this.getAttribute('data-current-status');
-            const tr = form.closest('tr');
-            const ul = tr.querySelector('td:last-child ul');
+                fetch(form.action, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': token,
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            status: newStatus
+                        }),
+                    })
+                    .then(response => {
+                        if (!response.ok) return response.json().then(err => {
+                            throw err;
+                        });
+                        return response.json();
+                    })
+                    .then(data => {
+                        alert(data.message || 'Cập nhật trạng thái thành công');
+                        select.setAttribute('data-current-status', newStatus);
+                        select.classList.remove('status-' + currentStatus);
+                        select.classList.add('status-' + newStatus);
 
-            fetch(form.action, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': token,
-                        'Accept': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        status: newStatus
-                    }),
-                })
-                .then(response => {
-                    if (!response.ok) return response.json().then(err => { throw err; });
-                    return response.json();
-                })
-                .then(data => {
-                    alert(data.message || 'Cập nhật trạng thái thành công');
-                    select.setAttribute('data-current-status', newStatus);
-                    select.classList.remove('status-' + currentStatus);
-                    select.classList.add('status-' + newStatus);
+                        // Cập nhật payment-status (nếu có)
+                        const paymentStatusTd = document.getElementById('payment-status-' + orderId);
+                        if (paymentStatusTd) {
+                            let paymentText = {
+                                paid: 'Đã thanh toán',
+                                unpaid: 'Chưa thanh toán',
+                                failed: 'Thất bại'
+                            } [data.payment_status] || data.payment_status;
 
-                    // Cập nhật payment-status (nếu có)
-                    const paymentStatusTd = document.getElementById('payment-status-' + orderId);
-                    if (paymentStatusTd) {
-                        let paymentText = {
-                            paid: 'Đã thanh toán',
-                            unpaid: 'Chưa thanh toán',
-                            failed: 'Thất bại'
-                        } [data.payment_status] || data.payment_status;
-
-                        paymentStatusTd.textContent = paymentText;
-                        paymentStatusTd.classList.remove('payment-paid', 'payment-unpaid', 'payment-failed');
-                        switch (data.payment_status) {
-                            case 'paid':
-                                paymentStatusTd.classList.add('payment-paid');
-                                break;
-                            case 'unpaid':
-                                paymentStatusTd.classList.add('payment-unpaid');
-                                break;
-                            case 'failed':
-                                paymentStatusTd.classList.add('payment-failed');
-                                break;
+                            paymentStatusTd.textContent = paymentText;
+                            paymentStatusTd.classList.remove('payment-paid', 'payment-unpaid',
+                                'payment-failed');
+                            switch (data.payment_status) {
+                                case 'paid':
+                                    paymentStatusTd.classList.add('payment-paid');
+                                    break;
+                                case 'unpaid':
+                                    paymentStatusTd.classList.add('payment-unpaid');
+                                    break;
+                                case 'failed':
+                                    paymentStatusTd.classList.add('payment-failed');
+                                    break;
+                            }
                         }
-                    }
 
-                    // Render lại nút chức năng
-                    const isHidden = !!data.is_hidden;
-                    ul.innerHTML = `
+                        // Render lại nút chức năng
+                        const isHidden = !!data.is_hidden;
+                        ul.innerHTML = `
                         <li>
                             <a href="${form.action.replace('/update-status', '')}">
                                 <i class="ri-eye-line"></i>
@@ -287,87 +300,90 @@
                             </a>
                         </li>
                     `;
-                    if (!isHidden && ['delivered', 'cancelled', 'failed_delivery'].includes(newStatus)) {
-                        const li = document.createElement('li');
-                        const hideForm = document.createElement('form');
-                        hideForm.action = form.action.replace('update-status', 'hide');
-                        hideForm.method = 'POST';
-                        hideForm.innerHTML = `
+                        if (!isHidden && ['delivered', 'cancelled', 'failed_delivery'].includes(
+                                newStatus)) {
+                            const li = document.createElement('li');
+                            const hideForm = document.createElement('form');
+                            hideForm.action = form.action.replace('update-status', 'hide');
+                            hideForm.method = 'POST';
+                            hideForm.innerHTML = `
                             <input type="hidden" name="_token" value="${token}">
                             <input type="hidden" name="_method" value="PATCH">
                             <button type="submit" class="border-0 bg-transparent" title="Ẩn">
                                 <i class="ri-eye-off-line text-warning"></i>
                             </button>
                         `;
-                        li.appendChild(hideForm);
-                        ul.appendChild(li);
-                    }
-                    if (isHidden) {
-                        const li = document.createElement('li');
-                        const deleteForm = document.createElement('form');
-                        deleteForm.action = form.action.replace('update-status', 'destroy');
-                        deleteForm.method = 'POST';
-                        deleteForm.innerHTML = `
+                            li.appendChild(hideForm);
+                            ul.appendChild(li);
+                        }
+                        if (isHidden) {
+                            const li = document.createElement('li');
+                            const deleteForm = document.createElement('form');
+                            deleteForm.action = form.action.replace('update-status', 'destroy');
+                            deleteForm.method = 'POST';
+                            deleteForm.innerHTML = `
                             <input type="hidden" name="_token" value="${token}">
                             <input type="hidden" name="_method" value="DELETE">
                             <button type="submit" class="border-0 bg-transparent" title="Xóa vĩnh viễn">
                                 <i class="ri-delete-bin-line text-danger"></i>
                             </button>
                         `;
-                        li.appendChild(deleteForm);
-                        ul.appendChild(li);
-                    }
+                            li.appendChild(deleteForm);
+                            ul.appendChild(li);
+                        }
 
-                    // Gọi lại để disable đúng option
-                    updateStatusOptions();
-                })
-                .catch(error => {
-                    alert(error.message || 'Lỗi khi cập nhật trạng thái');
-                    this.value = currentStatus;
-                    updateStatusOptions();
-                });
+                        // Gọi lại để disable đúng option
+                        updateStatusOptions();
+                    })
+                    .catch(error => {
+                        // alert(error.message || 'Lỗi khi cập nhật trạng thái');
+                        this.value = currentStatus;
+                        updateStatusOptions();
+                    });
+            });
         });
-    });
 
-    // Xử lý nút ẨN và XOÁ (giữ nguyên như cũ)
-    document.addEventListener('submit', function(e) {
-        // Nút ẨN: KHÔNG alert, không confirm
-        if (e.target.matches('form[action*="hide"]')) {
-            e.preventDefault();
-            const form = e.target;
-            const token = form.querySelector('input[name="_token"]').value;
-            const action = form.action;
-            const tr = form.closest('tr');
-
-            fetch(action, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': token,
-                        'Accept': 'application/json',
-                    },
-                    body: JSON.stringify({}),
-                })
-                .then(response => {
-                    if (!response.ok) return response.json().then(err => { throw err; });
-                    return response.json();
-                })
-                .then(() => {
-                    tr.remove();
-                })
-                .catch(error => {
-                    alert(error.message || 'Ẩn đơn hàng thất bại!');
-                });
-        }
-
-        // Nút XOÁ: CÓ confirm
-        if (e.target.matches('form[action*="destroy"]')) {
-            if (!confirm('Bạn có chắc chắn muốn xoá vĩnh viễn đơn hàng này không?')) {
+        // Xử lý nút ẨN và XOÁ (giữ nguyên như cũ)
+        document.addEventListener('submit', function(e) {
+            // Nút ẨN: KHÔNG alert, không confirm
+            if (e.target.matches('form[action*="hide"]')) {
                 e.preventDefault();
+                const form = e.target;
+                const token = form.querySelector('input[name="_token"]').value;
+                const action = form.action;
+                const tr = form.closest('tr');
+
+                fetch(action, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': token,
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({}),
+                    })
+                    .then(response => {
+                        if (!response.ok) return response.json().then(err => {
+                            throw err;
+                        });
+                        return response.json();
+                    })
+                    .then(() => {
+                        tr.remove();
+                    })
+                    .catch(error => {
+                        alert(error.message || 'Ẩn đơn hàng thất bại!');
+                    });
             }
-        }
-    });
-</script>
+
+            // Nút XOÁ: CÓ confirm
+            if (e.target.matches('form[action*="destroy"]')) {
+                if (!confirm('Bạn có chắc chắn muốn xoá vĩnh viễn đơn hàng này không?')) {
+                    e.preventDefault();
+                }
+            }
+        });
+    </script>
 
     <script>
         document.addEventListener('submit', function(e) {
@@ -523,4 +539,5 @@
     </script>
 </body>
 @stack('scripts')
+
 </html>

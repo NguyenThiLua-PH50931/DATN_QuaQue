@@ -14,16 +14,25 @@
                                 <div class="right-options">
                                     <ul>
                                         <li>
-                                            <a class="btn btn-theme d-flex align-items-center" href="{{ route('admin.attributes.create') }}">
+                                            <a class="btn btn-theme d-flex align-items-center"
+                                                href="{{ route('admin.attributes.create') }}">
                                                 <i data-feather="plus-square"></i> Thêm mới
                                             </a>
                                         </li>
                                     </ul>
                                 </div>
                             </div>
-
+                            <style>
+                                table#attributeTable {
+                                    width: 100%;
+                                    table-layout: fixed;
+                                    /* bảng co lại đều các cột */
+                                    word-wrap: break-word;
+                                    /* xuống dòng nếu nội dung dài */
+                                }
+                            </style>
                             <div class="table-responsive category-table">
-                                <table class="table all-package theme-table" id="attributeTable">
+                                <table class="table all-package theme-table" id="attributeTable" style="min-width: 700px;">
                                     <thead>
                                         <tr>
                                             <th style="color: black; background-color: #f8f9fa; width: 30px;">
@@ -45,7 +54,8 @@
                                                 </td>
                                                 <td class="text-center">{{ $attribute->id }}</td>
                                                 <td>
-                                                    <a href="{{ route('admin.attributes.edit', $attribute->slug) }}" class="fw-bold text-primary">
+                                                    <a href="{{ route('admin.attributes.edit', $attribute->slug) }}"
+                                                        class="fw-bold text-primary">
                                                         {{ $attribute->name }}
                                                     </a>
                                                 </td>
@@ -55,11 +65,13 @@
                                                     @endphp
                                                     {{ implode(', ', $values) }}
                                                 </td>
-                                                <td>{{ $attribute->updated_at ? $attribute->updated_at->format('d/m/Y H:i') : '' }}</td>
+                                                <td>{{ $attribute->updated_at ? $attribute->updated_at->format('d/m/Y H:i') : '' }}
+                                                </td>
                                                 <td>
                                                     <ul>
                                                         <li>
-                                                            <a href="{{ route('admin.attributes.edit', $attribute->slug) }}">
+                                                            <a
+                                                                href="{{ route('admin.attributes.edit', $attribute->slug) }}">
                                                                 <i class="ri-pencil-line"></i>
                                                             </a>
                                                         </li>
@@ -76,17 +88,20 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="6" class="py-4 px-4 text-center">Không có thuộc tính nào.</td>
+                                                <td colspan="6" class="py-4 px-4 text-center">Không có thuộc tính nào.
+                                                </td>
                                             </tr>
                                         @endforelse
                                     </tbody>
                                 </table>
                                 <form class="d-inline-flex">
-                                    <button type="button" id="bulk-delete-btn"
-                                        class="align-items-center btn btn-danger d-flex ms-2" style="display: none;">
-                                        <i data-feather="trash"></i> Xóa đã chọn
+                                    <button type="button" id="bulk-delete-btn" class="align-items-center btn d-flex ms-2"
+                                        style="display: none; background-color: #ffc107; color: white; border-color: #ffc107; font-size: 0.85rem; padding: 0.25rem 0.5rem;">
+                                        <i data-feather="trash" style="color: white; width: 16px; height: 16px;"></i> Xóa đã
+                                        chọn
                                     </button>
                                 </form>
+
                             </div>
                         </div>
                     </div>
@@ -104,19 +119,20 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    Bạn có chắc chắn muốn chuyển thuộc tính <strong id="attributeNameDelete"></strong> vào thùng rác không? Thuộc tính này sẽ được xóa mềm và có thể khôi phục sau này.
+                    Bạn có chắc chắn muốn chuyển thuộc tính <strong id="attributeNameDelete"></strong> vào thùng rác không?
+                    Thuộc tính này sẽ được xóa mềm và có thể khôi phục sau này.
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="button" class="btn btn-danger" id="confirm-delete-single-btn">Chuyển vào thùng rác</button>
+                    <button type="button" class="btn btn-danger" id="confirm-delete-single-btn">Chuyển vào thùng
+                        rác</button>
                 </div>
             </div>
         </div>
     </div>
 
     {{-- Bulk Delete Modal --}}
-    <div class="modal fade" id="bulkDeleteModal" tabindex="-1" aria-labelledby="bulkDeleteModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="bulkDeleteModal" tabindex="-1" aria-labelledby="bulkDeleteModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -124,7 +140,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    Bạn có chắc chắn muốn chuyển <span id="selectedAttributeCount"></span> thuộc tính đã chọn vào thùng rác không?
+                    Bạn có chắc chắn muốn chuyển <span id="selectedAttributeCount"></span> thuộc tính đã chọn vào thùng rác
+                    không?
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
@@ -135,8 +152,7 @@
     </div>
 
     {{-- No Selection Modal --}}
-    <div class="modal fade" id="noSelectionModal" tabindex="-1" aria-labelledby="noSelectionModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="noSelectionModal" tabindex="-1" aria-labelledby="noSelectionModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -148,209 +164,211 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+
+        {{-- Cannot Delete Modal --}}
+        <div class="modal fade" id="cannotDeleteModal" tabindex="-1" aria-labelledby="cannotDeleteModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="cannotDeleteModalLabel">Lỗi xóa</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <span id="cannotDeleteMessage"></span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @includeIf('backend.footer')
+    @endsection
+
+    @push('scripts')
+        <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+        <script>
+            $(document).ready(function() {
+                // Cấu hình Toastr
+                toastr.options = {
+                    "closeButton": true,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "timeOut": "5000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                };
+
+                // Hiển thị thông báo thành công/lỗi từ session flash
+                @if (session('success'))
+                    toastr.success('{{ session('success') }}');
+                @endif
+
+                @if (session('error'))
+                    toastr.error('{{ session('error') }}');
+                @endif
+
+                $('#attributeTable').DataTable({
+                    language: {
+                        search: "Tìm kiếm:",
+                        lengthMenu: "Hiển thị _MENU_ thuộc tính",
+                        info: "Hiển thị _START_ đến _END_ trong tổng _TOTAL_ thuộc tính",
+                        paginate: {
+                            first: "Đầu",
+                            last: "Cuối",
+                            next: "Sau",
+                            previous: "Trước"
+                        },
+                        zeroRecords: "Không tìm thấy thuộc tính nào.",
+                    },
+                    "columnDefs": [{
+                        "orderable": false,
+                        "targets": [0, 5]
+                    }]
+                });
+
+                // Xử lý sự kiện click nút sửa (chuyển sang trang edit)
+                $(document).on('click', '.edit-btn', function() {
+                    // Không cần xử lý modal, chỉ cần click vào link sẽ chuyển trang
+                });
+
+                // Reset form khi đóng modal tạo mới (đã loại bỏ modal tạo mới)
+                // $('#createModal').on('hidden.bs.modal', function() {
+                //     $('#createModal form')[0].reset();
+                // });
+
+                // Reset form khi đóng modal sửa (đã loại bỏ modal sửa)
+                // $('#editModal').on('hidden.bs.modal', function() {
+                //     $('#editModal form')[0].reset();
+                // });
+
+                // Xử lý sự kiện click nút xóa mềm (đơn lẻ)
+                $(document).on('click', '.delete-btn', function() {
+                    var id = $(this).data('id');
+                    var name = $(this).data('name');
+                    $('#attributeNameDelete').text(name);
+                    $('#confirm-delete-single-btn').data('id', id); // Lưu ID vào nút confirm
+                });
+
+                // Xử lý xác nhận xóa mềm (đơn lẻ)
+                $(document).on('click', '#confirm-delete-single-btn', function() {
+                    var attributeId = $(this).data('id');
+                    $('#deleteModal').modal('hide');
+
+                    $.ajax({
+                        url: '{{ url('admin/attributes') }}/' + attributeId,
+                        method: 'DELETE',
+                        data: {
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                toastr.success(response.message);
+                            } else if (response.status === 'warning') {
+                                toastr.warning(response.message);
+                            } else {
+                                toastr.info(response.message);
+                            }
+                            window.location.reload();
+                        },
+                        error: function(xhr) {
+                            let errorMessage = 'Lỗi khi xóa thuộc tính.';
+                            if (xhr.responseJSON && xhr.responseJSON.message) {
+                                errorMessage = xhr.responseJSON.message;
+                            } else if (xhr.responseText) {
+                                errorMessage = 'Lỗi server: ' + xhr.responseText.substring(0, 100) +
+                                    '...';
+                            }
+                            toastr.error(errorMessage);
+                        }
+                    });
+                });
+
+                // Logic cho chức năng chọn tất cả và ẩn/hiện nút hành động hàng loạt
+                $('#select-all-checkbox').change(function() {
+                    $('.row-checkbox').prop('checked', $(this).prop('checked'));
+                    toggleBulkActionButtons();
+                });
+
+                $(document).on('change', '.row-checkbox', function() {
+                    toggleBulkActionButtons();
+                });
+
+                function toggleBulkActionButtons() {
+                    if ($('.row-checkbox:checked').length > 0) {
+                        $('#bulk-delete-btn').show();
+                    } else {
+                        $('#bulk-delete-btn').hide();
+                    }
                 }
-            </div>
-        </div>
-    </div>
 
-    {{-- Cannot Delete Modal --}}
-    <div class="modal fade" id="cannotDeleteModal" tabindex="-1" aria-labelledby="cannotDeleteModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="cannotDeleteModalLabel">Lỗi xóa</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <span id="cannotDeleteMessage"></span>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                </div>
-            </div>
-        </div>
-    </div>
+                // Xử lý sự kiện click nút xóa hàng loạt (Soft Delete Bulk)
+                $('#bulk-delete-btn').click(function() {
+                    var selectedIds = [];
+                    $('.row-checkbox:checked').each(function() {
+                        selectedIds.push($(this).val());
+                    });
 
-    @includeIf('backend.footer')
-@endsection
+                    if (selectedIds.length > 0) {
+                        $('#selectedAttributeCount').text(selectedIds.length);
+                        $('#bulkDeleteModal').modal('show');
 
-@push('scripts')
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-
-    <script>
-        $(document).ready(function() {
-            // Cấu hình Toastr
-            toastr.options = {
-                "closeButton": true,
-                "progressBar": true,
-                "positionClass": "toast-top-right",
-                "timeOut": "5000",
-                "extendedTimeOut": "1000",
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-            };
-
-            // Hiển thị thông báo thành công/lỗi từ session flash
-            @if (session('success'))
-                toastr.success('{{ session('success') }}');
-            @endif
-
-            @if (session('error'))
-                toastr.error('{{ session('error') }}');
-            @endif
-
-            $('#attributeTable').DataTable({
-                language: {
-                    search: "Tìm kiếm:",
-                    lengthMenu: "Hiển thị _MENU_ thuộc tính",
-                    info: "Hiển thị _START_ đến _END_ trong tổng _TOTAL_ thuộc tính",
-                    paginate: {
-                        first: "Đầu",
-                        last: "Cuối",
-                        next: "Sau",
-                        previous: "Trước"
-                    },
-                    zeroRecords: "Không tìm thấy thuộc tính nào.",
-                },
-                "columnDefs": [{
-                    "orderable": false,
-                    "targets": [0, 5]
-                }]
-            });
-
-            // Xử lý sự kiện click nút sửa (chuyển sang trang edit)
-            $(document).on('click', '.edit-btn', function() {
-                // Không cần xử lý modal, chỉ cần click vào link sẽ chuyển trang
-            });
-
-            // Reset form khi đóng modal tạo mới (đã loại bỏ modal tạo mới)
-            // $('#createModal').on('hidden.bs.modal', function() {
-            //     $('#createModal form')[0].reset();
-            // });
-
-            // Reset form khi đóng modal sửa (đã loại bỏ modal sửa)
-            // $('#editModal').on('hidden.bs.modal', function() {
-            //     $('#editModal form')[0].reset();
-            // });
-
-            // Xử lý sự kiện click nút xóa mềm (đơn lẻ)
-            $(document).on('click', '.delete-btn', function() {
-                var id = $(this).data('id');
-                var name = $(this).data('name');
-                $('#attributeNameDelete').text(name);
-                $('#confirm-delete-single-btn').data('id', id); // Lưu ID vào nút confirm
-            });
-
-            // Xử lý xác nhận xóa mềm (đơn lẻ)
-            $(document).on('click', '#confirm-delete-single-btn', function() {
-                var attributeId = $(this).data('id');
-                $('#deleteModal').modal('hide');
-
-                $.ajax({
-                    url: '{{ url('admin/attributes') }}/' + attributeId,
-                    method: 'DELETE',
-                    data: {
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            toastr.success(response.message);
-                        } else if (response.status === 'warning') {
-                            toastr.warning(response.message);
-                        } else {
-                            toastr.info(response.message);
-                        }
-                        window.location.reload();
-                    },
-                    error: function(xhr) {
-                        let errorMessage = 'Lỗi khi xóa thuộc tính.';
-                        if (xhr.responseJSON && xhr.responseJSON.message) {
-                            errorMessage = xhr.responseJSON.message;
-                        } else if (xhr.responseText) {
-                             errorMessage = 'Lỗi server: ' + xhr.responseText.substring(0, 100) + '...';
-                        }
-                        toastr.error(errorMessage);
+                        $('#confirm-bulk-delete-btn').off('click').on('click', function() {
+                            $.ajax({
+                                url: '{{ route('admin.attributes.bulkDelete') }}',
+                                method: 'POST',
+                                data: {
+                                    _token: '{{ csrf_token() }}',
+                                    ids: selectedIds.join(',') // Gửi mảng ID dưới dạng chuỗi
+                                },
+                                success: function(response) {
+                                    $('#bulkDeleteModal').modal('hide');
+                                    if (response.success) {
+                                        toastr.success(response.message);
+                                    } else if (response.status === 'warning') {
+                                        toastr.warning(response.message);
+                                    } else {
+                                        toastr.info(response.message);
+                                    }
+                                    window.location.reload();
+                                },
+                                error: function(xhr) {
+                                    $('#bulkDeleteModal').modal('hide');
+                                    let errorMessage =
+                                        'Lỗi khi chuyển thuộc tính đã chọn vào thùng rác.';
+                                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                                        errorMessage = xhr.responseJSON.message;
+                                    } else if (xhr.responseText) {
+                                        errorMessage = 'Lỗi server: ' + xhr.responseText
+                                            .substring(0, 100) + '...';
+                                    }
+                                    toastr.error(errorMessage);
+                                }
+                            });
+                        });
+                    } else {
+                        $('#noSelectionModal').modal('show');
                     }
                 });
+
+                // Hiển thị modal lỗi nếu có session error từ server
+                @if (session('error'))
+                    var errorMessage = "{{ session('error') }}";
+                    $('#cannotDeleteMessage').text(errorMessage);
+                    $('#cannotDeleteModal').modal('show');
+                @endif
             });
-
-            // Logic cho chức năng chọn tất cả và ẩn/hiện nút hành động hàng loạt
-            $('#select-all-checkbox').change(function() {
-                $('.row-checkbox').prop('checked', $(this).prop('checked'));
-                toggleBulkActionButtons();
-            });
-
-            $(document).on('change', '.row-checkbox', function() {
-                toggleBulkActionButtons();
-            });
-
-            function toggleBulkActionButtons() {
-                if ($('.row-checkbox:checked').length > 0) {
-                    $('#bulk-delete-btn').show();
-                } else {
-                    $('#bulk-delete-btn').hide();
-                }
-            }
-
-            // Xử lý sự kiện click nút xóa hàng loạt (Soft Delete Bulk)
-            $('#bulk-delete-btn').click(function() {
-                var selectedIds = [];
-                $('.row-checkbox:checked').each(function() {
-                    selectedIds.push($(this).val());
-                });
-
-                if (selectedIds.length > 0) {
-                    $('#selectedAttributeCount').text(selectedIds.length);
-                    $('#bulkDeleteModal').modal('show');
-
-                    $('#confirm-bulk-delete-btn').off('click').on('click', function() {
-                        $.ajax({
-                            url: '{{ route('admin.attributes.bulkDelete') }}',
-                            method: 'POST',
-                            data: {
-                                _token: '{{ csrf_token() }}',
-                                ids: selectedIds.join(',') // Gửi mảng ID dưới dạng chuỗi
-                            },
-                            success: function(response) {
-                                $('#bulkDeleteModal').modal('hide');
-                                if (response.success) {
-                                    toastr.success(response.message);
-                                } else if (response.status === 'warning') {
-                                    toastr.warning(response.message);
-                                } else {
-                                    toastr.info(response.message);
-                                }
-                                window.location.reload();
-                            },
-                            error: function(xhr) {
-                                $('#bulkDeleteModal').modal('hide');
-                                let errorMessage = 'Lỗi khi chuyển thuộc tính đã chọn vào thùng rác.';
-                                if (xhr.responseJSON && xhr.responseJSON.message) {
-                                    errorMessage = xhr.responseJSON.message;
-                                } else if (xhr.responseText) {
-                                    errorMessage = 'Lỗi server: ' + xhr.responseText.substring(0, 100) + '...';
-                                }
-                                toastr.error(errorMessage);
-                            }
-                        });
-                    });
-                } else {
-                    $('#noSelectionModal').modal('show');
-                }
-            });
-
-            // Hiển thị modal lỗi nếu có session error từ server
-            @if(session('error'))
-                var errorMessage = "{{ session('error') }}";
-                $('#cannotDeleteMessage').text(errorMessage);
-                $('#cannotDeleteModal').modal('show');
-            @endif
-        });
-    </script>
-@endpush
+        </script>
+    @endpush

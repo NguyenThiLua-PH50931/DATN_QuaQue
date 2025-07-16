@@ -37,9 +37,9 @@ class OrderController extends Controller
             $keyword = $request->keyword;
             $query->where(function ($q) use ($keyword) {
                 $q->where('order_code', 'like', "%{$keyword}%")
-                  ->orWhereHas('user', function ($q2) use ($keyword) {
-                      $q2->where('name', 'like', "%{$keyword}%");
-                  });
+                    ->orWhereHas('user', function ($q2) use ($keyword) {
+                        $q2->where('name', 'like', "%{$keyword}%");
+                    });
             });
         }
 
@@ -176,11 +176,8 @@ class OrderController extends Controller
             Mail::to($order->user->email)->send(new OrderStatusUpdated($order));
         }
 
-        return response()->json([
-            'message' => 'Cập nhật trạng thái đơn hàng thành công.',
-            'status' => $order->status,
-            'payment_status' => $order->payment_status,
-        ]);
+        return redirect()->route('admin.orders.index')
+            ->with('success', 'Cập nhật trạng thái đơn hàng thành công.');
     }
 
     // Nếu KHÔNG muốn cho phép xóa, có thể comment function destroy

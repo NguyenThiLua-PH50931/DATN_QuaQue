@@ -463,12 +463,14 @@
                                  <li class="right-side onhover-dropdown">
                                      <div class="delivery-login-box">
                                          @if (Auth::check())
-                                             <div class="delivery-icon">
-                                                 <i data-feather="user"></i>
+                                             <div class="delivery-icon d-flex align-items-center gap-2">
+                                                 <img src="{{asset('storage/' . Auth::user()->avatar) ?? 'path/to/default-avatar.png' }}"
+                                                     alt="Avatar"
+                                                     style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
                                                  <strong>{{ Auth::user()->name }}</strong>
                                              </div>
                                          @else
-                                             <div class="delivery-icon">
+                                             <div class="delivery-icon d-flex align-items-center gap-2">
                                                  <i data-feather="user"></i>
                                                  <span>Tài khoản</span>
                                              </div>
@@ -478,6 +480,7 @@
                                              </div>
                                          @endif
                                      </div>
+
 
                                      <div class="onhover-div onhover-div-login">
                                          <ul class="user-box-name">
@@ -1249,12 +1252,12 @@
                          </div>
                      </div>
 
-                     <div class="header-nav-right">
+                     {{-- <div class="header-nav-right">
                          <button class="btn deal-button" data-bs-toggle="modal" data-bs-target="#deal-box">
                              <i class="ri-leaf-line"></i> <!-- icon lá cây từ Remix Icon -->
                              <span>Ưu đãi hôm nay</span>
                          </button>
-                     </div>
+                     </div> --}}
                  </div>
              </div>
          </div>

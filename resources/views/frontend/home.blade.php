@@ -246,7 +246,7 @@
                             </span>
                             <p>Sản phẩm hot nhất tuần này – Đặt sớm kẻo lỡ, số lượng có hạn!</p>
                         </div>
-                        <div class="timing-box">
+                        {{-- <div class="timing-box">
                             <div class="timing">
                                 <i data-feather="clock"></i>
                                 <h6 class="name">Expires in :</h6>
@@ -283,7 +283,7 @@
                                     </ul>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
 
                     <div class="section-b-space">
@@ -394,7 +394,7 @@
                                                                     <input type="hidden" name="product_id"
                                                                         value="{{ $product->id }}">
                                                                     <button type="submit"
-                                                                        class="notifi-wishlist btn p-0">
+                                                                        class="notifi-wishlist btn p-0" style="margin-left: 7px; width: 17px;">
                                                                         <i data-feather="heart"
                                                                             @if (auth()->check() && auth()->user()->wishlist()->where('product_id', $product->id)->exists()) class="text-red-500" @endif></i>
                                                                     </button>
@@ -612,7 +612,7 @@
                                                             @csrf
                                                             <input type="hidden" name="product_id"
                                                                 value="{{ $product->id }}">
-                                                            <button type="submit" class="notifi-wishlist btn p-0">
+                                                            <button type="submit" class="notifi-wishlist btn p-0" style="margin-left: 7px; width: 17px;">
                                                                 <i data-feather="heart"
                                                                     @if (auth()->check() && auth()->user()->wishlist()->where('product_id', $product->id)->exists()) class="text-red-500" @endif></i>
                                                             </button>
@@ -781,7 +781,7 @@
                                                                     <input type="hidden" name="product_id"
                                                                         value="{{ $product->id }}">
                                                                     <button type="submit"
-                                                                        class="notifi-wishlist btn p-0">
+                                                                        class="notifi-wishlist btn p-0" style="margin-left: 7px; width: 17px;">
                                                                         <i data-feather="heart"
                                                                             @if (auth()->check() && auth()->user()->wishlist()->where('product_id', $product->id)->exists()) class="text-red-500" @endif></i>
                                                                     </button>
