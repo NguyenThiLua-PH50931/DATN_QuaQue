@@ -176,7 +176,8 @@ class OrderController extends Controller
             Mail::to($order->user->email)->send(new OrderStatusUpdated($order));
         }
 
-        return response()->json(['message' => 'Cập nhật trạng thái đơn hàng thành công.']);
+        return redirect()->route('admin.orders.index')
+            ->with('success', 'Cập nhật trạng thái đơn hàng thành công.');
     }
 
     // Nếu KHÔNG muốn cho phép xóa, có thể comment function destroy
