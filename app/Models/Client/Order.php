@@ -4,12 +4,10 @@ namespace App\Models\Client;
 
 use App\Models\admin\OrderStatusLog;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Client\OrderItem;
 
 class Order extends Model
 {
-    use SoftDeletes;
 
     protected $table = 'orders';
 
@@ -23,15 +21,17 @@ class Order extends Model
         'total_amount',
         'shipping_cost',
         'status',
-        'is_hidden',
+        'cancel_reason',
         'payment_method',
         'payment_status',
         'receiver_name',
         'receiver_phone',
         'created_at',
         'updated_at',
-        'deleted_at',
-        'bank_transfer_confirmed',   // <-- thêm dòng này!
+        // 'bank_transfer_confirmed',
+         'recipient_name',
+    'phone',
+    'full_address',   // <-- thêm dòng này!
     ];
 
 
@@ -75,4 +75,18 @@ class Order extends Model
     {
         return $this->hasMany(OrderStatusLog::class, 'order_id');
     }
+    
+protected static function boot()
+{
+    parent::boot();
+
+    static::creating(function ($order) {
+        // Chỉ set nếu chưa có, tránh đè giá trị custom nếu có truyền vào
+        if (empty($order->order_code)) {
+            $order->order_code = 'QQ' . date('Ymd') . '-' . mt_rand(1000, 9999);
+        }
+    });
 }
+
+}
+

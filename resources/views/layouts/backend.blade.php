@@ -72,6 +72,16 @@
                 </footer>
             </div>
             <!-- Footer End -->
+            <!-- Loader Start -->
+            <div class="fullpage-loader">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <!-- Loader End -->
         </div>
     </div>
     <!-- Logout Modal -->
@@ -177,35 +187,48 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
 
     <script>
-        // Xử lý chuyển trạng thái đơn hàng (CÓ alert thành công)
+        // Xử lý chuyển trạng thái đơn hàng (có alert thành công, disable đúng option theo luồng trạng thái)
         document.querySelectorAll('.status-select').forEach(function(select) {
+
+            // Hàm kiểm soát các trạng thái được phép chuyển tiếp
             function updateStatusOptions() {
-                const finalStatuses = ['delivered', 'cancelled', 'failed_delivery'];
-                const afterShippedStatuses = ['shipped', 'in_transit', 'delivered', 'failed_delivery'];
                 const current = select.value;
+                let allowed = [];
+
+                switch (current) {
+                    case 'pending':
+                        allowed = ['confirmed'];
+                        break;
+                    case 'confirmed':
+                        allowed = ['processing'];
+                        break;
+                    case 'processing':
+                        allowed = ['shipped'];
+                        break;
+                    case 'shipped':
+                        allowed = ['in_transit'];
+                        break;
+                    case 'in_transit':
+                        allowed = ['delivered', 'failed_delivery'];
+                        break;
+                    default:
+                        allowed = [];
+                }
 
                 Array.from(select.options).forEach(opt => {
-                    opt.disabled = false;
+                    // Luôn enable option hiện tại để không gây lỗi giao diện
+                    if (opt.value !== current && !allowed.includes(opt.value)) {
+                        opt.disabled = true;
+                    } else {
+                        opt.disabled = false;
+                    }
                 });
-
-                if (finalStatuses.includes(current)) {
-                    Array.from(select.options).forEach(opt => {
-                        if (opt.value !== current && finalStatuses.includes(opt.value)) {
-                            opt.disabled = true;
-                        }
-                    });
-                }
-                if (afterShippedStatuses.includes(current)) {
-                    Array.from(select.options).forEach(opt => {
-                        if (opt.value === 'cancelled' && opt.value !== current) {
-                            opt.disabled = true;
-                        }
-                    });
-                }
             }
 
+            // Gọi hàm này khi trang vừa load xong
             updateStatusOptions();
 
+            // Xử lý khi user đổi trạng thái
             select.addEventListener('change', function() {
                 const orderId = this.getAttribute('data-order-id');
                 const newStatus = this.value;
@@ -233,12 +256,12 @@
                         return response.json();
                     })
                     .then(data => {
-                        // CHỈ hiện alert khi đổi trạng thái
                         alert(data.message || 'Cập nhật trạng thái thành công');
                         select.setAttribute('data-current-status', newStatus);
                         select.classList.remove('status-' + currentStatus);
                         select.classList.add('status-' + newStatus);
 
+                        // Cập nhật payment-status (nếu có)
                         const paymentStatusTd = document.getElementById('payment-status-' + orderId);
                         if (paymentStatusTd) {
                             let paymentText = {
@@ -266,17 +289,17 @@
                         // Render lại nút chức năng
                         const isHidden = !!data.is_hidden;
                         ul.innerHTML = `
-                <li>
-                    <a href="${form.action.replace('/update-status', '')}">
-                        <i class="ri-eye-line"></i>
-                    </a>
-                </li>
-                <li>
-                    <a href="${form.action.replace('/update-status', '/tracking')}">
-                        <i class="ri-map-pin-line"></i>
-                    </a>
-                </li>
-            `;
+                        <li>
+                            <a href="${form.action.replace('/update-status', '')}">
+                                <i class="ri-eye-line"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="${form.action.replace('/update-status', '/tracking')}">
+                                <i class="ri-map-pin-line"></i>
+                            </a>
+                        </li>
+                    `;
                         if (!isHidden && ['delivered', 'cancelled', 'failed_delivery'].includes(
                                 newStatus)) {
                             const li = document.createElement('li');
@@ -284,12 +307,12 @@
                             hideForm.action = form.action.replace('update-status', 'hide');
                             hideForm.method = 'POST';
                             hideForm.innerHTML = `
-                    <input type="hidden" name="_token" value="${token}">
-                    <input type="hidden" name="_method" value="PATCH">
-                    <button type="submit" class="border-0 bg-transparent" title="Ẩn">
-                        <i class="ri-eye-off-line text-warning"></i>
-                    </button>
-                `;
+                            <input type="hidden" name="_token" value="${token}">
+                            <input type="hidden" name="_method" value="PATCH">
+                            <button type="submit" class="border-0 bg-transparent" title="Ẩn">
+                                <i class="ri-eye-off-line text-warning"></i>
+                            </button>
+                        `;
                             li.appendChild(hideForm);
                             ul.appendChild(li);
                         }
@@ -299,27 +322,28 @@
                             deleteForm.action = form.action.replace('update-status', 'destroy');
                             deleteForm.method = 'POST';
                             deleteForm.innerHTML = `
-                    <input type="hidden" name="_token" value="${token}">
-                    <input type="hidden" name="_method" value="DELETE">
-                    <button type="submit" class="border-0 bg-transparent" title="Xóa vĩnh viễn">
-                        <i class="ri-delete-bin-line text-danger"></i>
-                    </button>
-                `;
+                            <input type="hidden" name="_token" value="${token}">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit" class="border-0 bg-transparent" title="Xóa vĩnh viễn">
+                                <i class="ri-delete-bin-line text-danger"></i>
+                            </button>
+                        `;
                             li.appendChild(deleteForm);
                             ul.appendChild(li);
                         }
 
+                        // Gọi lại để disable đúng option
                         updateStatusOptions();
                     })
                     .catch(error => {
-                        alert(error.message || 'Lỗi khi cập nhật trạng thái');
+                        // alert(error.message || 'Lỗi khi cập nhật trạng thái');
                         this.value = currentStatus;
                         updateStatusOptions();
                     });
             });
         });
 
-        // Xử lý nút ẨN và XOÁ
+        // Xử lý nút ẨN và XOÁ (giữ nguyên như cũ)
         document.addEventListener('submit', function(e) {
             // Nút ẨN: KHÔNG alert, không confirm
             if (e.target.matches('form[action*="hide"]')) {
@@ -345,7 +369,6 @@
                         return response.json();
                     })
                     .then(() => {
-                        // KHÔNG alert gì cả, chỉ xóa dòng
                         tr.remove();
                     })
                     .catch(error => {
@@ -361,6 +384,7 @@
             }
         });
     </script>
+
     <script>
         document.addEventListener('submit', function(e) {
             if (e.target.matches('form[action*="hide"]')) {
@@ -515,4 +539,5 @@
     </script>
 </body>
 @stack('scripts')
+
 </html>

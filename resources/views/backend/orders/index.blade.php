@@ -286,6 +286,20 @@
             /* bỏ in đậm */
         }
     </style>
+    @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
     <div class="page-body">
         <div class="container-fluid">
             <div class="row">
@@ -333,22 +347,16 @@
                                     <option value="">-- Phương thức TT --</option>
                                     <option value="cod" {{ request('payment_method') == 'cod' ? 'selected' : '' }}>COD
                                     </option>
-                                    <option value="bank" {{ request('payment_method') == 'bank' ? 'selected' : '' }}>
-                                        Chuyển khoản</option>
-                                    <option value="wallet" {{ request('payment_method') == 'wallet' ? 'selected' : '' }}>Ví
-                                        điện tử</option>
+                                    {{-- <option value="bank" {{ request('payment_method') == 'bank' ? 'selected' : '' }}>Chuyển khoản</option> --}}
+                                    <option value="momo" {{ request('payment_method') == 'momo' ? 'selected' : '' }}>Ví
+                                        điện tử momo</option>
                                 </select>
 
-                                <select name="bank_transfer_confirmed" class="form-select form-select-sm"
-                                    style="width: 150px;">
-                                    <option value="">-- XN chuyển khoản --</option>
-                                    <option value="1"
-                                        {{ request('bank_transfer_confirmed') === '1' ? 'selected' : '' }}>Đã xác nhận
-                                    </option>
-                                    <option value="0"
-                                        {{ request('bank_transfer_confirmed') === '0' ? 'selected' : '' }}>Chưa xác nhận
-                                    </option>
-                                </select>
+                                {{-- <select name="bank_transfer_confirmed" class="form-select form-select-sm" style="width: 150px;">
+                                <option value="">-- XN chuyển khoản --</option>
+                                <option value="1" {{ request('bank_transfer_confirmed') === '1' ? 'selected' : '' }}>Đã xác nhận</option>
+                                <option value="0" {{ request('bank_transfer_confirmed') === '0' ? 'selected' : '' }}>Chưa xác nhận</option>
+                            </select> --}}
 
 
                                 <input type="date" name="date_from" class="form-control form-control-sm"
@@ -357,12 +365,7 @@
                                 <input type="date" name="date_to" class="form-control form-control-sm"
                                     style="width: 130px;" value="{{ request('date_to') }}" placeholder="Đến ngày">
 
-                                <select name="is_hidden" class="form-select form-select-sm" style="width: 140px;">
-                                    <option value="0" {{ request('is_hidden') === '0' ? 'selected' : '' }}>-- Hiển thị
-                                        --</option>
-                                    <option value="1" {{ request('is_hidden') === '1' ? 'selected' : '' }}>-- Đã ẩn --
-                                    </option>
-                                </select>
+
                                 <input type="text" name="keyword" class="form-control form-control-sm"
                                     style="width: 160px;" value="{{ request('keyword') }}"
                                     placeholder="Mã đơn / Người đặt">
@@ -381,7 +384,6 @@
                                             <th>Ngày đặt</th>
                                             <th>MĐH</th>
                                             <th>Số tiền</th>
-                                            <th>XN CK</th>
                                             <th>PTTT</th>
                                             <th>TTTT</th>
                                             <th>TT đơn hàng</th>
@@ -417,17 +419,7 @@
                                                 {{-- 👉 Số tiền lên trước --}}
                                                 <td>{{ number_format($order->total_amount, 0, ',', '.') }} VNĐ</td>
                                                 {{-- Xác nhận chuyển khoản --}}
-                                                <td>
-                                                    @if ($order->payment_method === 'bank')
-                                                        @if ($order->bank_transfer_confirmed)
-                                                            <span class="badge bg-success">Đã xác nhận</span>
-                                                        @else
-                                                            <span class="badge bg-warning text-dark">Chưa xác nhận</span>
-                                                        @endif
-                                                    @else
-                                                        <span class="text-muted">-</span>
-                                                    @endif
-                                                </td>
+
 
                                                 {{-- PTTT --}}
                                                 <td>{{ $order->payment_method ?? 'N/A' }}</td>
@@ -437,14 +429,18 @@
                                                     @php
                                                         $paymentClass =
                                                             'payment-status-label payment-' . $order->payment_status;
-
                                                         if (
                                                             $order->payment_method === 'cod' &&
                                                             $order->status === 'delivered'
                                                         ) {
                                                             $paymentClass = 'payment-status-label payment-paid';
                                                         }
-
+                                                        if (
+                                                            $order->payment_method === 'momo' &&
+                                                            $order->payment_status === 'paid'
+                                                        ) {
+                                                            $paymentClass = 'payment-status-label payment-paid-momo';
+                                                        }
                                                         if (
                                                             $order->payment_method === 'bank' &&
                                                             $order->payment_status === 'paid'
@@ -455,6 +451,7 @@
                                                             $paymentSelectClass = 'payment-status-select';
                                                         }
                                                     @endphp
+
                                                     @if ($order->payment_method === 'bank')
                                                         <select
                                                             class="form-select payment-status-select {{ $paymentSelectClass }}"
@@ -474,6 +471,7 @@
                                                         </span>
                                                     @endif
                                                 </td>
+
                                                 {{-- Trạng thái đơn hàng --}}
                                                 <td>
                                                     <form id="status-form-{{ $order->id }}"
@@ -525,42 +523,9 @@
                                                                 <i class="ri-map-pin-line"></i>
                                                             </a>
                                                         </li>
-
-                                                        {{-- Đơn chưa ẩn → hiện nút ẩn --}}
-                                                        @if ($order->is_hidden == false && in_array($order->status, ['delivered', 'cancelled', 'failed_delivery']))
-                                                            <li>
-                                                                <form
-                                                                    action="{{ route('admin.orders.hide', $order->id) }}"
-                                                                    method="POST"
-                                                                    onsubmit="return confirm('Bạn có chắc chắn muốn ẩn đơn hàng này không?');">
-                                                                    @csrf
-                                                                    @method('PATCH')
-                                                                    <button type="submit" class="border-0 bg-transparent"
-                                                                        title="Ẩn">
-                                                                        <i class="ri-eye-off-line text-warning"></i>
-                                                                    </button>
-                                                                </form>
-                                                            </li>
-                                                        @endif
-
-                                                        {{-- Đơn đã bị ẩn → hiện nút xóa cứng --}}
-                                                        @if ($order->is_hidden == true)
-                                                            <li>
-                                                                <form
-                                                                    action="{{ route('admin.orders.destroy', $order->id) }}"
-                                                                    method="POST"
-                                                                    onsubmit="return confirm('Xóa vĩnh viễn đơn hàng này?');">
-                                                                    @csrf
-                                                                    @method('DELETE')
-                                                                    <button type="submit" class="border-0 bg-transparent"
-                                                                        title="Xóa vĩnh viễn">
-                                                                        <i class="ri-delete-bin-line text-danger"></i>
-                                                                    </button>
-                                                                </form>
-                                                            </li>
-                                                        @endif
                                                     </ul>
                                                 </td>
+
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -577,36 +542,30 @@
                         <!-- Table End -->
 
                         <!-- Pagination Box Start -->
-                        <div class="pagination-box">
-                            <nav class="ms-auto me-auto" aria-label="...">
-                                <ul class="pagination pagination-primary">
-                                    {{-- Previous Page Link --}}
-                                    @if ($orders->onFirstPage())
-                                        <li class="page-item disabled"><a class="page-link"
-                                                href="javascript:void(0)">Previous</a></li>
-                                    @else
-                                        <li class="page-item"><a class="page-link"
-                                                href="{{ $orders->previousPageUrl() }}">Previous</a></li>
-                                    @endif
+                        {{-- <div class="pagination-box">
+                        <nav class="ms-auto me-auto" aria-label="...">
+                            <ul class="pagination pagination-primary">
+                      
+                                @if ($orders->onFirstPage())
+                                    <li class="page-item disabled"><a class="page-link" href="javascript:void(0)">Previous</a></li>
+                                @else
+                                    <li class="page-item"><a class="page-link" href="{{ $orders->previousPageUrl() }}">Previous</a></li>
+                                @endif
 
-                                    {{-- Pagination Elements --}}
-                                    @foreach ($orders->getUrlRange(1, $orders->lastPage()) as $page => $url)
-                                        <li class="page-item {{ $orders->currentPage() == $page ? 'active' : '' }}">
-                                            <a class="page-link" href="{{ $url }}">{{ $page }}</a>
-                                        </li>
-                                    @endforeach
+                                @foreach ($orders->getUrlRange(1, $orders->lastPage()) as $page => $url)
+                                    <li class="page-item {{ $orders->currentPage() == $page ? 'active' : '' }}">
+                                        <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                                    </li>
+                                @endforeach
 
-                                    {{-- Next Page Link --}}
-                                    @if ($orders->hasMorePages())
-                                        <li class="page-item"><a class="page-link"
-                                                href="{{ $orders->nextPageUrl() }}">Next</a></li>
-                                    @else
-                                        <li class="page-item disabled"><a class="page-link"
-                                                href="javascript:void(0)">Next</a></li>
-                                    @endif
-                                </ul>
-                            </nav>
-                        </div>
+                                @if ($orders->hasMorePages())
+                                    <li class="page-item"><a class="page-link" href="{{ $orders->nextPageUrl() }}">Next</a></li>
+                                @else
+                                    <li class="page-item disabled"><a class="page-link" href="javascript:void(0)">Next</a></li>
+                                @endif
+                            </ul>
+                        </nav>
+                    </div> --}}
                         <!-- Pagination Box End -->
                     </div>
                 </div>
@@ -615,35 +574,15 @@
         <!-- Container-fluid Ends-->
         @includeIf('backend.footer')
     </div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll(".status-select").forEach(function (select) {
-            select.addEventListener("change", function () {
-                const orderId = this.dataset.orderId;
-                const newStatus = this.value;
-
-                fetch(`/admin/orders/${orderId}/update-status`, {
-                    method: 'PUT',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({ status: newStatus })
-                })
-                .then(res => res.json())
-                .then(data => {
-                    alert(data.message); // hoặc toast
-                    // Cập nhật giao diện nếu cần
-                })
-                .catch(err => {
-                    alert("Có lỗi xảy ra khi cập nhật trạng thái.");
-                });
+    <script>
+        document.querySelectorAll('.status-select').forEach(select => {
+            select.addEventListener('change', function() {
+                const formId = 'status-form-' + this.dataset.orderId;
+                const form = document.getElementById(formId);
+                if (form) {
+                    form.submit();
+                }
             });
         });
-    });
-</script>
-
-
+    </script>
 @endsection

@@ -53,12 +53,12 @@ class ReportController extends Controller
 
         // Tổng doanh thu
         $totalRevenue = (clone $orderQuery)
-            ->where('status', 'completed')
+            ->where('status', 'delivered')
             ->sum('total_amount');
 
         // Số đơn hoàn thành
         $completedOrders = (clone $orderQuery)
-            ->where('status', 'completed')
+            ->where('status', 'delivered')
             ->count();
 
         // Sản phẩm bán chạy nhất
@@ -75,16 +75,16 @@ class ReportController extends Controller
             ->first();
 
         // Vùng bán chạy nhất
-        $topRegion = (clone $orderQuery)
-            ->join('addresses', 'orders.address_id', '=', 'addresses.id')
-            ->where('orders.status', 'completed')
-            ->select(
-                'addresses.address',
-                DB::raw('SUM(orders.total_amount) as total_revenue')
-            )
-            ->groupBy('addresses.address')
-            ->orderByDesc('total_revenue')
-            ->first();
+     $topRegion = (clone $orderQuery)
+    ->where('orders.status', 'completed')
+    ->select(
+        'orders.full_address',
+        DB::raw('SUM(orders.total_amount) as total_revenue')
+    )
+    ->groupBy('orders.full_address')
+    ->orderByDesc('total_revenue')
+    ->first();
+
 
         // Người dùng mới trong tháng hiện tại
         $newUsers = User::whereMonth('created_at', date('m'))
