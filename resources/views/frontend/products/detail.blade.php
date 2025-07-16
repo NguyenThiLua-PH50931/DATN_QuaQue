@@ -186,17 +186,23 @@
                                 <div class="product-info">
                                     <ul class="product-info-list product-info-list-2">
                                         @php
-                                        $firstVariant = $product->variants[0] ?? null;
+                                        $variantWithMaxStock = $product->variants->sortByDesc('stock')->first();
                                         @endphp
                                         <li>SKU : <a href="javascript:void(0)" id="product-sku">
-                                                {{ $firstVariant ? ($firstVariant->sku ?? 'N/A') : '—' }}
+                                                {{ $variantWithMaxStock ? ($variantWithMaxStock->sku ?? 'N/A') : '—' }}
                                             </a></li>
-                                        <li>Số lượng : <a href="javascript:void(0)" id="product-stock">
-                                                {{ $firstVariant ? ($firstVariant->stock ?? 'N/A') : '—' }}
-                                            </a></li>
-
-                                        <li>Tags : <a
-                                                href="javascript:void(0)">{{ $product->category->name ?? '' }}</a></li>
+                                        <li>
+                                            Số lượng :
+                                            @if($variantWithMaxStock)
+                                            @if($variantWithMaxStock->stock > 0)
+                                            <a href="javascript:void(0)" id="product-stock">{{ $variantWithMaxStock->stock }}</a>
+                                            @else
+                                            <span id="product-stock" style="color: #ff4f4f; font-weight: bold;">Sản Phẩm tạm hết hàng</span>
+                                            @endif
+                                            @else
+                                            <a href="javascript:void(0)" id="product-stock">—</a>
+                                            @endif
+                                        </li>
                                     </ul>
                                 </div>
 
@@ -1350,6 +1356,45 @@
 </script>
 <!-- xử lý thêm vào giỏ -->
 <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const defaultStock = Number("{{ $variantWithMaxStock->stock ?? 999999 }}");
+        updateQuantityControls(defaultStock);
+    });
+
+    function updateQuantityControls(stock) {
+        const minusBtn = document.querySelector('.qty-left-minus');
+        const plusBtn = document.querySelector('.qty-right-plus');
+        const qtyInput = document.querySelector('input[name="quantity"]');
+        const addToCartBtn = document.querySelector('.add-to-cart-form button[type="submit"]');
+
+        if (stock === 0) {
+            minusBtn.disabled = true;
+            plusBtn.disabled = true;
+            qtyInput.disabled = true;
+            addToCartBtn.disabled = true;
+
+            minusBtn.style.opacity = 0.5;
+            plusBtn.style.opacity = 0.5;
+            qtyInput.style.opacity = 0.5;
+            addToCartBtn.style.opacity = 0.5;
+
+            qtyInput.value = 0;
+        } else {
+            minusBtn.disabled = false;
+            plusBtn.disabled = false;
+            qtyInput.disabled = false;
+            addToCartBtn.disabled = false;
+
+            minusBtn.style.opacity = 1;
+            plusBtn.style.opacity = 1;
+            qtyInput.style.opacity = 1;
+            addToCartBtn.style.opacity = 1;
+
+            if (parseInt(qtyInput.value, 10) === 0) {
+                qtyInput.value = 1;
+            }
+        }
+    }
     document.addEventListener('DOMContentLoaded', function() {
         const form = document.querySelector('.add-to-cart-form');
         const variantInput = document.getElementById('variant_attributes');
@@ -1457,6 +1502,7 @@
                         updateStockOfInput({
                             stock: 999999
                         });
+                        updateQuantityControls(0);
                     }
                 } else {
                     // Chưa chọn đủ biến thể => reset hiển thị và tồn kho

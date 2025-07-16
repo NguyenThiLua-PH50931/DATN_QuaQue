@@ -66,6 +66,11 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
         Route::post('/get-variant', [ClientProductController::class, 'getVariant'])->name('.getVariant');
         Route::post('/reviews', [ClientProductController::class, 'storeReview'])->name('reviews.store');
         Route::get('/quickview/{slug}', [ClientProductController::class, 'quickView'])->name('quickview');
+        // binh luan sp
+        Route::post('/san-pham/{product}/comment', [ClientProductController::class, 'comment'])->name('comment.store');
+        Route::post('comment/{comment}/reply', [ClientProductController::class, 'commentReply'])->name('comment.reply');
+        Route::delete('/comment/{comment}', [ClientProductController::class, 'deleteComment'])->name('comment.destroy');
+        Route::delete('/reply/{reply}', [ClientProductController::class, 'deleteReply'])->name('reply.destroy');
     });
 
 

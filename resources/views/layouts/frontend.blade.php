@@ -290,7 +290,7 @@
                 <!-- <i class="fa-solid fa-message-bot"></i> -->
                  <i class="fa-solid fa-message"></i>
             </button>
-
+        @include('layouts.chatTipBox') 
             <div class="theme-setting-2">
                 @includeIf('layouts.chatbot')
             </div>
