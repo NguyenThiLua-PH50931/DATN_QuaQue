@@ -309,7 +309,8 @@ ul {
                                             </tr>
                                             <tr>
                                                 <td colspan="4" class="text-end fw-bold text-success">Tổng cộng:</td>
-                                                <td class="text-end fw-bold text-success">{{ number_format($final_total, 0, ',', '.') }} VNĐ</td>
+                                                <td class="text-end fw-bold text-success">{{ number_format($order->total_amount, 0, ',', '.') }} VNĐ</td>
+
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -322,15 +323,16 @@ ul {
                                     <ul class="list-unstyled">
                                         <li style="margin-bottom: 0.5rem;"><strong>Mã đơn hàng:</strong> {{ $order->order_code }}</li>
                                         <li style="margin-bottom: 0.5rem;"><strong>Ngày đặt:</strong> {{ $order->created_at->format('d/m/Y') }}</li>
-                                        <li style="margin-bottom: 0.5rem;"><strong>Thành tiền:</strong> {{ number_format($final_total, 0, ',', '.') }} VNĐ</li>
+                                        <li style="margin-bottom: 0.5rem;"><strong>Thành tiền:</strong> {{ number_format($order->total_amount, 0, ',', '.') }} VNĐ</li>
+
                                     </ul>
                                     <h5 class="fw-bold mt-4 mb-3">Địa chỉ nhận hàng</h5>
                                     <ul class="list-unstyled">
-                                        <li style="margin-bottom: 0.5rem;">{{ $order->address->recipient_name ?? 'N/A' }}</li>
-                                        <li style="margin-bottom: 0.5rem;">{{ $order->address->address ?? '' }}</li>
-                                        <li style="margin-bottom: 0.5rem;">{{ $order->address->district ?? '' }}, {{ $order->address->province ?? '' }}</li>
-                                        <li style="margin-bottom: 0.5rem;">SĐT: {{ $order->address->phone ?? '' }}</li>
+                                        <li style="margin-bottom: 0.5rem;"><strong>Họ tên:</strong> {{ $order->recipient_name ?? ($order->address->recipient_name ?? 'N/A') }}</li>
+                                        <li style="margin-bottom: 0.5rem;"><strong>Địa chỉ:</strong> {{ $order->full_address ?? ($order->address->address ?? '') }}</li>
+                                        <li style="margin-bottom: 0.5rem;">SĐT: {{ $order->phone ?? ($order->address->phone ?? '') }}</li>
                                     </ul>
+
                                     @php
                                         $method = match ($order->payment_method) {
                                             'cod' => 'Thanh toán khi nhận hàng (COD)',

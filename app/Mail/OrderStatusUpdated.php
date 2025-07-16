@@ -14,10 +14,11 @@ class OrderStatusUpdated extends Mailable implements ShouldQueue
 
     public $order;
 
-    public function __construct(Order $order)
-    {
-        $this->order = $order;
-    }
+   public function __construct($order)
+{
+    $this->order = $order;
+}
+
 
     public function build()
     {

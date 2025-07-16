@@ -35,7 +35,7 @@
             <p>Để xem chi tiết đơn hàng, bạn có thể truy cập hệ thống theo nút bên dưới:</p>
 
             <div style="text-align: center; margin: 30px 0;">
-                <a href="{{ url('/') }}" style="background-color: #1a73e8; color: #fff; text-decoration: none; padding: 12px 24px; border-radius: 4px; display: inline-block; font-size: 16px;">🔎 Xem đơn hàng</a>
+                <a href="{{ url('/order.index') }}" style="background-color: #1a73e8; color: #fff; text-decoration: none; padding: 12px 24px; border-radius: 4px; display: inline-block; font-size: 16px;">🔎 Xem đơn hàng</a>
             </div>
 
             <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
