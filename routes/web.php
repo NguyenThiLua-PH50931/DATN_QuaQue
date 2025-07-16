@@ -42,6 +42,7 @@ use App\Http\Controllers\Client\OrdersController;
 use App\Http\Controllers\Client\PaymentController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Client\ChatbotController;
 // use App\Http\Controllers\ProductController as GlobalProductController; // Nếu cần dùng controller gốc ngoài admin/client
 
 
@@ -51,6 +52,9 @@ Route::redirect('/', '/client/home');
 
 Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
     Route::get('home', [ClientHomeController::class, 'home'])->name('home');
+
+    // AI CHAT BOT
+    Route::post('chatbot', [ChatbotController::class, 'chat'])->name('chatbot.send');
 
     // Sản phẩm:
     Route::group(['prefix' => 'san-pham', 'as' => 'product.'], function () {
@@ -151,16 +155,16 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
     Route::middleware('auth')->group(function () {
         Route::post('/blog/comments', [ClientBlogCommentController::class, 'store'])->name('blog.comments.store');
     });
-// Route::middleware('auth')->group(function () {
-//     Route::group(['prefix' => 'order', 'as' => 'order.'], function () {
-//         Route::post('/place-from-pending', [OrderController::class, 'placeFromPending'])->name('placeFromPending');
-//     });
-// });
-Route::middleware('auth')->group(function () {
-    Route::group(['prefix' => 'order', 'as' => 'order.'], function () {
-        Route::post('/place-from-pending', [OrdersController::class, 'placeFromPending'])->name('placeFromPending');
+    // Route::middleware('auth')->group(function () {
+    //     Route::group(['prefix' => 'order', 'as' => 'order.'], function () {
+    //         Route::post('/place-from-pending', [OrderController::class, 'placeFromPending'])->name('placeFromPending');
+    //     });
+    // });
+    Route::middleware('auth')->group(function () {
+        Route::group(['prefix' => 'order', 'as' => 'order.'], function () {
+            Route::post('/place-from-pending', [OrdersController::class, 'placeFromPending'])->name('placeFromPending');
+        });
     });
-});
 
 
     //Giới thiêu

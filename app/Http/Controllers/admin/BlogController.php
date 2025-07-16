@@ -52,12 +52,29 @@ class BlogController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required|string|max:200',
-            'content' => 'required|string',
-            'thumbnail' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'start_date' => 'nullable|date',
-            'end_date' => 'nullable|date|after_or_equal:start_date'
-        ]);
+    'title' => 'required|string|max:200',
+    'content' => 'required|string',
+    'thumbnail' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+    'start_date' => 'nullable|date',
+    'end_date' => 'nullable|date|after_or_equal:start_date'
+], [
+    'title.required' => 'Tiêu đề bắt buộc không để trống.',
+    'title.string' => 'Tiêu đề phải là chuỗi.',
+    'title.max' => 'Tối đa 200 ký tự.',
+
+    'content.required' => 'Nội dung bắt buộc.',
+    'content.string' => 'Nội dung phải là chuỗi.',
+
+    'thumbnail.required' => 'Vui lòng chọn ảnh.',
+    'thumbnail.image' => 'Tệp phải là hình ảnh.',
+    'thumbnail.mimes' => 'Ảnh phải là jpeg, png, jpg hoặc gif.',
+    'thumbnail.max' => 'Ảnh không vượt quá 2MB.',
+
+    'start_date.date' => 'Ngày bắt đầu không hợp lệ.',
+    'end_date.date' => 'Ngày kết thúc không hợp lệ.',
+    'end_date.after_or_equal' => 'Ngày kết thúc phải sau hoặc bằng ngày bắt đầu.',
+]);
+
 
         // Handle file upload
         if ($request->hasFile('thumbnail')) {
@@ -250,7 +267,12 @@ class BlogController extends Controller
     public function bulkRestore(Request $request)
     {
         $ids = collect($request->input('ids'))->filter()->values();
-        Blog::onlyTrashed()->whereIn('id', $ids)->restore();
+        // Blog::onlyTrashed()->whereIn('id', $ids)->restore();
+        $blogs = Blog::onlyTrashed()->whereIn('id', $ids)->get();
+
+        foreach ($blogs as $blog) {
+            $blog->restore();
+        }
 
         return response()->json([
             'message' => 'Đã khôi phục các blog đã chọn thành công.',

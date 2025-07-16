@@ -185,8 +185,16 @@
 
                                 <div class="product-info">
                                     <ul class="product-info-list product-info-list-2">
-                                        <li>SKU : <a href="javascript:void(0)" id="product-sku">—</a></li>
-                                        <li>Số lượng : <a href="javascript:void(0)" id="product-stock">—</a></li>
+                                        @php
+                                        $firstVariant = $product->variants[0] ?? null;
+                                        @endphp
+                                        <li>SKU : <a href="javascript:void(0)" id="product-sku">
+                                                {{ $firstVariant ? ($firstVariant->sku ?? 'N/A') : '—' }}
+                                            </a></li>
+                                        <li>Số lượng : <a href="javascript:void(0)" id="product-stock">
+                                                {{ $firstVariant ? ($firstVariant->stock ?? 'N/A') : '—' }}
+                                            </a></li>
+
                                         <li>Tags : <a
                                                 href="javascript:void(0)">{{ $product->category->name ?? '' }}</a></li>
                                     </ul>
@@ -207,6 +215,7 @@
                                     </button>
                                 </li>
 
+                                @if ($product->variants->count() > 1)
                                 <li class="nav-item" role="presentation">
                                     <button class="nav-link" id="info-tab" data-bs-toggle="tab"
                                         data-bs-target="#info" type="button" role="tab" aria-controls="info"
@@ -214,6 +223,7 @@
                                         Mô tả Biến thể
                                     </button>
                                 </li>
+                                @endif
 
                                 <li class="nav-item" role="presentation">
                                     <button class="nav-link" id="care-tab" data-bs-toggle="tab"
@@ -227,7 +237,7 @@
                                     <button class="nav-link" id="review-tab" data-bs-toggle="tab"
                                         data-bs-target="#review" type="button" role="tab"
                                         aria-controls="review" aria-selected="false">
-                                        Review
+                                        Đánh giá
                                     </button>
                                 </li>
                             </ul>
@@ -252,95 +262,7 @@
                                 <div class="tab-pane fade" id="care" role="tabpanel"
                                     aria-labelledby="care-tab">
                                     <div class="information-box">
-                                        <section class="blog-section section-b-space">
-                                            <div class="comment-box overflow-hidden">
-                                                <div class="leave-title">
-                                                    <h3>Bình luận</h3>
-                                                </div>
-
-                                                <div class="user-comment-box">
-                                                    <ul>
-                                                        <li>
-                                                            <div class="user-box border-color">
-                                                                <div class="reply-button">
-                                                                    <i
-                                                                        class="fa-solid fa-reply"></i>
-                                                                    <span class="theme-color">Reply</span>
-                                                                </div>
-                                                                <div class="user-iamge">
-                                                                    <img
-                                                                        src="../assets/images/inner-page/user/2.jpg"
-                                                                        class="img-fluid blur-up lazyload"
-                                                                        alt="" />
-                                                                    <div class="user-name">
-                                                                        <h6>30 Jan, 2022</h6>
-                                                                        <h5 class="text-content">
-                                                                            Glenn Greer
-                                                                        </h5>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="user-contain">
-                                                                    <p>
-                                                                        Nội dung bình luận
-                                                                    </p>
-                                                                </div>
-                                                            </div>
-                                                        </li>
-
-                                                        <li class="li-padding">
-                                                            <div class="user-box">
-                                                                <div class="reply-button">
-                                                                    <i
-                                                                        class="fa-solid fa-reply"></i>
-                                                                    <span class="theme-color">Reply</span>
-                                                                </div>
-                                                                <div class="user-iamge">
-                                                                    <img
-                                                                        src="../assets/images/inner-page/user/3.jpg"
-                                                                        class="img-fluid blur-up lazyload"
-                                                                        alt="" />
-                                                                    <div class="user-name">
-                                                                        <h6>30 Jan, 2022</h6>
-                                                                        <h5 class="text-content">
-                                                                            Glenn Greer
-                                                                        </h5>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="user-contain">
-                                                                    <p>
-                                                                        Nội dung trả lời
-                                                                    </p>
-                                                                </div>
-                                                            </div>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-
-                                            <div class="leave-box">
-                                                <div class="leave-title mt-0">
-                                                    <h3>Để lại bình luận</h3>
-                                                </div>
-
-                                                <div class="leave-comment mb-3">
-                                                    <div class="col-12">
-                                                        <div class="blog-input">
-                                                            <textarea
-                                                                class="form-control"
-                                                                id="exampleFormControlTextarea1"
-                                                                rows="4"
-                                                                placeholder="Để lại bình luận..."></textarea>
-                                                        </div>
-                                                    </div>
-                                                    <button
-                                                        class="btn btn-animation ms-xxl-auto mt-xxl-0 mt-3 btn-md fw-bold">
-                                                        Bình luận
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </section>
+                                        @includeIf('frontend.products.comment', ['comments' => $comments])
                                     </div>
                                 </div>
 
@@ -375,9 +297,9 @@
                                                             </li>
                                                         </ul>
                                                     </div>
-                                                    <h6 class="ms-3">
+                                                    {{-- <h6 class="ms-3">
                                                         4.2 Out Of 5
-                                                    </h6>
+                                                    </h6> --}}
                                                 </div>
 
                                                 <div class="rating-box">
@@ -386,7 +308,7 @@
                                                             <div class="rating-list">
                                                                 <h5>
                                                                     5
-                                                                    Star
+                                                                    Sao
                                                                 </h5>
                                                                 <div class="progress">
                                                                     <div class="progress-bar" role="progressbar"
@@ -402,7 +324,7 @@
                                                             <div class="rating-list">
                                                                 <h5>
                                                                     4
-                                                                    Star
+                                                                    Sao
                                                                 </h5>
                                                                 <div class="progress">
                                                                     <div class="progress-bar" role="progressbar"
@@ -418,7 +340,7 @@
                                                             <div class="rating-list">
                                                                 <h5>
                                                                     3
-                                                                    Star
+                                                                    Sao
                                                                 </h5>
                                                                 <div class="progress">
                                                                     <div class="progress-bar" role="progressbar"
@@ -434,7 +356,7 @@
                                                             <div class="rating-list">
                                                                 <h5>
                                                                     2
-                                                                    Star
+                                                                    Sao
                                                                 </h5>
                                                                 <div class="progress">
                                                                     <div class="progress-bar" role="progressbar"
@@ -450,7 +372,7 @@
                                                             <div class="rating-list">
                                                                 <h5>
                                                                     1
-                                                                    Star
+                                                                    Sao
                                                                 </h5>
                                                                 <div class="progress">
                                                                     <div class="progress-bar" role="progressbar"
@@ -467,9 +389,9 @@
 
                                             <div class="col-xl-6">
                                                 <div class="review-title">
-                                                    <h4 class="fw-500">
-                                                        Add a review
-                                                    </h4>
+                                                    {{-- <h4 class="fw-500">
+                                                        Đánh giá
+                                                    </h4> --}}
                                                 </div>
                                                 @if($canReview)
                                                 {{-- Form đánh giá --}}
@@ -506,9 +428,7 @@
                                             <div class="col-12">
                                                 <div class="review-title">
                                                     <h4 class="fw-500">
-                                                        Customer
-                                                        questions &
-                                                        answers
+                                                        Câu hỏi của khách hàng
                                                     </h4>
                                                 </div>
                                                 <label for="filter_star">Lọc theo số sao:</label>
@@ -1118,7 +1038,7 @@
                                 <ul class="rating" id="quickview-rating">
                                     <!-- JS render stars -->
                                 </ul>
-                                <span class="ms-2" id="quickview-review-count">0 Reviews</span>
+                                <span class="ms-2" id="quickview-review-count">Đánh giá</span>
                             </div>
 
                             <div class="product-detail">
@@ -1580,7 +1500,6 @@
         updateVariantInput();
     });
 </script>
-
 
 <style>
     .swal2-title-smaller {

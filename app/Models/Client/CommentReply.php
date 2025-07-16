@@ -10,19 +10,19 @@ class CommentReply extends Model
 
     protected $fillable = [
         'comment_id',
-        'admin_id',
+        'user_id',
         'reply',
     ];
 
-    // Comment gốc
+    // 1 reply thuộc về 1 comment
     public function comment()
     {
         return $this->belongsTo(Comment::class, 'comment_id');
     }
 
-    // Admin trả lời
-    public function admin()
+    // 1 reply thuộc về 1 user (ai trả lời)
+    public function user()
     {
-        return $this->belongsTo(\App\Models\User::class, 'admin_id');
+        return $this->belongsTo(\App\Models\User::class, 'user_id');
     }
 }
