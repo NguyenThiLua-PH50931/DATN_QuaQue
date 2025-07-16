@@ -43,7 +43,8 @@
                             </form>
                             <div>
                                 <div class="table-responsive overflow-hidden">
-                                    <table class="table table-hover w-90 coupon-list-table theme-table" id="table_id">
+                                    <table class="table table-hover w-90 coupon-list-table theme-table" id="table_id"
+                                        style="table-layout: fixed; width: 100%;">
                                         <thead>
                                             <tr>
                                                 <th>Ảnh</th>
@@ -55,20 +56,21 @@
                                         </thead>
 
                                         <tbody>
-                                            @foreach($blog as $item)
+                                            @foreach ($blog as $item)
                                                 <tr>
                                                     <td>
                                                         <div class="table-image">
-                                                            @if($item->thumbnail)
-                                                                <img src="{{ asset($item->thumbnail) }}" alt="{{ $item->title }}"
-                                                                    width="100">
+                                                            @if ($item->thumbnail)
+                                                                <img src="{{ asset($item->thumbnail) }}"
+                                                                    alt="{{ $item->title }}" width="100">
                                                             @endif
                                                         </div>
                                                     </td>
 
-                                                    <td>{{ $item->title }}</td>
+                                                    <td class="title-column">{{ $item->title }}</td>
 
-                                                    <td>{{ $item->start_date ? $item->start_date->format('m/d/Y') : '' }}</td>
+                                                    <td>{{ $item->start_date ? $item->start_date->format('m/d/Y') : '' }}
+                                                    </td>
                                                     <td>{{ $item->end_date ? $item->end_date->format('m/d/Y') : '' }}</td>
 
                                                     <td>
@@ -97,13 +99,14 @@
                                             @endforeach
                                         </tbody>
                                     </table>
-                                    @foreach($blog as $item)
+                                    @foreach ($blog as $item)
                                         <div class="modal fade" id="deleteModal{{ $item->id }}" tabindex="-1"
                                             aria-labelledby="deleteModalLabel{{ $item->id }}" aria-hidden="true">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title" id="deleteModalLabel{{ $item->id }}">Xác nhận
+                                                        <h5 class="modal-title" id="deleteModalLabel{{ $item->id }}">
+                                                            Xác nhận
                                                             xóa</h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                             aria-label="Close"></button>
@@ -132,6 +135,16 @@
                 </div>
             </div>
         </div>
-
+        <style>
+            th.title-column,
+            td.title-column {
+                white-space: normal;
+                /* cho phép xuống dòng */
+                word-wrap: break-word;
+                /* ngắt từ khi dài */
+                word-break: break-word;
+                /* ngắt từ khi dài */
+            }
+        </style>
         @includeIf('backend.footer')
-@endsection
+    @endsection

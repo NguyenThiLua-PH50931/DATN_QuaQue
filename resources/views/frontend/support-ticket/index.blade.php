@@ -78,69 +78,80 @@
                                     Tạo Yêu Cầu Mới</h4>
                                 <form method="POST" action="{{ route('client.support-ticket.store') }}">
                                     @csrf
+                                    <!-- Tiêu đề -->
                                     <div class="mb-3">
                                         <label for="title" class="form-label fw-medium">Tiêu đề</label>
                                         <div class="input-group">
-                                            <span class="input-group-text bg-light"><i
-                                                    class="fa-solid fa-heading"></i></span>
                                             <input type="text" name="title" class="form-control" id="title"
                                                 required placeholder="Nhập tiêu đề">
                                         </div>
                                     </div>
+
+                                    <!-- Nội dung với CKEditor -->
                                     <div class="mb-3">
-                                        <label for="content" class="form-label fw-medium">Nội dung</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-light"><i
-                                                    class="fa-solid fa-message"></i></span>
-                                            <textarea name="content" class="form-control" id="content" required placeholder="Nhập nội dung" rows="4"></textarea>
-                                        </div>
+                                        <label for="editor" class="form-label fw-medium">Nội dung</label>
+                                        <div class="input-group"></div>
+
+                                        <textarea name="content" class="form-control" id="editor" required placeholder="Nhập nội dung" rows="4"></textarea>
                                     </div>
-                                    <div class="text-end">
-                                        <button type="submit" class="btn btn-danger fw-bold px-4">
-                                            <i class="fa-solid fa-paper-plane me-1"></i> Gửi Yêu Cầu
-                                        </button>
-                                    </div>
-                                </form>
                             </div>
 
-                            <!-- Danh sách Ticket -->
-                            <div class="col-12">
-                                <h4 class="fw-semibold text-dark mb-3"><i class="fa-solid fa-list-check me-2 text-info"></i>
-                                    Danh Sách Yêu Cầu</h4>
-                                @forelse ($tickets as $ticket)
-                                    <div class="card shadow-sm border-0 mb-3">
-                                        <div class="card-body">
-                                            <h5 class="card-title d-flex justify-content-between align-items-center">
-                                                {{ $ticket->title }}
-                                                <span
-                                                    class="badge bg-{{ $ticket->status == 'pending' ? 'warning' : 'success' }}">
-                                                    {{ $ticket->status == 'pending' ? 'Chờ xử lý' : 'Đã giải quyết' }}
-                                                </span>
-                                            </h5>
-                                            <p class="card-text text-muted mb-2">
-                                                <i class="fa-regular fa-clock me-1"></i>
-                                                Ngày tạo: {{ $ticket->created_at->format('d/m/Y H:i') }}
-                                            </p>
-                                            <a href="{{ route('client.support-ticket.show', $ticket->id) }}"
-                                                class="btn btn-outline-warning btn-sm">
-                                                <i class="fa-solid fa-eye me-1"></i> Xem chi tiết
-                                            </a>
-                                        </div>
-                                    </div>
-                                @empty
-                                    <p class="text-muted fst-italic">Không có yêu cầu nào.</p>
-                                @endforelse
+                            <!-- Thêm đoạn này vào cuối trang (trước </body>) -->
+                            <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+                            <script>
+                                ClassicEditor
+                                    .create(document.querySelector('#editor'))
+                                    .catch(error => {
+                                        console.error(error);
+                                    });
+                            </script>
 
-                                <!-- Phân trang -->
-                                <div class="mt-3">
-                                    {{ $tickets->links() }}
+                            <div class="text-end" style="margin-bottom: 25px;">
+                                <button type="submit" class="btn btn-danger fw-bold px-4">
+                                    <i class="fa-solid fa-paper-plane me-1"></i> Gửi Yêu Cầu
+                                </button>
+                            </div>
+                            </form>
+                        </div>
+
+                        <!-- Danh sách Ticket -->
+                        <div class="col-12">
+                            <h4 class="fw-semibold text-dark mb-3"><i class="fa-solid fa-list-check me-2 text-info"></i>
+                                Danh Sách Yêu Cầu</h4>
+                            @forelse ($tickets as $ticket)
+                                <div class="card shadow-sm border-0 mb-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title d-flex justify-content-between align-items-center">
+                                            {{ $ticket->title }}
+                                            <span
+                                                class="badge bg-{{ $ticket->status == 'pending' ? 'warning' : 'success' }}">
+                                                {{ $ticket->status == 'pending' ? 'Chờ xử lý' : 'Đã giải quyết' }}
+                                            </span>
+                                        </h5>
+                                        <p class="card-text text-muted mb-2">
+                                            <i class="fa-regular fa-clock me-1"></i>
+                                            Ngày tạo: {{ $ticket->created_at->format('d/m/Y H:i') }}
+                                        </p>
+                                        <a href="{{ route('client.support-ticket.show', $ticket->id) }}"
+                                            class="btn btn-outline-warning btn-sm">
+                                            <i class="fa-solid fa-eye me-1"></i> Xem chi tiết
+                                        </a>
+                                    </div>
                                 </div>
+                            @empty
+                                <p class="text-muted fst-italic">Không có yêu cầu nào.</p>
+                            @endforelse
+
+                            <!-- Phân trang -->
+                            <div class="mt-3">
+                                {{ $tickets->links() }}
                             </div>
                         </div>
                     </div>
                 </div>
-
             </div>
+
+        </div>
         </div>
     </section>
     <!-- Contact Box Section End -->
@@ -157,4 +168,5 @@
         </div>
     </section>
     <!-- Map Section End -->
+
 @endsection
