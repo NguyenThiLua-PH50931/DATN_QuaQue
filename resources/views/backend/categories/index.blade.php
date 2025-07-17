@@ -249,9 +249,7 @@
     </div>
 
     @includeIf('backend.footer')
-@endsection
 
-@push('scripts')
     <script>
         $(document).ready(function() {
             $('#table_id').DataTable({
@@ -387,7 +385,7 @@
             @endif
         });
     </script>
-@endpush
+
 <style>
     .btn.btn-warning {
         background-color: #ffc107 !important;
@@ -410,3 +408,5 @@
         height: 50px !important;
     }
 </style>
+@endsection
+
