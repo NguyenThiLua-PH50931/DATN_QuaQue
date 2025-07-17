@@ -550,7 +550,7 @@
 
 </style>
 @endsection
-@push('scripts')
+
 <script>
     $(document).ready(function() {
         // Hàm xóa dấu tiếng Việt
@@ -925,4 +925,3 @@
 
     });
 </script>
-@endpush

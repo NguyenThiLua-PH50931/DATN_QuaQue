@@ -196,9 +196,6 @@
         </div>
     </div>
 
-@endsection
-
-@push('scripts')
     {{-- Include Toastr CSS and JS --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
@@ -393,4 +390,4 @@
             @endif
         });
     </script>
-@endpush
+    @endsection
