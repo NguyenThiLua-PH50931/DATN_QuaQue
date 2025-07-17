@@ -134,9 +134,9 @@
                                                          // Thêm liên kết "Xem thêm" nếu có hơn 3 sản phẩm
                                                          if (response.length > 3) {
                                                              $('#searchResults').append(
-                                                                 `<a href="/client/san-pham/search?search=${encodeURIComponent(query)}" class="list-group-item list-group-item-action text-center text-primary">
-                                            Xem tất cả kết quả cho "${query}"
-                                        </a>`
+                                                                 `<a href="/client/san-pham/search?search=${encodeURIComponent(query)}"
+                                                                 class="list-group-item list-group-item-action text-center text-primary">
+                                                                 Xem tất cả kết quả cho "${query}"</a>`
                                                              );
                                                          }
                                                          $('#searchResults').show();
