@@ -3,14 +3,17 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Models\Client\Comment;
 use Illuminate\Http\Request;
 use App\Models\Client\Product;
 use App\Models\Client\ProductVariant;
 use Carbon\Carbon;
 use App\Models\Admin\Banner;
 use App\Models\Admin\Product as AdminProduct;
+use App\Models\Client\CommentReply;
 use App\Models\Client\Review;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -48,7 +51,7 @@ class ProductController extends Controller
         // Filter theo rating trung bình
         if ($request->filled('rating')) {
             $query->withAvg('reviews', 'rating')
-                  ->havingRaw('ROUND(reviews_avg_rating) = ?', [$request->rating]);
+                ->havingRaw('ROUND(reviews_avg_rating) = ?', [$request->rating]);
         }
         // Sắp xếp
         if ($request->filled('sort')) {
@@ -81,6 +84,8 @@ class ProductController extends Controller
         $categories = \App\Models\admin\Category::all();
         $regions = \App\Models\admin\Region::all();
 
+
+
         return view('frontend.products.index', compact('products', 'categories', 'regions', 'priceMin', 'priceMax'));
     }
     /**
@@ -95,7 +100,7 @@ class ProductController extends Controller
             'variants.attributeValues.attribute',
             'reviews.user',
             'comments.user',
-            'comments.replies.admin'
+            'comments.replies.user'
         ])
             ->where('slug', $slug)
             ->where('active', 1)
@@ -194,6 +199,24 @@ class ProductController extends Controller
             ->limit(4)
             ->get();
         $reviews = $product->reviews()->with('user')->latest()->get();
+        $user = Auth::user();
+        $canReview = false;
+
+        if ($user) {
+            $canReview = DB::table('order_items')
+                ->join('orders', 'order_items.order_id', '=', 'orders.id')
+                ->where('orders.user_id', $user->id)
+                ->where('orders.status', 'delivered')
+                ->whereIn('order_items.product_variant_value_id', $variants->pluck('id'))
+                ->exists();
+        }
+        $currentUser = Auth::user();
+        // LẤY BÌNH LUẬN KÈM TRẢ LỜI CHO SẢN PHẨM
+        $comments = $product->comments()
+            ->with(['user', 'replies.user']) // giả sử replies user là người trả lời
+            ->where('status', 'visible')
+            ->latest()
+            ->get();
 
         return view('frontend.products.detail', [
             'product'                 => $product,
@@ -206,6 +229,9 @@ class ProductController extends Controller
             'productSectionPromoLeftTop' => $productSectionPromoLeftTop,
             'reviews'    => $reviews,
             'topViewedProducts'       => $topViewedProducts,
+            'canReview'               => $canReview,
+            'comments'                => $comments,    // thêm biến comments vào view
+            'currentUser'             => $currentUser,
         ]);
     }
     public function quickView($slug)
@@ -346,22 +372,37 @@ class ProductController extends Controller
     public function storeReview(Request $request)
     {
         $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'comment'    => 'required|string',
-            'rating'     => 'required|integer|min:1|max:5',
+            'product_variant_id' => 'required|exists:product_variants,id',
+            'comment' => 'required|string',
+            'rating'  => 'required|integer|min:1|max:5',
         ]);
 
         $user = Auth::user();
 
+        // Kiểm tra xem user đã mua biến thể này và đơn hàng đã được giao chưa
+        $hasDeliveredVariant = DB::table('order_items')
+            ->join('orders', 'order_items.order_id', '=', 'orders.id')
+            ->where('order_items.product_variant_id', $request->product_variant_id)
+            ->where('orders.user_id', $user->id)
+            ->where('orders.status', 'delivered') // giả sử status 'delivered' là đã giao
+            ->exists();
+
+        if (!$hasDeliveredVariant) {
+            return redirect()->back()->withErrors(['Bạn chỉ có thể đánh giá sản phẩm sau khi đã nhận hàng.']);
+        }
+
+        // Lưu đánh giá
         Review::create([
-            'product_id' => $request->product_id,
-            'user_id'    => $user?->id,
-            'rating'     => $request->rating,
-            'comment'    => $request->comment,
+            'product_id'          => DB::table('product_variants')->where('id', $request->product_variant_id)->value('product_id'),
+            'product_variant_id'  => $request->product_variant_id,
+            'user_id'             => $user->id,
+            'rating'              => $request->rating,
+            'comment'             => $request->comment,
         ]);
 
         return redirect()->back()->with('success', 'Đánh giá của bạn đã được gửi.');
     }
+
     public function filterReviews(Request $request, $slug)
     {
         $ratingFilter = $request->query('star');
@@ -385,18 +426,140 @@ class ProductController extends Controller
     {
         $query = $request->input('q');
         $products = Product::where('active', 1)
-            ->where(function($q) use ($query) {
+            ->where(function ($q) use ($query) {
                 $q->where('name', 'like', "%$query%")
-                  ->orWhereHas('category', function($cat) use ($query) {
-                      $cat->where('name', 'like', "%$query%") ;
-                  })
-                  ->orWhereHas('region', function($reg) use ($query) {
-                      $reg->where('name', 'like', "%$query%") ;
-                  });
+                    ->orWhereHas('category', function ($cat) use ($query) {
+                        $cat->where('name', 'like', "%$query%");
+                    })
+                    ->orWhereHas('region', function ($reg) use ($query) {
+                        $reg->where('name', 'like', "%$query%");
+                    });
             })
             ->select('id', 'name', 'slug', 'image')
             ->limit(10)
             ->get();
         return response()->json($products);
+    }
+    public function comment(Request $request, $productId)
+    {
+        $request->validate([
+            'content' => 'required|string|max:500',
+        ]);
+
+        $comment = new Comment();
+        $comment->user_id = Auth::id();
+        $comment->product_id = $productId;
+        $comment->content = $request->content;
+        $comment->status = 'visible';
+        $comment->save();
+
+        $comment->load('user');
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Bình luận đã được gửi',
+            'comment' => $comment,
+        ]);
+    }
+
+    // Tạo trả lời cho comment
+    public function commentReply(Request $request, $commentId)
+    {
+        $request->validate([
+            'reply' => 'required|string|max:500',
+        ]);
+
+        $reply = new CommentReply();
+        $reply->comment_id = $commentId;
+        $reply->user_id = Auth::id();
+        $reply->reply = $request->reply;
+        $reply->save();
+
+        $reply->load('user');
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Trả lời đã được gửi',
+            'reply' => $reply,
+        ]);
+    }
+
+    // Cập nhật bình luận
+    public function updateComment(Request $request, $commentId)
+    {
+        $request->validate([
+            'content' => 'required|string|max:500',
+        ]);
+
+        $comment = Comment::findOrFail($commentId);
+        $user = Auth::user();
+
+        if ($user->id !== $comment->user_id) {
+            return response()->json(['status' => 'error', 'message' => 'Bạn không có quyền sửa bình luận này'], 403);
+        }
+
+        $comment->content = $request->content;
+        $comment->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Cập nhật bình luận thành công',
+            'comment' => $comment,
+        ]);
+    }
+
+    // Xóa bình luận
+    public function deleteComment($commentId)
+    {
+        $comment = Comment::findOrFail($commentId);
+        $user = Auth::user();
+
+        if ($user->id !== $comment->user_id && $user->role !== 'admin') {
+            return response()->json(['status' => 'error', 'message' => 'Bạn không có quyền xóa bình luận này'], 403);
+        }
+
+        $comment->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Xóa bình luận thành công',
+        ]);
+    }
+    public function updateReply(Request $request, $replyId)
+    {
+        $request->validate([
+            'reply' => 'required|string|max:500',
+        ]);
+
+        $reply = CommentReply::findOrFail($replyId);
+
+        if (Auth::id() !== $reply->user_id) {
+            return response()->json(['status' => 'error', 'message' => 'Bạn không có quyền sửa trả lời này'], 403);
+        }
+
+        $reply->reply = $request->reply;
+        $reply->save();
+
+        return response()->json([
+            'status' => 'success',
+            'reply' => $reply,
+        ]);
+    }
+
+    public function deleteReply($replyId)
+    {
+        $reply = CommentReply::findOrFail($replyId);
+
+        $user = Auth::user();
+        if ($user->id !== $reply->user_id && $user->role !== 'admin') {
+            return response()->json(['status' => 'error', 'message' => 'Bạn không có quyền xóa trả lời này'], 403);
+        }
+
+        $reply->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Xóa trả lời thành công',
+        ]);
     }
 }
