@@ -26,15 +26,12 @@
                                     <label class="col-sm-3 col-form-label form-label-title">Giá trị thuộc tính</label>
                                     <div class="col-sm-9">
                                         <div id="attribute-values-wrapper">
-                                            @if(old('values', $values))
-                                                @foreach(old('values', $values) as $index => $value)
+                                            @php $inputValues = old('values', $values ?? []); @endphp
+                                            @if(!empty($inputValues))
+                                                @foreach($inputValues as $index => $value)
                                                     <div class="d-flex mb-2 attribute-value-row align-items-center">
-                                                        <input
-                                                            class="form-control me-3 @error('values.' . $index) is-invalid @enderror"
-                                                            type="text"
-                                                            name="values[]"
-                                                            value="{{ $value }}"
-                                                            placeholder="Nhập giá trị thuộc tính">
+                                                        <input class="form-control me-3 @error('values.' . $index) is-invalid @enderror"
+                                                            type="text" name="values[]" value="{{ $value }}" placeholder="Nhập giá trị thuộc tính">
                                                         <button type="button" class="btn btn-outline-danger btn-remove-value">Remove</button>
                                                         @error('values.' . $index)
                                                         <small class="text-danger ms-3 mt-1 d-block">{{ $message }}</small>

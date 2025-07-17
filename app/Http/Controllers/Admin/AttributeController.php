@@ -127,18 +127,14 @@ class AttributeController extends Controller
     public function edit($slug)
     {
         $attribute = Attribute::where('slug', $slug)->firstOrFail();
-        // Lấy các value liên quan
         $values = $attribute->values()->pluck('value')->toArray();
         return view('backend.attributes.edit', compact('attribute', 'values'));
     }
 
-
-    // Cập nhật thuộc tính
     public function update(Request $request, $slug)
     {
         $attribute = Attribute::where('slug', $slug)->firstOrFail();
 
-        // Validate, bỏ unique cho trường hợp trùng chính nó
         $request->validate([
             'name' => 'required|unique:attributes,name,' . $attribute->id,
             'values' => 'required|array|min:1',
@@ -152,19 +148,23 @@ class AttributeController extends Controller
             'values.*.distinct' => 'Các giá trị thuộc tính không được trùng nhau.',
         ]);
 
-        // Cập nhật tên + slug
         $attribute->name = $request->name;
         $attribute->slug = Str::slug($request->name);
         $attribute->save();
 
-        // Xử lý values
         $newValues = collect($request->values)->map(fn($v) => trim($v))->filter()->unique();
-        $oldValues = $attribute->values()->pluck('value', 'id');
 
-        // Xoá value không còn trong $newValues
-        foreach ($attribute->values as $value) {
+        // Lấy tất cả value kể cả đã xóa mềm
+        $allValues = $attribute->values()->withTrashed()->get();
+
+        // Xoá hoặc khôi phục value
+        foreach ($allValues as $value) {
             if (!$newValues->contains($value->value)) {
-                $value->delete();
+                $value->forceDelete(); // hoặc $value->delete() nếu dùng soft delete
+            } else {
+                if ($value->trashed()) {
+                    $value->restore(); // khôi phục nếu value từng bị xóa mềm
+                }
             }
         }
 
@@ -172,14 +172,12 @@ class AttributeController extends Controller
         foreach ($newValues as $val) {
             $attribute->values()->updateOrCreate(
                 ['value' => $val],
-                ['slug' => Str::slug($val)]
+                ['slug' => Str::slug($val), 'deleted_at' => null]
             );
         }
 
         return redirect()->route('admin.attributes.index')->with('success', 'Cập nhật thuộc tính thành công!');
     }
-
-
 
     // Xóa thuộc tính (Soft delete)
     public function destroy(Request $request, $id)
