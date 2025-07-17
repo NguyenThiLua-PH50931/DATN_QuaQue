@@ -13,7 +13,7 @@ class Attribute extends Model
 
     public function values()
     {
-        return $this->hasMany(AttributeValue::class, 'attribute_id')->withTrashed();
+        return $this->hasMany(AttributeValue::class);
     }
 
     // Nếu có quan hệ đến sản phẩm thì giữ, không thì bỏ
@@ -21,7 +21,7 @@ class Attribute extends Model
     {
         return $this->belongsTo(Product::class);
     }
-        public function attributeValue()
+    public function attributeValue()
     {
         return $this->belongsTo(AttributeValue::class, 'attribute_value_id');
     }
@@ -29,8 +29,8 @@ class Attribute extends Model
     protected static function boot()
     {
         parent::boot();
-        
-        static::deleting(function($attribute) {
+
+        static::deleting(function ($attribute) {
             if ($attribute->isForceDeleting()) {
                 $attribute->values()->forceDelete();
             } else {

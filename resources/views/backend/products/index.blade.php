@@ -111,8 +111,8 @@
 
                                 {{-- Remove Filters --}}
                                 <li class="nav-item ms-3">
-                                    <a href="#" id="removeFilters" class="nav-link text-danger d-none" title="Remove filters">
-                                        <i class="fa fa-eraser"></i> Remove filters
+                                    <a href="#" id="removeFilters" class="nav-link text-danger d-none" title="Xóa lọc">
+                                        <i class="fa fa-eraser"></i> Xóa lọc
                                     </a>
                                 </li>
 
@@ -549,8 +549,7 @@
     }
 
 </style>
-@endsection
-@push('scripts')
+
 <script>
     $(document).ready(function() {
         // Hàm xóa dấu tiếng Việt
@@ -925,4 +924,4 @@
 
     });
 </script>
-@endpush
+@endsection
