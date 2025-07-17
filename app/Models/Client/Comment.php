@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Comment extends Model
 {
+    // use SoftDeletes;
+
     protected $table = 'comments';
 
     protected $fillable = [
@@ -15,17 +17,13 @@ class Comment extends Model
         'status',
     ];
 
-    public function product()
-    {
-        return $this->belongsTo(Product::class, 'product_id');
-    }
-
+    // 1 comment thuộc về 1 user
     public function user()
     {
         return $this->belongsTo(\App\Models\User::class, 'user_id');
     }
 
-    // Nếu có phản hồi admin cho comment:
+    // 1 comment có nhiều reply
     public function replies()
     {
         return $this->hasMany(CommentReply::class, 'comment_id');

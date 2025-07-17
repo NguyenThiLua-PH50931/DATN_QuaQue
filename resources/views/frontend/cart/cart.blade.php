@@ -38,10 +38,12 @@
                         {{-- Các sản phẩm trong giỏ --}}
                         <div class="col-lg-9">
                             <div class="bg-white rounded shadow-sm p-4">
-                                <!-- FORM XÓA mục đã chọn -->
+                                <!-- ✅ FORM BẮT ĐẦU -->
                                 <form action="{{ route('client.cart.bulkDelete') }}" method="POST" id="bulk-action-form">
                                     @csrf
+                                    @method('POST')
                                     <table class="table table-hover">
+
                                         <tbody>
                                             @php $tongTienTamTinh = 0; @endphp
                                             @forelse ($cartItems as $item)
@@ -63,7 +65,8 @@
                                                                 style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
                                                             <div>
                                                                 <h6 class="mb-1 fw-semibold text-truncate"
-                                                                    style="max-width: 300px;">{{ $item->product->name }}
+                                                                    style="max-width: 300px;">
+                                                                    {{ $item->product->name }}
                                                                 </h6>
                                                             </div>
                                                         </td>
@@ -75,7 +78,6 @@
                                                                 data-cart-id="{{ $item->id }}">
                                                                 {{ $item->variant->name ?? 'Chọn biến thể' }}
                                                             </button>
-
                                                         </td>
                                                         <td class="text-end fw-semibold">
                                                             {{ number_format($pricePerItem, 0, ',', '.') }} ₫
@@ -104,7 +106,9 @@
                                                         <td class="text-center">
                                                             <button type="button"
                                                                 class="btn btn-link p-0 text-danger btn-delete-item"
-                                                                data-id="{{ $item->id }}">Xóa</button>
+                                                                data-id="{{ $item->id }}">
+                                                                Xóa
+                                                            </button>
                                                         </td>
                                                     </tr>
                                                 @else
@@ -118,68 +122,55 @@
                                                     <td colspan="7" class="text-center">Giỏ hàng của bạn đang trống.</td>
                                                 </tr>
                                             @endforelse
-
                                         </tbody>
-                                        {{-- Modal bién thể --}}
-                                        @foreach ($cartItems as $item)
-                                            <!-- Modal biến thể cho mỗi sản phẩm -->
-                                            <div class="modal fade" id="variantModal{{ $item->id }}" tabindex="-1"
-                                                aria-labelledby="variantModalLabel{{ $item->id }}" aria-hidden="true">
-                                                <div class="modal-dialog modal-dialog-centered">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title"
-                                                                id="variantModalLabel{{ $item->id }}">Chọn biến thể
-                                                            </h5>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                                aria-label="Đóng"></button>
+                                    </table>
+
+                                    <!-- ✅ Nút xoá mục đã chọn -->
+                                    <div class="mt-3">
+                                        <button type="submit" class="btn btn-sm text-white" id="bulk-delete-button"
+                                            style="background-color: #ffa53b; padding: 6px 16px; font-size: 0.875rem; border-radius: 4px;">
+                                            <i class="fa-solid fa-trash-can me-1"></i> Xoá mục đã chọn
+                                        </button>
+                                    </div>
+
+                                </form>
+
+                                <!-- ✅ Modal CHỌN BIẾN THỂ -->
+                                @foreach ($cartItems as $item)
+                                    @if (isset($item->product))
+                                        <div class="modal fade" id="variantModal{{ $item->id }}" tabindex="-1"
+                                            aria-labelledby="variantModalLabel{{ $item->id }}" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="variantModalLabel{{ $item->id }}">
+                                                            Chọn biến thể</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Đóng"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="variant-btn-group">
+                                                            @foreach ($item->product->variants as $variant)
+                                                                <button type="button" class="variant-btn"
+                                                                    data-variant-id="{{ $variant->id }}">
+                                                                    {{ $variant->name }}
+                                                                </button>
+                                                            @endforeach
                                                         </div>
-                                                        <div class="modal-body">
-                                                            <div class="variant-btn-group">
-                                                                @foreach ($item->product->variants as $variant)
-                                                                    <button type="button" class="variant-btn"
-                                                                        data-variant-id="{{ $variant->id }}">
-                                                                        {{ $variant->name }}
-                                                                    </button>
-                                                                @endforeach
-                                                            </div>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary"
-                                                                data-bs-dismiss="modal">Trở lại</button>
-                                                            <button type="button"
-                                                                class="btn btn-primary btn-confirm-variant"
-                                                                data-cart-id="{{ $item->id }}">Xác nhận</button>
-                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                            data-bs-dismiss="modal">Trở lại</button>
+                                                        <button type="button" class="btn btn-primary btn-confirm-variant"
+                                                            data-cart-id="{{ $item->id }}">Xác nhận</button>
                                                     </div>
                                                 </div>
                                             </div>
-                                        @endforeach
-
-                                    </table>
-                                    <button type="submit" aria-label="Xóa mục đã chọn" id="btn-bulk-delete"
-                                        class="btn-no-border">
-                                        Xóa mục đã chọn
-                                    </button>
-                                    <style>
-                                        .btn-no-border {
-                                            background-color: #0da487;
-                                            color: white;
-                                            padding: 8px 16px;
-                                            border: none;
-                                            border-radius: 6px;
-                                            font-size: 14px;
-                                            cursor: pointer;
-                                            transition: background-color 0.3s ease;
-                                            font-weight: 400;
-                                        }
-
-                                        .btn-no-border:hover {
-                                            background-color: #07a37f;
-                                        }
-                                    </style>
-                                </form>
+                                        </div>
+                                    @endif
+                                @endforeach
                             </div>
+
                         </div>
                         {{-- Tổng tiền + Nút đặt hàng --}}
                         <div class="col-lg-3">
@@ -204,7 +195,8 @@
                                     <div id="selected-items-hidden"></div>
                                     <button type="submit" class="btn btn-danger w-100">Đặt hàng</button>
                                 </form>
-                                <a href="{{ route('client.product.index') }}" class="btn btn-outline-secondary w-100 mt-3">
+                                <a href="{{ route('client.product.index') }}"
+                                    class="btn btn-outline-secondary w-100 mt-3">
                                     <i class="fa-solid fa-arrow-left-long me-2"></i> Tiếp tục mua hàng
                                 </a>
                             </div>
@@ -225,7 +217,7 @@
                     checked.forEach(function(checkbox) {
                         const input = document.createElement('input');
                         input.type = 'hidden';
-                        input.name = 'selected_items[]';
+                        input.name = 'selected_cart_item_ids[]';
                         input.value = checkbox.value;
                         hiddenDiv.appendChild(input);
                     });
@@ -665,8 +657,8 @@
                 }
 
                 /* .modal-footer .btn-secondary:hover {
-                    color: #fdfefe;
-                } */
+                                                                                                                                            color: #fdfefe;
+                                                                                                                                        } */
 
                 /* Nút Xác nhận */
                 .modal-footer .btn-primary {
@@ -677,6 +669,7 @@
                     border-radius: 4px;
                     color: white
                 }
+
                 .open-variant-modal {
                     position: relative;
                     background: transparent !important;
@@ -710,6 +703,7 @@
                     /* không cho cột xuống dòng */
                     overflow: hidden;
                 }
+
                 .open-variant-modal:hover {
                     background-color: transparent !important;
                     color: #212529 !important;
@@ -770,33 +764,133 @@
                 }
             </style>
             {{-- Hiển thị thông báo modal --}}
-            <!-- Modal Thông báo -->
-            <div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel"
-                aria-hidden="true">
+            <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="notificationModalLabel">Thông báo</h5>
+                            <h5 class="modal-title" id="infoModalLabel">Thông báo</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
                         </div>
-                        <div class="modal-body" id="notificationModalBody">
-                            <!-- Nội dung thông báo sẽ được đẩy vào đây -->
+                        <div class="modal-body" id="infoModalBody">
+                            <!-- nội dung sẽ đổ qua JS -->
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-sm btn-primary" data-bs-dismiss="modal">Đóng</button>
+                            <button type="button" class="btn btn-primary btn-sm" data-bs-dismiss="modal">Đóng</button>
                         </div>
                     </div>
                 </div>
             </div>
+
             <script>
                 function showNotificationModal(message) {
-                    const modalBody = document.getElementById('notificationModalBody');
-                    modalBody.textContent = message;
-                    const modalEl = document.getElementById('notificationModal');
-                    const modal = new bootstrap.Modal(modalEl);
-                    modal.show();
+                    document.getElementById('infoModalBody').textContent = message;
+                    new bootstrap.Modal(document.getElementById('infoModal')).show();
                 }
             </script>
 
+            {{-- Xử lý xóa từng sản phẩm --}}
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    document.querySelectorAll('.btn-delete-item').forEach(button => {
+                        button.addEventListener('click', function() {
+                            const cartItemId = this.getAttribute('data-id');
+                            const row = this.closest('tr');
+
+                            // Gọi confirmModal để xác nhận trước
+                            confirmModal('Bạn có chắc chắn muốn xoá sản phẩm này?', function() {
+                                // Khi người dùng bấm "Đồng ý", mới gọi fetch để xoá
+                                fetch(`/client/cart/delete/${cartItemId}`, {
+                                        method: 'DELETE',
+                                        headers: {
+                                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                            'Accept': 'application/json',
+                                        }
+                                    })
+                                    .then(res => res.json())
+                                    .then(data => {
+                                        if (data.success) {
+                                            row.remove();
+                                            updateTotals();
+                                            showNotificationModal(
+                                                'Đã xoá sản phẩm khỏi giỏ hàng.');
+                                        } else {
+                                            showNotificationModal(data.message ||
+                                                'Xoá thất bại!');
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Lỗi:', error);
+                                        showNotificationModal(
+                                            'Đã xảy ra lỗi khi xoá sản phẩm.');
+                                    });
+                            });
+                        });
+                    });
+                });
+            </script>
+            <!-- Modal Xác nhận & Thông báo -->
+            <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Xác nhận</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                        </div>
+                        <div class="modal-body" id="confirmModalBody">Bạn có chắc chắn không?</div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal"
+                                style="padding: 4px 12px; font-size: 0.85rem;">
+                                Hủy
+                            </button>
+                            <button type="button" class="btn btn-sm text-white" id="confirmModalYesBtn"
+                                style="background-color: #ffa53b; padding: 4px 14px; font-size: 0.85rem; border-radius: 4px;">
+                                Đồng ý
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                function confirmModal(message, onConfirm) {
+                    document.getElementById('confirmModalBody').textContent = message;
+
+                    const yesBtn = document.getElementById('confirmModalYesBtn');
+                    const modalEl = document.getElementById('confirmModal');
+                    const modal = new bootstrap.Modal(modalEl);
+
+                    const newHandler = function() {
+                        yesBtn.removeEventListener('click', newHandler);
+                        modal.hide();
+                        if (typeof onConfirm === 'function') onConfirm();
+                    };
+
+                    yesBtn.addEventListener('click', newHandler);
+                    modal.show();
+                }
+            </script>
+            {{-- confirm xóa đã chọn --}}
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    const bulkForm = document.getElementById('bulk-action-form');
+                    const deleteBtn = document.getElementById('bulk-delete-button');
+
+                    deleteBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+
+                        const checked = bulkForm.querySelectorAll('input[name="selected_items[]"]:checked');
+
+                        if (checked.length === 0) {
+                            showNotificationModal('Vui lòng chọn ít nhất một sản phẩm để xoá.');
+                            return;
+                        }
+
+                        confirmModal('Bạn có chắc chắn muốn xoá các sản phẩm đã chọn?', function() {
+                            bulkForm.submit(); // Thực hiện submit nếu người dùng xác nhận
+                        });
+                    });
+                });
+            </script>
 
         @endsection

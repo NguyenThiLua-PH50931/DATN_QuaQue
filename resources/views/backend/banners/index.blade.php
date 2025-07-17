@@ -127,11 +127,13 @@
                                     </tbody>
                                 </table>
                                 <form class="d-inline-flex">
-                                    <button type="button" id="bulk-delete-btn"
-                                        class="align-items-center btn btn-danger d-flex ms-2" style="display: none;">
-                                        <i data-feather="trash"></i> Xóa đã chọn
+                                    <button type="button" id="bulk-delete-btn" class="align-items-center btn d-flex ms-2"
+                                        style="display: none; background-color: #ffc107; color: white; border-color: #ffc107; font-size: 0.85rem; padding: 0.25rem 0.5rem;">
+                                        <i data-feather="trash" style="color: white; width: 16px; height: 16px;"></i> Xóa đã
+                                        chọn
                                     </button>
                                 </form>
+
                             </div>
                             <form id="bulk-delete-form" action="{{ route('admin.banners.bulkDelete') }}" method="POST"
                                 style="display: none;">

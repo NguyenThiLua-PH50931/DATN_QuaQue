@@ -32,12 +32,12 @@
             <div class="row g-sm-4 g-3">
                 <div class="col-xxl-3 col-xl-4 col-lg-5 d-lg-block d-none">
                     <div class="left-sidebar-box">
-                        <div class="left-search-box">
+                        {{-- <div class="left-search-box">
                             <div class="search-box">
                                 <input type="search" class="form-control" id="exampleFormControlInput4"
                                     placeholder="Search....">
                             </div>
-                        </div>
+                        </div> --}}
 
                         <div class="accordion left-accordion-box" id="accordionPanelsStayOpenExample">
                             <div class="accordion-item">

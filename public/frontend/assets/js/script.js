@@ -376,9 +376,38 @@ $(window).scroll(function () {
 /*=====================
    19. setting-option open js
    ==========================*/
-$(".theme-option .setting-box .setting-button").click(function () {
-    $(".theme-setting-2").toggleClass("active");
-    $(this).find("i").toggleClass("fa-xmark");
+$(document).ready(function () {
+    var KEY_CHATBOT = 'quaque-chatbot-open';
+
+    // Đảm bảo trạng thái popup luôn giống trạng thái lưu
+    function syncPopupStatus() {
+        const isOpen = localStorage.getItem(KEY_CHATBOT) === 'true';
+        if (isOpen) {
+            $(".theme-setting-2").addClass("active");
+            $(".theme-option .setting-box .setting-button i").addClass("fa-xmark");
+        } else {
+            $(".theme-setting-2").removeClass("active");
+            $(".theme-option .setting-box .setting-button i").removeClass("fa-xmark");
+        }
+    }
+
+    // Khi click nút bật/tắt (icon chat), vừa toggle popup vừa LƯU TRẠNG THÁI MỚI
+    $(".theme-option .setting-box .setting-button").click(function () {
+        if ($(".theme-setting-2").hasClass("active")) {
+            // Đang mở thì đóng lại, và lưu đóng
+            $(".theme-setting-2").removeClass("active");
+            $(this).find("i").removeClass("fa-xmark");
+            localStorage.setItem(KEY_CHATBOT, 'false');
+        } else {
+            // Đang đóng thì mở ra, và lưu mở
+            $(".theme-setting-2").addClass("active");
+            $(this).find("i").addClass("fa-xmark");
+            localStorage.setItem(KEY_CHATBOT, 'true');
+        }
+    });
+
+    // Khi load lại trang, hoặc chuyển trang, tự động giữ trạng thái
+    syncPopupStatus();
 });
 
 /*=====================

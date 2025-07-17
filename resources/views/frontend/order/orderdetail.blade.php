@@ -77,56 +77,98 @@
                     </li>
                 
                     @if (in_array($order->status, ['pending', 'confirmed', 'processing']) &&
-                            !($order->payment_method === 'bank' && $order->payment_status === 'paid'))
-                        <form id="cancelOrderForm" action="{{ route('client.orders.cancel', $order->id) }}" method="POST">
-                            @csrf
-                            <button type="button" id="btn-cancel-order" class="btn btn-danger btn-sm">
-                                <i class="fa fa-times"></i> Huỷ đơn hàng
-                            </button>
-                        </form>
+                       !(in_array($order->payment_method, ['momo', 'bank']) && $order->payment_status === 'paid'))
+
+                        <!-- Nút chỉ mở modal -->
+                        <button type="button" id="btn-cancel-order" class="btn btn-danger btn-sm">
+                            <i class="fa fa-times"></i>Huỷ đơn hàng
+                        </button>
                     @endif
 
 
+
+                      <!-- Modal chọn lý do huỷ -->
+                    <div class="modal fade" id="cancelReasonModal" tabindex="-1" aria-labelledby="cancelReasonModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <form method="POST" action="{{ route('client.orders.cancel', $order->id) }}">
+                                @csrf
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Chọn lý do huỷ đơn hàng</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        @php
+                                            $cancelReasons = [
+                                                'Tôi không muốn mua nữa',
+                                                'Tôi muốn thay đổi sản phẩm / số lượng',
+                                                'Tôi muốn thay đổi địa chỉ giao hàng',
+                                                'Đặt nhầm đơn hàng',
+                                                'Lý do khác',
+                                            ];
+                                        @endphp
+
+                                        @foreach ($cancelReasons as $reason)
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input reason-radio" type="radio" name="cancel_reason" value="{{ $reason }}" required>
+                                                <label class="form-check-label">{{ $reason }}</label>
+                                            </div>
+                                        @endforeach
+
+                                        <!-- Lý do khác: hiện ô nhập -->
+                                        <div id="other-reason-group" class="mt-2 d-none">
+                                            <label for="other_reason_input">Vui lòng ghi rõ lý do:</label>
+                                            <textarea class="form-control" name="other_reason" id="other_reason_input" rows="3"></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                        <button type="submit" class="btn btn-danger">Xác nhận huỷ</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Script điều khiển hiển thị "Lý do khác" -->
                     <script>
-                        document.addEventListener('DOMContentLoaded', function() {
+                        document.addEventListener('DOMContentLoaded', function () {
                             const btn = document.getElementById('btn-cancel-order');
+                            const modalEl = document.getElementById('cancelReasonModal');
+                            const modal = new bootstrap.Modal(modalEl);
+                            const reasonRadios = document.querySelectorAll('.reason-radio');
+                            const otherGroup = document.getElementById('other-reason-group');
+
                             if (btn) {
-                                btn.addEventListener('click', function(e) {
-                                    Swal.fire({
-                                        icon: 'warning',
-                                        title: 'Thông báo',
-                                        text: 'Bạn chắc chắn muốn huỷ đơn hàng này?',
-                                        showCancelButton: true,
-                                        confirmButtonColor: '#16a085',
-                                        cancelButtonColor: '#d33',
-                                        confirmButtonText: 'OK',
-                                        cancelButtonText: 'Huỷ'
-                                    }).then((result) => {
-                                        if (result.isConfirmed) {
-                                            document.getElementById('cancelOrderForm').submit();
-                                        }
-                                    });
+                                btn.addEventListener('click', function () {
+                                    modal.show();
                                 });
                             }
+
+                            reasonRadios.forEach(radio => {
+                                radio.addEventListener('change', function () {
+                                    if (this.value === 'Lý do khác') {
+                                        otherGroup.classList.remove('d-none');
+                                    } else {
+                                        otherGroup.classList.add('d-none');
+                                        document.getElementById('other_reason_input').value = '';
+                                    }
+                                });
+                            });
                         });
                     </script>
 
 
-
                 </div>
                 <!-- NGƯỜI NHẬN -->
-                <div class="border rounded-3 p-3 bg-white mb-3 shadow-sm">
+                    <div class="border rounded-3 p-3 bg-white mb-3 shadow-sm">
                     <div class="fw-bold mb-2" style="color:#f47721">Người nhận</div>
-                    <div><strong>Họ tên:</strong> {{ $order->address->recipient_name ?? '---' }}</div>
-                    <div><strong>Điện thoại:</strong> {{ $order->address->phone ?? '---' }}</div>
-                    <div>
-                        <strong>Địa chỉ:</strong>
-                        {{ $order->address->address ?? '' }},
-                        {{ $order->address->ward ?? '' }},
-                        {{ $order->address->district ?? '' }},
-                        {{ $order->address->province ?? '' }}
-                    </div>
+                    <div><strong>Họ tên:</strong> {{ $order->recipient_name ?? '---' }}</div>
+                    <div><strong>Điện thoại:</strong> {{ $order->phone ?? '---' }}</div>
+                    <div><strong>Địa chỉ:</strong> {{ $order->full_address ?? '---' }}</div>
                 </div>
+
             </div>
             <!-- CHI TIẾT SẢN PHẨM & CHI PHÍ -->
             <div class="col-lg-6">
