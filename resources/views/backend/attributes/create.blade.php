@@ -87,8 +87,6 @@
         border-color: #6f42c1 !important;
     }
 </style>
-@endsection
-@push('scripts')
 <script>
     $(document).ready(function() {
         // Thêm input giá trị mới
@@ -113,4 +111,6 @@
         }
     });
 </script>
-@endpush
+
+@endsection
+

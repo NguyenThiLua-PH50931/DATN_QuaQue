@@ -69,10 +69,10 @@
                                                         </li>
                                                         <li>
                                                             <a href="javascript:void(0)"
-                                                                class="btn btn-sm btn-danger force-delete-btn"
+                                                                class="btn btn-sm  force-delete-btn"
                                                                 data-id="{{ $attribute->id }}"
                                                                 data-name="{{ $attribute->name }}">
-                                                                <i class="ri-delete-bin-line"></i> Xóa vĩnh viễn
+                                                                <i class="ri-delete-bin-line"></i>
                                                             </a>
                                                         </li>
                                                     </ul>
@@ -217,7 +217,7 @@
     </div>
 
     @includeIf('backend.footer')
-@endsection
+
 
 {{-- Include Toastr CSS and JS --}}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
@@ -227,7 +227,6 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-@push('scripts')
     <script>
         $(document).ready(function() {
             // Cấu hình Toastr
@@ -464,7 +463,6 @@
             @endif
         });
     </script>
-@endpush
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 <style>
@@ -491,3 +489,4 @@
         color: #fff !important;
     }
 </style>
+@endsection

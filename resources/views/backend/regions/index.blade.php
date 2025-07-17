@@ -264,10 +264,7 @@
     </div>
 
     @includeIf('backend.footer')
-@endsection
-
-@push('scripts')
-    <script>
+        <script>
         $(document).ready(function() {
             $('#table_id').DataTable({
                 language: {
@@ -400,4 +397,6 @@
             @endif
         });
     </script>
-@endpush
+
+@endsection
+

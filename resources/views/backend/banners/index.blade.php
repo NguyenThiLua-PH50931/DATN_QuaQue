@@ -231,9 +231,7 @@
         </div>
 
         @includeIf('backend.footer')
-    @endsection
 
-    @push('scripts')
         <script>
             $(document).ready(function() {
                 $('#table_id').DataTable({
@@ -363,4 +361,4 @@
                 @endif
             });
         </script>
-    @endpush
+    @endsection

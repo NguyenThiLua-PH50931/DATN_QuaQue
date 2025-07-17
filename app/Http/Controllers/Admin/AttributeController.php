@@ -126,23 +126,25 @@ class AttributeController extends Controller
     // Form chỉnh sửa thuộc tính
     public function edit($slug)
     {
-        $attribute = Attribute::where('slug', $slug)->with('values')->firstOrFail();
-
-        return view('backend.attributes.edit', compact('attribute'));
+        $attribute = Attribute::where('slug', $slug)->firstOrFail();
+        $values = $attribute->values()->pluck('value')->toArray();
+        return view('backend.attributes.edit', compact('attribute', 'values'));
     }
 
-    // Cập nhật thuộc tính
     public function update(Request $request, $slug)
     {
         $attribute = Attribute::where('slug', $slug)->firstOrFail();
 
         $request->validate([
             'name' => 'required|unique:attributes,name,' . $attribute->id,
-            'values' => 'nullable|array',
-            'values.*' => 'nullable|string|distinct',
+            'values' => 'required|array|min:1',
+            'values.*' => 'required|string|distinct',
         ], [
             'name.required' => 'Tên thuộc tính là bắt buộc.',
             'name.unique' => 'Tên thuộc tính đã tồn tại.',
+            'values.required' => 'Bạn phải nhập ít nhất một giá trị thuộc tính.',
+            'values.array' => 'Giá trị thuộc tính không hợp lệ.',
+            'values.*.required' => 'Mỗi giá trị thuộc tính không được để trống.',
             'values.*.distinct' => 'Các giá trị thuộc tính không được trùng nhau.',
         ]);
 
@@ -150,25 +152,32 @@ class AttributeController extends Controller
         $attribute->slug = Str::slug($request->name);
         $attribute->save();
 
-        // Xóa các giá trị cũ
-        $attribute->values()->delete();
+        $newValues = collect($request->values)->map(fn($v) => trim($v))->filter()->unique();
 
-        // Lưu lại các giá trị mới (bỏ trống sẽ không lưu)
-        if ($request->values) {
-            foreach ($request->values as $value) {
-                $value = trim($value);
-                if ($value) {
-                    $attribute->values()->create([
-                        'value' => $value,
-                        'slug' => Str::slug($value),
-                    ]);
+        // Lấy tất cả value kể cả đã xóa mềm
+        $allValues = $attribute->values()->withTrashed()->get();
+
+        // Xoá hoặc khôi phục value
+        foreach ($allValues as $value) {
+            if (!$newValues->contains($value->value)) {
+                $value->forceDelete(); // hoặc $value->delete() nếu dùng soft delete
+            } else {
+                if ($value->trashed()) {
+                    $value->restore(); // khôi phục nếu value từng bị xóa mềm
                 }
             }
         }
 
+        // Thêm mới hoặc update value
+        foreach ($newValues as $val) {
+            $attribute->values()->updateOrCreate(
+                ['value' => $val],
+                ['slug' => Str::slug($val), 'deleted_at' => null]
+            );
+        }
+
         return redirect()->route('admin.attributes.index')->with('success', 'Cập nhật thuộc tính thành công!');
     }
-
 
     // Xóa thuộc tính (Soft delete)
     public function destroy(Request $request, $id)
@@ -178,7 +187,7 @@ class AttributeController extends Controller
             $attribute = Attribute::findOrFail($id);
 
             // Kiểm tra xem các giá trị thuộc tính có liên kết với bất kỳ biến thể sản phẩm nào không
-            $hasProductVariants = $attribute->values()->whereHas('variants', function($query) {
+            $hasProductVariants = $attribute->values()->whereHas('variants', function ($query) {
                 $query->withTrashed()->whereNull('product_variants.deleted_at'); // Chỉ kiểm tra với variants chưa bị xóa mềm
             })->exists();
 
@@ -231,7 +240,7 @@ class AttributeController extends Controller
             foreach ($ids as $id) {
                 $attribute = Attribute::find($id);
                 if ($attribute) {
-                    $hasProductVariants = $attribute->values()->whereHas('variants', function($query) {
+                    $hasProductVariants = $attribute->values()->whereHas('variants', function ($query) {
                         $query->withTrashed()->whereNull('product_variants.deleted_at');
                     })->exists();
 
@@ -259,11 +268,10 @@ class AttributeController extends Controller
             }
 
             if ($deletedCount === 0 && count($notDeletedNames) === 0) {
-                 return response()->json(['success' => false, 'message' => 'Không có thuộc tính nào hợp lệ để xóa.'], 400);
+                return response()->json(['success' => false, 'message' => 'Không có thuộc tính nào hợp lệ để xóa.'], 400);
             }
 
             return response()->json(['success' => true, 'message' => $message]);
-
         } catch (\Exception $e) {
             DB::rollBack();
             $message = 'Lỗi xóa hàng loạt thuộc tính: ' . $e->getMessage();
@@ -347,7 +355,7 @@ class AttributeController extends Controller
             $attribute = Attribute::onlyTrashed()->findOrFail($id);
 
             // Kiểm tra xem các giá trị thuộc tính có liên kết với bất kỳ biến thể sản phẩm nào không
-            $hasProductVariants = $attribute->values()->withTrashed()->whereHas('variants', function($query) {
+            $hasProductVariants = $attribute->values()->withTrashed()->whereHas('variants', function ($query) {
                 $query->whereNull('product_variants.deleted_at'); // Chỉ kiểm tra với variants chưa bị xóa mềm
             })->exists();
 
@@ -401,7 +409,7 @@ class AttributeController extends Controller
                 $attribute = Attribute::onlyTrashed()->find($id);
                 if ($attribute) {
                     // Kiểm tra xem các giá trị thuộc tính có liên kết với bất kỳ biến thể sản phẩm nào không
-                    $hasProductVariants = $attribute->values()->withTrashed()->whereHas('variants', function($query) {
+                    $hasProductVariants = $attribute->values()->withTrashed()->whereHas('variants', function ($query) {
                         $query->whereNull('product_variants.deleted_at');
                     })->exists();
 
@@ -433,7 +441,6 @@ class AttributeController extends Controller
             }
 
             return response()->json(['success' => true, 'message' => $message]);
-
         } catch (\Exception $e) {
             DB::rollBack();
             $message = 'Lỗi xóa vĩnh viễn hàng loạt thuộc tính: ' . $e->getMessage();
