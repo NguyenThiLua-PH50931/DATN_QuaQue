@@ -88,12 +88,12 @@
                                 </div>
                             </form>
                         </div>
-
+{{-- 
                         <div class="other-log-in">
                             <h6>hoặc</h6>
-                        </div>
+                        </div> --}}
 
-                        <div class="log-in-button">
+                        {{-- <div class="log-in-button">
                             <ul>
                                 <li>
                                     <a href="https://accounts.google.com/signin/v2/identifier?flowName=GlifWebSignIn&flowEntry=ServiceLogin"
@@ -109,7 +109,7 @@
                                     </a>
                                 </li>
                             </ul>
-                        </div>
+                        </div> --}}
 
                         <div class="sign-up-box">
                             <h4>Bạn đã có tài khoản?</h4>

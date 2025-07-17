@@ -66,6 +66,11 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
         Route::post('/get-variant', [ClientProductController::class, 'getVariant'])->name('.getVariant');
         Route::post('/reviews', [ClientProductController::class, 'storeReview'])->name('reviews.store');
         Route::get('/quickview/{slug}', [ClientProductController::class, 'quickView'])->name('quickview');
+        // binh luan sp
+        Route::post('/san-pham/{product}/comment', [ClientProductController::class, 'comment'])->name('comment.store');
+        Route::post('comment/{comment}/reply', [ClientProductController::class, 'commentReply'])->name('comment.reply');
+        Route::delete('/comment/{comment}', [ClientProductController::class, 'deleteComment'])->name('comment.destroy');
+        Route::delete('/reply/{reply}', [ClientProductController::class, 'deleteReply'])->name('reply.destroy');
     });
 
 
@@ -287,8 +292,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         Route::get('/', [AttributeController::class, 'index'])->name('index');                  // danh sách thuộc tính
         Route::post('/', [AttributeController::class, 'store'])->name('store');                 // thêm mới
         Route::get('create', [AttributeController::class, 'create'])->name('create');           // form tạo
-        Route::get('/{slug}/edit', [AttributeController::class, 'edit'])->name('edit');            // Form chỉnh sửa
-        Route::put('/{id}', [AttributeController::class, 'update'])->name('update'); // Cập nhật (dùng PUT để nhất quán với REST)
+        Route::get('/{slug}/edit', [AttributeController::class, 'edit'])->name('edit'); // Form chỉnh sửa
+        Route::put('/{slug}', [AttributeController::class, 'update'])->name('update');   // Cập nhật     // Cập nhật (dùng PUT để nhất quán với REST)
         Route::delete('/{id}', [AttributeController::class, 'destroy'])->name('destroy');       // Xóa mềm một thuộc tính (sử dụng destroy)
         Route::post('/bulk-delete', [AttributeController::class, 'bulkDelete'])->name('bulkDelete'); // Xóa mềm nhiều thuộc tính
         Route::get('/trashed', [AttributeController::class, 'trashed'])->name('trashed');        // Danh sách thuộc tính đã xóa mềm

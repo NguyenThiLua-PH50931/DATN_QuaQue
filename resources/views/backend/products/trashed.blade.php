@@ -28,7 +28,7 @@
                             @endif
 
                             <div class="table-responsive category-table" style="overflow-x: auto; width: 100%;">
-                                <table class="table all-package theme-table" id="productTable" style="width: 100%; min-width: 900px;">
+                                <table class="table all-package theme-table" id="productTableDeleted" style="width: 100%; min-width: 900px;">
                                     <thead>
                                         <tr>
                                             <th style="color: black; background-color: #f8f9fa;">
@@ -117,7 +117,6 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-@push('scripts')
     <script>
         $(document).ready(function() {
             // Cấu hình Toastr
@@ -143,7 +142,7 @@
                 toastr.error('{{ session('error') }}');
             @endif
 
-            $('#productTable').DataTable({
+            $('#productTableDeleted').DataTable({
                 language: {
                     search: "Tìm kiếm:",
                     lengthMenu: "Hiển thị _MENU_ sản phẩm",
@@ -348,4 +347,3 @@
             });
         });
     </script>
-@endpush

@@ -314,7 +314,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.status === 'success') {
                     this.reset();
                     appendComment(data.comment);
-                    Swal.fire({ icon: 'success', text: 'Bình luận thành công!' });
+                    // Swal.fire({ icon: 'success', text: 'Bình luận thành công!' }); k can tb thi an
                 } else {
                     Swal.fire({ icon: 'error', text: data.message || 'Có lỗi khi gửi bình luận' });
                 }
@@ -345,7 +345,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 form.style.display = 'none';
                 lastOpenedReplyForm = null;
                 appendReply(commentId, data.reply);
-                Swal.fire({ icon: 'success', text: 'Đã trả lời!' });
+                // Swal.fire({ icon: 'success', text: 'Đã trả lời!' }); k can tb thi an
             } else {
                 Swal.fire({ icon: 'error', text: data.message || 'Có lỗi khi gửi trả lời' });
             }
