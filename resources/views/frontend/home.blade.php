@@ -220,11 +220,11 @@
 
                                     <div class="review-profile">
                                         <div class="review-image">
-                                            <img src="../frontend/assets/images/vegetable/review/1.jpg"
+                                            <img src="../backend/assets/images/users/27.jpg"
                                                 class="img-fluid blur-up lazyload" alt="">
                                         </div>
                                         <div class="review-detail">
-                                            <h5>Tina Mcdonnale</h5> <!-- Tên người đánh giá -->
+                                            <h5>Sir Alex Ferguson</h5> <!-- Tên người đánh giá -->
                                             <h6>Giám đốc bán hàng</h6> <!-- Chức vụ -->
                                         </div>
                                     </div>
@@ -878,6 +878,16 @@
             height: 100%;
             object-fit: cover;
             object-position: center;
+            border-radius: 16px;
+            display: block;
+            background: #f8f8f8;
+        }
+
+        /* Chỉ CSS cho ảnh sản phẩm thịnh hành */
+        .offer-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
             border-radius: 16px;
             display: block;
             background: #f8f8f8;
