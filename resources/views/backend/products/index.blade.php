@@ -624,7 +624,7 @@
         });
 
         // --- XỬ LÝ CUSTOM DROPDOWN FILTER ---
-        $('.filter-dropdown-toggle').on('click', function(e) {
+        $('.filter-dropdown-toggle').off('click').on('click', function(e) {
             e.preventDefault();
             var $dropdown = $(this).closest('.filter-dropdown');
             var isOpen = $dropdown.hasClass('open');

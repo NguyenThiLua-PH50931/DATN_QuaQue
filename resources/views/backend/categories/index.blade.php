@@ -117,9 +117,15 @@
                 <form action="{{ route('admin.categories.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
+                        {{-- Hiển thị lỗi cho trường name --}}
+                        @if ($errors->has('name'))
+                            <div class="alert alert-danger">
+                                {{ $errors->first('name') }}
+                            </div>
+                        @endif
                         <div class="mb-3">
                             <label for="name" class="form-label">Tên danh mục</label>
-                            <input type="text" class="form-control" id="name" name="name" required>
+                            <input type="text" class="form-control" id="name" name="name" required value="{{ old('name') }}">
                         </div>
                         <div class="mb-3">
                             <label for="image" class="form-label">Icon (Ảnh)</label>
@@ -243,6 +249,29 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal hiển thị lỗi khi thêm mới --}}
+    <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="errorModalLabel">Lỗi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @if ($errors->has('name'))
+                        <div class="alert alert-danger mb-0">
+                            @if ($errors->first('name') == 'Tên danh mục đã tồn tại, vui lòng chọn tên khác')
+                                Tên danh mục đã tồn tại, vui lòng chọn tên khác
+                            @else
+                                {{ $errors->first('name') }}
+                            @endif
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -382,6 +411,12 @@
                     $('#cannotDeleteMessage').text(errorMessage);
                     $('#cannotDeleteModal').modal('show');
                 }
+            @endif
+
+            @if ($errors->has('name'))
+                // Nếu có lỗi validate trường name, mở lại modal thêm mới và hiện modal lỗi
+                $('#createModal').modal('show');
+                $('#errorModal').modal('show');
             @endif
         });
     </script>
