@@ -77,7 +77,7 @@ class CartController extends Controller
         $request->validate([
             'product_id'        => 'required|exists:products,id',
             'quantity'          => 'required|integer|min:1',
-            'variant_attributes'=> 'nullable|string',
+            'variant_attributes' => 'nullable|string',
         ]);
 
         // Xử lý json biến thể
@@ -161,7 +161,10 @@ class CartController extends Controller
     public function delete($id)
     {
         $userId = Auth::id();
-        $cartItem = CartItem::where('user_id', $userId)->find($id);
+        $cartItem = CartItem::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->first();
+
 
         if (!$cartItem) {
             return response()->json([
@@ -321,7 +324,7 @@ class CartController extends Controller
      */
     public function proceedCheckout(Request $request)
     {
-        $selectedIds = $request->input('selected_items', []);
+        $selectedIds = $request->input('selected_cart_item_ids', []);
 
         // Đảm bảo $selectedIds là mảng số nguyên duy nhất
         if (!is_array($selectedIds)) {
@@ -346,7 +349,7 @@ class CartController extends Controller
      */
     public function checkStock(Request $request)
     {
-        $cartItemIds = $request->input('selected_items', []);
+        $cartItemIds = $request->input('selected_cart_item_ids', []);
         $messages = [];
 
         foreach ($cartItemIds as $id) {
