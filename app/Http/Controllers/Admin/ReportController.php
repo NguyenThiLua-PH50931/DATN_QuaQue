@@ -53,12 +53,12 @@ class ReportController extends Controller
 
         // Tổng doanh thu
         $totalRevenue = (clone $orderQuery)
-            ->where('status', 'completed')
+            ->where('status', 'delivered')
             ->sum('total_amount');
 
         // Số đơn hoàn thành
         $completedOrders = (clone $orderQuery)
-            ->where('status', 'completed')
+            ->where('status', 'delivered')
             ->count();
 
         // Sản phẩm bán chạy nhất

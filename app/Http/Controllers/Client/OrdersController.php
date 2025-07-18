@@ -113,7 +113,7 @@ class OrdersController extends Controller
 
 
     // Tạo đơn hàng từ pending payment đã thanh toán MoMo
-   public function placeFromPending(Request $request)
+  public function placeFromPending(Request $request)
 {
     $user = auth()->user();
     $pending = PendingPayment::where('id', $request->pending_payment_id)
@@ -125,79 +125,68 @@ class OrdersController extends Controller
         return back()->with('error', 'Không tìm thấy thanh toán đang chờ xử lý!');
     }
 
-    // Lấy snapshot luôn!
+    // Check nếu đã có order với mã pending này rồi thì không tạo lại (tránh double order)
+    $hasOrder = \App\Models\Client\Order::where('payment_method', 'momo')
+        ->where('total_amount', $pending->amount)
+        ->where('user_id', $user->id)
+        ->where('created_at', '>=', now()->subMinutes(30))
+        ->first();
+    if ($hasOrder) {
+        return back()->with('error', 'Đơn hàng đã được tạo trước đó!');
+    }
+
     $snapshot = $pending->cart_items_snapshot;
     if (empty($snapshot) || !is_array($snapshot)) {
         return back()->with('error', 'Không tìm thấy sản phẩm trong giỏ hàng hoặc dữ liệu đơn hàng!');
     }
 
-    // Lấy địa chỉ (ưu tiên địa chỉ lúc pending, nếu lưu; nếu không thì lấy mặc định của user)
+    // Lấy địa chỉ (ưu tiên địa chỉ lúc pending, nếu lưu; nếu không thì lấy mặc định)
     $address = $user->addresses()->where('is_default', true)->first();
     if (!$address) {
         return back()->with('error', 'Bạn cần thêm địa chỉ giao hàng trước!');
     }
 
-    // Lấy các trường giảm giá, freeship, ship method từ pending
-    $discountCodeId      = $pending->discount_code_id ?? null;
-    $freeShippingCodeId  = $pending->free_shipping_code_id ?? null;
-    $discountAmount      = $pending->discount_amount ?? 0;
-    $shippingMethodId    = $pending->shipping_method_id ?? session('shipping_method_id', 1);
-    $shippingCost        = $pending->shipping_cost ?? 0;
-
-    // Tạo đơn hàng từ snapshot (dữ liệu freeze)
+    // Tạo đơn hàng từ snapshot (KHÔNG TRỪ KHO)
     $order = \App\Models\Client\Order::create([
-        // 'order_code'           => $pending->order_id,
         'user_id'              => $user->id,
-        'recipient_name'       => $address->recipient_name,
-        'phone'                => $address->phone,
-        'full_address'         => $address->address . ', ' . ($address->ward ?? '') . ', ' . $address->district . ', ' . $address->province,
-        'shipping_method_id'   => $shippingMethodId,
-        'shipping_cost'        => $shippingCost,
-        'discount_code_id'     => $discountCodeId,
-        'free_shipping_code_id'=> $freeShippingCodeId,
-        'discount_amount'      => $discountAmount,
+        'recipient_name'       => $pending->recipient_name ?? $address->recipient_name,
+        'phone'                => $pending->phone ?? $address->phone,
+        'full_address'         => $pending->full_address ?? ($address->address . ', ' . ($address->ward ?? '') . ', ' . $address->district . ', ' . $address->province),
+        'shipping_method_id'   => $pending->shipping_method_id ?? 1,
+        'shipping_cost'        => $pending->shipping_cost ?? 0,
+        'discount_code_id'     => $pending->discount_code_id ?? null,
+        'free_shipping_code_id'=> $pending->free_shipping_code_id ?? null,
+        'discount_amount'      => $pending->discount_amount ?? 0,
         'total_amount'         => $pending->amount,
         'status'               => 'confirmed',
         'payment_method'       => 'momo',
         'payment_status'       => 'paid',
     ]);
 
-    // Thêm item từ snapshot
+    // Thêm order item từ snapshot, KHÔNG update stock
     foreach ($snapshot as $item) {
-        $product = \App\Models\admin\Product::find($item['product_id'] ?? null);
-        $variant = !empty($item['variant_id']) ? \App\Models\admin\ProductVariant::find($item['variant_id']) : null;
-
-        \App\Models\Client\OrderItem::create([
-            'order_id'                   => $order->id,
+        $order->items()->create([
             'product_id'                 => $item['product_id'] ?? null,
-            'product_name'               => $item['product_name'] ?? ($product->name ?? ''),
+            'product_name'               => $item['product_name'] ?? '',
             'product_variant_value_id'   => $item['variant_id'] ?? null,
-            'product_variant_value_name' => $item['variant_name'] ?? ($variant->name ?? null),
-            'product_sku'                => $item['sku'] ?? ($variant->sku ?? $product->sku ?? null),
-            'product_image'              => $item['image'] ?? ($product->image ?? null),
+            'product_variant_value_name' => $item['variant_name'] ?? null,
+            'product_sku'                => $item['sku'] ?? null,
+            'product_image'              => $item['image'] ?? null,
             'quantity'                   => $item['quantity'] ?? 1,
-            'price'                      => $item['price'] ?? ($product->price ?? 0),
-            'total'                      => (($item['price'] ?? $product->price ?? 0) * ($item['quantity'] ?? 1)),
+            'price'                      => $item['price'] ?? 0,
+            'total'                      => (($item['price'] ?? 0) * ($item['quantity'] ?? 1)),
         ]);
-
-        // Trừ kho thực tế
-        if (!empty($item['variant_id']) && $variant) {
-            $variant->stock = max(0, $variant->stock - ($item['quantity'] ?? 1));
-            $variant->save();
-        } elseif ($product) {
-            $product->stock = max(0, $product->stock - ($item['quantity'] ?? 1));
-            $product->save();
-        }
+        // KHÔNG động gì đến kho!
     }
 
-    // Xóa các cart item này nếu vẫn còn trong giỏ
+    // Xóa cart item đã đặt nếu còn
     if (!empty($pending->cart_item_ids)) {
         \App\Models\Client\CartItem::where('user_id', $user->id)
             ->whereIn('id', $pending->cart_item_ids)
             ->delete();
     }
 
-    // Cập nhật trạng thái pending
+    // Update pending status
     $pending->status = 'processed';
     $pending->save();
 

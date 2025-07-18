@@ -22,9 +22,10 @@ class PaymentController extends Controller
 
     // Cấu hình MoMo
     $endpoint = "https://test-payment.momo.vn/v2/gateway/api/create";
-    $partnerCode = "MOMO";
-    $accessKey = "F8BBA842ECF85";
-    $secretKey = "K951B6PE1waDMi640xX08PD3vg6EkVlz";
+    $partnerCode = "MOMOSORK20250710_TEST";
+    $accessKey = "jVMp4nX1cGAq8sg3";
+    $secretKey = "smyMtdwl6o7XmNwZx8v90y0IR6v3Minu";
+
     $redirectUrl = route('client.checkout'); // Địa chỉ MoMo redirect về
     $ipnUrl = route('client.checkout');      // IPN cũng trả về luôn, cho demo
     $requestId = time() . "";

@@ -65,11 +65,11 @@
                             </form>
                         </div>
 
-                        <div class="other-log-in">
+                        {{-- <div class="other-log-in">
                             <h6>hoặc</h6>
-                        </div>
+                        </div> --}}
 
-                        <div class="log-in-button">
+                        {{-- <div class="log-in-button">
                             <ul>
                                 <li>
                                     <a href="https://www.google.com/" class="btn google-button w-100">
@@ -84,7 +84,7 @@
                                     </a>
                                 </li>
                             </ul>
-                        </div>
+                        </div> --}}
 
                         <div class="other-log-in">
                             <h6></h6>
