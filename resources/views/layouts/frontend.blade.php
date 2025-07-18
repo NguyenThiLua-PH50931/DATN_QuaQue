@@ -174,7 +174,7 @@
     </div>
     <!-- Location Modal End -->
 
-<<<<<<< HEAD
+
     {{-- <!-- Cookie Bar Box Start -->
     <div class="cookie-bar-box">
 =======
@@ -199,10 +199,8 @@
 <<<<<<< HEAD
     </div>
     <!-- Cookie Bar Box End --> --}}
-=======
-    </div> --}}
+    </div> 
     <!-- Cookie Bar Box End -->
->>>>>>> 4ae3f07a6c1ca1e711ca99f72f251b17ce2c38a0
 
     <!-- Deal Box Modal Start -->
     <div class="modal fade theme-modal deal-modal" id="deal-box" tabindex="-1">
@@ -296,11 +294,11 @@
             </div>
         </div>
 
-        <div class="back-to-top">
+        {{-- <div class="back-to-top">
             <a id="back-to-top" href="#">
                 <i class="fas fa-chevron-up"></i>
             </a>
-        </div>
+        </div> --}}
     </div>
     <!-- Tap to top and theme setting button end -->
 

@@ -68,7 +68,7 @@
     position: absolute;
     top: 10px;
     left: 10px;
-    z-index: 5;
+    z-index: 1 !important;
     background: linear-gradient(135deg, #ff5722, #e91e63);
     color: #fff;
     font-weight: bold;

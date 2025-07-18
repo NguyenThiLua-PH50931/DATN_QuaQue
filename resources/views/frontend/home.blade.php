@@ -294,17 +294,9 @@
                                         @foreach ($chunk as $product)
                                             <div class="col-md-3 col-sm-6 col-12 mb-4">
                                                 <div class="product-box" style="position: relative;">
-                                                    <div class="label-tagg label-tagg-top">
+                                                    <div class="label-tag" style="background-color: #0b7c65">
                                                         <span>TOP</span>
                                                     </div>
-                                                    <style>
-                                                        .label-tagg-top {
-                                                            border: none;
-                                                            /* bỏ viền */
-                                                            box-shadow: none;
-                                                            /* bỏ bóng viền */
-                                                        }
-                                                    </style>
                                                     <div class="product-image">
                                                         <a
                                                             href="{{ route('client.product.detail', ['slug' => $product->slug]) }}">
@@ -329,41 +321,38 @@
                                                                         }
                                                                     }
                                                                 }
-                                                            @endphp
-                                                            <li data-bs-toggle="tooltip" data-bs-placement="top"
-                                                                title="Xem nhanh">
-                                                                @php
-                                                                    $variantMap = $product->variants->map(function (
-                                                                        $v,
-                                                                    ) {
+
+                                                                // Map variants
+                                                                $variantMap = $product->variants->map(function ($v) {
+                                                                    return [
+                                                                        'id' => $v->id,
+                                                                        'sku' => $v->sku,
+                                                                        'stock' => $v->stock,
+                                                                        'price' => $v->price,
+                                                                        'image' => $v->image
+                                                                            ? asset('storage/' . $v->image)
+                                                                            : null,
+                                                                        'value_ids' => $v->attributeValues
+                                                                            ->pluck('id')
+                                                                            ->sort()
+                                                                            ->values()
+                                                                            ->all(),
+                                                                    ];
+                                                                });
+
+                                                                // Map attributes grouped by attribute_id
+                                                                $attributesMap = $product->variants->flatMap->attributeValues
+                                                                    ->groupBy('attribute_id')
+                                                                    ->map(function ($values, $attrId) {
                                                                         return [
-                                                                            'id' => $v->id,
-                                                                            'sku' => $v->sku,
-                                                                            'stock' => $v->stock,
-                                                                            'price' => $v->price,
-                                                                            'image' => $v->image
-                                                                                ? asset('storage/' . $v->image)
-                                                                                : null,
-                                                                            'value_ids' => $v->attributeValues
-                                                                                ->pluck('id')
-                                                                                ->sort()
-                                                                                ->values()
-                                                                                ->all(),
+                                                                            'name' => $values->first()->attribute->name,
+                                                                            'values' => $values->pluck('value', 'id'),
                                                                         ];
                                                                     });
-                                                                    $attributesMap = $product->variants->flatMap->attributeValues
-                                                                        ->groupBy('attribute_id')
-                                                                        ->map(function ($values, $attrId) {
-                                                                            return [
-                                                                                'name' => $values->first()->attribute
-                                                                                    ->name,
-                                                                                'values' => $values->pluck(
-                                                                                    'value',
-                                                                                    'id',
-                                                                                ),
-                                                                            ];
-                                                                        });
-                                                                @endphp
+                                                            @endphp
+
+                                                            <li data-bs-toggle="tooltip" data-bs-placement="top"
+                                                                title="Xem nhanh">
                                                                 <a href="javascript:void(0)" data-bs-toggle="modal"
                                                                     data-bs-target="#view" class="quickview-btn"
                                                                     data-name="{{ $product->name }}"
@@ -381,26 +370,28 @@
                                                                     <i data-feather="eye"></i>
                                                                 </a>
                                                             </li>
-                                                            <li data-bs-toggle="tooltip" data-bs-placement="top"
-                                                                title="So sánh">
-                                                                <a href="{{ url('compare') }}"><i
-                                                                        data-feather="refresh-cw"></i></a>
-                                                            </li>
+                                                            {{-- <li data-bs-toggle="tooltip" data-bs-placement="top" title="So sánh">
+                                                                <a href="{{ url('compare') }}">
+                                                                    <i data-feather="refresh-cw"></i>
+                                                                </a>
+                                                            </li> --}}
+
                                                             <li data-bs-toggle="tooltip" data-bs-placement="top"
                                                                 title="Thêm vào yêu thích">
                                                                 <form action="{{ route('client.wishlist.store') }}"
-                                                                    method="POST">
+                                                                    method="POST" class="d-inline">
                                                                     @csrf
                                                                     <input type="hidden" name="product_id"
                                                                         value="{{ $product->id }}">
-                                                                    <button type="submit"
-                                                                        class="notifi-wishlist btn p-0" style="margin-left: 7px; width: 17px;">
+                                                                    <button type="submit" class="notifi-wishlist btn p-0"
+                                                                        style="margin-left: 7px; width: 17px;">
                                                                         <i data-feather="heart"
                                                                             @if (auth()->check() && auth()->user()->wishlist()->where('product_id', $product->id)->exists()) class="text-red-500" @endif></i>
                                                                     </button>
                                                                 </form>
                                                             </li>
                                                         </ul>
+
                                                     </div>
                                                     <div class="product-detail">
                                                         <a
@@ -600,11 +591,11 @@
                                                             <i data-feather="eye"></i>
                                                         </a>
                                                     </li>
-                                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="So sánh">
+                                                    {{-- <li data-bs-toggle="tooltip" data-bs-placement="top" title="So sánh">
                                                         <a href="{{ url('compare') }}">
                                                             <i data-feather="refresh-cw"></i>
                                                         </a>
-                                                    </li>
+                                                    </li> --}}
                                                     <li data-bs-toggle="tooltip" data-bs-placement="top"
                                                         title="Thêm vào yêu thích">
                                                         <form action="{{ route('client.wishlist.store') }}"
@@ -612,7 +603,8 @@
                                                             @csrf
                                                             <input type="hidden" name="product_id"
                                                                 value="{{ $product->id }}">
-                                                            <button type="submit" class="notifi-wishlist btn p-0" style="margin-left: 7px; width: 17px;">
+                                                            <button type="submit" class="notifi-wishlist btn p-0"
+                                                                style="margin-left: 7px; width: 17px;">
                                                                 <i data-feather="heart"
                                                                     @if (auth()->check() && auth()->user()->wishlist()->where('product_id', $product->id)->exists()) class="text-red-500" @endif></i>
                                                             </button>
@@ -750,7 +742,7 @@
                                         @foreach ($chunk as $product)
                                             <div class="col-md-3 col-sm-6 col-12 mb-4">
                                                 <div class="product-box" style="position: relative;">
-                                                    <div class="label-tagg label-tagg-hot">
+                                                    <div class="label-tag" style="background-color: rgb(174, 6, 6)">
                                                         <span>HOT</span>
                                                     </div>
                                                     <div class="product-image">
@@ -767,12 +759,12 @@
                                                                     <i data-feather="eye"></i>
                                                                 </a>
                                                             </li>
-                                                            <li data-bs-toggle="tooltip" data-bs-placement="top"
+                                                            {{-- <li data-bs-toggle="tooltip" data-bs-placement="top"
                                                                 title="So sánh">
                                                                 <a href="{{ url('compare') }}">
                                                                     <i data-feather="refresh-cw"></i>
                                                                 </a>
-                                                            </li>
+                                                            </li> --}}
                                                             <li data-bs-toggle="tooltip" data-bs-placement="top"
                                                                 title="Yêu thích">
                                                                 <form action="{{ route('client.wishlist.store') }}"
@@ -780,8 +772,8 @@
                                                                     @csrf
                                                                     <input type="hidden" name="product_id"
                                                                         value="{{ $product->id }}">
-                                                                    <button type="submit"
-                                                                        class="notifi-wishlist btn p-0" style="margin-left: 7px; width: 17px;">
+                                                                    <button type="submit" class="notifi-wishlist btn p-0"
+                                                                        style="margin-left: 7px; width: 17px;">
                                                                         <i data-feather="heart"
                                                                             @if (auth()->check() && auth()->user()->wishlist()->where('product_id', $product->id)->exists()) class="text-red-500" @endif></i>
                                                                     </button>
@@ -892,5 +884,6 @@
             display: block;
             background: #f8f8f8;
         }
+
     </style>
-@endsection
+    @endsection

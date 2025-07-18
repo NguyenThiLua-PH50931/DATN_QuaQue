@@ -420,7 +420,7 @@
         @includeIf('backend.footer')
     </div>
 @endsection
-<<<<<<< HEAD {{ url('/admin//create') }} @push('scripts') <script>
+ {{ url('/admin//create') }} @push('scripts') <script>
     $(document).ready(function() {
         $('#table_id').DataTable({
             language: {
