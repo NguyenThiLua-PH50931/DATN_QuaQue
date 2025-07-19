@@ -15,9 +15,9 @@
                         <div class="mb-4">
                             @foreach ($order->items as $item)
                                 <div class="d-flex align-items-center gap-3 border rounded p-3 mb-2">
-                                    <img src="{{ asset('storage/' . $item->product_image) }}" 
-                                        class="img-thumbnail" 
-                                        style="width:80px; height:80px; object-fit:cover;" 
+                                    <img src="{{ asset('storage/' . $item->product_image) }}"
+                                        class="img-thumbnail"
+                                        style="width:80px; height:80px; object-fit:cover;"
                                         alt="{{ $item->product_name }}">
                                     <div class="flex-grow-1">
                                         <h6 class="mb-1">{{ $item->product_name }}</h6>
