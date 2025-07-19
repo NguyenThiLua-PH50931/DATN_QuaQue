@@ -117,6 +117,7 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
         Route::post('/checkout/apply-discount', [CheckoutController::class, 'applyDiscount'])->name('checkout.applyDiscount');
         Route::post('/checkout/remove-discount', [CheckoutController::class, 'removeDiscount'])->name('checkout.removeDiscount');
         Route::post('/checkout/bank-confirm', [CheckoutController::class, 'bankConfirm'])->name('client.checkout.bankConfirm');
+        Route::post('/checkout/update-pending-payment-address', [CheckoutController::class, 'updatePendingPaymentAddress'])->name('checkout.updatePendingPaymentAddress');
     });
     Route::get('/checkout/success', function () {
         return view('frontend.checkout.checkoutsuccess');
@@ -229,6 +230,7 @@ Route::post('/save-shipping-method', function (Request $request) {
     session(['shipping_method_id' => (int) $request->shipping_method_id]);
     return response()->json(['success' => true]);
 });
+
 
 // ADMIN:
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin'], function () {
