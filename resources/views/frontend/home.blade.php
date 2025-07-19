@@ -182,26 +182,48 @@
                                         $trendingProducts = $topViewedProducts->take(4);
                                     @endphp
                                     @foreach ($trendingProducts as $product)
+                                        @php
+                                            // Xử lý logic stock cho sản phẩm thịnh hành
+                                            $displayProduct = null;
+                                            $displayVariant = null;
+
+                                            if ($product->has_variants) {
+                                                // Sản phẩm có biến thể
+                                                $availableVariants = $product->variants->where('stock', '>', 0)->where('active', 1);
+                                                if ($availableVariants->count() > 0) {
+                                                    $displayProduct = $product;
+                                                    $displayVariant = $availableVariants->first();
+                                                }
+                                            } else {
+                                                // Sản phẩm không có biến thể
+                                                if ($product->stock > 0) {
+                                                    $displayProduct = $product;
+                                                }
+                                            }
+                                        @endphp
+
+                                        @if ($displayProduct)
                                         <li>
                                             <div class="offer-product">
-                                                <a href="{{ route('client.product.detail', ['slug' => $product->slug]) }}"
+                                                    <a href="{{ route('client.product.detail', ['slug' => $displayProduct->slug]) }}"
                                                     class="offer-image">
-                                                    <img src="{{ asset('storage/' . $product->image) }}"
-                                                        class="blur-up lazyload" alt="{{ $product->name }}">
+                                                        <img src="{{ asset('storage/' . ($displayVariant ? $displayVariant->image : $displayProduct->image)) }}"
+                                                            class="blur-up lazyload" alt="{{ $displayProduct->name }}">
                                                 </a>
                                                 <div class="offer-detail">
                                                     <div>
-                                                        <a href="{{ route('client.product.detail', ['slug' => $product->slug]) }}"
+                                                            <a href="{{ route('client.product.detail', ['slug' => $displayProduct->slug]) }}"
                                                             class="text-title">
-                                                            <h6 class="name">{{ $product->name }}</h6>
+                                                                <h6 class="name">{{ $displayProduct->name }}</h6>
                                                         </a>
-                                                        <span>{{ $product->weight ?? '' }}</span>
-                                                        <h6 class="price theme-color">{{ number_format($product->price) }}₫
+                                                            <span>{{ $displayVariant ? $displayVariant->weight : ($displayProduct->weight ?? '') }}</span>
+                                                            <h6 class="price theme-color">{{ number_format($displayVariant ? $displayVariant->price : $displayProduct->price) }}₫
                                                         </h6>
                                                     </div>
                                                 </div>
                                             </div>
                                         </li>
+                                        @endif
                                     @endforeach
                                 </ul>
                             </div>
@@ -292,6 +314,27 @@
                                 @foreach ($topViewedProducts->chunk(4) as $chunk)
                                     <div class="row">
                                         @foreach ($chunk as $product)
+                                            @php
+                                                // Xử lý logic stock cho sản phẩm
+                                                $displayProduct = null;
+                                                $displayVariant = null;
+
+                                                if ($product->has_variants) {
+                                                    // Sản phẩm có biến thể
+                                                    $availableVariants = $product->variants->where('stock', '>', 0)->where('active', 1);
+                                                    if ($availableVariants->count() > 0) {
+                                                        $displayProduct = $product;
+                                                        $displayVariant = $availableVariants->first();
+                                                    }
+                                                } else {
+                                                    // Sản phẩm không có biến thể
+                                                    if ($product->stock > 0) {
+                                                        $displayProduct = $product;
+                                                    }
+                                                }
+                                            @endphp
+
+                                            @if ($displayProduct)
                                             <div class="col-md-3 col-sm-6 col-12 mb-4">
                                                 <div class="product-box" style="position: relative;">
                                                     <div class="label-tagg label-tagg-top">
@@ -307,23 +350,35 @@
                                                     </style>
                                                     <div class="product-image">
                                                         <a
-                                                            href="{{ route('client.product.detail', ['slug' => $product->slug]) }}">
-                                                            <img src="{{ asset('storage/' . $product->image) }}"
-                                                                alt="{{ $product->name }}"
+                                                                href="{{ route('client.product.detail', ['slug' => $displayProduct->slug]) }}">
+                                                                @php
+                                                                    $imagePath = '';
+                                                                    if ($displayVariant && $displayVariant->image) {
+                                                                        $imagePath = asset('storage/' . $displayVariant->image);
+                                                                    } elseif ($displayProduct->image) {
+                                                                        $imagePath = asset('storage/' . $displayProduct->image);
+                                                                    } else {
+                                                                        $imagePath = asset('images/no-image.png');
+                                                                    }
+                                                                @endphp
+                                                                <img src="{{ $imagePath }}"
+                                                                    alt="{{ $displayProduct->name }}"
                                                                 class="img-fluid blur-up lazyload"
-                                                                style="filter:none !important; mix-blend-mode:normal !important; opacity:1 !important;">
+                                                                    style="filter:none !important; mix-blend-mode:normal !important; opacity:1 !important;"
+                                                                    onerror="this.src='{{ asset('images/no-image.png') }}'">
                                                         </a>
                                                         <ul class="product-option">
                                                             @php
                                                                 $descImgs = [];
-                                                                if (!empty($product->image)) {
-                                                                    $descImgs[] = asset('storage/' . $product->image);
+                                                                    $mainImage = $displayVariant ? $displayVariant->image : $displayProduct->image;
+                                                                    if (!empty($mainImage)) {
+                                                                        $descImgs[] = asset('storage/' . $mainImage);
                                                                 }
                                                                 if (
-                                                                    $product->product_images &&
-                                                                    $product->product_images->count()
+                                                                        $displayProduct->product_images &&
+                                                                        $displayProduct->product_images->count()
                                                                 ) {
-                                                                    foreach ($product->product_images as $img) {
+                                                                        foreach ($displayProduct->product_images as $img) {
                                                                         if (!empty($img->image_url)) {
                                                                             $descImgs[] = $img->image_url;
                                                                         }
@@ -333,7 +388,7 @@
                                                             <li data-bs-toggle="tooltip" data-bs-placement="top"
                                                                 title="Xem nhanh">
                                                                 @php
-                                                                    $variantMap = $product->variants->map(function (
+                                                                        $variantMap = $displayProduct->variants->map(function (
                                                                         $v,
                                                                     ) {
                                                                         return [
@@ -351,30 +406,26 @@
                                                                                 ->all(),
                                                                         ];
                                                                     });
-                                                                    $attributesMap = $product->variants->flatMap->attributeValues
+                                                                        $attributesMap = $displayProduct->variants->flatMap->attributeValues
                                                                         ->groupBy('attribute_id')
                                                                         ->map(function ($values, $attrId) {
                                                                             return [
-                                                                                'name' => $values->first()->attribute
-                                                                                    ->name,
-                                                                                'values' => $values->pluck(
-                                                                                    'value',
-                                                                                    'id',
-                                                                                ),
+                                                                                    'name' => $values->first()->attribute->name,
+                                                                                    'values' => $values->pluck('value', 'id'),
                                                                             ];
                                                                         });
                                                                 @endphp
                                                                 <a href="javascript:void(0)" data-bs-toggle="modal"
                                                                     data-bs-target="#view" class="quickview-btn"
-                                                                    data-name="{{ $product->name }}"
-                                                                    data-price="{{ number_format($product->price) }}₫"
-                                                                    data-rating="{{ $product->reviews->avg('rating') ?? '' }}"
-                                                                    data-description="{{ $product->description }}"
-                                                                    data-code="{{ $product->variants->first()->sku ?? '' }}"
-                                                                    data-origin="{{ $product->origin ?? '' }}"
-                                                                    data-variant="{{ $product->variants->count() ? $product->variants->pluck('name')->implode(', ') : '' }}"
-                                                                    data-image="{{ asset('storage/' . $product->image) }}"
-                                                                    data-link="{{ route('client.product.detail', ['slug' => $product->slug]) }}"
+                                                                        data-name="{{ $displayProduct->name }}"
+                                                                        data-price="{{ number_format($displayVariant ? $displayVariant->price : $displayProduct->price) }}₫"
+                                                                        data-rating="{{ $displayProduct->reviews->avg('rating') ?? '' }}"
+                                                                        data-description="{{ $displayProduct->description }}"
+                                                                        data-code="{{ $displayVariant ? $displayVariant->sku : ($displayProduct->variants->first()->sku ?? '') }}"
+                                                                        data-origin="{{ $displayProduct->origin ?? '' }}"
+                                                                        data-variant="{{ $displayProduct->variants->count() ? $displayProduct->variants->pluck('name')->implode(', ') : '' }}"
+                                                                        data-image="{{ asset('storage/' . ($displayVariant ? $displayVariant->image : $displayProduct->image)) }}"
+                                                                        data-link="{{ route('client.product.detail', ['slug' => $displayProduct->slug]) }}"
                                                                     data-description-images='@json($descImgs)'
                                                                     data-variant-map='@json($variantMap)'
                                                                     data-attributes='@json($attributesMap)'>
@@ -392,11 +443,11 @@
                                                                     method="POST">
                                                                     @csrf
                                                                     <input type="hidden" name="product_id"
-                                                                        value="{{ $product->id }}">
+                                                                            value="{{ $displayProduct->id }}">
                                                                     <button type="submit"
                                                                         class="notifi-wishlist btn p-0" style="margin-left: 7px; width: 17px;">
                                                                         <i data-feather="heart"
-                                                                            @if (auth()->check() && auth()->user()->wishlist()->where('product_id', $product->id)->exists()) class="text-red-500" @endif></i>
+                                                                                @if (auth()->check() && auth()->user()->wishlist()->where('product_id', $displayProduct->id)->exists()) class="text-red-500" @endif></i>
                                                                     </button>
                                                                 </form>
                                                             </li>
@@ -404,13 +455,13 @@
                                                     </div>
                                                     <div class="product-detail">
                                                         <a
-                                                            href="{{ route('client.product.detail', ['slug' => $product->slug]) }}">
-                                                            <h6 class="name">{{ $product->name }}</h6>
+                                                                href="{{ route('client.product.detail', ['slug' => $displayProduct->slug]) }}">
+                                                                <h6 class="name">{{ $displayProduct->name }}</h6>
                                                         </a>
 
                                                         <h5 class="sold text-content">
                                                             <span
-                                                                class="theme-color price">{{ number_format($product->price) }}₫</span>
+                                                                    class="theme-color price">{{ number_format($displayVariant ? $displayVariant->price : $displayProduct->price) }}₫</span>
                                                         </h5>
                                                         <div class="product-rating mt-sm-2 mt-1">
                                                             <ul class="rating">
@@ -445,6 +496,7 @@
                                                     </div>
                                                 </div> <!-- .product-box -->
                                             </div>
+                                            @endif
                                         @endforeach
                                     </div>
                                 @endforeach
@@ -528,27 +580,49 @@
                         <div class="container">
                             <div class="row">
                                 @foreach ($latestProducts as $product)
+                                    @php
+                                        // Xử lý logic stock cho sản phẩm mới
+                                        $displayProduct = null;
+                                        $displayVariant = null;
+
+                                        if ($product->has_variants) {
+                                            // Sản phẩm có biến thể
+                                            $availableVariants = $product->variants->where('stock', '>', 0)->where('active', 1);
+                                            if ($availableVariants->count() > 0) {
+                                                $displayProduct = $product;
+                                                $displayVariant = $availableVariants->first();
+                                            }
+                                        } else {
+                                            // Sản phẩm không có biến thể
+                                            if ($product->stock > 0) {
+                                                $displayProduct = $product;
+                                            }
+                                        }
+                                    @endphp
+
+                                    @if ($displayProduct)
                                     <div class="col-6 col-md-3 mb-4">
                                         <div class="product-box">
                                             <div class="label-tag"><span>NEW</span></div>
                                             <div class="product-image">
                                                 <a
-                                                    href="{{ route('client.product.detail', ['slug' => $product->slug]) }}">
-                                                    <img src="{{ asset('storage/' . $product->image) }}"
-                                                        alt="{{ $product->name }}" class="img-fluid blur-up lazyload"
+                                                        href="{{ route('client.product.detail', ['slug' => $displayProduct->slug]) }}">
+                                                        <img src="{{ asset('storage/' . ($displayVariant ? $displayVariant->image : $displayProduct->image)) }}"
+                                                            alt="{{ $displayProduct->name }}" class="img-fluid blur-up lazyload"
                                                         style="filter:none !important; mix-blend-mode:normal !important; opacity:1 !important;">
                                                 </a>
                                                 <ul class="product-option">
                                                     @php
                                                         $descImgs = [];
-                                                        if (!empty($product->image)) {
-                                                            $descImgs[] = asset('storage/' . $product->image);
+                                                            $mainImage = $displayVariant ? $displayVariant->image : $displayProduct->image;
+                                                            if (!empty($mainImage)) {
+                                                                $descImgs[] = asset('storage/' . $mainImage);
                                                         }
                                                         if (
-                                                            $product->product_images &&
-                                                            $product->product_images->count()
+                                                                $displayProduct->product_images &&
+                                                                $displayProduct->product_images->count()
                                                         ) {
-                                                            foreach ($product->product_images as $img) {
+                                                                foreach ($displayProduct->product_images as $img) {
                                                                 if (!empty($img->image_url)) {
                                                                     $descImgs[] = $img->image_url;
                                                                 }
@@ -558,7 +632,7 @@
                                                     <li data-bs-toggle="tooltip" data-bs-placement="top"
                                                         title="Xenh nhanh">
                                                         @php
-                                                            $variantMap = $product->variants->map(function ($v) {
+                                                                $variantMap = $displayProduct->variants->map(function ($v) {
                                                                 return [
                                                                     'id' => $v->id,
                                                                     'sku' => $v->sku,
@@ -574,7 +648,7 @@
                                                                         ->all(),
                                                                 ];
                                                             });
-                                                            $attributesMap = $product->variants->flatMap->attributeValues
+                                                                $attributesMap = $displayProduct->variants->flatMap->attributeValues
                                                                 ->groupBy('attribute_id')
                                                                 ->map(function ($values, $attrId) {
                                                                     return [
@@ -585,15 +659,15 @@
                                                         @endphp
                                                         <a href="javascript:void(0)" data-bs-toggle="modal"
                                                             data-bs-target="#view" class="quickview-btn"
-                                                            data-name="{{ $product->name }}"
-                                                            data-price="{{ number_format($product->price) }}₫"
-                                                            data-rating="{{ $product->reviews->avg('rating') ?? '' }}"
-                                                            data-description="{{ $product->description }}"
-                                                            data-code="{{ $product->variants->first()->sku ?? '' }}"
-                                                            data-origin="{{ $product->origin ?? '' }}"
-                                                            data-variant="{{ $product->variants->count() ? $product->variants->pluck('name')->implode(', ') : '' }}"
-                                                            data-image="{{ asset('storage/' . $product->image) }}"
-                                                            data-link="{{ route('client.product.detail', ['slug' => $product->slug]) }}"
+                                                                data-name="{{ $displayProduct->name }}"
+                                                                data-price="{{ number_format($displayVariant ? $displayVariant->price : $displayProduct->price) }}₫"
+                                                                data-rating="{{ $displayProduct->reviews->avg('rating') ?? '' }}"
+                                                                data-description="{{ $displayProduct->description }}"
+                                                                data-code="{{ $displayVariant ? $displayVariant->sku : ($displayProduct->variants->first()->sku ?? '') }}"
+                                                                data-origin="{{ $displayProduct->origin ?? '' }}"
+                                                                data-variant="{{ $displayProduct->variants->count() ? $displayProduct->variants->pluck('name')->implode(', ') : '' }}"
+                                                                data-image="{{ asset('storage/' . ($displayVariant ? $displayVariant->image : $displayProduct->image)) }}"
+                                                                data-link="{{ route('client.product.detail', ['slug' => $displayProduct->slug]) }}"
                                                             data-description-images='@json($descImgs)'
                                                             data-variant-map='@json($variantMap)'
                                                             data-attributes='@json($attributesMap)'>
@@ -611,10 +685,10 @@
                                                             method="POST">
                                                             @csrf
                                                             <input type="hidden" name="product_id"
-                                                                value="{{ $product->id }}">
+                                                                    value="{{ $displayProduct->id }}">
                                                             <button type="submit" class="notifi-wishlist btn p-0" style="margin-left: 7px; width: 17px;">
                                                                 <i data-feather="heart"
-                                                                    @if (auth()->check() && auth()->user()->wishlist()->where('product_id', $product->id)->exists()) class="text-red-500" @endif></i>
+                                                                        @if (auth()->check() && auth()->user()->wishlist()->where('product_id', $displayProduct->id)->exists()) class="text-red-500" @endif></i>
                                                             </button>
                                                         </form>
                                                     </li>
@@ -622,16 +696,16 @@
                                             </div>
                                             <div class="product-detail">
                                                 <a
-                                                    href="{{ route('client.product.detail', ['slug' => $product->slug]) }}">
-                                                    <h6 class="name h-100">{{ $product->name }}</h6>
+                                                        href="{{ route('client.product.detail', ['slug' => $displayProduct->slug]) }}">
+                                                        <h6 class="name h-100">{{ $displayProduct->name }}</h6>
                                                 </a>
 
 
                                                 <h5 class="sold text-content">
                                                     <span
-                                                        class="theme-color price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
-                                                    @if ($product->old_price)
-                                                        <del>{{ number_format($product->old_price, 0, ',', '.') }}₫</del>
+                                                            class="theme-color price">{{ number_format($displayVariant ? $displayVariant->price : $displayProduct->price, 0, ',', '.') }}₫</span>
+                                                        @if ($displayProduct->old_price)
+                                                            <del>{{ number_format($displayProduct->old_price, 0, ',', '.') }}₫</del>
                                                     @endif
                                                 </h5>
                                                 <div class="product-rating mt-sm-2 mt-1">
@@ -639,12 +713,12 @@
                                                         @for ($i = 1; $i <= 5; $i++)
                                                             <li>
                                                                 <i data-feather="star"
-                                                                    class="{{ $i <= $product->rating ? 'fill' : '' }}"></i>
+                                                                        class="{{ $i <= $displayProduct->rating ? 'fill' : '' }}"></i>
                                                             </li>
                                                         @endfor
                                                     </ul>
                                                     <h6 class="theme-color">
-                                                        {{ $product->stock > 0 ? 'Còn hàng' : 'Out of Stock' }}</h6>
+                                                            {{ ($displayVariant ? $displayVariant->stock : $displayProduct->stock) > 0 ? 'Còn hàng' : 'Out of Stock' }}</h6>
                                                 </div>
                                                 <div class="add-to-cart-box">
                                                     {{-- <button class="btn btn-add-cart addcart-button">Add
@@ -670,6 +744,7 @@
                                             </div>
                                         </div> <!-- .product-box -->
                                     </div>
+                                    @endif
                                 @endforeach
                             </div>
                         </div>
@@ -748,6 +823,27 @@
                                 @foreach ($chunks as $chunk)
                                     <div class="row">
                                         @foreach ($chunk as $product)
+                                            @php
+                                                // Xử lý logic stock cho sản phẩm bán chạy
+                                                $displayProduct = null;
+                                                $displayVariant = null;
+
+                                                if ($product->has_variants) {
+                                                    // Sản phẩm có biến thể
+                                                    $availableVariants = $product->variants->where('stock', '>', 0)->where('active', 1);
+                                                    if ($availableVariants->count() > 0) {
+                                                        $displayProduct = $product;
+                                                        $displayVariant = $availableVariants->first();
+                                                    }
+                                                } else {
+                                                    // Sản phẩm không có biến thể
+                                                    if ($product->stock > 0) {
+                                                        $displayProduct = $product;
+                                                    }
+                                                }
+                                            @endphp
+
+                                            @if ($displayProduct)
                                             <div class="col-md-3 col-sm-6 col-12 mb-4">
                                                 <div class="product-box" style="position: relative;">
                                                     <div class="label-tagg label-tagg-hot">
@@ -755,15 +851,70 @@
                                                     </div>
                                                     <div class="product-image">
                                                         <a
-                                                            href="{{ route('client.product.detail', ['slug' => $product->slug]) }}">
-                                                            <img src="{{ asset('storage/' . $product->image) }}"
-                                                                alt="{{ $product->name }}">
+                                                                href="{{ route('client.product.detail', ['slug' => $displayProduct->slug]) }}">
+                                                                <img src="{{ asset('storage/' . ($displayVariant ? $displayVariant->image : $displayProduct->image)) }}"
+                                                                    alt="{{ $displayProduct->name }}">
                                                         </a>
                                                         <ul class="product-option">
+                                                                @php
+                                                                    $descImgs = [];
+                                                                    $mainImage = $displayVariant ? $displayVariant->image : $displayProduct->image;
+                                                                    if (!empty($mainImage)) {
+                                                                        $descImgs[] = asset('storage/' . $mainImage);
+                                                                    }
+                                                                    if (
+                                                                        $displayProduct->product_images &&
+                                                                        $displayProduct->product_images->count()
+                                                                    ) {
+                                                                        foreach ($displayProduct->product_images as $img) {
+                                                                            if (!empty($img->image_url)) {
+                                                                                $descImgs[] = $img->image_url;
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                @endphp
                                                             <li data-bs-toggle="tooltip" data-bs-placement="top"
                                                                 title="Xem nhanh">
+                                                                    @php
+                                                                        $variantMap = $displayProduct->variants->map(function ($v) {
+                                                                            return [
+                                                                                'id' => $v->id,
+                                                                                'sku' => $v->sku,
+                                                                                'stock' => $v->stock,
+                                                                                'price' => $v->price,
+                                                                                'image' => $v->image
+                                                                                    ? asset('storage/' . $v->image)
+                                                                                    : null,
+                                                                                'value_ids' => $v->attributeValues
+                                                                                    ->pluck('id')
+                                                                                    ->sort()
+                                                                                    ->values()
+                                                                                    ->all(),
+                                                                            ];
+                                                                        });
+                                                                        $attributesMap = $displayProduct->variants->flatMap->attributeValues
+                                                                            ->groupBy('attribute_id')
+                                                                            ->map(function ($values, $attrId) {
+                                                                                return [
+                                                                                    'name' => $values->first()->attribute->name,
+                                                                                    'values' => $values->pluck('value', 'id'),
+                                                                                ];
+                                                                            });
+                                                                    @endphp
                                                                 <a href="javascript:void(0)" data-bs-toggle="modal"
-                                                                    data-bs-target="#view">
+                                                                        data-bs-target="#view" class="quickview-btn"
+                                                                        data-name="{{ $displayProduct->name }}"
+                                                                        data-price="{{ number_format($displayVariant ? $displayVariant->price : $displayProduct->price) }}₫"
+                                                                        data-rating="{{ $displayProduct->reviews->avg('rating') ?? '' }}"
+                                                                        data-description="{{ $displayProduct->description }}"
+                                                                        data-code="{{ $displayVariant ? $displayVariant->sku : ($displayProduct->variants->first()->sku ?? '') }}"
+                                                                        data-origin="{{ $displayProduct->origin ?? '' }}"
+                                                                        data-variant="{{ $displayProduct->variants->count() ? $displayProduct->variants->pluck('name')->implode(', ') : '' }}"
+                                                                        data-image="{{ asset('storage/' . ($displayVariant ? $displayVariant->image : $displayProduct->image)) }}"
+                                                                        data-link="{{ route('client.product.detail', ['slug' => $displayProduct->slug]) }}"
+                                                                        data-description-images='@json($descImgs)'
+                                                                        data-variant-map='@json($variantMap)'
+                                                                        data-attributes='@json($attributesMap)'>
                                                                     <i data-feather="eye"></i>
                                                                 </a>
                                                             </li>
@@ -779,11 +930,11 @@
                                                                     method="POST">
                                                                     @csrf
                                                                     <input type="hidden" name="product_id"
-                                                                        value="{{ $product->id }}">
+                                                                            value="{{ $displayProduct->id }}">
                                                                     <button type="submit"
                                                                         class="notifi-wishlist btn p-0" style="margin-left: 7px; width: 17px;">
                                                                         <i data-feather="heart"
-                                                                            @if (auth()->check() && auth()->user()->wishlist()->where('product_id', $product->id)->exists()) class="text-red-500" @endif></i>
+                                                                                @if (auth()->check() && auth()->user()->wishlist()->where('product_id', $displayProduct->id)->exists()) class="text-red-500" @endif></i>
                                                                     </button>
                                                                 </form>
                                                             </li>
@@ -792,15 +943,15 @@
 
                                                     <div class="product-detail">
                                                         <a
-                                                            href="{{ route('client.product.detail', ['slug' => $product->slug]) }}">
-                                                            <h6 class="name">{{ $product->name }}</h6>
+                                                                href="{{ route('client.product.detail', ['slug' => $displayProduct->slug]) }}">
+                                                                <h6 class="name">{{ $displayProduct->name }}</h6>
                                                         </a>
                                                         <h5 class="sold text-content">
                                                             <span
-                                                                class="theme-color price">{{ number_format($product->price) }}₫</span>
+                                                                    class="theme-color price">{{ number_format($displayVariant ? $displayVariant->price : $displayProduct->price) }}₫</span>
                                                         </h5>
                                                         <p class="text-muted small">Đã bán:
-                                                            {{ $product->total_sold ?? 0 }}</p> <!-- ✅ dòng mới -->
+                                                                {{ $displayProduct->total_sold ?? 0 }}</p> <!-- ✅ dòng mới -->
                                                         <div class="product-rating mt-sm-2 mt-1">
                                                             <ul class="rating">
                                                                 <li><i data-feather="star" class="fill"></i></li>
@@ -815,6 +966,7 @@
 
                                                 </div> <!-- .product-box -->
                                             </div>
+                                            @endif
                                         @endforeach
                                     </div>
                                 @endforeach

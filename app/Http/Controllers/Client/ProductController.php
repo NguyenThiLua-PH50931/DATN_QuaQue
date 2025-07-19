@@ -75,7 +75,15 @@ class ProductController extends Controller
                     $query->orderBy('id', 'desc');
             }
         } else {
-            $query->orderBy('id', 'desc');
+            // Mặc định: sắp xếp theo stock (có hàng trước, hết hàng sau)
+            $query->orderByRaw('
+                CASE
+                    WHEN products.has_variants = 1 THEN
+                        (SELECT COUNT(*) FROM product_variants WHERE product_id = products.id AND stock > 0 AND active = 1)
+                    ELSE
+                        0
+                END DESC
+            ')->orderBy('id', 'desc');
         }
         // Phân trang
         $products = $query->paginate(12)->appends($request->query());

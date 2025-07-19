@@ -56,7 +56,9 @@ class ProductVariantController extends Controller
         $variant->active = $request->active;
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('variants', 'public');
+            $file = $request->file('image');
+            $fileName = 'variant-' . time() . '-' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('products/variants', $fileName, 'public');
             $variant->image = $path;
         }
 
@@ -110,8 +112,13 @@ class ProductVariantController extends Controller
         $variant->active = $request->active;
 
         if ($request->hasFile('image')) {
-            // Xóa file cũ nếu có (tùy bạn thêm)
-            $path = $request->file('image')->store('variants', 'public');
+            // Xóa file cũ nếu có
+            if ($variant->image && \Illuminate\Support\Facades\Storage::disk('public')->exists($variant->image)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($variant->image);
+            }
+            $file = $request->file('image');
+            $fileName = 'variant-' . time() . '-' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('products/variants', $fileName, 'public');
             $variant->image = $path;
         }
 
