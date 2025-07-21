@@ -574,15 +574,4 @@
         <!-- Container-fluid Ends-->
         @includeIf('backend.footer')
     </div>
-    <script>
-        document.querySelectorAll('.status-select').forEach(select => {
-            select.addEventListener('change', function() {
-                const formId = 'status-form-' + this.dataset.orderId;
-                const form = document.getElementById(formId);
-                if (form) {
-                    form.submit();
-                }
-            });
-        });
-    </script>
 @endsection
