@@ -57,10 +57,16 @@ class ProductController extends Controller
         if ($request->filled('sort')) {
             switch ($request->sort) {
                 case 'price_asc':
-                    $query->orderByRaw('(SELECT MIN(price) FROM product_variants WHERE product_id = products.id) ASC');
+                    $query->orderByRaw('(
+                        SELECT MIN(price) FROM product_variants
+                        WHERE product_id = products.id AND stock > 0 AND active = 1
+                    ) ASC');
                     break;
                 case 'price_desc':
-                    $query->orderByRaw('(SELECT MIN(price) FROM product_variants WHERE product_id = products.id) DESC');
+                    $query->orderByRaw('(
+                        SELECT MIN(price) FROM product_variants
+                        WHERE product_id = products.id AND stock > 0 AND active = 1
+                    ) DESC');
                     break;
                 case 'rating':
                     $query->withAvg('reviews', 'rating')->orderByDesc('reviews_avg_rating');

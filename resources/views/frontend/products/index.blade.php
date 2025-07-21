@@ -73,7 +73,7 @@
                             {{-- Thanh lọc giá với noUiSlider --}}
                             <div class="filter-category mb-4">
                                 <div class="filter-title" style="margin-bottom: 2em;">
-                                    <h2 style="font-weight: bold; font-size: 1.5rem;">Khoảng Giá</h2>
+                                    <h2 style="font-weight: bold; font-size: 1.5rem;">Khoảng Giá</h2> <br>
                                 </div>
                                 <div class="mb-2" style="margin-bottom: 2em;">
                                     <div id="noui-price-slider" class="mb-3" data-min="0" data-max="20000000"></div>
@@ -266,12 +266,26 @@
             height: 100px;
             margin: 0 auto;
             background: #f8f8f8;
+            position: relative;
         }
         .product-img-large {
             width: 200px !important;
             height: 100px !important;
             object-fit: cover;
             border-radius: 24px !important;
+        }
+        .sold-out-ribbon-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255,255,255,0.85);
+            padding: 12px 24px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            z-index: 10;
+            box-shadow: 0 2px 8px #0002;
         }
         .filter-category ul {
             padding-left: 0;
