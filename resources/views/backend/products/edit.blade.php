@@ -321,7 +321,7 @@
                                                         trị thuộc tính.</p>
 
                                                     <div id="variants-list">
-                                                                                                                @php
+                                                        @php
                                                             $currentVariants = old('variants', null); // Lấy từ old() trước
                                                             if (is_null($currentVariants)) {
                                                                 $currentVariants = [];
@@ -329,23 +329,19 @@
                                                                     $product->variants->where('name', '!=', 'Mặc định')
                                                                     as $variant
                                                                 ) {
-                                                                    // Chỉ hiển thị biến thể có hàng hoặc active
-                                                                    if ($variant->stock > 0 || $variant->active == 1) {
-                                                                        $variantData = [
-                                                                            'id' => $variant->id,
-                                                                            'price' => $variant->price,
-                                                                            'stock' => $variant->stock,
-                                                                            'sku' => $variant->sku,
-                                                                            'name' => $variant->name,
-                                                                            'description' => $variant->description,
-                                                                            'image' => $variant->image, // Đảm bảo lấy image
-                                                                            'active' => $variant->active,
-                                                                            'attribute_value_ids' => $variant->attributeValues
-                                                                                ->pluck('id')
-                                                                                ->toArray(),
-                                                                        ];
-                                                                        $currentVariants[] = $variantData;
-                                                                    }
+                                                                    // Luôn hiển thị tất cả biến thể (trừ 'Mặc định')
+                                                                    $variantData = [
+                                                                        'id' => $variant->id,
+                                                                        'price' => $variant->price,
+                                                                        'stock' => $variant->stock,
+                                                                        'sku' => $variant->sku,
+                                                                        'name' => $variant->name,
+                                                                        'description' => $variant->description,
+                                                                        'image' => $variant->image, // Đảm bảo lấy image
+                                                                        'active' => $variant->active,
+                                                                        'attribute_value_ids' => $variant->attributeValues->pluck('id')->toArray(),
+                                                                    ];
+                                                                    $currentVariants[] = $variantData;
                                                                 }
                                                             }
 
@@ -370,7 +366,7 @@
                                                                     class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 btn-remove-variant"
                                                                     title="Xóa biến thể">&times;</button>
 
-                                                                <div class="mb-2 fw-semibold">
+                                                                <div class="mb-2 fw-semibold" style="color: black;">
                                                                     Giá trị thuộc tính:
                                                                     <span>
                                                                         @php
@@ -457,12 +453,12 @@
                                                                                         <i class="fas fa-exclamation-triangle"></i><br>
                                                                                         Lỗi tải ảnh<br>
                                                                                         <small>{{ $variantImage }}</small>
-                                                                                    </div>
+                                                                    </div>
                                                                                     <div style="display: none; text-align: center; color: #6c757d; font-size: 12px; padding: 20px;">
                                                                                         <i class="fas fa-info-circle"></i><br>
                                                                                         File ảnh không tồn tại<br>
                                                                                         <small>Vui lòng upload lại ảnh</small>
-                                                                                    </div>
+                                                                </div>
                                                                                 </div>
                                                                             </div>
                                                                         @else
