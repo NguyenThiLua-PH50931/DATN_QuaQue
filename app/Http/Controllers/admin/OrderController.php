@@ -88,97 +88,103 @@ class OrderController extends Controller
         return view('backend.orders.tracking', compact('order', 'steps'));
     }
 
-    public function updateStatus(Request $request, Order $order)
-    {
-        $request->validate([
-            'status' => 'required|in:pending,confirmed,processing,shipped,in_transit,delivered,cancelled,failed_delivery',
-        ]);
+public function updateStatus(Request $request, Order $order)
+{
+    $request->validate([
+        'status' => 'required|in:pending,confirmed,processing,shipped,in_transit,delivered,cancelled,failed_delivery',
+    ]);
 
-        $statusOrder = [
-            'pending' => 1,
-            'confirmed' => 2,
-            'processing' => 3,
-            'shipped' => 4,
-            'in_transit' => 5,
-            'delivered' => 6,
-            'cancelled' => 7,
-            'failed_delivery' => 8,
-        ];
+    $statusOrder = [
+        'pending' => 1,
+        'confirmed' => 2,
+        'processing' => 3,
+        'shipped' => 4,
+        'in_transit' => 5,
+        'delivered' => 6,
+        'cancelled' => 7,
+        'failed_delivery' => 8,
+    ];
 
-        $oldStatus = $order->status;
-        $newStatus = $request->status;
+    $oldStatus = $order->status;
+    $newStatus = $request->status;
 
-        $currentStatusRank = $statusOrder[$oldStatus] ?? 0;
-        $newStatusRank = $statusOrder[$newStatus];
+    $currentStatusRank = $statusOrder[$oldStatus] ?? 0;
+    $newStatusRank = $statusOrder[$newStatus];
 
-        if ($newStatusRank < $currentStatusRank && !in_array($newStatus, ['cancelled', 'failed_delivery'])) {
-            return response()->json([
-                'message' => 'Không thể quay lại trạng thái trước đó.',
-            ], 422);
-        }
+    // Không cho chuyển lùi trạng thái (trừ khi hủy/giao thất bại)
+    if ($newStatusRank < $currentStatusRank && !in_array($newStatus, ['cancelled', 'failed_delivery'])) {
+        $msg = 'Không thể quay lại trạng thái trước đó.';
+        return $request->ajax()
+            ? response()->json(['success' => false, 'message' => $msg], 422)
+            : redirect()->back()->with('error', $msg);
+    }
 
-        // Ghi log trạng thái
-        OrderStatusLog::create([
-            'order_id'    => $order->id,
-            'from_status' => $oldStatus,
-            'to_status'   => $newStatus,
-            'changed_at'  => now(),
-        ]);
+    // Ghi log trạng thái
+    OrderStatusLog::create([
+        'order_id'    => $order->id,
+        'from_status' => $oldStatus,
+        'to_status'   => $newStatus,
+        'changed_at'  => now(),
+    ]);
 
-        // Nếu là trạng thái cần hoàn lại kho
-        if (!in_array($oldStatus, ['cancelled', 'failed_delivery']) && in_array($newStatus, ['cancelled', 'failed_delivery'])) {
-            $order->loadMissing('items');
-
-            if ($order->items->isEmpty()) {
-                \Log::warning('Không có item nào trong đơn hàng khi hủy:', ['order_id' => $order->id]);
-            }
-
-            foreach ($order->items as $item) {
-                \Log::info('Đang xử lý item:', [
-                    'order_item_id' => $item->id,
-                    'variant_id' => $item->product_variant_value_id,
-                    'product_id' => $item->product_id,
-                    'quantity' => $item->quantity
-                ]);
-
-                if ($item->product_variant_value_id) {
-                    $variant = \App\Models\admin\ProductVariant::find($item->product_variant_value_id);
-                    if ($variant) {
-                        $variant->stock += (int) $item->quantity;
-                        $variant->save();
-                        \Log::info('>> Đã cộng lại stock cho biến thể', ['variant_id' => $variant->id, 'stock' => $variant->stock]);
-                    } else {
-                        \Log::error('Không tìm thấy biến thể:', ['variant_id' => $item->product_variant_value_id]);
-                    }
-                } else {
-                    $product = \App\Models\admin\Product::find($item->product_id);
-                    if ($product) {
-                        $product->stock += (int) $item->quantity;
-                        $product->save();
-                        \Log::info('>> Đã cộng lại stock cho sản phẩm thường', ['product_id' => $product->id, 'stock' => $product->stock]);
-                    } else {
-                        \Log::error('Không tìm thấy sản phẩm thường:', ['product_id' => $item->product_id]);
-                    }
+    // Nếu là trạng thái cần hoàn lại kho (cộng lại kho cho variant)
+    if (!in_array($oldStatus, ['cancelled', 'failed_delivery']) && in_array($newStatus, ['cancelled', 'failed_delivery'])) {
+        $order->loadMissing('items');
+        foreach ($order->items as $item) {
+            if ($item->product_variant_value_id) {
+                $variant = \App\Models\admin\ProductVariant::find($item->product_variant_value_id);
+                if ($variant) {
+                    $variant->stock += (int) $item->quantity;
+                    $variant->save();
                 }
             }
+            // Nếu KHÔNG cộng lại kho cho product gốc thì không cần else!
         }
-
-        $order->status = $newStatus;
-
-        if ($order->payment_method === 'cod') {
-            $order->payment_status = ($newStatus === 'delivered') ? 'paid' : 'unpaid';
-        }
-
-        $order->save();
-
-        $order->loadMissing('user');
-        if ($order->user && $order->user->email) {
-            Mail::to($order->user->email)->send(new OrderStatusUpdated($order));
-        }
-
-        return redirect()->route('admin.orders.index')
-            ->with('success', 'Cập nhật trạng thái đơn hàng thành công.');
     }
+
+    // Cập nhật trạng thái mới cho đơn hàng
+    $order->status = $newStatus;
+
+    // Cập nhật trạng thái thanh toán theo phương thức
+    if ($order->payment_method === 'cod') {
+        $order->payment_status = ($newStatus === 'delivered') ? 'paid' : 'unpaid';
+    } elseif ($order->payment_method === 'momo' || $order->payment_method === 'bank') {
+        // Với momo, bank thì giữ nguyên trạng thái thanh toán đã xử lý ở nơi khác
+        // Nếu cần có logic tự chuyển trạng thái thì bổ sung ở đây
+    }
+
+    // Lưu thay đổi
+    $order->save();
+
+    // Thông báo email nếu cần
+    $order->loadMissing('user');
+    if ($order->user && $order->user->email) {
+        try {
+            \Mail::to($order->user->email)->send(new \App\Mail\OrderStatusUpdated($order));
+        } catch (\Throwable $e) {
+            \Log::warning('Không gửi được mail trạng thái đơn hàng', [
+                'order_id' => $order->id,
+                'error'    => $e->getMessage()
+            ]);
+        }
+    }
+
+    // Trả về đầy đủ dữ liệu cho frontend JS cập nhật UI
+    if ($request->ajax()) {
+        return response()->json([
+            'success'        => true,
+            'message'        => 'Cập nhật trạng thái thành công!',
+            'new_status'     => $order->status,
+            'payment_status' => $order->payment_status,
+            'payment_method' => $order->payment_method,
+            'order_id'       => $order->id,
+            'is_hidden'      => $order->is_hidden ?? false,
+            // Nếu muốn render lại cả action/xóa/ẩn... trả thêm các trường cần thiết ở đây
+        ]);
+    }
+
+    return redirect()->route('admin.orders.index')->with('success', 'Cập nhật trạng thái đơn hàng thành công.');
+}
 
     // Nếu KHÔNG muốn cho phép xóa, có thể comment function destroy
     public function destroy(Order $order)

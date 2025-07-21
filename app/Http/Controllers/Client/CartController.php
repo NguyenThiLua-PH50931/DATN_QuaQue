@@ -37,18 +37,7 @@ class CartController extends Controller
             ];
         }
 
-        // Lấy các giao dịch MoMo đã thanh toán nhưng chưa tạo đơn (pending order)
-        $pendingPayments = \App\Models\Client\PendingPayment::where('user_id', $userId)
-            ->where('status', 'paid')
-            ->get();
-
-        // Lọc ra các pending chưa có order thực tế
-        $pendingPayments = $pendingPayments->filter(function ($payment) {
-            return !\App\Models\Client\Order::where('order_code', $payment->order_id)->exists();
-        });
-
-        // Render ra view cart với dữ liệu
-        return view('frontend.cart.cart', compact('cartItems', 'attributesData', 'pendingPayments'));
+        return view('frontend.cart.cart', compact('cartItems', 'attributesData'));
     }
 
     /**

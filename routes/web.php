@@ -356,14 +356,17 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
 
     // Order
     Route::group(['prefix' => 'orders', 'as' => 'orders.'], function () {
-        Route::get('/', [OrderController::class, 'index'])->name('index');                // Hiển thị danh sách
-        Route::get('/{order}', [OrderController::class, 'show'])->name('show');          // Chi tiết đơn hàng
-        Route::get('/{order}/tracking', [OrderController::class, 'tracking'])->name('tracking');  // Tracking
-        Route::delete('/{order}', [OrderController::class, 'destroy'])->name('destroy'); // Xóa cứng
-        Route::put('/{order}/update-status', [OrderController::class, 'updateStatus'])->name('updateStatus'); // Cập nhật trạng thái
-        Route::patch('/{order}/hide', [OrderController::class, 'hide'])->name('hide');   // Ẩn đơn hàng ✅
+        // ĐẶC BIỆT ĐẶT TRƯỚC!!!
+        Route::put('/{order}/update-status', [OrderController::class, 'updateStatus'])->name('updateStatus');
         Route::put('/{order}/update-payment-status', [OrderController::class, 'updatePaymentStatus'])->name('updatePaymentStatus');
+        Route::patch('/{order}/hide', [OrderController::class, 'hide'])->name('hide');
+        Route::get('/{order}/tracking', [OrderController::class, 'tracking'])->name('tracking');
+        // Các route chung để sau cùng!
+        Route::delete('/{order}', [OrderController::class, 'destroy'])->name('destroy');
+        Route::get('/{order}', [OrderController::class, 'show'])->name('show');
+        Route::get('/', [OrderController::class, 'index'])->name('index');
     });
+
 
 
     // User
