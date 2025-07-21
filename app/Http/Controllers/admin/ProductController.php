@@ -651,7 +651,7 @@ class ProductController extends Controller
                 }
             }
 
-                        // 5. Xử lý biến thể
+            // 5. Xử lý biến thể
             if ($request->has_variants) {
                 // Lấy danh sách biến thể hiện tại để so sánh
                 $existingVariants = $product->variants->keyBy('id');
@@ -712,8 +712,15 @@ class ProductController extends Controller
                     $variant->attributeValues()->sync($pivotData);
                 }
 
-                // KHÔNG XÓA BIẾN THỂ NÀO - Giữ lại tất cả biến thể hiện có
-                // Chỉ cập nhật thông tin, không xóa biến thể nào cả
+                // Xóa các biến thể không còn được sử dụng
+                $variantsToDelete = $existingVariants->whereNotIn('id', $updatedVariantIds);
+                foreach ($variantsToDelete as $variant) {
+                    if ($variant->image && Storage::disk('public')->exists($variant->image)) {
+                        Storage::disk('public')->delete($variant->image);
+                    }
+                    $variant->attributeValues()->detach();
+                    $variant->forceDelete();
+                }
             } else {
                 // XÓA tất cả biến thể cũ trước khi tạo mới
                 foreach ($product->variants as $variant) {
