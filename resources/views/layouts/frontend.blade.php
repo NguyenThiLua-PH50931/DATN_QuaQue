@@ -46,6 +46,8 @@
     <link rel="stylesheet" href="{{ asset('frontend/assets/css/bulk-style.css') }}">
     <link rel="stylesheet" href="{{ asset('frontend/assets/css/vendors/animate.css') }}">
     <link rel="stylesheet" href="{{ asset('frontend/assets/css/vendors/ion.rangeSlider.min.css') }}">
+    <!-- noUiSlider CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.css">
     <!-- Template Style -->
     <link id="color-link" rel="stylesheet" href="{{ asset('frontend/assets/css/style.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -174,13 +176,9 @@
     </div>
     <!-- Location Modal End -->
 
-<<<<<<< HEAD
     {{-- <!-- Cookie Bar Box Start -->
     <div class="cookie-bar-box">
-=======
-    <!-- Cookie Bar Box Start -->
-    {{-- <div class="cookie-bar-box">
->>>>>>> 4ae3f07a6c1ca1e711ca99f72f251b17ce2c38a0
+
         <div class="cookie-box">
             <div class="cookie-image">
                 <img src="../frontend/assets/images/cookie-bar.png" class="blur-up lazyload" alt="">
@@ -196,13 +194,8 @@
             <button class="btn privacy-button">Privacy Policy</button>
             <button class="btn ok-button">OK</button>
         </div>
-<<<<<<< HEAD
     </div>
     <!-- Cookie Bar Box End --> --}}
-=======
-    </div> --}}
-    <!-- Cookie Bar Box End -->
->>>>>>> 4ae3f07a6c1ca1e711ca99f72f251b17ce2c38a0
 
     <!-- Deal Box Modal Start -->
     <div class="modal fade theme-modal deal-modal" id="deal-box" tabindex="-1">
@@ -290,7 +283,7 @@
                 <!-- <i class="fa-solid fa-message-bot"></i> -->
                  <i class="fa-solid fa-message"></i>
             </button>
-        @include('layouts.chatTipBox') 
+        @include('layouts.chatTipBox')
             <div class="theme-setting-2">
                 @includeIf('layouts.chatbot')
             </div>
@@ -356,6 +349,10 @@
     <script src="{{ asset('frontend/assets/js/theme-setting.js') }}"></script>
      <script src="{{ asset('frontend/assets/js/jquery-3.6.0.min.js') }}"></script>
     <script src="{{ asset('frontend/assets/js/ion.rangeSlider.min.js') }}"></script>
+    <!-- noUiSlider JS -->
+    <script src="https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/wnumb@1.2.0/wNumb.min.js"></script>
+    @stack('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             let locationsData = null;
