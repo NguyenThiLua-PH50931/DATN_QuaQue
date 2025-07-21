@@ -70,27 +70,22 @@
                                     @endforeach
                                 </ul>
                             </div>
+                            {{-- Thanh lọc giá với noUiSlider --}}
                             <div class="filter-category mb-4">
                                 <div class="filter-title" style="margin-bottom: 2em;">
                                     <h2 style="font-weight: bold; font-size: 1.5rem;">Khoảng Giá</h2>
                                 </div>
                                 <div class="mb-2" style="margin-bottom: 2em;">
-                                    <div class="range-slider" style="margin: 0 0 1.5em 0; min-height: 30px;">
-                                        <input type="text" class="js-range-slider" value=""
-                                            data-min="{{ $priceMin ?? 0 }}"
-                                            data-max="{{ $priceMax ?? 10000000 }}"
-                                            data-from="{{ request('price_min', $priceMin ?? 0) }}"
-                                            data-to="{{ request('price_max', $priceMax ?? 10000000) }}">
-                                    </div>
+                                    <div id="noui-price-slider" class="mb-3" data-min="0" data-max="20000000"></div>
                                     <div class="d-flex align-items-center mb-2 gap-2" style="margin-bottom: 1.5em;">
                                         <input type="text" class="form-control form-control-sm js-input-from vnd-input"
                                             style="width: 120px; font-size: 1rem;" name="price_min"
-                                            value="{{ request('price_min', '') }}"
+                                            value="{{ request('price_min', 0) }}"
                                             placeholder="Từ (₫)">
                                         <span>-</span>
                                         <input type="text" class="form-control form-control-sm js-input-to vnd-input"
                                             style="width: 120px; font-size: 1rem;" name="price_max"
-                                            value="{{ request('price_max', '') }}"
+                                            value="{{ request('price_max', 1000000) }}"
                                             placeholder="Đến (₫)">
                                     </div>
                                     <div id="selected-range" style="font-size: 1rem; color: #007bff; font-weight: 500; margin-top: 0.5em;"></div>
@@ -160,79 +155,92 @@
                     class="row g-sm-4 g-3 row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-1 product-list-section">
                     @forelse($products as $product)
                         @php
-                            $variantInRange = $product->variants->where('price', '>=', $priceMin)->where('price', '<=', $priceMax)->first();
+                            // Xác định biến thể còn hàng đầu tiên (nếu có)
+                            $variantInStock = $product->has_variants
+                                ? $product->variants->where('stock', '>', 0)->where('active', 1)->first()
+                                : $product->variants->first();
+                            $isOutOfStock = false;
+                            if ($product->has_variants) {
+                                $isOutOfStock = $product->variants->where('stock', '>', 0)->where('active', 1)->count() == 0;
+                            } else {
+                                $isOutOfStock = !$variantInStock || $variantInStock->stock == 0;
+                            }
                             $minPrice = $product->variants->min('price');
                         @endphp
-                        @if($variantInRange)
-                            <div class="col">
-                                <div class="product-box-3 h-100 wow fadeInUp">
-                                    <div class="product-header">
-                                        <div class="product-image product-image-rounded">
-                                            <a href="{{ route('client.product.detail', ['slug' => $product->slug]) }}">
-                                                <img src="{{ asset('storage/' . $product->image) }}"
-                                                    class="img-fluid blur-up lazyload product-img-large"
-                                                    alt="{{ $product->name }}"
-                                                    style="width: 300px; height: 230px; object-fit: cover; border-radius: 24px;">
-                                            </a>
-                                            <ul class="product-option">
-                                                <li data-bs-toggle="tooltip" data-bs-placement="top" title="Xem nhanh">
-                                                    <a href="javascript:void(0)" data-bs-toggle="modal"
-                                                        data-bs-target="#view" class="quickview-btn"
-                                                        data-name="{{ $product->name }}"
-                                                        data-price="{{ number_format(optional($product->variants->first())->price ?? 0) }}đ"
-                                                        data-rating="{{ $product->reviews->avg('rating') ?? '' }}"
-                                                        data-description="{{ e(strip_tags($product->description)) }}"
-                                                        data-code="{{ $product->variants->first()->sku ?? '' }}"
-                                                        data-origin="{{ $product->origin ?? '' }}"
-                                                        data-image="{{ asset('storage/' . $product->image) }}"
-                                                        data-link="{{ route('client.product.detail', ['slug' => $product->slug]) }}"
-                                                        data-description-images='@json(collect([$product->image])->merge($product->images?->pluck('image_url') ?? [])->filter(fn($img) => !empty($img))->map(fn($img) => asset('storage/' . $img))->values()->toArray())'>
-                                                        <i data-feather="eye"></i>
-                                                    </a>
-                                                </li>
-
-                                                <li data-bs-toggle="tooltip" data-bs-placement="top" title="So sánh">
-                                                    <a href="{{ url('compare') }}"><i data-feather="refresh-cw"></i></a>
-                                                </li>
-                                                <li data-bs-toggle="tooltip" data-bs-placement="top" title="Thêm yêu thích">
-                                                    <form action="{{ route('client.wishlist.index') }}" method="POST" style="display:inline-block;">
-                                                        @csrf
-                                                        <input type="hidden" name="product_id" value="{{ $product->id }}">
-                                                        <button type="submit" class="notifi-wishlist btn p-0"
-                                                            style="border:none; background:none; width: 18px; height: 18px; margin-top: 10px">
-                                                            <i data-feather="heart"
-                                                                @if (auth()->check() && auth()->user()->wishlist()->where('product_id', $product->id)->exists()) class="text-red-500" @endif></i>
-                                                        </button>
-                                                    </form>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div class="product-footer">
-                                        <div class="product-detail">
-                                            <span class="span-name">{{ $product->category->name ?? '' }}</span>
-                                            <a href="{{ route('client.product.detail', ['slug' => $product->slug]) }}">
-                                                <h5 class="name">{{ $product->name }}</h5>
-                                            </a>
-                                            <div class="product-rating mt-2">
-                                                <ul class="rating">
-                                                    @php $avg = round($product->reviews->avg('rating')); @endphp
-                                                    @for ($i = 1; $i <= 5; $i++)
-                                                        <li><i data-feather="star"
-                                                                class="{{ $i <= $avg ? 'fill' : '' }}"></i></li>
-                                                    @endfor
-                                                </ul>
-                                                <span>({{ number_format($product->reviews->avg('rating'), 1) }})</span>
+                        <div class="col">
+                            <div class="product-box-3 h-100 wow fadeInUp">
+                                <div class="product-header">
+                                    <div class="product-image product-image-rounded position-relative">
+                                        <a href="{{ route('client.product.detail', ['slug' => $product->slug]) }}">
+                                            <img src="{{ asset('storage/' . ($variantInStock && $variantInStock->image ? $variantInStock->image : $product->image)) }}"
+                                                class="img-fluid blur-up lazyload product-img-large"
+                                                alt="{{ $product->name }}"
+                                                style="width: 300px; height: 230px; object-fit: cover; border-radius: 24px;">
+                                        </a>
+                                        @if($isOutOfStock)
+                                            <div class="sold-out-ribbon-center">
+                                                <span style="margin-right:10px; font-size:2.2rem; line-height:1;">&#9888;</span>
+                                                <span style="font-size:2rem; font-weight:900; letter-spacing:3px;">BÁN HẾT</span>
                                             </div>
-                                            <h6 class="unit">{{ $variantInRange->weight ?? '' }}</h6>
-                                            <h5 class="price"><span
-                                                    class="theme-color">{{ number_format($minPrice ?? 0) }}₫</span>
-                                            </h5>
+                                        @endif
+                                        <ul class="product-option">
+                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Xem nhanh">
+                                                <a href="javascript:void(0)" data-bs-toggle="modal"
+                                                    data-bs-target="#view" class="quickview-btn"
+                                                    data-name="{{ $product->name }}"
+                                                    data-price="{{ number_format(optional($product->variants->first())->price ?? 0) }}đ"
+                                                    data-rating="{{ $product->reviews->avg('rating') ?? '' }}"
+                                                    data-description="{{ e(strip_tags($product->description)) }}"
+                                                    data-code="{{ $product->variants->first()->sku ?? '' }}"
+                                                    data-origin="{{ $product->origin ?? '' }}"
+                                                    data-image="{{ asset('storage/' . $product->image) }}"
+                                                    data-link="{{ route('client.product.detail', ['slug' => $product->slug]) }}"
+                                                    data-description-images='@json(collect([$product->image])->merge($product->images?->pluck('image_url') ?? [])->filter(fn($img) => !empty($img))->map(fn($img) => asset('storage/' . $img))->values()->toArray())'>
+                                                    <i data-feather="eye"></i>
+                                                </a>
+                                            </li>
+
+                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="So sánh">
+                                                <a href="{{ url('compare') }}"><i data-feather="refresh-cw"></i></a>
+                                            </li>
+                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Thêm yêu thích">
+                                                <form action="{{ route('client.wishlist.index') }}" method="POST" style="display:inline-block;">
+                                                    @csrf
+                                                    <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                                    <button type="submit" class="notifi-wishlist btn p-0"
+                                                        style="border:none; background:none; width: 18px; height: 18px; margin-top: 10px">
+                                                        <i data-feather="heart"
+                                                            @if (auth()->check() && auth()->user()->wishlist()->where('product_id', $product->id)->exists()) class="text-red-500" @endif></i>
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="product-footer">
+                                    <div class="product-detail">
+                                        <span class="span-name">{{ $product->category->name ?? '' }}</span>
+                                        <a href="{{ route('client.product.detail', ['slug' => $product->slug]) }}">
+                                            <h5 class="name">{{ $product->name }}</h5>
+                                        </a>
+                                        <div class="product-rating mt-2">
+                                            <ul class="rating">
+                                                @php $avg = round($product->reviews->avg('rating')); @endphp
+                                                @for ($i = 1; $i <= 5; $i++)
+                                                    <li><i data-feather="star"
+                                                            class="{{ $i <= $avg ? 'fill' : '' }}"></i></li>
+                                                @endfor
+                                            </ul>
+                                            <span>({{ number_format($product->reviews->avg('rating'), 1) }})</span>
                                         </div>
+                                        <h6 class="unit">{{ $variantInStock->weight ?? '' }}</h6>
+                                        <h5 class="price"><span
+                                                class="theme-color">{{ number_format($variantInStock ? $variantInStock->price : $minPrice) }}₫</span>
+                                        </h5>
                                     </div>
                                 </div>
                             </div>
-                        @endif
+                        </div>
                     @empty
                         <p>Không có sản phẩm nào.</p>
                     @endforelse
@@ -249,7 +257,7 @@
 @endsection
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('frontend/assets/css/ion.rangeSlider.min.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.css">
     <style>
         .product-image.product-image-rounded {
             border-radius: 24px !important;
@@ -259,134 +267,129 @@
             margin: 0 auto;
             background: #f8f8f8;
         }
-
         .product-img-large {
             width: 200px !important;
             height: 100px !important;
             object-fit: cover;
             border-radius: 24px !important;
         }
-
         .filter-category ul {
             padding-left: 0;
             list-style: none;
         }
-
-        #price-slider .noUi-target {
-            width: 100% !important;
-            min-width: 180px;
-            margin: 0 auto;
-        }
-
         #price-slider {
             margin-bottom: 1.5em !important;
         }
-
-        /* Ghi đè ký hiệu $ trên slider */
-        .irs-from:before,
-        .irs-to:before,
-        .irs-single:before {
-            content: '' !important;
+        #noui-price-slider {
+            margin-top: 0;
+            margin-bottom: 1em;
+        }
+        #noui-price-slider .noUi-tooltip {
+            top: unset !important;
+            bottom: -48px !important;
+            transform: none !important;
+        }
+        .noUi-target {
+            background: #e0e0e0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px #0001;
+        }
+        .noUi-connect {
+            background: #1abc9c;
+        }
+        .noUi-handle {
+            background: #1abc9c;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 8px #0002;
+        }
+        .noUi-tooltip {
+            background: #1abc9c;
+            color: #fff;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 1rem;
+            padding: 4px 12px;
         }
     </style>
 @endpush
 
 @push('scripts')
-    <script src="{{ asset('frontend/assets/js/ion.rangeSlider.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/wnumb@1.2.0/wNumb.min.js"></script>
     <script>
-        function formatVND(n) {
-            n = parseInt(n) || 0;
-            return n.toLocaleString('vi-VN') + '₫';
-        }
-        $(function() {
-            var $range = $(".js-range-slider"),
-                min = Number($range.data('min')) || 0,
-                max = Number($range.data('max')) || 10000000,
-                from = Number($range.data('from')) || min,
-                to = Number($range.data('to')) || max;
+        document.addEventListener('DOMContentLoaded', function() {
+            var priceSlider = document.getElementById('noui-price-slider');
+            var inputFrom = document.querySelector('.js-input-from');
+            var inputTo = document.querySelector('.js-input-to');
+            var min = 0;
+            var max = 20000000;
+            var from = Number(inputFrom.value.replace(/\D/g, '')) || 0;
+            var to = Number(inputTo.value.replace(/\D/g, '')) || 1000000;
 
-            var $inputFrom = $(".js-input-from"),
-                $inputTo = $(".js-input-to");
-
-            // Nếu input có giá trị (user nhập lại), ưu tiên lấy từ input
-            var inputFromVal = Number($inputFrom.val().replace(/\D/g, ''));
-            var inputToVal = Number($inputTo.val().replace(/\D/g, ''));
-            if (inputFromVal) from = inputFromVal;
-            if (inputToVal) to = inputToVal;
-
-            if (!from) from = min;
-            if (!to) to = max;
-
-            // Xóa slider cũ nếu có (tránh cache cấu hình cũ)
-            if ($range.data("ionRangeSlider")) {
-                $range.ionRangeSlider("destroy");
-            }
-
-            $range.ionRangeSlider({
-                type: "double",
-                min: min,
-                max: max,
-                from: from,
-                to: to,
-                step: 10000,
-                prettify_enabled: true,
-                prettify_separator: ".",
-                values_separator: " - ",
-                force_edges: true,
-                prefix: '',
-                postfix: '₫',
-                prettify: function (num) {
-                    return num.toLocaleString('vi-VN');
+            noUiSlider.create(priceSlider, {
+                start: [from, to],
+                connect: true,
+                step: 1,
+                range: {
+                    'min': min,
+                    'max': max
                 },
-                onStart: updateInputs,
-                onChange: updateInputs
+                tooltips: [
+                    wNumb({ decimals: 0, thousand: '.', suffix: '₫', prefix: '' }),
+                    wNumb({ decimals: 0, thousand: '.', suffix: '₫', prefix: '' })
+                ],
+                format: wNumb({ decimals: 0, thousand: '', suffix: '', prefix: '' })
             });
-            var instance = $range.data("ionRangeSlider");
 
-            function updateInputs(data) {
-                var sliderFrom = data ? data.from : instance.result.from;
-                var sliderTo = data ? data.to : instance.result.to;
-                $inputFrom.val(formatVND(sliderFrom));
-                $inputTo.val(formatVND(sliderTo));
-                // Hiển thị khoảng giá đã chọn bên dưới
-                $("#selected-range").text("Đang chọn: " + formatVND(sliderFrom) + " - " + formatVND(sliderTo));
+            function updateSelectedRange(v1, v2) {
+                document.getElementById('selected-range').textContent =
+                    'Đang chọn: ' + v1.toLocaleString('vi-VN') + '₫ - ' + v2.toLocaleString('vi-VN') + '₫';
             }
 
-            // Khi thay đổi input, cập nhật slider
-            $inputFrom.on("input", function() {
-                var val = +$(this).val().replace(/\D/g, '');
-                if (!val) val = min;
-                if (val < min) val = min;
-                if (val > Number($inputTo.val().replace(/\D/g, ''))) val = Number($inputTo.val().replace(/\D/g, ''));
-                instance.update({ from: val });
-                $(this).val(formatVND(val));
-            });
-            $inputTo.on("input", function() {
-                var val = +$(this).val().replace(/\D/g, '');
-                if (!val) val = max;
-                if (val > max) val = max;
-                if (val < Number($inputFrom.val().replace(/\D/g, ''))) val = Number($inputFrom.val().replace(/\D/g, ''));
-                instance.update({ to: val });
-                $(this).val(formatVND(val));
+            priceSlider.noUiSlider.on('update', function(values, handle) {
+                var v1 = parseInt(values[0]);
+                var v2 = parseInt(values[1]);
+                inputFrom.value = v1;
+                inputTo.value = v2;
+                updateSelectedRange(v1, v2);
             });
 
-            // Định dạng lại input tiền Việt khi nhập
-            $(document).on('input', '.vnd-input', function() {
-                let val = $(this).val().replace(/\D/g, '');
-                if (val) {
-                    val = parseInt(val).toLocaleString('vi-VN') + '₫';
-                } else {
-                    val = '';
-                }
-                $(this).val(val);
-            });
-            // Khi submit form, loại bỏ ký tự không phải số
-            $('#product-filter-form').on('submit', function() {
-                $('.vnd-input').each(function() {
-                    let val = $(this).val().replace(/\D/g, '');
-                    $(this).val(val);
+            function syncSliderFromInput() {
+                var v1 = parseInt(inputFrom.value.replace(/\D/g, ''));
+                var v2 = parseInt(inputTo.value.replace(/\D/g, ''));
+                if (isNaN(v1)) v1 = min;
+                if (isNaN(v2)) v2 = max;
+                // Ép về min/max nếu nhập ngoài khoảng
+                v1 = Math.max(min, Math.min(v1, max));
+                v2 = Math.max(min, Math.min(v2, max));
+                // Nếu min > max, hoán đổi
+                if (v1 > v2) { var tmp = v1; v1 = v2; v2 = tmp; }
+                priceSlider.noUiSlider.set([v1, v2]);
+                updateSelectedRange(v1, v2);
+            }
+            function updateSelectedRangeFromInput() {
+                var v1 = parseInt(inputFrom.value.replace(/\D/g, ''));
+                var v2 = parseInt(inputTo.value.replace(/\D/g, ''));
+                if (isNaN(v1)) v1 = min;
+                if (isNaN(v2)) v2 = max;
+                updateSelectedRange(v1, v2);
+            }
+            inputFrom.addEventListener('input', updateSelectedRangeFromInput);
+            inputTo.addEventListener('input', updateSelectedRangeFromInput);
+            inputFrom.addEventListener('change', syncSliderFromInput);
+            inputTo.addEventListener('change', syncSliderFromInput);
+            inputFrom.addEventListener('blur', syncSliderFromInput);
+            inputTo.addEventListener('blur', syncSliderFromInput);
+            // Khi submit form, nếu inputTo rỗng thì không giới hạn max
+            var form = document.getElementById('product-filter-form');
+            if (form) {
+                form.addEventListener('submit', function() {
+                    if (!inputTo.value || isNaN(parseInt(inputTo.value))) {
+                        inputTo.value = '';
+                    }
                 });
-            });
+            }
         });
     </script>
 @endpush
+
