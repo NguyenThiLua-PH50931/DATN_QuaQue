@@ -55,17 +55,107 @@ class ClientHomeController extends Controller
             ->take(4)
             ->get();
 
-        $topViewedProducts = Product::with('category')
+        // Sản phẩm nổi bật - lấy nhiều hơn để thay thế khi hết hàng
+        $topViewedProducts = Product::with(['category', 'variants'])
             ->where('active', 1)
             ->orderBy('view_total', 'desc')
-            ->take(8)
+            ->take(20) // Lấy 20 sản phẩm để có thể thay thế
             ->get();
 
-        $latestProducts = Product::with('category')
+        // Lọc sản phẩm nổi bật có hàng, nếu thiếu thì lấy thêm
+        $availableTopProducts = collect();
+        foreach ($topViewedProducts as $product) {
+            if ($availableTopProducts->count() >= 8) break;
+
+            if ($product->has_variants) {
+                $availableVariants = $product->variants->where('stock', '>', 0)->where('active', 1);
+                if ($availableVariants->count() > 0) {
+                    $availableTopProducts->push($product);
+                }
+            } else {
+                if ($product->stock > 0) {
+                    $availableTopProducts->push($product);
+                }
+            }
+        }
+
+        // Nếu chưa đủ 8 sản phẩm, lấy thêm từ danh sách có lượt view cao
+        if ($availableTopProducts->count() < 8) {
+            $additionalTopProducts = Product::with(['category', 'variants'])
+                ->where('active', 1)
+                ->whereNotIn('id', $availableTopProducts->pluck('id'))
+                ->orderBy('view_total', 'desc')
+                ->take(20)
+                ->get();
+
+            foreach ($additionalTopProducts as $product) {
+                if ($availableTopProducts->count() >= 8) break;
+
+                if ($product->has_variants) {
+                    $availableVariants = $product->variants->where('stock', '>', 0)->where('active', 1);
+                    if ($availableVariants->count() > 0) {
+                        $availableTopProducts->push($product);
+                    }
+                } else {
+                    if ($product->stock > 0) {
+                        $availableTopProducts->push($product);
+                    }
+                }
+            }
+        }
+
+        $topViewedProducts = $availableTopProducts->take(8);
+
+        // Sản phẩm mới - lấy nhiều hơn để thay thế khi hết hàng
+        $latestProducts = Product::with(['category', 'variants'])
             ->where('active', 1)
             ->latest()
-            ->take(8)
+            ->take(20) // Lấy 20 sản phẩm để có thể thay thế
             ->get();
+
+        // Lọc sản phẩm mới có hàng, nếu thiếu thì lấy thêm
+        $availableLatestProducts = collect();
+        foreach ($latestProducts as $product) {
+            if ($availableLatestProducts->count() >= 8) break;
+
+            if ($product->has_variants) {
+                $availableVariants = $product->variants->where('stock', '>', 0)->where('active', 1);
+                if ($availableVariants->count() > 0) {
+                    $availableLatestProducts->push($product);
+                }
+            } else {
+                if ($product->stock > 0) {
+                    $availableLatestProducts->push($product);
+                }
+            }
+        }
+
+        // Nếu chưa đủ 8 sản phẩm, lấy thêm từ danh sách sản phẩm mới
+        if ($availableLatestProducts->count() < 8) {
+            $additionalLatestProducts = Product::with(['category', 'variants'])
+                ->where('active', 1)
+                ->whereNotIn('id', $availableLatestProducts->pluck('id'))
+                ->latest()
+                ->take(20)
+                ->get();
+
+            foreach ($additionalLatestProducts as $product) {
+                if ($availableLatestProducts->count() >= 8) break;
+
+                if ($product->has_variants) {
+                    $availableVariants = $product->variants->where('stock', '>', 0)->where('active', 1);
+                    if ($availableVariants->count() > 0) {
+                        $availableLatestProducts->push($product);
+                    }
+                } else {
+                    if ($product->stock > 0) {
+                        $availableLatestProducts->push($product);
+                    }
+                }
+            }
+        }
+
+        $latestProducts = $availableLatestProducts->take(8);
 
         $categories = Category::all();
 
@@ -149,7 +239,7 @@ class ClientHomeController extends Controller
             ->first();
 
             // Sản phẩm bán chạy: (lấy theo tổng số sản phẩm được bán ra)
-        $bestSellingProducts = Product::with('category')
+        $bestSellingProducts = Product::with(['category', 'variants'])
             ->select('products.*', DB::raw('SUM(order_items.quantity) as total_sold'))
             ->join('order_items', 'order_items.product_id', '=', 'products.id')
             ->where('products.active', 1)

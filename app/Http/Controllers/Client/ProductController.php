@@ -57,10 +57,16 @@ class ProductController extends Controller
         if ($request->filled('sort')) {
             switch ($request->sort) {
                 case 'price_asc':
-                    $query->orderByRaw('(SELECT MIN(price) FROM product_variants WHERE product_id = products.id) ASC');
+                    $query->orderByRaw('(
+                        SELECT MIN(price) FROM product_variants
+                        WHERE product_id = products.id AND stock > 0 AND active = 1
+                    ) ASC');
                     break;
                 case 'price_desc':
-                    $query->orderByRaw('(SELECT MIN(price) FROM product_variants WHERE product_id = products.id) DESC');
+                    $query->orderByRaw('(
+                        SELECT MIN(price) FROM product_variants
+                        WHERE product_id = products.id AND stock > 0 AND active = 1
+                    ) DESC');
                     break;
                 case 'rating':
                     $query->withAvg('reviews', 'rating')->orderByDesc('reviews_avg_rating');
@@ -75,16 +81,59 @@ class ProductController extends Controller
                     $query->orderBy('id', 'desc');
             }
         } else {
-            $query->orderBy('id', 'desc');
+            // Mặc định: sắp xếp theo stock (có hàng trước, hết hàng sau)
+            $query->orderByRaw('
+                CASE
+                    WHEN products.has_variants = 1 THEN
+                        (SELECT COUNT(*) FROM product_variants WHERE product_id = products.id AND stock > 0 AND active = 1)
+                    ELSE
+                        0
+                END DESC
+            ')->orderBy('id', 'desc');
         }
-        // Phân trang
-        $products = $query->paginate(12)->appends($request->query());
+        // Lấy tất cả sản phẩm (không phân trang ở đây)
+        $allProducts = $query->get();
+
+        // Phân loại sản phẩm còn hàng và hết hàng
+        $inStockProducts = collect();
+        $outOfStockProducts = collect();
+        foreach ($allProducts as $product) {
+            if ($product->has_variants) {
+                // Có biến thể
+                $hasInStockVariant = $product->variants->where('stock', '>', 0)->where('active', 1)->count() > 0;
+                if ($hasInStockVariant) {
+                    $inStockProducts->push($product);
+                } else {
+                    $outOfStockProducts->push($product);
+                }
+            } else {
+                // Không có biến thể
+                $defaultVariant = $product->variants->first();
+                if ($defaultVariant && $defaultVariant->stock > 0) {
+                    $inStockProducts->push($product);
+                } else {
+                    $outOfStockProducts->push($product);
+                }
+            }
+        }
+        // Gộp lại: còn hàng trước, hết hàng sau
+        $finalProducts = $inStockProducts->concat($outOfStockProducts);
+
+        // Phân trang thủ công
+        $perPage = 12;
+        $currentPage = $request->input('page', 1);
+        $pagedProducts = $finalProducts->forPage($currentPage, $perPage);
+        $products = new \Illuminate\Pagination\LengthAwarePaginator(
+            $pagedProducts,
+            $finalProducts->count(),
+            $perPage,
+            $currentPage,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
 
         // Lấy danh sách danh mục và vùng miền cho filter
         $categories = \App\Models\admin\Category::all();
         $regions = \App\Models\admin\Region::all();
-
-
 
         return view('frontend.products.index', compact('products', 'categories', 'regions', 'priceMin', 'priceMax'));
     }
