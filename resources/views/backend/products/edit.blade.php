@@ -329,15 +329,24 @@
                                                                     $product->variants->where('name', '!=', 'Mặc định')
                                                                     as $variant
                                                                 ) {
-                                                                    $variantData = $variant->toArray();
-                                                                    $variantData[
-                                                                        'attribute_value_ids'
-                                                                    ] = $variant->attributeValues
-                                                                        ->pluck('id')
-                                                                        ->toArray();
+                                                                    // Luôn hiển thị tất cả biến thể (trừ 'Mặc định')
+                                                                    $variantData = [
+                                                                        'id' => $variant->id,
+                                                                        'price' => $variant->price,
+                                                                        'stock' => $variant->stock,
+                                                                        'sku' => $variant->sku,
+                                                                        'name' => $variant->name,
+                                                                        'description' => $variant->description,
+                                                                        'image' => $variant->image, // Đảm bảo lấy image
+                                                                        'active' => $variant->active,
+                                                                        'attribute_value_ids' => $variant->attributeValues->pluck('id')->toArray(),
+                                                                    ];
                                                                     $currentVariants[] = $variantData;
                                                                 }
                                                             }
+
+                                                            // Debug: Log thông tin variants
+                                                            \Log::info('Current variants in view:', $currentVariants);
                                                         @endphp
 
                                                         @foreach ($currentVariants as $i => $variant)
@@ -357,7 +366,7 @@
                                                                     class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 btn-remove-variant"
                                                                     title="Xóa biến thể">&times;</button>
 
-                                                                <div class="mb-2 fw-semibold">
+                                                                <div class="mb-2 fw-semibold" style="color: black;">
                                                                     Giá trị thuộc tính:
                                                                     <span>
                                                                         @php
@@ -387,7 +396,7 @@
                                                                         <input type="number"
                                                                             name="variants[{{ $i }}][price]"
                                                                             min="0" step="0.01"
-                                                                            class="form-control mb-3"
+                                                                            class="form-control"
                                                                             value="{{ old("variants.$i.price", $variant['price'] ?? '') }}"
                                                                             required>
                                                                         @error("variants.$i.price")
@@ -399,7 +408,7 @@
                                                                         <label class="form-label">Tồn kho</label>
                                                                         <input type="number"
                                                                             name="variants[{{ $i }}][stock]"
-                                                                            min="0" class="form-control mb-3"
+                                                                            min="0" class="form-control"
                                                                             value="{{ old("variants.$i.stock", $variant['stock'] ?? '') }}"
                                                                             required>
                                                                         @error("variants.$i.stock")
@@ -411,44 +420,80 @@
                                                                         <label class="form-label">SKU</label>
                                                                         <input type="text"
                                                                             name="variants[{{ $i }}][sku]"
-                                                                            class="form-control sku-auto mb-3" readonly
+                                                                            class="form-control sku-auto" readonly
                                                                             value="{{ old("variants.$i.sku", $variant['sku'] ?? '') }}">
                                                                         @error("variants.$i.sku")
                                                                             <small
                                                                                 class="text-danger">{{ $message }}</small>
                                                                         @enderror
                                                                     </div>
+                                                                    <div class="col-6 col-md-3">
+                                                                        <input type="hidden"
+                                                                            name="variants[{{ $i }}][old_image]"
+                                                                            value="{{ old("variants.$i.old_image", $variant['image'] ?? '') }}">
+                                                                    </div>
+                                                                </div>
+
+                                                                {{-- Phần hiển thị ảnh hiện tại và thay đổi ảnh --}}
+                                                                <div class="row mt-3">
+                                                                    <div class="col-12">
+                                                                        <label class="form-label fw-bold text-success">Ảnh hiện tại của biến thể</label>
+                                                                        @php
+                                                                            $variantImage = $variant['image'] ?? '';
+                                                                        @endphp
+
+                                                                                                                                                @if (!empty($variantImage))
+                                                                            <div class="d-flex justify-content-center mb-3">
+                                                                                <div class="border rounded p-3 bg-light shadow-sm" style="max-width: 200px;">
+                                                                                    <img src="{{ asset('storage/' . $variantImage) }}"
+                                                                                        alt="Ảnh biến thể hiện tại"
+                                                                                        style="width: 100%; height: 150px; object-fit: cover; border-radius: 6px;"
+                                                                                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block'; this.nextElementSibling.nextElementSibling.style.display='block';">
+                                                                                    <div style="display: none; text-align: center; color: #dc3545; font-size: 12px; padding: 20px;">
+                                                                                        <i class="fas fa-exclamation-triangle"></i><br>
+                                                                                        Lỗi tải ảnh<br>
+                                                                                        <small>{{ $variantImage }}</small>
+                                                                    </div>
+                                                                                    <div style="display: none; text-align: center; color: #6c757d; font-size: 12px; padding: 20px;">
+                                                                                        <i class="fas fa-info-circle"></i><br>
+                                                                                        File ảnh không tồn tại<br>
+                                                                                        <small>Vui lòng upload lại ảnh</small>
+                                                                </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        @else
+                                                                            <div class="d-flex justify-content-center mb-3">
+                                                                                <div class="border rounded p-3 bg-light text-center text-muted shadow-sm" style="max-width: 200px;">
+                                                                                    <i class="fas fa-image" style="font-size: 64px; opacity: 0.3;"></i>
+                                                                                    <br><small class="fw-bold">Chưa có ảnh</small>
+                                                                                </div>
+                                                                        </div>
+                                                                    @endif
+
+                                                                        {{-- Thay đổi ảnh biến thể --}}
+                                                                        <div class="mb-3">
+                                                                            <label class="form-label">Thay đổi ảnh biến thể</label>
+                                                                    <input type="file"
+                                                                        name="variants[{{ $i }}][image]"
+                                                                                class="form-control" accept="image/*">
+                                                                            <small class="text-muted">Để trống nếu không muốn thay đổi ảnh</small>
+                                                                    @error("variants.$i.image")
+                                                                        <small class="text-danger">{{ $message }}</small>
+                                                                    @enderror
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                {{-- Mô tả biến thể --}}
+                                                                <div class="row mt-3">
                                                                     <div class="col-12">
                                                                         <label class="form-label">Mô tả biến thể</label>
                                                                         <textarea name="variants[{{ $i }}][description]" rows="2"
                                                                             class="form-control variant-description-editor">{{ old("variants.$i.description", $variant['description'] ?? '') }}</textarea>
                                                                         @error("variants.$i.description")
-                                                                            <small
-                                                                                class="text-danger">{{ $message }}</small>
+                                                                            <small class="text-danger">{{ $message }}</small>
                                                                         @enderror
                                                                     </div>
-                                                                </div>
-                                                                <div class="col-6 col-md-3">
-                                                                    <label class="form-label">Ảnh biến thể hiện
-                                                                        tại</label>
-                                                                    @if (!empty($variant['image'] ?? ''))
-                                                                        <div class="mb-2">
-                                                                            <img src="{{ asset('storage/' . $variant['image']) }}"
-                                                                                alt="Ảnh biến thể"
-                                                                                style="max-width: 100px;">
-                                                                        </div>
-                                                                    @endif
-                                                                    <input type="hidden"
-                                                                        name="variants[{{ $i }}][old_image]"
-                                                                        value="{{ old("variants.$i.old_image", $variant['image'] ?? '') }}">
-                                                                    <label class="form-label">Thay đổi ảnh biến
-                                                                        thể</label>
-                                                                    <input type="file"
-                                                                        name="variants[{{ $i }}][image]"
-                                                                        class="form-control mb-3" accept="image/*">
-                                                                    @error("variants.$i.image")
-                                                                        <small class="text-danger">{{ $message }}</small>
-                                                                    @enderror
                                                                 </div>
                                                             </div>
                                                             {{-- <div class="col-12">
@@ -458,6 +503,8 @@
                                                             </div>
                                                         </div> --}}
                                                     </div>
+
+
                                                     @endforeach
                                                 </div>
                                             </div>
@@ -888,7 +935,10 @@
                         const html = `
                     <div class="variant-row border rounded p-3 mb-3 bg-white position-relative">
                       <input type="hidden" name="variants[0][id]" value="${defaultVariant.id}">
-                      <div class="mb-2 fw-semibold">Giá trị thuộc tính: <span>Mặc định</span></div>
+                      <div class="mb-3 p-2 bg-success text-white rounded">
+                          <strong>Giá trị thuộc tính:</strong>
+                          <span class="fw-bold">Mặc định</span>
+                      </div>
                       <div class="row gx-2 gy-2">
                         <div class="col-6 col-md-3">
                           <label class="form-label">Giá bán</label>
@@ -903,13 +953,28 @@
                           <input type="text" name="variants[0][sku]" class="form-control sku-auto" readonly value="${defaultVariant.sku}">
                         </div>
                         <div class="col-6 col-md-3">
-                          <label class="form-label">Ảnh biến thể hiện tại</label>
-                          ${defaultVariant.image ? `<div class="mb-2"><img src="{{ asset('storage/') }}/${defaultVariant.image}" alt="Ảnh biến thể" style="max-width: 100px;"></div>` : ''}
+                          <label class="form-label">Ảnh biến thể</label>
+                          ${defaultVariant.image ? `
+                                <div class="mb-2">
+                                  <label class="form-label text-muted small">Ảnh hiện tại:</label>
+                                  <div class="border rounded p-2 bg-light">
+                                    <img src="{{ asset('storage/') }}/${defaultVariant.image}" alt="Ảnh biến thể hiện tại" style="max-width: 120px; max-height: 120px; object-fit: cover; border-radius: 4px;">
+                                  </div>
+                                </div>
+                              ` : `
+                                <div class="mb-2">
+                                  <label class="form-label text-muted small">Ảnh hiện tại:</label>
+                                  <div class="border rounded p-2 bg-light text-center text-muted">
+                                    <i class="fas fa-image" style="font-size: 48px; opacity: 0.3;"></i>
+                                    <br><small>Chưa có ảnh</small>
+                                  </div>
+                                </div>
+                              `}
                           <input type="hidden" name="variants[0][old_image]" value="${defaultVariant.image || ''}">
                           <label class="form-label">Thay đổi ảnh biến thể</label>
                           <input type="file" name="variants[0][image]" class="form-control" accept="image/*">
+                          <small class="text-muted">Để trống nếu không muốn thay đổi ảnh</small>
                         </div>
-
                       </div>
                     </div>
                     `;
@@ -970,7 +1035,10 @@
                   ${ids.map(id => `<input type="hidden" name="variants[${idx}][attribute_value_ids][]" value="${id}">`).join('')}
                   <input type="hidden" name="variants[${idx}][id]" value="${oldVariantId}">
                   <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 btn-remove-variant" title="Xóa biến thể">&times;</button>
-                  <div class="mb-2 fw-semibold">Giá trị thuộc tính: <span>${names.join(' - ')}</span></div>
+                                                                                                                                        <div class="mb-3 p-2 bg-success text-white rounded">
+                                                        <strong>Giá trị thuộc tính:</strong>
+                                                        <span class="fw-bold">${names.join(' - ')}</span>
+                                                    </div>
                   <div class="row gx-2 gy-2">
                     <div class="col-6 col-md-3">
                       <label class="form-label">Giá bán</label>
@@ -985,11 +1053,27 @@
                       <input type="text" name="variants[${idx}][sku]" class="form-control sku-auto" readonly value="${oldSku}">
                     </div>
                     <div class="col-6 col-md-3">
-                      <label class="form-label">Ảnh biến thể hiện tại</label>
-                      ${oldImage ? `<div class="mb-2"><img src="{{ asset('storage/') }}/${oldImage}" alt="Ảnh biến thể" style="max-width: 100px;"></div>` : ''}
+                      <label class="form-label">Ảnh biến thể</label>
+                      ${oldImage ? `
+                            <div class="mb-2">
+                              <label class="form-label text-muted small">Ảnh hiện tại:</label>
+                              <div class="border rounded p-2 bg-light">
+                                <img src="{{ asset('storage/') }}/${oldImage}" alt="Ảnh biến thể hiện tại" style="max-width: 120px; max-height: 120px; object-fit: cover; border-radius: 4px;">
+                              </div>
+                            </div>
+                          ` : `
+                            <div class="mb-2">
+                              <label class="form-label text-muted small">Ảnh hiện tại:</label>
+                              <div class="border rounded p-2 bg-light text-center text-muted">
+                                <i class="fas fa-image" style="font-size: 48px; opacity: 0.3;"></i>
+                                <br><small>Chưa có ảnh</small>
+                              </div>
+                            </div>
+                          `}
                       <input type="hidden" name="variants[${idx}][old_image]" value="${oldImage}">
                       <label class="form-label">Thay đổi ảnh biến thể</label>
                       <input type="file" name="variants[${idx}][image]" class="form-control" accept="image/*">
+                      <small class="text-muted">Để trống nếu không muốn thay đổi ảnh</small>
                     </div>
                     <div class="col-12">
                       <label class="form-label">Mô tả biến thể</label>

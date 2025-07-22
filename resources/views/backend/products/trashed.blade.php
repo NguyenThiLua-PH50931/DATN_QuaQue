@@ -63,7 +63,6 @@
                                                         <li>
                                                             <a href="javascript:void(0)"
                                                                 class="btn btn-sm btn-success restore-btn"
-                                                                data-bs-toggle="modal" data-bs-target="#restoreModal"
                                                                 data-id="{{ $product->id }}"
                                                                 data-name="{{ $product->name }}">
                                                                 <i class="ri-refresh-line"></i> Khôi phục
@@ -72,7 +71,6 @@
                                                         <li>
                                                             <a href="javascript:void(0)"
                                                                 class="btn btn-sm btn-danger force-delete-btn"
-                                                                data-bs-toggle="modal" data-bs-target="#forceDeleteModal"
                                                                 data-id="{{ $product->id }}"
                                                                 data-name="{{ $product->name }}">
                                                                 <i class="ri-delete-bin-line"></i> Xóa vĩnh viễn
@@ -109,6 +107,9 @@
 
 @endsection
 
+{{-- Include jQuery --}}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 {{-- Include Toastr CSS and JS --}}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
@@ -117,9 +118,31 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+{{-- Include DataTables CSS and JS --}}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+
     <script>
         $(document).ready(function() {
+            // Đảm bảo jQuery đã được load
+            if (typeof $ === 'undefined') {
+                console.error('jQuery is not loaded');
+                return;
+            }
+            // Kiểm tra các thư viện đã được load
+            if (typeof toastr === 'undefined') {
+                console.error('Toastr is not loaded');
+            }
+            if (typeof Swal === 'undefined') {
+                console.error('SweetAlert2 is not loaded');
+            }
+            if (typeof $.fn.DataTable === 'undefined') {
+                console.error('DataTables is not loaded');
+            }
+
             // Cấu hình Toastr
+            if (typeof toastr !== 'undefined') {
             toastr.options = {
                 "closeButton": true,
                 "progressBar": true,
@@ -131,17 +154,24 @@
                 "showMethod": "fadeIn",
                 "hideMethod": "fadeOut"
             };
+            }
 
             // Hiển thị thông báo thành công từ session flash (nếu có)
             @if (session('success'))
+                if (typeof toastr !== 'undefined') {
                 toastr.success('{{ session('success') }}');
+                }
             @endif
 
             // Hiển thị thông báo lỗi từ session flash (nếu có)
             @if (session('error'))
+                if (typeof toastr !== 'undefined') {
                 toastr.error('{{ session('error') }}');
+                }
             @endif
 
+            // Khởi tạo DataTable
+            if (typeof $.fn.DataTable !== 'undefined') {
             $('#productTableDeleted').DataTable({
                 language: {
                     search: "Tìm kiếm:",
@@ -157,9 +187,10 @@
                 },
                 "columnDefs": [{
                     "orderable": false,
-                    "targets": [0, 3, 6] // Tắt sắp xếp cho cột checkbox, ảnh, hành động (cột 0, 3, 6)
+                        "targets": [0, 3, 4] // Tắt sắp xếp cho cột checkbox, ảnh, hành động
                 }]
             });
+            }
 
             // Logic cho chức năng chọn tất cả và ẩn/hiện nút hành động hàng loạt
             $('#select-all-checkbox').change(function() {
@@ -185,6 +216,36 @@
             $(document).on('click', '.restore-btn', function() {
                 var productId = $(this).data('id');
                 var productName = $(this).data('name');
+
+                if (typeof Swal === 'undefined') {
+                    if (confirm('Bạn có chắc chắn muốn khôi phục sản phẩm "' + productName + '" không?')) {
+                        // Thực hiện khôi phục
+                        $.ajax({
+                            url: '/admin/products/' + productId + '/restore',
+                            method: 'POST',
+                            data: {
+                                _token: '{{ csrf_token() }}'
+                            },
+                            success: function(response) {
+                                if (typeof toastr !== 'undefined') {
+                                    toastr.success(response.message || 'Khôi phục sản phẩm thành công!');
+                                }
+                                window.location.reload();
+                            },
+                            error: function(xhr) {
+                                let errorMessage = 'Lỗi khi khôi phục sản phẩm.';
+                                if (xhr.responseJSON && xhr.responseJSON.message) {
+                                    errorMessage = xhr.responseJSON.message;
+                                }
+                                if (typeof toastr !== 'undefined') {
+                                    toastr.error(errorMessage);
+                                }
+                            }
+                        });
+                    }
+                    return;
+                }
+
                 Swal.fire({
                     title: 'Xác nhận khôi phục?',
                     text: 'Bạn có chắc chắn muốn khôi phục sản phẩm "' + productName + '" không?',
@@ -203,7 +264,9 @@
                                 _token: '{{ csrf_token() }}'
                             },
                             success: function(response) {
+                                if (typeof toastr !== 'undefined') {
                                 toastr.success(response.message || 'Khôi phục sản phẩm thành công!');
+                                }
                                 window.location.reload();
                             },
                             error: function(xhr) {
@@ -211,7 +274,9 @@
                                 if (xhr.responseJSON && xhr.responseJSON.message) {
                                     errorMessage = xhr.responseJSON.message;
                                 }
+                                if (typeof toastr !== 'undefined') {
                                 toastr.error(errorMessage);
+                                }
                             }
                         });
                     }
@@ -222,6 +287,36 @@
             $(document).on('click', '.force-delete-btn', function() {
                 var productId = $(this).data('id');
                 var productName = $(this).data('name');
+
+                if (typeof Swal === 'undefined') {
+                    if (confirm('Bạn có chắc chắn muốn xóa vĩnh viễn sản phẩm "' + productName + '" không? Hành động này không thể hoàn tác.')) {
+                        // Thực hiện xóa vĩnh viễn
+                        $.ajax({
+                            url: '/admin/products/' + productId + '/force',
+                            method: 'DELETE',
+                            data: {
+                                _token: '{{ csrf_token() }}'
+                            },
+                            success: function(response) {
+                                if (typeof toastr !== 'undefined') {
+                                    toastr.success(response.message || 'Xóa vĩnh viễn sản phẩm thành công!');
+                                }
+                                window.location.reload();
+                            },
+                            error: function(xhr) {
+                                let errorMessage = 'Lỗi khi xóa vĩnh viễn sản phẩm.';
+                                if (xhr.responseJSON && xhr.responseJSON.message) {
+                                    errorMessage = xhr.responseJSON.message;
+                                }
+                                if (typeof toastr !== 'undefined') {
+                                    toastr.error(errorMessage);
+                                }
+                            }
+                        });
+                    }
+                    return;
+                }
+
                 Swal.fire({
                     title: 'Xác nhận xóa vĩnh viễn?',
                     text: 'Bạn có chắc chắn muốn xóa vĩnh viễn sản phẩm "' + productName + '" không? Hành động này không thể hoàn tác.',
@@ -235,13 +330,14 @@
                     if (result.isConfirmed) {
                         $.ajax({
                             url: '/admin/products/' + productId + '/force',
-                            method: 'POST',
+                            method: 'DELETE',
                             data: {
-                                _token: '{{ csrf_token() }}',
-                                _method: 'DELETE'
+                                _token: '{{ csrf_token() }}'
                             },
                             success: function(response) {
+                                if (typeof toastr !== 'undefined') {
                                 toastr.success(response.message || 'Xóa vĩnh viễn sản phẩm thành công!');
+                                }
                                 window.location.reload();
                             },
                             error: function(xhr) {
@@ -249,7 +345,9 @@
                                 if (xhr.responseJSON && xhr.responseJSON.message) {
                                     errorMessage = xhr.responseJSON.message;
                                 }
+                                if (typeof toastr !== 'undefined') {
                                 toastr.error(errorMessage);
+                                }
                             }
                         });
                     }
