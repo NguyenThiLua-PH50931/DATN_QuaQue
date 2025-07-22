@@ -281,9 +281,9 @@
         <div class="setting-box">
             <button class="btn setting-button">
                 <!-- <i class="fa-solid fa-message-bot"></i> -->
-                 <i class="fa-solid fa-message"></i>
+                <i class="fa-solid fa-message"></i>
             </button>
-        @include('layouts.chatTipBox')
+            @include('layouts.chatTipBox')
             <div class="theme-setting-2">
                 @includeIf('layouts.chatbot')
             </div>
@@ -342,19 +342,19 @@
 
     <!-- script js -->
     <script src="{{ asset('frontend/assets/js/script.js') }}"></script>
-<!-- SweetAlert2 CDN -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- theme setting js -->
     <script src="{{ asset('frontend/assets/js/theme-setting.js') }}"></script>
-     <script src="{{ asset('frontend/assets/js/jquery-3.6.0.min.js') }}"></script>
+    <script src="{{ asset('frontend/assets/js/jquery-3.6.0.min.js') }}"></script>
     <script src="{{ asset('frontend/assets/js/ion.rangeSlider.min.js') }}"></script>
     <!-- noUiSlider JS -->
     <script src="https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/wnumb@1.2.0/wNumb.min.js"></script>
     @stack('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             let locationsData = null;
 
             const provinceSelect = document.getElementById('province');
@@ -442,7 +442,7 @@
                     });
 
                 if (provinceSelect) {
-                    provinceSelect.addEventListener('change', function () {
+                    provinceSelect.addEventListener('change', function() {
                         selectedDistrict = '';
                         selectedWard = '';
                         loadDistricts(this.value);
@@ -450,7 +450,7 @@
                 }
 
                 if (districtSelect) {
-                    districtSelect.addEventListener('change', function () {
+                    districtSelect.addEventListener('change', function() {
                         selectedWard = '';
                         loadWards(provinceSelect.value, this.value);
                     });
@@ -458,7 +458,7 @@
             }
         });
     </script>
-{{-- <script>
+    {{-- <script>
 document.querySelectorAll('input[name="shipping_method_id"]').forEach(function(radio) {
     radio.addEventListener('change', function() {
         document.getElementById('shipping-method-form').submit();
@@ -467,211 +467,217 @@ document.querySelectorAll('input[name="shipping_method_id"]').forEach(function(r
 </script> --}}
 
 
-<script>
-    document.querySelectorAll('input[name="flexRadioDefault"]').forEach(function(radio){
-        radio.addEventListener('change', function(){
-            document.getElementById('payment_method_input').value = this.id === 'banking' ? 'bank' : 'cod';
+    <script>
+        document.querySelectorAll('input[name="flexRadioDefault"]').forEach(function(radio) {
+            radio.addEventListener('change', function() {
+                document.getElementById('payment_method_input').value = this.id === 'banking' ? 'bank' :
+                    'cod';
+            });
         });
-    });
-</script>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const applyBtn = document.getElementById('btn-apply-discount');
-    const removeBtn = document.getElementById('btn-remove-discount');
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const applyBtn = document.getElementById('btn-apply-discount');
+            const removeBtn = document.getElementById('btn-remove-discount');
 
-    if (applyBtn) {
-        applyBtn.addEventListener('click', function (e) {
-            e.preventDefault();
-            // Lấy tất cả mã được chọn trong select multiple
-            const select = document.getElementById('discount_code_select');
-            const selectedCodes = Array.from(select.selectedOptions).map(option => option.value);
+            if (applyBtn) {
+                applyBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // Lấy tất cả mã được chọn trong select multiple
+                    const select = document.getElementById('discount_code_select');
+                    const selectedCodes = Array.from(select.selectedOptions).map(option => option.value);
 
-            if (selectedCodes.length === 0) {
-                alert('Vui lòng chọn ít nhất một mã giảm giá!');
-                return;
+                    if (selectedCodes.length === 0) {
+                        alert('Vui lòng chọn ít nhất một mã giảm giá!');
+                        return;
+                    }
+
+                    fetch("{{ route('client.checkout.applyDiscount') }}", {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: JSON.stringify({
+                                discount_codes: selectedCodes
+                            })
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                location.reload();
+                            } else {
+                                alert(data.message || 'Áp dụng mã giảm giá thất bại!');
+                            }
+                        })
+                        .catch(err => {
+                            console.error('Lỗi áp dụng mã:', err);
+                            alert('Lỗi xảy ra khi áp dụng mã giảm giá!');
+                        });
+                });
             }
 
-            fetch("{{ route('client.checkout.applyDiscount') }}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: JSON.stringify({
-                    discount_codes: selectedCodes
-                })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    location.reload();
-                } else {
-                    alert(data.message || 'Áp dụng mã giảm giá thất bại!');
+            if (removeBtn) {
+                removeBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    fetch("{{ route('client.checkout.removeDiscount') }}", {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            location.reload();
+                        })
+                        .catch(err => {
+                            console.error('Lỗi xoá mã:', err);
+                            alert('Lỗi xảy ra khi xoá mã giảm giá!');
+                        });
+                });
+            }
+        }); <
+        /html> <
+        style >
+            .onhover - div - login {
+                min - width: 140 px;
+                /* Độ rộng tối thiểu vừa phải */
+                max - width: 180 px;
+                /* Giới hạn chiều rộng tối đa */
+                background: #fff;
+                border: 1 px solid #ddd;
+                border - radius: 4 px;
+                box - shadow: 0 2 px 6 px rgba(0, 0, 0, 0.12);
+                font - size: 13 px;
+                color: #222;
+                        padding: 6px 0;
+                    }
+
+                    .user-box-name {
+                        margin: 0;
+                        padding: 0;
+                        list-style: none;
+                    }
+
+                    .user-box-name li {
+                        padding: 6px 14px;
+                        border-bottom: 1px solid # eee;
+            }
+
+            .user - box - name li: last - child {
+                border - bottom: none;
+            }
+
+            .user - box - name li a {
+                color: #333;
+                        text-decoration: none;
+                        display: block;
+                        white-space: nowrap;
+                        /* Không xuống dòng */
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        /* Ẩn chữ dài quá */
+                    }
+
+                    .user-box-name li a:hover {
+                        background-color: # e7e7e7;
+                color: #000;
+                    }
+
+                    /* Tăng cỡ chữ modal lên 4-5px */
+                    # view.modal - content,
+                #view.modal - content * {
+                    font - size: 20 px!important;
                 }
-            })
-            .catch(err => {
-                console.error('Lỗi áp dụng mã:', err);
-                alert('Lỗi xảy ra khi áp dụng mã giảm giá!');
-            });
-        });
-    }
 
-    if (removeBtn) {
-        removeBtn.addEventListener('click', function (e) {
-            e.preventDefault();
-            fetch("{{ route('client.checkout.removeDiscount') }}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'X-Requested-With': 'XMLHttpRequest'
+                #view.title - name {
+                    font - size: 28 px!important;
+                    font - weight: bold;
                 }
-            })
-            .then(res => res.json())
-            .then(data => {
-                location.reload();
-            })
-            .catch(err => {
-                console.error('Lỗi xoá mã:', err);
-                alert('Lỗi xảy ra khi xoá mã giảm giá!');
-            });
-        });
-    }
-});
-</html>
-<style>
-    .onhover-div-login {
-        min-width: 140px;
-        /* Độ rộng tối thiểu vừa phải */
-        max-width: 180px;
-        /* Giới hạn chiều rộng tối đa */
-        background: #fff;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
-        font-size: 13px;
-        color: #222;
-        padding: 6px 0;
-    }
 
-    .user-box-name {
-        margin: 0;
-        padding: 0;
-        list-style: none;
-    }
+                #view.price {
+                    font - size: 24 px!important;
+                    color: #0da487;
+                    }
 
-    .user-box-name li {
-        padding: 6px 14px;
-        border-bottom: 1px solid #eee;
-    }
+                    # view.main - quickview - image {
+                        width: 500 px!important;
+                        height: 350 px!important;
+                        aspect - ratio: 5 / 4;
+                        object - fit: cover!important;
+                        border - radius: 16 px;
+                        display: block;
+                        margin: 0 auto;
+                        background: #f8f8f8;
+                    }
 
-    .user-box-name li:last-child {
-        border-bottom: none;
-    }
+                    #view.description - thumbnails img {
+                        width: 48 px;
+                        height: 48 px;
+                        object - fit: cover;
+                        border - radius: 8 px;
+                        border: 2 px solid #eee;
+                        cursor: pointer;
+                        transition: border 0.2 s;
+                        background: #f8f8f8;
+                        margin - right: 8 px;
+                    }
 
-    .user-box-name li a {
-        color: #333;
-        text-decoration: none;
-        display: block;
-        white-space: nowrap;
-        /* Không xuống dòng */
-        overflow: hidden;
-        text-overflow: ellipsis;
-        /* Ẩn chữ dài quá */
-    }
+                    #view.description - thumbnails img.active {
+                            border: 2 px solid #0da487;
+                    }
 
-    .user-box-name li a:hover {
-        background-color: #e7e7e7;
-        color: #000;
-    }
+                    # view.description - thumbnails {
+                                margin - top: 16 px;
+                                justify - content: flex - start;
+                                gap: 0;
+                                flex - wrap: wrap;
+                            }
 
-    /* Tăng cỡ chữ modal lên 4-5px */
-    #view .modal-content,
-    #view .modal-content * {
-        font-size: 20px !important;
-    }
+                            #view.right - sidebar - modal,
+                            #view.right - sidebar - modal * {
+                                font - size: 20 px!important;
+                            }
+                            #view.description - text {
+                                font - size: 23 px!important;
+                            }
+                            #view.product - detail h4 {
+                                font - size: 27 px!important;
+                            }
+                            #view.brand - list h5,
+                            #view.brand - list h6 {
+                                font - size: 20 px!important;
+                            }
+                            #view.modal - button.btn {
+                                font - size: 20 px!important;
+                            } <
+                            /style>
+                            @stack('scripts') <
+                            style >
+                            #view.right - sidebar - modal,
+                            #view.right - sidebar - modal * {
+                                font - size: 20 px!important;
+                            }
+                            #view.description - text {
+                                font - size: 23 px!important;
+                            }
+                            #view.product - detail h4 {
+                                font - size: 27 px!important;
+                            }
+                            #view.brand - list h5,
+                            #view.brand - list h6 {
+                                font - size: 20 px!important;
+                            }
+                            #view.modal - button.btn {
+                                font - size: 20 px!important;
+                            }
 
-    #view .title-name {
-        font-size: 28px !important;
-        font-weight: bold;
-    }
-
-    #view .price {
-        font-size: 24px !important;
-        color: #0da487;
-    }
-
-    #view .main-quickview-image {
-        width: 500px !important;
-        height: 350px !important;
-        aspect-ratio: 5/4;
-        object-fit: cover !important;
-        border-radius: 16px;
-        display: block;
-        margin: 0 auto;
-        background: #f8f8f8;
-    }
-
-    #view .description-thumbnails img {
-        width: 48px;
-        height: 48px;
-        object-fit: cover;
-        border-radius: 8px;
-        border: 2px solid #eee;
-        cursor: pointer;
-        transition: border 0.2s;
-        background: #f8f8f8;
-        margin-right: 8px;
-    }
-
-    #view .description-thumbnails img.active {
-        border: 2px solid #0da487;
-    }
-
-    #view .description-thumbnails {
-        margin-top: 16px;
-        justify-content: flex-start;
-        gap: 0;
-        flex-wrap: wrap;
-    }
-
-    #view .right-sidebar-modal, #view .right-sidebar-modal * {
-        font-size: 20px !important;
-    }
-    #view .description-text {
-        font-size: 23px !important;
-    }
-    #view .product-detail h4 {
-        font-size: 27px !important;
-    }
-    #view .brand-list h5, #view .brand-list h6 {
-        font-size: 20px !important;
-    }
-    #view .modal-button .btn {
-        font-size: 20px !important;
-    }
-</style>
-    @stack('scripts')
-    <style>
-    #view .right-sidebar-modal, #view .right-sidebar-modal * {
-        font-size: 20px !important;
-    }
-    #view .description-text {
-        font-size: 23px !important;
-    }
-    #view .product-detail h4 {
-        font-size: 27px !important;
-    }
-    #view .brand-list h5, #view .brand-list h6 {
-        font-size: 20px !important;
-    }
-    #view .modal-button .btn {
-        font-size: 20px !important;
-    }
-
-</style>
-</script>
+                            <
+                            /style>
+    </script>
     @stack('scripts')
 </body>
 </body>

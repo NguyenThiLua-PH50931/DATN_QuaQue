@@ -227,7 +227,7 @@ Route::group(['prefix' => 'client', 'as' => 'client.', 'middleware' => 'auth'], 
     Route::get('/checkout', [CheckoutController::class, 'checkout'])->name('checkout');
 });
 Route::post('/save-shipping-method', function (Request $request) {
-    session(['shipping_method_id' => (int) $request->shipping_method_id]);
+    session(['shipping_method' => (int) $request->shipping_method]);
     return response()->json(['success' => true]);
 });
 

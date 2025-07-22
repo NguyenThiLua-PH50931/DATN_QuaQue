@@ -17,10 +17,10 @@ protected $fillable = [
     'recipient_name',
     'phone',
     'full_address',
-    'shipping_method_id',
+    'shipping_method',
     'shipping_cost',
-    'discount_code_id',
-    'free_shipping_code_id',
+    'discount_code',
+    'free_shipping_code',
     'discount_amount',
 ];
 

@@ -326,7 +326,7 @@ class CartController extends Controller
         }
 
         // Xóa session liên quan đến giảm giá/shipping cũ
-        session()->forget(['order_discount_code', 'free_shipping_code', 'shipping_method_id']);
+        session()->forget(['order_discount_code', 'free_shipping_code', 'shipping_method']);
 
         // Gửi sang trang checkout với danh sách cart_item_id
         $idsString = implode(',', $selectedIds);

@@ -292,7 +292,7 @@
                                                                 <div
                                                                     class="form-check custom-form-check d-flex align-items-center">
                                                                     <input class="form-check-input" type="radio"
-                                                                        name="shipping_method_id"
+                                                                        name="shipping_method"
                                                                         id="shipping_method_{{ $method->id }}"
                                                                         value="{{ $method->id }}"
                                                                         {{ $shippingMethodId == $method->id ? 'checked' : '' }}
@@ -680,7 +680,7 @@
         function updateOrderSummary() {
             const orderDiscountCode = document.getElementById('order_discount_code')?.value || '';
             const freeShippingCode = document.getElementById('free_shipping_code')?.value || '';
-            const shippingMethodId = document.querySelector('input[name="shipping_method_id"]:checked')?.value || '';
+            const shippingMethodId = document.querySelector('input[name="shipping_method"]:checked')?.value || '';
 
             const selectedCartItemIds = Array.from(document.querySelectorAll('input[name="selected_cart_item_ids[]"]'))
                 .map(input => parseInt(input.value));
@@ -692,7 +692,7 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        shipping_method_id: shippingMethodId,
+                        shipping_method: shippingMethodId,
                         order_discount_code: orderDiscountCode,
                         free_shipping_code: freeShippingCode,
                         selected_cart_item_ids: selectedCartItemIds
@@ -715,7 +715,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Gọi lại khi đổi phương thức giao hàng
-            document.querySelectorAll('input[name="shipping_method_id"]').forEach(radio => {
+            document.querySelectorAll('input[name="shipping_method"]').forEach(radio => {
                 radio.addEventListener('change', updateOrderSummary);
             });
 
@@ -739,7 +739,7 @@
     </script>
 
     <script>
-        document.querySelectorAll('input[name="shipping_method_id"]').forEach((radio) => {
+        document.querySelectorAll('input[name="shipping_method"]').forEach((radio) => {
             radio.addEventListener('change', function() {
                 fetch('/save-shipping-method', {
                     method: 'POST',
@@ -748,7 +748,7 @@
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        shipping_method_id: this.value
+                        shipping_method: this.value
                     })
                 });
             });
