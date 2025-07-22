@@ -138,7 +138,23 @@ $order = \App\Models\admin\Order::create([
                 }
             }
         }
-
+        \App\Models\admin\OrderStatusLog::create([
+    'order_id'    => $order->id,
+    'from_status' => 'pending',
+    'to_status'   => 'confirmed',
+    'changed_at'  => now(),
+]);
+$order->loadMissing('user');
+    if ($order->user && $order->user->email) {
+        try {
+            \Mail::to($order->user->email)->send(new \App\Mail\OrderStatusUpdated($order));
+        } catch (\Throwable $e) {
+            \Log::warning('Không gửi được mail trạng thái đơn hàng', [
+                'order_id' => $order->id,
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
         // Xoá cart item đã đặt hàng và clear session
         \App\Models\Client\CartItem::where('user_id', $user->id)->whereIn('id', $selectedIds)->delete();
         session()->forget(['momo_selected_cart_item_ids', 'order_discount_code', 'free_shipping_code', 'shipping_method']);
@@ -397,6 +413,19 @@ public function processOrder(Request $request)
                 $product->stock = max(0, $product->stock - $item->quantity);
                 $product->save();
             }
+        }
+    }
+
+    
+    $order->loadMissing('user');
+    if ($order->user && $order->user->email) {
+        try {
+            \Mail::to($order->user->email)->send(new \App\Mail\OrderStatusUpdated($order));
+        } catch (\Throwable $e) {
+            \Log::warning('Không gửi được mail trạng thái đơn hàng', [
+                'order_id' => $order->id,
+                'error' => $e->getMessage()
+            ]);
         }
     }
 
