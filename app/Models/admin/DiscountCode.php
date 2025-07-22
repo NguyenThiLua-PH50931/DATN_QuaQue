@@ -67,7 +67,7 @@ class DiscountCode extends Model
 
     public function orders()
     {
-        return $this->hasMany(Order::class, 'discount_code_id');
+        return $this->hasMany(Order::class, 'discount_code');
     }
    public function products()
 {

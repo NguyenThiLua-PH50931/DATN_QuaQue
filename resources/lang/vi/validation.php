@@ -134,7 +134,7 @@ return [
         'quantity' => 'số lượng',
         'image' => 'hình ảnh',
         'category_id' => 'danh mục',
-        'shipping_method_id' => 'phương thức vận chuyển',
+        'shipping_method' => 'phương thức vận chuyển',
         'payment_method' => 'phương thức thanh toán',
         'discount_code' => 'mã giảm giá',
     ],

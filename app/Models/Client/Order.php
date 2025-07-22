@@ -16,8 +16,9 @@ class Order extends Model
         'order_code',
         'user_id',
         'address_id',
-        'shipping_method_id',
-        'discount_code_id',
+        'shipping_method',
+        'discount_code',
+        'free_shipping_code',
         'total_amount',
         'shipping_cost',
         'status',
@@ -57,7 +58,7 @@ class Order extends Model
     // 1 đơn hàng có thể có mã giảm giá
     public function discountCode()
     {
-        return $this->belongsTo(DiscountCode::class, 'discount_code_id');
+        return $this->belongsTo(DiscountCode::class, 'discount_code');
     }
 
     // 1 đơn hàng có nhiều order item (chi tiết sản phẩm trong đơn)
@@ -68,7 +69,7 @@ class Order extends Model
 
     public function freeShippingCode()
     {
-        return $this->belongsTo(DiscountCode::class, 'free_shipping_code_id');
+        return $this->belongsTo(DiscountCode::class, 'free_shipping_code');
     }
 
     public function statusLogs()

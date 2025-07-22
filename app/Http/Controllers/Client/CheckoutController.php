@@ -52,7 +52,7 @@ public function checkout(Request $request)
         }
 
         // Lấy các thông tin khuyến mãi
-        $shippingMethodId = session('shipping_method_id', 1);
+        $shippingMethodId = session('shipping_method', 1);
         $shippingMethod = \App\Models\admin\ShippingMethod::find($shippingMethodId);
         $shippingCost = $shippingMethod ? $shippingMethod->cost : 0;
 
@@ -93,22 +93,23 @@ public function checkout(Request $request)
         $shippingCost = $freeShippingCode ? 0 : $shippingCost;
         $total = $subtotal + $shippingCost - $discountAmount;
 
-        // Tạo đơn hàng
-        $order = \App\Models\admin\Order::create([
-            'user_id'               => $user->id,
-            'recipient_name'        => $address->recipient_name,
-            'phone'                 => $address->phone,
-            'full_address'          => $address->address . ', ' . ($address->ward ?? '') . ', ' . $address->district . ', ' . $address->province,
-            'shipping_method_id'    => $shippingMethodId,
-            'payment_method'        => 'momo',
-            'discount_code_id'      => $orderDiscountCode ? $orderDiscountCode->id : null,
-            'free_shipping_code_id' => $freeShippingCode ? $freeShippingCode->id : null,
-            'discount_amount'       => $discountAmount,
-            'total_amount'          => $total,
-            'shipping_cost'         => $shippingCost,
-            'status'                => 'confirmed',
-            'payment_status'        => 'paid',
-        ]);
+$order = \App\Models\admin\Order::create([
+    'user_id'               => $user->id,
+    'recipient_name'        => $address->recipient_name,
+    'phone'                 => $address->phone,
+    'full_address'          => $address->address . ', ' . ($address->ward ?? '') . ', ' . $address->district . ', ' . $address->province,
+    'shipping_method' => $shippingMethod->name,
+    'payment_method'        => 'momo',
+    'discount_code'         => $orderDiscountCode ? $orderDiscountCode->code : null, // <-- SỬA chỗ này
+    'free_shipping_code' => $freeShippingCode ? $freeShippingCode->code : null,
+
+    'discount_amount'       => $discountAmount,
+    'total_amount'          => $total,
+    'shipping_cost'         => $shippingCost,
+    'status'                => 'confirmed',
+    'payment_status'        => 'paid',
+]);
+
 
         foreach ($cartItems as $item) {
             $order->items()->create([
@@ -140,7 +141,7 @@ public function checkout(Request $request)
 
         // Xoá cart item đã đặt hàng và clear session
         \App\Models\Client\CartItem::where('user_id', $user->id)->whereIn('id', $selectedIds)->delete();
-        session()->forget(['momo_selected_cart_item_ids', 'order_discount_code', 'free_shipping_code', 'shipping_method_id']);
+        session()->forget(['momo_selected_cart_item_ids', 'order_discount_code', 'free_shipping_code', 'shipping_method']);
 
         return redirect()->route('client.checkout.success');
     }
@@ -197,7 +198,7 @@ public function checkout(Request $request)
     }
 
     $shippingMethods = \App\Models\admin\ShippingMethod::whereIn('id', [1, 2])->where('active', 1)->get();
-    $shippingMethodId = session('shipping_method_id', 1);
+    $shippingMethodId = session('shipping_method', 1);
     $shippingMethod   = $shippingMethods->firstWhere('id', $shippingMethodId);
 
     $subtotal = $cartItems->sum(function ($item) {
@@ -282,7 +283,7 @@ public function processOrder(Request $request)
     $address->update(['is_default' => true]);
     $user->addresses()->where('id', '!=', $address->id)->update(['is_default' => false]);
 
-    $shipping_method_id = $request->input('shipping_method_id', 1);
+    $shipping_method = $request->input('shipping_method', 1);
     $payment_method = $request->input('payment_method', 'cod');
 
     // Lấy cart item id đã chọn
@@ -313,7 +314,7 @@ public function processOrder(Request $request)
 
     // ...Phần còn lại giữ nguyên...
 
-    $shippingMethod = \App\Models\admin\ShippingMethod::find($shipping_method_id);
+    $shippingMethod = \App\Models\admin\ShippingMethod::find($shipping_method);
     $originalShippingCost = $shippingMethod ? $shippingMethod->cost : 0;
 
     $orderDiscountCodeStr = session('order_discount_code');
@@ -359,10 +360,11 @@ public function processOrder(Request $request)
         'recipient_name'        => $address->recipient_name,
         'phone'                 => $address->phone,
         'full_address'          => $address->address . ', ' . ($address->ward ?? '') . ', ' . $address->district . ', ' . $address->province,
-        'shipping_method_id'    => $shipping_method_id,
+        'shipping_method' => $shippingMethod->name,
         'payment_method'        => $payment_method,
-        'discount_code_id'      => $orderDiscountCode ? $orderDiscountCode->id : null,
-        'free_shipping_code_id' => $freeShippingCode ? $freeShippingCode->id : null,
+        'discount_code' => $orderDiscountCode ? $orderDiscountCode->code : null,
+        'free_shipping_code' => $freeShippingCode ? $freeShippingCode->code : null,
+
         'discount_amount'       => $discountAmount,
         'total_amount'          => $total,
         'shipping_cost'         => $shippingCost,
@@ -405,7 +407,7 @@ public function processOrder(Request $request)
         })
         ->delete();
 
-    session()->forget(['order_discount_code', 'free_shipping_code', 'shipping_method_id']);
+    session()->forget(['order_discount_code', 'free_shipping_code', 'shipping_method']);
 
     return redirect()->route('client.checkout.success');
 }
@@ -421,13 +423,13 @@ public function processOrder(Request $request)
         $shippingMethods = ShippingMethod::whereIn('id', [1, 2])  // hoặc lấy tất cả
             ->where('active', 1)
             ->get();
-        $shippingMethodId = $request->input('shipping_method_id', 1);
+        $shippingMethodId = $request->input('shipping_method', 1);
         $orderDiscountCodeStr = $request->input('order_discount_code', null);
         $freeShippingCodeStr  = $request->input('free_shipping_code', null);
 
         // Lưu session
         session([
-            'shipping_method_id'    => $shippingMethodId,
+            'shipping_method'    => $shippingMethodId,
             'order_discount_code'   => $orderDiscountCodeStr,
             'free_shipping_code'    => $freeShippingCodeStr,
         ]);

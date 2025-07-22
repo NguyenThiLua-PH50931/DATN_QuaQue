@@ -21,6 +21,6 @@ class ShippingMethod extends Model
     // Một phương thức giao hàng có thể được nhiều đơn hàng sử dụng
     public function orders()
     {
-        return $this->hasMany(Order::class, 'shipping_method_id');
+        return $this->hasMany(Order::class, 'shipping_method');
     }
 }

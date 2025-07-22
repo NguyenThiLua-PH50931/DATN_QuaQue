@@ -66,15 +66,13 @@
                     </div>
                     <li>
                         <strong>Mã giảm giá:</strong>
-                        @if ($order->discountCode)
-                            <span class="badge bg-info text-dark">{{ $order->discountCode->code }}</span>
-                            @if ($order->discountCode->description)
-                                <span class="text-muted ms-2">{{ $order->discountCode->description }}</span>
-                            @endif
+                        @if ($order->discount_code)
+                            <span class="badge bg-info text-dark">{{ $order->discount_code }}</span>
                         @else
                             <span class="text-muted">Không có mã giảm giá</span>
                         @endif
                     </li>
+
 
                     @if (in_array($order->status, ['pending']) &&
                             !(in_array($order->payment_method, ['momo', 'bank']) && $order->payment_status === 'paid'))
