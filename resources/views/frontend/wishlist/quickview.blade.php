@@ -24,10 +24,10 @@
                             <div class="product-rating"></div>
                             <div class="product-detail">
                                 <h4 style="font-size:24px;">Mô tả sản phẩm:</h4>
-                                <p class="description-text" style="font-size:20px;"></p>
+                                <p class="description-text" style="font-size:23px;"></p>
                                 <button class="btn btn-link p-0 show-more-btn" style="display:none">Xem thêm</button>
                             </div>
-                            <ul class="brand-list"></ul>
+                            <ul class="brand-list" style="margin-top: 18px;"></ul>
                             <div class="modal-button d-flex gap-2 align-items-center">
                                 <button class="btn theme-bg-color view-button icon text-white fw-bold btn-md">Xem chi tiết</button>
                             </div>
@@ -93,13 +93,20 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             var ratingHtml = '';
-            if (rating) {
+            if (rating && !isNaN(rating) && Number(rating) > 0) {
                 ratingHtml = '<ul class="rating">';
                 for (var i = 1; i <= 5; i++) {
                     ratingHtml += '<li><i data-feather="star" class="' + (i <= Math.round(rating) ? 'fill' : '') + '"></i></li>';
                 }
                 ratingHtml += '</ul>';
                 ratingHtml += '<span class="ms-2">' + rating + ' sao</span>';
+            } else {
+                ratingHtml = '<ul class="rating">';
+                for (var i = 1; i <= 5; i++) {
+                    ratingHtml += '<li><i data-feather="star"></i></li>';
+                }
+                ratingHtml += '</ul>';
+                ratingHtml += '<span class="ms-2" style="color:#888; font-size:15px;">Chưa có đánh giá</span>';
             }
             modal.querySelector('.product-rating').innerHTML = ratingHtml;
             if (window.feather) feather.replace();
@@ -107,10 +114,10 @@ document.addEventListener('DOMContentLoaded', function() {
             var brandList = modal.querySelector('.brand-list');
             brandList.innerHTML = '';
             if (code) {
-                brandList.innerHTML += `<li><div class="brand-box"><h5>Mã sản phẩm:</h5><h6>${code}</h6></div></li>`;
+                brandList.innerHTML += `<li><div class="brand-box"><h5 style='font-size:18px; color:#222; font-weight:600;'>Mã sản phẩm:</h5><h6 style='font-size:19px;'>${code}</h6></div></li>`;
             }
             if (origin) {
-                brandList.innerHTML += `<li><div class="brand-box"><h5>Xuất xứ:</h5><h6>${origin}</h6></div></li>`;
+                brandList.innerHTML += `<li><div class="brand-box"><h5 style='font-size:18px; color:#222; font-weight:600;'>Xuất xứ:</h5><h6 style='font-size:19px;'>${origin}</h6></div></li>`;
             }
 
             var detailBtn = modal.querySelector('.view-button');
