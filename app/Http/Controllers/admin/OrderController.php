@@ -127,7 +127,7 @@ public function updateStatus(Request $request, Order $order)
         'changed_at'  => now(),
     ]);
 
-    // Nếu là trạng thái cần hoàn lại kho (cộng lại kho cho variant)
+    // Nếu là trạng thái cần hoàn lại kho và hoàn lại lượt dùng mã giảm giá
     if (!in_array($oldStatus, ['cancelled', 'failed_delivery']) && in_array($newStatus, ['cancelled', 'failed_delivery'])) {
         $order->loadMissing('items');
         foreach ($order->items as $item) {
@@ -140,6 +140,22 @@ public function updateStatus(Request $request, Order $order)
             }
             // Nếu KHÔNG cộng lại kho cho product gốc thì không cần else!
         }
+
+        // =============================
+        //   HOÀN LẠI USED_COUNT COUPON
+        // =============================
+        if ($order->discount_code) {
+            $coupon = \App\Models\admin\DiscountCode::where('code', $order->discount_code)->first();
+            if ($coupon && $coupon->used_count > 0) {
+                $coupon->decrement('used_count');
+            }
+        }
+        if ($order->free_shipping_code) {
+            $coupon = \App\Models\admin\DiscountCode::where('code', $order->free_shipping_code)->first();
+            if ($coupon && $coupon->used_count > 0) {
+                $coupon->decrement('used_count');
+            }
+        }
     }
 
     // Cập nhật trạng thái mới cho đơn hàng
@@ -150,7 +166,6 @@ public function updateStatus(Request $request, Order $order)
         $order->payment_status = ($newStatus === 'delivered') ? 'paid' : 'unpaid';
     } elseif ($order->payment_method === 'momo' || $order->payment_method === 'bank') {
         // Với momo, bank thì giữ nguyên trạng thái thanh toán đã xử lý ở nơi khác
-        // Nếu cần có logic tự chuyển trạng thái thì bổ sung ở đây
     }
 
     // Lưu thay đổi
@@ -179,7 +194,6 @@ public function updateStatus(Request $request, Order $order)
             'payment_method' => $order->payment_method,
             'order_id'       => $order->id,
             'is_hidden'      => $order->is_hidden ?? false,
-            // Nếu muốn render lại cả action/xóa/ẩn... trả thêm các trường cần thiết ở đây
         ]);
     }
 
