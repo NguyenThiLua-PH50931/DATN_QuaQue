@@ -465,8 +465,18 @@ document.querySelectorAll('input[name="shipping_method_id"]').forEach(function(r
     });
 });
 </script> --}}
-
-
+    {{-- popup mã giảm giá --}}
+    {{-- @if (session('error'))
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Thông báo',
+                text: {!! json_encode(session('error')) !!},
+                confirmButtonText: 'OK'
+            });
+        </script>
+    @endif --}}
+    {{-- popup mã giảm giá --}}
     <script>
         document.querySelectorAll('input[name="flexRadioDefault"]').forEach(function(radio) {
             radio.addEventListener('change', function() {
@@ -552,19 +562,20 @@ document.querySelectorAll('input[name="shipping_method_id"]').forEach(function(r
                 border - radius: 4 px;
                 box - shadow: 0 2 px 6 px rgba(0, 0, 0, 0.12);
                 font - size: 13 px;
-                color: #222;
-                        padding: 6px 0;
-                    }
+                color:
+                    #222;
+                                                                                                                                                padding: 6px 0;
+                                                                                                                                            }
 
-                    .user-box-name {
-                        margin: 0;
-                        padding: 0;
-                        list-style: none;
-                    }
+                                                                                                                                            .user-box-name {
+                                                                                                                                                margin: 0;
+                                                                                                                                                padding: 0;
+                                                                                                                                                list-style: none;
+                                                                                                                                            }
 
-                    .user-box-name li {
-                        padding: 6px 14px;
-                        border-bottom: 1px solid # eee;
+                                                                                                                                            .user-box-name li {
+                                                                                                                                                padding: 6px 14px;
+                                                                                                                                                border-bottom: 1px solid # eee;
             }
 
             .user - box - name li: last - child {
@@ -573,22 +584,24 @@ document.querySelectorAll('input[name="shipping_method_id"]').forEach(function(r
 
             .user - box - name li a {
                 color: #333;
-                        text-decoration: none;
-                        display: block;
-                        white-space: nowrap;
-                        /* Không xuống dòng */
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                        /* Ẩn chữ dài quá */
-                    }
+                                                                                                                                                text-decoration: none;
+                                                                                                                                                display: block;
+                                                                                                                                                white-space: nowrap;
+                                                                                                                                                /* Không xuống dòng */
+                                                                                                                                                overflow: hidden;
+                                                                                                                                                text-overflow: ellipsis;
+                                                                                                                                                /* Ẩn chữ dài quá */
+                                                                                                                                            }
 
-                    .user-box-name li a:hover {
-                        background-color: # e7e7e7;
+                                                                                                                                            .user-box-name li a:hover {
+                                                                                                                                                background-color: # e7e7e7;
                 color: #000;
-                    }
+                                                                                                                                            }
 
-                    /* Tăng cỡ chữ modal lên 4-5px */
-                    # view.modal - content,
+                                                                                                                                            /* Tăng cỡ chữ modal lên 4-5px */
+                                                                                                                                            # view
+                    .modal -
+                    content,
                 #view.modal - content * {
                     font - size: 20 px!important;
                 }
@@ -600,19 +613,23 @@ document.querySelectorAll('input[name="shipping_method_id"]').forEach(function(r
 
                 #view.price {
                     font - size: 24 px!important;
-                    color: #0da487;
-                    }
+                    color:
+                        #0da487;
+                                                                                                                                            }
 
-                    # view.main - quickview - image {
-                        width: 500 px!important;
-                        height: 350 px!important;
-                        aspect - ratio: 5 / 4;
-                        object - fit: cover!important;
-                        border - radius: 16 px;
-                        display: block;
-                        margin: 0 auto;
-                        background: #f8f8f8;
-                    }
+                                                                                                                                            # view
+                        .main -
+                        quickview -
+                        image {
+                            width: 500 px!important;
+                            height: 350 px!important;
+                            aspect - ratio: 5 / 4;
+                            object - fit: cover!important;
+                            border - radius: 16 px;
+                            display: block;
+                            margin: 0 auto;
+                            background: #f8f8f8;
+                        }
 
                     #view.description - thumbnails img {
                         width: 48 px;
@@ -628,14 +645,16 @@ document.querySelectorAll('input[name="shipping_method_id"]').forEach(function(r
 
                     #view.description - thumbnails img.active {
                             border: 2 px solid #0da487;
-                    }
+                                                                                                                                            }
 
-                    # view.description - thumbnails {
-                                margin - top: 16 px;
-                                justify - content: flex - start;
-                                gap: 0;
-                                flex - wrap: wrap;
-                            }
+                                                                                                                                            # view
+                                .description -
+                                thumbnails {
+                                    margin - top: 16 px;
+                                    justify - content: flex - start;
+                                    gap: 0;
+                                    flex - wrap: wrap;
+                                }
 
                             #view.right - sidebar - modal,
                             #view.right - sidebar - modal * {
