@@ -268,12 +268,14 @@
                 const typeSelect = document.getElementById('discount-type-select');
                 const discountTypeRow = document.getElementById('discount-type-row') || document.querySelector(
                     'select[name="discount_type"]')?.closest('.row');
+                const discountTypeSelect = document.querySelector('select[name="discount_type"]');
                 const discountValueRow = document.getElementById('discount-value-row') || document.querySelector(
                     'input[name="discount_value"]')?.closest('.row');
                 const minOrderRow = document.getElementById('min-order-row') || document.querySelector(
                     'input[name="min_order_amount"]')?.closest('.row');
                 const maxDiscountRow = document.getElementById('max-discount-row') || document.querySelector(
                     'input[name="max_discount_amount"]')?.closest('.row');
+                const maxDiscountInput = document.querySelector('input[name="max_discount_amount"]');
                 const startDateRow = document.getElementById('start-date-row') || document.querySelector(
                     'input[name="start_date"]')?.closest('.row');
                 const endDateRow = document.getElementById('end-date-row') || document.querySelector(
@@ -281,6 +283,21 @@
                 const usageInput = document.querySelector('input[name="usage_limit"]');
                 const usageRow = usageInput?.closest('.row');
                 const condRow = document.getElementById('condition-type-row');
+
+                // Toggle hiện/ẩn max_discount_amount field
+                function toggleMaxDiscountField() {
+                    if (!discountTypeSelect || !maxDiscountRow) return;
+                    if (discountTypeSelect.value === 'percent') {
+                        maxDiscountRow.classList.remove('d-none');
+                        if (maxDiscountInput) maxDiscountInput.required = true;
+                    } else {
+                        maxDiscountRow.classList.add('d-none');
+                        if (maxDiscountInput) {
+                            maxDiscountInput.required = false;
+                            maxDiscountInput.value = '';
+                        }
+                    }
+                }
 
                 function updateFormFields() {
                     const scope = scopeSelect.value;
@@ -302,21 +319,23 @@
                             // Chọn & khóa loại mã
                             if (typeSelect) {
                                 typeSelect.value = (conditionConfig[conditionType].type === 'freeship') ?
-                                    'free_shipping' : 'order_discount';
+                                    'free_shipping' :
+                                    'order_discount';
                                 typeSelect.readOnly = true;
                                 typeSelect.style.pointerEvents = 'none';
                                 typeSelect.style.background = '#f5f5f5';
                             }
-                            // Hiện/ẩn field discount
+                            // Hiện/ẩn field discount/freeship
                             if (conditionConfig[conditionType].type === 'discount') {
                                 discountTypeRow?.classList.remove('d-none');
                                 discountValueRow?.classList.remove('d-none');
                                 minOrderRow?.classList.remove('d-none');
-                                maxDiscountRow?.classList.remove('d-none');
-                            } else {
+                                // toggle maxDiscount theo loại giảm giá
+                                toggleMaxDiscountField();
+                            } else if (conditionConfig[conditionType].type === 'freeship') {
                                 discountTypeRow?.classList.add('d-none');
                                 discountValueRow?.classList.add('d-none');
-                                minOrderRow?.classList.add('d-none');
+                                minOrderRow?.classList.remove('d-none'); // HIỆN
                                 maxDiscountRow?.classList.add('d-none');
                             }
                             // usage_limit = 1, readonly, KHÔNG disabled!
@@ -348,24 +367,25 @@
                             endDateRow?.classList.add('d-none');
                         }
                     } else {
-                        // GLOBAL
+                        // GLOBAL (toàn hệ thống)
                         condRow?.classList.add('d-none');
                         if (typeSelect) {
                             typeSelect.readOnly = false;
                             typeSelect.style.pointerEvents = 'auto';
                             typeSelect.style.background = '';
                         }
-                        // Freeship toàn hệ thống: ẩn field giảm giá
+                        // Nếu là miễn phí vận chuyển toàn hệ thống: hiện minOrderRow, ẩn field giảm giá
                         if (typeSelect?.value === 'free_shipping') {
                             discountTypeRow?.classList.add('d-none');
                             discountValueRow?.classList.add('d-none');
-                            minOrderRow?.classList.add('d-none');
+                            minOrderRow?.classList.remove('d-none'); // luôn hiện!
                             maxDiscountRow?.classList.add('d-none');
                         } else {
                             discountTypeRow?.classList.remove('d-none');
                             discountValueRow?.classList.remove('d-none');
                             minOrderRow?.classList.remove('d-none');
-                            maxDiscountRow?.classList.remove('d-none');
+                            // toggle maxDiscount theo loại giảm giá
+                            toggleMaxDiscountField();
                         }
                         startDateRow?.classList.remove('d-none');
                         endDateRow?.classList.remove('d-none');
@@ -381,8 +401,13 @@
                 scopeSelect.addEventListener('change', updateFormFields);
                 conditionTypeSelect?.addEventListener('change', updateFormFields);
                 typeSelect?.addEventListener('change', updateFormFields);
+                if (discountTypeSelect) {
+                    discountTypeSelect.addEventListener('change', toggleMaxDiscountField);
+                }
 
+                // Gọi 1 lần lúc đầu để set đúng trạng thái
                 updateFormFields();
+                toggleMaxDiscountField();
             });
         </script>
     @endpush

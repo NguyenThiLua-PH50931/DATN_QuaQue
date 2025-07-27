@@ -39,6 +39,11 @@ public function index(Request $request)
     if ($request->filled('scope')) {
         $query->where('scope', $request->input('scope'));
     }
+    // Lọc theo loại giảm giá (discount_type)
+if ($request->filled('discount_type')) {
+    $query->where('discount_type', $request->input('discount_type'));
+}
+
     // **Lọc theo từ khóa (code hoặc mô tả)**
     if ($request->filled('q')) {
         $query->where(function ($q) use ($request) {
@@ -72,6 +77,7 @@ public function store(Request $request)
 {
     $type = $request->input('type');
     $scope = $request->input('scope', 'global');
+    $discountType = $request->input('discount_type');
 
     $rules = [
         'description' => 'required|string|max:255',
@@ -80,23 +86,37 @@ public function store(Request $request)
         'scope' => 'required|in:global,conditional',
         'used_count' => 'nullable|integer|min:0',
         'usage_limit' => 'required|integer|min:1',
+        'min_order_amount' => 'nullable|numeric|min:0',
     ];
 
-    // Toàn hệ thống: bắt buộc ngày bắt đầu/kết thúc
+    $messages = [
+        'description.required' => 'Vui lòng nhập tiêu đề mã giảm giá.',
+        'code.required' => 'Vui lòng nhập mã giảm giá.',
+        'code.unique' => 'Mã giảm giá đã tồn tại.',
+        'usage_limit.required' => 'Vui lòng nhập số lượng.',
+    ];
+
     if ($scope === 'global') {
         $rules['start_date'] = 'required|date';
         $rules['end_date']   = 'required|date|after_or_equal:start_date';
     }
 
-    // Giảm giá đơn hàng (KHÔNG phải mã freeship)
     if ($type === 'order_discount') {
         $rules['discount_type'] = 'required|in:percent,fixed';
         $rules['discount_value'] = 'required|numeric|min:0';
-        $rules['min_order_amount'] = 'nullable|numeric|min:0';
-        $rules['max_discount_amount'] = 'nullable|numeric|min:0';
+        if ($discountType === 'percent') {
+            $rules['max_discount_amount'] = 'required|numeric|min:0.01';
+            $messages['max_discount_amount.required'] = 'Bạn phải nhập giá trị giảm tối đa khi chọn giảm theo phần trăm.';
+        } else {
+            $rules['max_discount_amount'] = 'nullable|numeric|min:0';
+        }
+    } else {
+        // free_shipping
+        $rules['discount_type'] = 'nullable';
+        $rules['discount_value'] = 'nullable';
+        $rules['max_discount_amount'] = 'nullable';
     }
 
-    // Mã theo điều kiện: yêu cầu chọn đúng điều kiện cho phép
     if ($scope === 'conditional') {
         $rules['condition_type'] = [
             'required',
@@ -104,23 +124,22 @@ public function store(Request $request)
             'max:50',
             Rule::in(['new_user_30d', 'first_order']),
         ];
-        // LUÔN ép usage_limit = 1, kể cả ai cố chỉnh HTML
         $request->merge(['usage_limit' => 1]);
     }
 
-    $validated = $request->validate($rules);
+    $validated = $request->validate($rules, $messages);
 
-    // Nếu là điều kiện và là mã freeship thì các trường giảm giá để null
+    // Nếu là điều kiện và là mã freeship thì các trường giảm giá để null, nhưng GIỮ min_order_amount
     if ($scope === 'conditional' && $type === 'free_shipping') {
         $validated['discount_type'] = null;
         $validated['discount_value'] = null;
-        $validated['min_order_amount'] = null;
         $validated['max_discount_amount'] = null;
     }
 
     $validated['active'] = $request->has('active') ? 1 : 0;
     $validated['free_shipping'] = ($type === 'free_shipping') ? 1 : 0;
 
+    // Luôn để min_order_amount là 0 nếu null
     if (!isset($validated['min_order_amount']) || $validated['min_order_amount'] === null) {
         $validated['min_order_amount'] = 0;
     }
@@ -132,6 +151,7 @@ public function store(Request $request)
 
 
 
+
     // Show edit form
 public function edit($id)
 {
@@ -140,13 +160,12 @@ public function edit($id)
     return view('backend.coupons.edit', compact('coupon', 'products'));
 }
 
-
-    // Update coupon
-    public function update(Request $request, $id)
+public function update(Request $request, $id)
 {
     $coupon = DiscountCode::findOrFail($id);
     $type = $request->input('type');
     $scope = $request->input('scope', 'global');
+    $discountType = $request->input('discount_type');
 
     $rules = [
         'description' => 'required|string|max:255',
@@ -155,23 +174,37 @@ public function edit($id)
         'scope' => 'required|in:global,conditional',
         'used_count' => 'nullable|integer|min:0',
         'usage_limit' => 'required|integer|min:1',
+        'min_order_amount' => 'nullable|numeric|min:0',
     ];
 
-    // Toàn hệ thống: bắt buộc ngày bắt đầu/kết thúc
+    $messages = [
+        'description.required' => 'Vui lòng nhập tiêu đề mã giảm giá.',
+        'code.required' => 'Vui lòng nhập mã giảm giá.',
+        'code.unique' => 'Mã giảm giá đã tồn tại.',
+        'usage_limit.required' => 'Vui lòng nhập số lượng.',
+    ];
+
     if ($scope === 'global') {
         $rules['start_date'] = 'required|date';
         $rules['end_date']   = 'required|date|after_or_equal:start_date';
     }
 
-    // Giảm giá đơn hàng (KHÔNG phải mã freeship)
     if ($type === 'order_discount') {
         $rules['discount_type'] = 'required|in:percent,fixed';
         $rules['discount_value'] = 'required|numeric|min:0';
-        $rules['min_order_amount'] = 'nullable|numeric|min:0';
-        $rules['max_discount_amount'] = 'nullable|numeric|min:0';
+        if ($discountType === 'percent') {
+            $rules['max_discount_amount'] = 'required|numeric|min:0.01';
+            $messages['max_discount_amount.required'] = 'Bạn phải nhập giá trị giảm tối đa khi chọn giảm theo phần trăm.';
+        } else {
+            $rules['max_discount_amount'] = 'nullable|numeric|min:0';
+        }
+    } else {
+        // free_shipping
+        $rules['discount_type'] = 'nullable';
+        $rules['discount_value'] = 'nullable';
+        $rules['max_discount_amount'] = 'nullable';
     }
 
-    // Mã theo điều kiện: yêu cầu chọn đúng điều kiện cho phép
     if ($scope === 'conditional') {
         $rules['condition_type'] = [
             'required',
@@ -179,23 +212,22 @@ public function edit($id)
             'max:50',
             Rule::in(['new_user_30d', 'first_order']),
         ];
-        // LUÔN ép usage_limit = 1, kể cả ai cố chỉnh HTML
         $request->merge(['usage_limit' => 1]);
     }
 
-    $validated = $request->validate($rules);
+    $validated = $request->validate($rules, $messages);
 
-    // Nếu là điều kiện và là mã freeship thì các trường giảm giá để null
+    // Nếu là điều kiện và là mã freeship thì các trường giảm giá để null, nhưng GIỮ min_order_amount
     if ($scope === 'conditional' && $type === 'free_shipping') {
         $validated['discount_type'] = null;
         $validated['discount_value'] = null;
-        $validated['min_order_amount'] = null;
         $validated['max_discount_amount'] = null;
     }
 
     $validated['active'] = $request->has('active') ? 1 : 0;
     $validated['free_shipping'] = ($type === 'free_shipping') ? 1 : 0;
 
+    // Luôn để min_order_amount là 0 nếu null
     if (!isset($validated['min_order_amount']) || $validated['min_order_amount'] === null) {
         $validated['min_order_amount'] = 0;
     }
@@ -205,16 +237,6 @@ public function edit($id)
     return redirect()->route('admin.coupon.index')->with('success', 'Cập nhật mã giảm giá thành công!');
 }
 
-
-    // Delete coupon
-    public function destroy($id)
-    {
-        $coupon = DiscountCode::findOrFail($id);
-        $coupon->delete();
-        return redirect()->route('admin.coupon.index')->with('success', 'Đã xóa mã giảm giá.');
-    }
-
-    // --- PHẦN NÀY ĐỂ XỬ LÝ ÁP DỤNG MÃ VÀ XỬ LÝ LƯỢT DÙNG ---
 
     // Hàm áp dụng mã cho đơn hàng
     public function applyDiscountCode(Request $request)
