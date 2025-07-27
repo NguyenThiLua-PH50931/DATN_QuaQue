@@ -148,6 +148,7 @@ class ProductController extends Controller
             'region',
             'variants.attributeValues.attribute',
             'reviews.user',
+            'reviews.productVariantId',
             'comments.user',
             'comments.replies.user'
         ])
@@ -247,18 +248,21 @@ class ProductController extends Controller
             ->orderByDesc('view_month')
             ->limit(4)
             ->get();
-        $reviews = $product->reviews()->with('user')->latest()->get();
-        $user = Auth::user();
-        $canReview = false;
+        $reviews = $product->reviews()
+            ->with(['user', 'productVariantId'])
+            ->orderByDesc('created_at')
+            ->get();
+        $totalReviews = $reviews->count();
+        $averageRating = $totalReviews > 0
+            ? round($reviews->avg('rating'), 2)
+            : 0;
 
-        if ($user) {
-            $canReview = DB::table('order_items')
-                ->join('orders', 'order_items.order_id', '=', 'orders.id')
-                ->where('orders.user_id', $user->id)
-                ->where('orders.status', 'delivered')
-                ->whereIn('order_items.product_variant_value_id', $variants->pluck('id'))
-                ->exists();
+        // Đếm số lượng review mỗi mức sao
+        $ratingsCount = [];
+        for ($i = 1; $i <= 5; $i++) {
+            $ratingsCount[$i] = $reviews->where('rating', $i)->count();
         }
+        $user = Auth::user();
         $currentUser = Auth::user();
         // LẤY BÌNH LUẬN KÈM TRẢ LỜI CHO SẢN PHẨM
         $comments = $product->comments()
@@ -266,7 +270,9 @@ class ProductController extends Controller
             ->where('status', 'visible')
             ->latest()
             ->get();
-
+        $starOptions = $reviews->pluck('rating')->unique()->sortDesc()->values();
+        // Lọc các phân loại đang có review
+        $variantOptions = $reviews->pluck('product_variant_value_id')->unique()->values();
         return view('frontend.products.detail', [
             'product'                 => $product,
             'variants'                => $variants,
@@ -278,9 +284,13 @@ class ProductController extends Controller
             'productSectionPromoLeftTop' => $productSectionPromoLeftTop,
             'reviews'    => $reviews,
             'topViewedProducts'       => $topViewedProducts,
-            'canReview'               => $canReview,
             'comments'                => $comments,    // thêm biến comments vào view
             'currentUser'             => $currentUser,
+            'averageRating'           => $averageRating,
+            'totalReviews'            => $totalReviews,
+            'ratingsCount'            => $ratingsCount,
+            'starOptions' => $starOptions,
+                'variantOptions' => $variantOptions,
         ]);
     }
     public function quickView($slug)
@@ -417,57 +427,6 @@ class ProductController extends Controller
                 ];
             })
         ]);
-    }
-    public function storeReview(Request $request)
-    {
-        $request->validate([
-            'product_variant_id' => 'required|exists:product_variants,id',
-            'comment' => 'required|string',
-            'rating'  => 'required|integer|min:1|max:5',
-        ]);
-
-        $user = Auth::user();
-
-        // Kiểm tra xem user đã mua biến thể này và đơn hàng đã được giao chưa
-        $hasDeliveredVariant = DB::table('order_items')
-            ->join('orders', 'order_items.order_id', '=', 'orders.id')
-            ->where('order_items.product_variant_id', $request->product_variant_id)
-            ->where('orders.user_id', $user->id)
-            ->where('orders.status', 'delivered') // giả sử status 'delivered' là đã giao
-            ->exists();
-
-        if (!$hasDeliveredVariant) {
-            return redirect()->back()->withErrors(['Bạn chỉ có thể đánh giá sản phẩm sau khi đã nhận hàng.']);
-        }
-
-        // Lưu đánh giá
-        Review::create([
-            'product_id'          => DB::table('product_variants')->where('id', $request->product_variant_id)->value('product_id'),
-            'product_variant_id'  => $request->product_variant_id,
-            'user_id'             => $user->id,
-            'rating'              => $request->rating,
-            'comment'             => $request->comment,
-        ]);
-
-        return redirect()->back()->with('success', 'Đánh giá của bạn đã được gửi.');
-    }
-
-    public function filterReviews(Request $request, $slug)
-    {
-        $ratingFilter = $request->query('star');
-
-        $product = Product::where('slug', $slug)
-            ->where('active', 1)
-            ->whereNull('deleted_at')
-            ->firstOrFail();
-
-        $reviews = $product->reviews()
-            ->with('user')
-            ->when($ratingFilter, fn($q) => $q->where('rating', $ratingFilter))
-            ->latest()
-            ->get();
-
-        return view('frontend.products.review-items', compact('reviews'));
     }
 
     // AJAX search cho header

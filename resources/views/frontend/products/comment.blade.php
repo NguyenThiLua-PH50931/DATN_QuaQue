@@ -15,7 +15,7 @@
                                     $firstChar = strtoupper(substr($user->name, 0, 1));
                                 @endphp
                                 @if ($user->avatar)
-                                    <img src="{{ asset($user->avatar) }}" alt="{{ $user->name }}" class="avatar-img" />
+                                    <img src="{{ asset('storage/'.   $user->avatar) }}" alt="{{ $user->name }}" class="avatar-img" />
                                 @else
                                     <div class="avatar-initial">{{ $firstChar }}</div>
                                 @endif
@@ -70,7 +70,7 @@
                                                 $rFirstChar = strtoupper(substr($rUser->name, 0, 1));
                                             @endphp
                                             @if ($rUser->avatar)
-                                                <img src="{{ asset($rUser->avatar) }}" alt="{{ $rUser->name }}"
+                                                <img src="{{ asset('storage/'.$rUser->avatar) }}" alt="{{ $rUser->name }}"
                                                     class="avatar-img" />
                                             @else
                                                 <div class="avatar-initial">{{ $rFirstChar }}</div>
