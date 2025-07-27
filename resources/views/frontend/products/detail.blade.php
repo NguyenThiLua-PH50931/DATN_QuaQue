@@ -594,7 +594,7 @@
                 </h2>
                 <span class="title-leaf">
                     <svg class="icon-width">
-                        <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
+                        <use xlink:href="../frontend/assets/svg/leaf.svg#leaf"></use>
                     </svg>
                 </span>
             </div>
@@ -1409,7 +1409,7 @@
                 ['blur', 'change'].forEach(evt => {
                     qtyInput.addEventListener(evt, function() {
                         const maxStock = parseInt(qtyInput.getAttribute('data-stock'), 10) ||
-                        999999;
+                            999999;
                         let val = parseInt(qtyInput.value, 10);
 
                         if (isNaN(val) || val < 1) {
@@ -1478,7 +1478,7 @@
                     // Nếu chọn đủ biến thể thì tìm biến thể phù hợp
                     if (Object.keys(selected).length === attributesCount) {
                         let attrValueIds = Object.values(selected).map(Number).sort((a, b) => a -
-                        b);
+                            b);
 
                         // Tìm biến thể trùng
                         let found = window.VARIANTS.find(v =>
@@ -1572,7 +1572,7 @@
                     icon: 'error', // hoặc 'success'
                     title: 'Lỗi vượt quá số lượng tồn kho',
                     text: '{{ session('
-                                error ') }}',
+                                                    error ') }}',
                     confirmButtonColor: '#0da487',
                     width: 350, // giảm chiều ngang
                     padding: '1rem 1.5rem', // giảm padding
@@ -1589,7 +1589,7 @@
                     icon: 'success',
                     title: 'Thành công',
                     text: '{{ session('
-                                success ') }}',
+                                                    success ') }}',
                     confirmButtonColor: '#0da487',
                     width: 350,
                     padding: '1rem 1.5rem',

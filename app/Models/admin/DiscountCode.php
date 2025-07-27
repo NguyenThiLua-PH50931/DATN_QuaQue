@@ -11,26 +11,36 @@ class DiscountCode extends Model
 
     protected $table = 'discount_codes';
 
-    protected $fillable = [
-        'code',
-        'description',
-        'discount_type',
-        'discount_value',
-        'min_order_amount',
-        'max_discount_amount',
-        'start_date',
-        'end_date',
-        'usage_limit',
-        'used_count',
-        'active',
-        'type',   
-    ];
+protected $fillable = [
+    'code',
+    'description',
+    'discount_type',
+    'discount_value',
+    'min_order_amount',
+    'max_discount_amount',
+    'start_date',
+    'end_date',
+    'usage_limit',
+    'used_count',
+    'active',
+    'type',
+    'scope',           // thêm nếu có
+    'condition_type',  // thêm nếu có
+    'free_shipping',   // thêm nếu có
+];
 
-    protected $casts = [
-        'start_date' => 'datetime',
-        'end_date' => 'datetime',
-        'active' => 'boolean',
-    ];
+
+protected $casts = [
+    'start_date' => 'datetime',
+    'end_date' => 'datetime',
+    'active' => 'boolean',
+    'discount_value' => 'float',
+    'min_order_amount' => 'float',
+    'max_discount_amount' => 'float',
+    'usage_limit' => 'integer',
+    'used_count' => 'integer',
+];
+
 
     public function isValid(): bool
     {
