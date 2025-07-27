@@ -175,9 +175,22 @@
                                         </select>
                                     </div>
                                     <div class="col-md-2">
+                                        <select name="discount_type" class="form-control">
+                                            <option value="">--Loại giảm giá--</option>
+                                            <option value="percent"
+                                                {{ request('discount_type') == 'percent' ? 'selected' : '' }}>Phần trăm
+                                            </option>
+                                            <option value="fixed"
+                                                {{ request('discount_type') == 'fixed' ? 'selected' : '' }}>Tiền cố định
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-2">
                                         <select name="scope" class="form-control">
                                             <option value="">--Phạm vi áp dụng--</option>
-                                            <option value="global" {{ request('scope') == 'global' ? 'selected' : '' }}>Toàn
+                                            <option value="global" {{ request('scope') == 'global' ? 'selected' : '' }}>
+                                                Toàn
                                                 hệ thống</option>
                                             <option value="conditional"
                                                 {{ request('scope') == 'conditional' ? 'selected' : '' }}>Theo điều kiện
@@ -209,6 +222,7 @@
                                             <th>Phạm vi</th>
                                             <th>Điều kiện</th>
                                             <th>Loại</th>
+                                            <th>Hình thức</th>
                                             <th>Số lượng</th>
                                             <th>Ngày bắt đầu</th>
                                             <th>Ngày kết thúc</th>
@@ -257,11 +271,24 @@
                                                     @if ($coupon->type == 'free_shipping')
                                                         <span class="badge badge-green"
                                                             title="Miễn phí vận chuyển">🚚</span>
+                                                    @elseif($coupon->type == 'order_discount')
+                                                        <span class="badge badge-blue" title="Giảm giá đơn hàng">🛒</span>
+                                                    @else
+                                                        <span class="badge badge-gray">?</span>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    @if ($coupon->type == 'free_shipping')
+                                                        <span class="badge badge-green"
+                                                            title="Miễn phí vận chuyển">Freeship</span>
                                                     @elseif($coupon->discount_type == 'percent')
-                                                        <span class="badge badge-yellow"
-                                                            title="Giảm theo phần trăm">%</span>
+                                                        <span class="badge badge-yellow" title="Theo phần trăm">
+                                                            {{ (int) $coupon->discount_value }}%
+                                                        </span>
                                                     @elseif($coupon->discount_type == 'fixed')
-                                                        <span class="badge badge-purple" title="Giảm theo số tiền">₫</span>
+                                                        <span class="badge badge-purple" title="Tiền cố định">
+                                                            {{ number_format($coupon->discount_value, 0, ',', '.') }}₫
+                                                        </span>
                                                     @else
                                                         <span class="badge badge-gray" title="Không xác định">?</span>
                                                     @endif

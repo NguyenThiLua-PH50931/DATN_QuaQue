@@ -160,6 +160,64 @@
     @includeIf('frontend.footer')
     @include('frontend.wishlist.quickview')
 
+    <style>
+    /* Quickview Modal Custom Styles */
+    #view .right-sidebar-modal,
+    #view .right-sidebar-modal * {
+        font-size: 20px !important;
+    }
+    #view .title-name {
+        font-size: 28px !important;
+        font-weight: bold;
+    }
+    #view .price {
+        font-size: 24px !important;
+        color: #0da487;
+    }
+    #view .main-quickview-image {
+        width: 500px !important;
+        height: 350px !important;
+        aspect-ratio: 5/4;
+        object-fit: cover !important;
+        border-radius: 16px;
+        display: block;
+        margin: 0 auto;
+        background: #f8f8f8;
+    }
+    #view .description-thumbnails img {
+        width: 48px;
+        height: 48px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 2px solid #eee;
+        cursor: pointer;
+        transition: border 0.2s;
+        background: #f8f8f8;
+        margin-right: 8px;
+    }
+    #view .description-thumbnails img.active {
+        border: 2px solid #0da487;
+    }
+    #view .description-thumbnails {
+        margin-top: 16px;
+        justify-content: flex-start;
+        gap: 0;
+        flex-wrap: wrap;
+    }
+    #view .description-text {
+        font-size: 23px !important;
+    }
+    #view .product-detail h4 {
+        font-size: 27px !important;
+    }
+    #view .brand-list h5,
+    #view .brand-list h6 {
+        font-size: 20px !important;
+    }
+    #view .modal-button .btn {
+        font-size: 20px !important;
+    }
+    </style>
     <!-- Location Modal Start -->
     <div class="modal location-modal fade theme-modal" id="locationModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
@@ -549,6 +607,7 @@ document.querySelectorAll('input[name="shipping_method_id"]').forEach(function(r
                         });
                 });
             }
+<<<<<<< HEAD
         }); <
         /html> <
         style >
@@ -700,3 +759,7 @@ document.querySelectorAll('input[name="shipping_method_id"]').forEach(function(r
     @stack('scripts')
 </body>
 </body>
+=======
+        });
+        </html>
+>>>>>>> 5190ef9e29e6ccf360b9f36f0c8242a864e548da

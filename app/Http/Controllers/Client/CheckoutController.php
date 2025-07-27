@@ -121,34 +121,45 @@ $validDiscountCodes = \App\Models\admin\DiscountCode::where('active', 1)
             });
     })
     ->get()
-    ->filter(function ($code) use ($subtotal, $user) {
-        $singleUseConditionTypes = ['new_user_30d', 'first_order'];
+->filter(function ($code) use ($subtotal, $user) {
+    $singleUseConditionTypes = ['new_user_30d', 'first_order'];
 
-        if ($code->scope === 'conditional' && in_array($code->condition_type, $singleUseConditionTypes)) {
-            $alreadyUsed = \App\Models\admin\DiscountCodeUsage::where('discount_code_id', $code->id)
-                ->where('user_id', $user->id)
-                ->exists();
-            if ($alreadyUsed) return false;
-            // Điều kiện riêng từng loại
-            if ($code->condition_type === 'new_user_30d') {
-                $days = $user->created_at->diffInDays(now());
-                return $days < 30;
-            }
-            if ($code->condition_type === 'first_order') {
-                return true; // chỉ cần chưa dùng mã này là được (đã check ở trên)
-            }
+    // Check nếu user đã có đơn chưa hủy dùng mã này thì không hiển thị nữa
+    $hasUncancelledOrder = \App\Models\admin\Order::where('user_id', $user->id)
+        ->where(function($q) use ($code) {
+            $q->where('discount_code', $code->code)
+              ->orWhere('free_shipping_code', $code->code);
+        })
+        ->where('status', '!=', 'cancelled') // hoặc 'canceled', tùy bạn dùng status gì cho hủy đơn
+        ->exists();
+    if ($hasUncancelledOrder) return false;
+
+    // Check cho mã conditional
+    if ($code->scope === 'conditional' && in_array($code->condition_type, $singleUseConditionTypes)) {
+        $alreadyUsed = \App\Models\admin\DiscountCodeUsage::where('discount_code_id', $code->id)
+            ->where('user_id', $user->id)
+            ->exists();
+        if ($alreadyUsed) return false;
+        if ($code->condition_type === 'new_user_30d') {
+            $days = $user->created_at->diffInDays(now());
+            if ($days >= 30) return false;
         }
+        // Kiểm tra min_order_amount với cả conditional!
+        if ($code->min_order_amount && $subtotal < $code->min_order_amount) {
+            return false;
+        }
+        return true;
+    }
 
-        // Các mã global khác: kiểm tra min_order_amount (nếu có)
-        return !$code->min_order_amount || $subtotal >= $code->min_order_amount;
-    });
-
+    // Các mã global khác: kiểm tra min_order_amount (nếu có)
+    return !$code->min_order_amount || $subtotal >= $code->min_order_amount;
+});
 
     // =========================
     // END FILTER COUPON
     // =========================
-
     // Tính tiền giảm giá (nếu có)
+
     $discountAmount = 0;
     if ($orderDiscountCode) {
         if ($orderDiscountCode->discount_type === 'percent') {
@@ -187,11 +198,6 @@ $validDiscountCodes = \App\Models\admin\DiscountCode::where('active', 1)
         'momoResult'            => null,
     ]);
 }
-
-
-
-
-
     /**
      * Xử lý đặt hàng (POST)
      */
