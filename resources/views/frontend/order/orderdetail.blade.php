@@ -136,6 +136,8 @@
                 <!-- Chi phí -->
                 <div class="border rounded-4 p-4 bg-white mb-4 shadow-sm">
                     <div class="fw-bold fs-5 mb-3" style="color:#f47721"><i class="fa fa-coins"></i> Chi phí</div>
+                    <div class="d-flex justify-content-between"><span>Tạm
+                            tính:</span><span>{{ number_format($subtotal, 0, ',', '.') }} VNĐ</span></div>
                     <div class="d-flex justify-content-between"><span>Phí vận
                             chuyển:</span><span>{{ number_format($order->shipping_cost, 0, ',', '.') }} ₫</span></div>
                     @if ($order->free_shipping_code)
@@ -157,6 +159,9 @@
                     <div class="fw-bold fs-4 mb-4 text-center" style="color:#f47721"><i class="fa fa-box-open"></i> Sản phẩm
                         trong đơn</div>
                     @foreach ($order->items as $item)
+                        @php
+                            $pricePerItem = $item->price ?? ($item->product->price ?? 0);
+                        @endphp
                         <div class="card mb-4 shadow-sm border-0">
                             <div class="row g-0 align-items-center">
                                 <div class="col-auto p-3">
@@ -175,6 +180,8 @@
                                             <b>{{ $item->productVariant?->sku ?? '---' }}</b>
                                         </div>
                                         <div class="small text-muted mb-2">Số lượng: x{{ $item->quantity }}</div>
+                                        <div class="small text-muted mb-2">Giá gốc:
+                                            x{{ number_format($pricePerItem, 0, ',', '.') }} ₫</div>
                                         <div class="text-end fw-bold" style="color: #229a71; font-size: 1.25rem;">Thành
                                             tiền:
                                             {{ number_format($item->total, 0, ',', '.') }} ₫</div>
