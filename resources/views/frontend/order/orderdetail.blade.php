@@ -224,11 +224,11 @@
                                     tiền:
                                     {{ number_format($item->total, 0, ',', '.') }} ₫
                                 </div>
-                                <div class="d-flex justify-content-end mt-2 gap-2">
+                                <div class="d-flex justify-content-end  mt-2 gap-2">
                                     {{-- Nút đánh giá, chỉ hiện nếu đơn đã giao và chưa đánh giá --}}
                                     @if ($order->status == 'delivered' && !$item->is_reviewed)
                                     <a href="#"
-                                        class="btn-danhgia"
+                                        class="btn-danhgia btn fw-bold "
                                         data-bs-toggle="modal"
                                         data-bs-target="#writeReviewModal"
                                         data-order-id="{{ $order->id }}"
