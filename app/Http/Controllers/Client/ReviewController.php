@@ -20,7 +20,7 @@ class ReviewController extends Controller
             'product_id'               => 'required|exists:products,id',
             'product_variant_value_id' => 'required|exists:product_variants,id', // <-- validate chuẩn bảng product_variants
             'rating'                   => 'required|integer|min:1|max:5',
-            'content'                  => 'required|string|max:250',
+            'content'                  => 'required|string|max:800',
         ], [
             'order_id.required'                 => 'Thiếu đơn hàng.',
             'order_id.exists'                   => 'Đơn hàng không tồn tại.',
@@ -36,7 +36,7 @@ class ReviewController extends Controller
             'rating.max'                        => 'Số sao cao nhất là 5.',
             'content.required'                  => 'Vui lòng nhập bình luận.',
             'content.string'                    => 'Bình luận phải là dạng văn bản.',
-            'content.max'                       => 'Bình luận tối đa 250 ký tự.',
+            'content.max'                       => 'Bình luận tối đa 800 ký tự.',
         ]);
 
         // Kiểm tra đăng nhập

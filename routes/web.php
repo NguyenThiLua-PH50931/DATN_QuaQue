@@ -275,6 +275,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         Route::get('/{id}/description', [AdminProductController::class, 'getDescription'])->name('description');
         Route::get('/variant/{id}/description', [AdminProductController::class, 'getVariantDescription'])->name('variant.description');
         Route::post('/variant/{id}/toggle-status', [AdminProductController::class, 'toggleVariantStatus'])->name('variant.toggleStatus');
+        Route::post('/variant/{id}/update-stock', [AdminProductController::class, 'updateVariantStock'])->name('variant.updateStock');
         Route::get('/trashed', [AdminProductController::class, 'trashed'])->name('trashed');
         Route::get('/{slug}', [AdminProductController::class, 'show'])->name('show');
         Route::post('/bulk-restore', [AdminProductController::class, 'bulkRestore'])->name('bulkRestore');
