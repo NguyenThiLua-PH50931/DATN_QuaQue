@@ -44,7 +44,7 @@
 .status-pending {
   background: linear-gradient(135deg, #fef9c3, #fef3c7);
   color: #a16207;
-  border-color: #fde68a80; 
+  border-color: #fde68a80;
 }
 .status-confirmed {
   background: linear-gradient(135deg, #dbeafe, #bfdbfe);
@@ -85,12 +85,12 @@
 
 
 .btn-primary.btn-sm {
-    padding: 6px 12px; 
-    font-size: 12px;   
-    border-radius: 6px; 
-    width: auto;       
-    text-align: center; 
-    min-width: 100px;   
+    padding: 6px 12px;
+    font-size: 12px;
+    border-radius: 6px;
+    width: auto;
+    text-align: center;
+    min-width: 100px;
     transition: all 0.3s ease;
 }
 
@@ -131,3 +131,13 @@
   display: block;
   margin-bottom: 10px;
 } */
+
+/* Ẩn footer */
+.footer {
+    display: none !important;
+}
+
+/* Hoặc ẩn toàn bộ container footer */
+.container-fluid .footer {
+    display: none !important;
+}
