@@ -10,6 +10,8 @@
     <meta name="keywords"
         content="admin template, Fastkart admin template, dashboard template, flat admin template, responsive admin template, web app">
     <meta name="author" content="pixelstrap">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <link rel="icon" href="{{ asset('frontend/assets/images/favicon/icon.png') }}" type="image/x-icon">
     <link rel="shortcut icon" href="{{ asset('frontend/assets/images/favicon/icon.png') }}" type="image/x-icon">
     <title>@yield('title', 'Admin Panel')</title>
@@ -104,8 +106,8 @@
     <script src="{{ asset('backend/assets/js/scrollbar/custom.js') }}"></script>
     <script src="{{ asset('backend/assets/js/config.js') }}"></script>
     <script src="{{ asset('backend/assets/js/tooltip-init.js') }}"></script>
-    <script src="{{ asset('backend/assets/js/notify/bootstrap-notify.min.js') }}"></script>
-    <script src="{{ asset('backend/assets/js/notify/index.js') }}"></script>
+{{--     <script src="{{ asset('backend/assets/js/notify/bootstrap-notify.min.js') }}"></script>
+    <script src="{{ asset('backend/assets/js/notify/index.js') }}"></script> --}}
     <!-- Chỉ tải ApexCharts cho trang cần thiết -->
     @if (Request::is('dashboard*'))
         <script src="{{ asset('backend/assets/js/chart/apex-chart/apex-chart1.js') }}"></script>

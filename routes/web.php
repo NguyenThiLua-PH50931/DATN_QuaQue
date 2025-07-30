@@ -30,6 +30,7 @@ use App\Http\Controllers\Client\CartController;
 
 use App\Http\Controllers\Client\BlogCommentController as ClientBlogCommentController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
+use App\Http\Controllers\Client\ReviewController as ClientReviewController;
 use App\Http\Controllers\Client\ClientSupportTicketController;
 use App\Http\Controllers\Client\ContactController;
 use App\Http\Controllers\Client\ForgotController;
@@ -52,7 +53,10 @@ Route::redirect('/', '/client/home');
 
 Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
     Route::get('home', [ClientHomeController::class, 'home'])->name('home');
-
+    // đánh giá
+    Route::group(['prefix' => 'danh-gia', 'as' => 'review.'], function () {
+        Route::post('store', [ClientReviewController::class, 'store'])->name('store');
+    });
     // AI CHAT BOT
     Route::post('chatbot', [ChatbotController::class, 'chat'])->name('chatbot.send');
 
@@ -94,6 +98,7 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
         Route::get('index', [CartController::class, 'index'])->name('index');
         Route::post('add', [CartController::class, 'add'])->name('add');
         Route::delete('delete/{id}', [CartController::class, 'delete'])->name('delete');
+        Route::post('/store-quick', [CartController::class, 'storeQuick'])->name('storeQuick');
         // checkbox
         Route::post('bulkDelete', [CartController::class, 'bulkDelete'])->name('bulkDelete');
         // update số lượng giỏ
@@ -270,6 +275,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         Route::get('/{id}/description', [AdminProductController::class, 'getDescription'])->name('description');
         Route::get('/variant/{id}/description', [AdminProductController::class, 'getVariantDescription'])->name('variant.description');
         Route::post('/variant/{id}/toggle-status', [AdminProductController::class, 'toggleVariantStatus'])->name('variant.toggleStatus');
+        Route::post('/variant/{id}/update-stock', [AdminProductController::class, 'updateVariantStock'])->name('variant.updateStock');
         Route::get('/trashed', [AdminProductController::class, 'trashed'])->name('trashed');
         Route::get('/{slug}', [AdminProductController::class, 'show'])->name('show');
         Route::post('/bulk-restore', [AdminProductController::class, 'bulkRestore'])->name('bulkRestore');

@@ -117,7 +117,7 @@
             color: #666 !important;
         }
     </style>
-    @if (session('success') || session('error'))
+    {{-- @if (session('success') || session('error'))
         <div style="position: fixed; top: 32px; right: 32px; z-index: 1055; min-width:320px;max-width:90vw;">
             @if (session('success'))
                 <div class="alert alert-success alert-dismissible shadow rounded-3 fade show mb-2 px-4 py-3 fs-6"
@@ -143,7 +143,28 @@
                 });
             }, 4000);
         </script>
+    @endif --}}
+    @if (session('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Thành công',
+                text: {!! json_encode(session('success')) !!},
+                confirmButtonText: 'OK'
+            });
+        </script>
     @endif
+    @if (session('error'))
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Thông báo',
+                text: {!! json_encode(session('error')) !!},
+                confirmButtonText: 'OK'
+            });
+        </script>
+    @endif
+
 
     <!-- Breadcrumb Section Start -->
     <section class="breadscrumb-section pt-0">
@@ -325,6 +346,7 @@
                                             </div>
                                             <div class="mb-3">
                                                 <label for="order_discount_code">Mã giảm giá đơn hàng</label>
+
                                                 <select id="order_discount_code" name="order_discount_code"
                                                     class="form-control" style="min-width: 300px;"
                                                     @if (!empty($momoResult) && isset($momoResult['resultCode']) && $momoResult['resultCode'] == 0) disabled @endif>
