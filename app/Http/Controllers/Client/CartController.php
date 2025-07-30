@@ -363,4 +363,76 @@ class CartController extends Controller
             'messages' => $messages
         ]);
     }
+    public function storeQuick(Request $request)
+    {
+        if (!$request->ajax()) {
+            return response()->json(['message' => 'Yêu cầu không hợp lệ.'], 400);
+        }
+
+        $request->validate([
+            'product_id'  => 'required|exists:products,id',
+            'variant_id'  => 'required|exists:product_variants,id',
+            'quantity'    => 'required|integer|min:1',
+        ]);
+
+        $userId    = Auth::id();
+        $productId = $request->input('product_id');
+        $variantId = $request->input('variant_id');
+        $quantity  = (int) $request->input('quantity');
+
+        // Lấy biến thể sản phẩm
+        $variant = ProductVariant::with('attributeValues')->find($variantId);
+        if (!$variant) {
+            return response()->json(['message' => 'Biến thể không còn tồn tại.'], 404);
+        }
+
+        // ✅ Check hết hàng hoặc không hoạt động
+        if ($variant->stock <= 0 || !$variant->active) {
+            return response()->json(['message' => 'Sản phẩm này hiện đã hết hàng.'], 400);
+        }
+
+        // ✅ Check vượt quá số lượng tồn kho
+        if ($quantity > $variant->stock) {
+            return response()->json(['message' => 'Số lượng yêu cầu vượt quá tồn kho.'], 400);
+        }
+
+        // Chuẩn bị dữ liệu biến thể để so sánh
+        $variantAttributes = $variant->attributeValues->pluck('id')->sort()->values()->all();
+        $variantAttributesJson = json_encode($variantAttributes, JSON_UNESCAPED_UNICODE);
+
+        $price = $variant->price;
+        if ($price === null || $price <= 0) {
+            return response()->json(['message' => 'Giá sản phẩm không hợp lệ.'], 400);
+        }
+
+        // ✅ Kiểm tra xem đã có trong giỏ chưa
+        $existingItem = CartItem::where('user_id', $userId)
+            ->where('product_id', $productId)
+            ->where('variant_id', $variantId)
+            ->where('variant_attributes', $variantAttributesJson)
+            ->first();
+
+        if ($existingItem) {
+            // Kiểm tra tổng quantity sau khi cộng có vượt tồn kho không
+            $newQuantity = $existingItem->quantity + $quantity;
+            if ($newQuantity > $variant->stock) {
+                return response()->json(['message' => 'Tổng số lượng trong giỏ vượt tồn kho.'], 400);
+            }
+
+            $existingItem->quantity = $newQuantity;
+            $existingItem->price = $price;
+            $existingItem->save();
+        } else {
+            CartItem::create([
+                'user_id'            => $userId,
+                'product_id'         => $productId,
+                'variant_id'         => $variantId,
+                'variant_attributes' => $variantAttributesJson,
+                'price'              => $price,
+                'quantity'           => $quantity,
+            ]);
+        }
+
+        return response()->json(['message' => 'Sản phẩm đã được thêm vào giỏ hàng!'], 200);
+    }
 }
