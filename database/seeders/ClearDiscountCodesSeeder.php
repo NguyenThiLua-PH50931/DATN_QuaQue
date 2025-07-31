@@ -22,6 +22,7 @@ public function run()
     DB::table('order_items')->truncate();
     DB::table('order_status_logs')->truncate();
     DB::table('discount_codes')->truncate();
+    DB::table('cart_items')->truncate();
     // Bật lại
     DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 }

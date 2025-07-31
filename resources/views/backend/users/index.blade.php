@@ -13,10 +13,10 @@
                             <div class="title-header option-title">
                                 <h5>Tài khoản</h5>
                                 <form class="d-inline-flex">
-                                    <a href="{{ route('admin.user.create') }}"
+                                    {{-- <a href="{{ route('admin.user.create') }}"
                                         class="align-items-center btn btn-theme d-flex">
                                         <i data-feather="plus"></i>Thêm mới
-                                    </a>
+                                    </a> --}}
                                 </form>
                             </div>
 

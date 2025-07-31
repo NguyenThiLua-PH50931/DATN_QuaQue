@@ -194,7 +194,19 @@ class ProductController extends Controller
 
         return back()->with('success_modal', 'Đã cập nhật trạng thái sản phẩm!');
     }
+    public function updateVariantStock(Request $request, $id)
+    {
+        $request->validate([
+            'stock' => 'required|integer|min:0',
+        ]);
 
+        $variant = AdminProductVariant::findOrFail($id);
+        $variant->stock = $request->input('stock');
+        // Không cần set active, trigger DB sẽ tự động set active theo stock
+        $variant->save();
+
+        return back()->with('success_modal', 'Cập nhật số lượng thành công!');
+    }
     // Xóa mềm một sản phẩm
     public function destroy($id)
     {

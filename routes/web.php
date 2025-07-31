@@ -123,12 +123,26 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
         Route::post('/checkout/remove-discount', [CheckoutController::class, 'removeDiscount'])->name('checkout.removeDiscount');
         Route::post('/checkout/bank-confirm', [CheckoutController::class, 'bankConfirm'])->name('client.checkout.bankConfirm');
         Route::post('/checkout/update-pending-payment-address', [CheckoutController::class, 'updatePendingPaymentAddress'])->name('checkout.updatePendingPaymentAddress');
+         Route::post('/checkout/check-discount-before-momo', [CheckoutController::class, 'checkDiscountBeforeMomo'])
+        ->name('checkout.checkDiscountBeforeMomo');
     });
     Route::get('/checkout/success', function () {
         return view('frontend.checkout.checkoutsuccess');
     })->name('checkout.success');
 
-
+Route::post('/checkout/save-address-snapshot', function (Request $request) {
+    session([
+        'address_snapshot' => [
+            'recipient_name' => $request->input('recipient_name'),
+            'phone' => $request->input('phone'),
+            'address' => $request->input('address'),
+            'province' => $request->input('province'),
+            'district' => $request->input('district'),
+            'ward' => $request->input('ward'),
+        ]
+    ]);
+    return response()->json(['ok' => true]);
+})->name('checkout.saveAddressSnapshot');
 
     Route::middleware('auth')->group(function () {
         Route::get('/orders', [OrdersController::class, 'index'])->name('orders.index');
@@ -275,6 +289,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         Route::get('/{id}/description', [AdminProductController::class, 'getDescription'])->name('description');
         Route::get('/variant/{id}/description', [AdminProductController::class, 'getVariantDescription'])->name('variant.description');
         Route::post('/variant/{id}/toggle-status', [AdminProductController::class, 'toggleVariantStatus'])->name('variant.toggleStatus');
+        Route::post('/variant/{id}/update-stock', [AdminProductController::class, 'updateVariantStock'])->name('variant.updateStock');
         Route::get('/trashed', [AdminProductController::class, 'trashed'])->name('trashed');
         Route::get('/{slug}', [AdminProductController::class, 'show'])->name('show');
         Route::post('/bulk-restore', [AdminProductController::class, 'bulkRestore'])->name('bulkRestore');
