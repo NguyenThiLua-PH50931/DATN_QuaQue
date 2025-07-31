@@ -472,12 +472,9 @@
                                          @else
                                              <div class="delivery-icon d-flex align-items-center gap-2">
                                                  <i data-feather="user"></i>
-                                                 <span>Tài khoản</span>
+                                                 <span style="font-size: 18px;" class="fw-b">Tài khoản</span>
                                              </div>
-                                             <div class="delivery-detail">
-                                                 <h6>Chào mừng!</h6>
-                                                 <h5>Vui lòng đăng nhập</h5>
-                                             </div>
+                                          
                                          @endif
                                      </div>
 

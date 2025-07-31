@@ -123,12 +123,26 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
         Route::post('/checkout/remove-discount', [CheckoutController::class, 'removeDiscount'])->name('checkout.removeDiscount');
         Route::post('/checkout/bank-confirm', [CheckoutController::class, 'bankConfirm'])->name('client.checkout.bankConfirm');
         Route::post('/checkout/update-pending-payment-address', [CheckoutController::class, 'updatePendingPaymentAddress'])->name('checkout.updatePendingPaymentAddress');
+         Route::post('/checkout/check-discount-before-momo', [CheckoutController::class, 'checkDiscountBeforeMomo'])
+        ->name('checkout.checkDiscountBeforeMomo');
     });
     Route::get('/checkout/success', function () {
         return view('frontend.checkout.checkoutsuccess');
     })->name('checkout.success');
 
-
+Route::post('/checkout/save-address-snapshot', function (Request $request) {
+    session([
+        'address_snapshot' => [
+            'recipient_name' => $request->input('recipient_name'),
+            'phone' => $request->input('phone'),
+            'address' => $request->input('address'),
+            'province' => $request->input('province'),
+            'district' => $request->input('district'),
+            'ward' => $request->input('ward'),
+        ]
+    ]);
+    return response()->json(['ok' => true]);
+})->name('checkout.saveAddressSnapshot');
 
     Route::middleware('auth')->group(function () {
         Route::get('/orders', [OrdersController::class, 'index'])->name('orders.index');
