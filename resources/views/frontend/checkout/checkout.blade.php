@@ -446,7 +446,7 @@
                                                                             type="radio" name="payment_method"
                                                                             id="momo" value="momo"
                                                                             {{ !empty($momoResult) && isset($momoResult['resultCode']) && $momoResult['resultCode'] == 0 ? 'checked' : '' }}>
-                                                                        Thanh toán qua MoMo ảo (Test Sandbox)
+                                                                        Thanh toán qua MoMo
                                                                     </label>
                                                                 </div>
                                                             </div>
@@ -638,61 +638,144 @@
             if (btnOk) {
                 btnOk.onclick = function() {
                     hideModal();
-                    const amountText = document.getElementById('total-amount')?.innerText || '0';
-                    const amount = parseInt(amountText.replace(/[^\d]/g, '')) || 0;
 
-                    // Kiểm tra số tiền > 1000
-                    if (amount < 1000) {
-                        alert('Số tiền phải lớn hơn 1000đ để thanh toán qua MoMo!');
+                    // LẤY VÀ KIỂM TRA CÁC TRƯỜNG ĐỊA CHỈ
+                    const recipient = document.querySelector('input[name="recipient_name"]')?.value.trim();
+                    const phone = document.querySelector('input[name="phone"]')?.value.trim();
+                    const address = document.querySelector('input[name="address"]')?.value.trim();
+                    const province = document.querySelector('select[name="province"]')?.value.trim();
+                    const district = document.querySelector('select[name="district"]')?.value.trim();
+                    const ward = document.querySelector('select[name="ward"]')?.value.trim();
+
+                    if (!recipient || !phone || !address || !province || !district || !ward) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Thiếu thông tin!',
+                            text: 'Bạn cần nhập đầy đủ địa chỉ giao hàng trước khi thanh toán MoMo.',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            document.getElementById('cash')?.click();
+                        });
                         return;
                     }
 
-                    // Sinh orderId cực unique (chống trùng): QQyyyymmdd-xxxx-timestamp
-                    const now = new Date();
-                    const yyyy = now.getFullYear();
-                    const mm = String(now.getMonth() + 1).padStart(2, '0');
-                    const dd = String(now.getDate()).padStart(2, '0');
-                    const dateStr = `${yyyy}${mm}${dd}`;
-                    const random4 = Math.floor(1000 + Math.random() * 9000);
-                    const timestamp = Date.now();
-                    const orderId = `QQ${dateStr}-${random4}-${timestamp}`;
-
-                    // LẤY DANH SÁCH SẢN PHẨM ĐƯỢC CHỌN
-                    const selectedCartItemIds = Array.from(document.querySelectorAll(
-                            'input[name="selected_cart_item_ids[]"]'))
-                        .map(input => parseInt(input.value))
-                        .filter(val => !isNaN(val));
-
-                    if (selectedCartItemIds.length === 0) {
-                        alert('Bạn chưa chọn sản phẩm nào để thanh toán!');
-                        return;
-                    }
-
-                    // DEBUG:
-                    console.log('selectedCartItemIds:', selectedCartItemIds);
-
-                    fetch('/client/pay/momo', {
+                    // GỬI ĐỊA CHỈ LÊN SERVER LƯU VÀO SESSION (AJAX)
+                    fetch('/client/checkout/save-address-snapshot', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
                             },
                             body: JSON.stringify({
-                                amount,
-                                orderId,
-                                selected_cart_item_ids: selectedCartItemIds
+                                recipient_name: recipient,
+                                phone: phone,
+                                address: address,
+                                province: province,
+                                district: district,
+                                ward: ward,
                             })
                         })
-                        .then(res => res.json())
+                        .then(() => {
+                            // Sau khi lưu địa chỉ, kiểm tra mã giảm giá còn lượt không!
+                            const orderDiscountCode = document.getElementById('order_discount_code')
+                                ?.value || '';
+                            const freeShippingCode = document.getElementById('free_shipping_code')?.value ||
+                                '';
+
+                            return fetch('{{ route('client.checkout.checkDiscountBeforeMomo') }}', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                },
+                                body: JSON.stringify({
+                                    order_discount_code: orderDiscountCode,
+                                    free_shipping_code: freeShippingCode
+                                })
+                            });
+                        })
+                        .then(res => res ? res.json() : {
+                            valid: false
+                        })
                         .then(data => {
+                            if (!data.valid) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Thông báo',
+                                    text: data.message ||
+                                        'Mã giảm giá hoặc mã freeship đã hết lượt sử dụng!',
+                                    confirmButtonText: 'OK'
+                                }).then(() => {
+                                    // Chuyển lại sang COD
+                                    document.getElementById('cash')?.click();
+                                });
+
+                                return Promise.reject('Coupon not available');
+                            }
+
+                            // Nếu mã hợp lệ, tiếp tục gọi API thanh toán MoMo như cũ
+                            const amountText = document.getElementById('total-amount')?.innerText || '0';
+                            const amount = parseInt(amountText.replace(/[^\d]/g, '')) || 0;
+
+                            if (amount < 1000) {
+                                alert('Số tiền phải lớn hơn 1000đ để thanh toán qua MoMo!');
+                                return Promise.reject('Amount not enough');
+                            }
+
+                            const now = new Date();
+                            const yyyy = now.getFullYear();
+                            const mm = String(now.getMonth() + 1).padStart(2, '0');
+                            const dd = String(now.getDate()).padStart(2, '0');
+                            const dateStr = `${yyyy}${mm}${dd}`;
+                            const random4 = Math.floor(1000 + Math.random() * 9000);
+                            const timestamp = Date.now();
+                            const orderId = `QQ${dateStr}-${random4}-${timestamp}`;
+
+                            const selectedCartItemIds = Array.from(document.querySelectorAll(
+                                    'input[name="selected_cart_item_ids[]"]'))
+                                .map(input => parseInt(input.value))
+                                .filter(val => !isNaN(val));
+
+                            if (selectedCartItemIds.length === 0) {
+                                alert('Bạn chưa chọn sản phẩm nào để thanh toán!');
+                                return Promise.reject('No cart item selected');
+                            }
+
+                            // DEBUG:
+                            console.log('selectedCartItemIds:', selectedCartItemIds);
+
+                            // Gọi API tạo payUrl MoMo như cũ
+                            return fetch('/client/pay/momo', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                },
+                                body: JSON.stringify({
+                                    amount,
+                                    orderId,
+                                    selected_cart_item_ids: selectedCartItemIds
+                                })
+                            });
+                        })
+                        .then(res => res ? res.json() : null)
+                        .then(data => {
+                            if (!data) return;
                             if (data.payUrl) {
                                 window.location.href = data.payUrl;
-                            } else {
+                            } else if (data.error) {
                                 alert(data.error || 'Không lấy được link thanh toán MoMo!');
                             }
                         })
-                        .catch(() => alert('Có lỗi khi kết nối tới server!'));
+                        .catch((err) => {
+                            // Đã xử lý alert ở trên, không cần gì thêm ở đây.
+                            if (typeof err === 'string') {
+                                console.log('Hủy quy trình MoMo:', err);
+                            }
+                        });
                 };
+
+
             }
         });
     </script>

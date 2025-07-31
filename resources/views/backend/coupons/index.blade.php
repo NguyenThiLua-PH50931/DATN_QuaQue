@@ -269,10 +269,9 @@
 
                                                 <td>
                                                     @if ($coupon->type == 'free_shipping')
-                                                        <span class="badge badge-green"
-                                                            title="Miễn phí vận chuyển">🚚</span>
+                                                        <i class="ri-truck-line" title="Miễn phí vận chuyển"></i>
                                                     @elseif($coupon->type == 'order_discount')
-                                                        <span class="badge badge-blue" title="Giảm giá đơn hàng">🛒</span>
+                                                        <i class="ri-coupon-2-line" title="Giảm giá đơn hàng"></i>
                                                     @else
                                                         <span class="badge badge-gray">?</span>
                                                     @endif
