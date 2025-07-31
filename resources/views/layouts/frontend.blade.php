@@ -641,3 +641,141 @@ document.querySelectorAll('input[name="shipping_method_id"]').forEach(function(r
     @stack('scripts')
 </body>
 </body>
+            </script>
+        <style >
+            .onhover-div-login {
+    min-width: 140 px;
+    /* Độ rộng tối thiểu vừa phải */
+    max-width: 180 px;
+    /* Giới hạn chiều rộng tối đa */
+    background: #fff;
+    border: 1 px solid #ddd;
+    border-radius: 4 px;
+    box-shadow: 0 2 px 6 px rgba(0, 0, 0, 0.12);
+    font-size: 13 px;
+    color: #222;
+    padding: 6px 0;
+}
+
+.user-box-name {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.user-box-name li {
+    padding: 6px 14px;
+    border-bottom: 1px solid #eee;
+}
+
+.user-box-name li:last-child {
+    border-bottom: none;
+}
+
+.user-box-name li a {
+    color: #333;
+    text-decoration: none;
+    display: block;
+    white-space: nowrap;
+    /* Không xuống dòng */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* Ẩn chữ dài quá */
+}
+
+.user-box-name li a:hover {
+    background-color: #e7e7e7;
+    color: #000;
+}
+
+/* Tăng cỡ chữ modal lên 4-5px */
+#view .modal-content,
+#view.modal-content * {
+    font-size: 20 px !important;
+}
+
+#view.title-name {
+    font-size: 28 px !important;
+    font-weight: bold;
+}
+
+#view.price {
+    font-size: 24 px !important;
+    color: #0da487;
+}
+
+#view .main-quickview-image {
+    width: 500 px !important;
+    height: 350 px !important;
+    aspect-ratio: 5 / 4;
+    object-fit: cover !important;
+    border-radius: 16 px;
+    display: block;
+    margin: 0 auto;
+    background: #f8f8f8;
+}
+
+#view.description-thumbnails img {
+    width: 48 px;
+    height: 48 px;
+    object-fit: cover;
+    border-radius: 8 px;
+    border: 2 px solid #eee;
+    cursor: pointer;
+    transition: border 0.2 s;
+    background: #f8f8f8;
+    margin-right: 8 px;
+}
+
+#view.description-thumbnails img.active {
+    border: 2 px solid #0da487;
+}
+
+#view .description-thumbnails {
+    margin-top: 16 px;
+    justify-content: flex-start;
+    gap: 0;
+    flex-wrap: wrap;
+}
+
+#view.right-sidebar-modal,
+#view.right-sidebar-modal * {
+    font-size: 20px !important;
+}
+#view.description-text {
+    font-size: 23px !important;
+}
+#view.product-detail h4 {
+    font-size: 27px !important;
+}
+#view.brand-list h5,
+#view.brand-list h6 {
+    font-size: 20px !important;
+}
+#view.modal-button.btn {
+    font-size: 20px !important;
+}
+#view.right-sidebar-modal,
+#view.right-sidebar-modal * {
+    font-size: 20px !important;
+}
+#view.description-text {
+    font-size: 23px !important;
+}
+#view.product-detail h4 {
+    font-size: 27px !important;
+}
+#view.brand-list h5,
+#view.brand-list h6 {
+    font-size: 20px !important;
+}
+#view.modal-button.btn {
+    font-size: 20px !important;
+}
+
+</style>
+
+    @stack('scripts')
+</body>
+
+        </html>

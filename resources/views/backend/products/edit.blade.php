@@ -160,7 +160,7 @@
                                         </div>
 
                                         {{-- BLOCK: THÔNG TIN CHO SẢN PHẨM KHÔNG CÓ BIẾN THỂ --}}
-                                        <div id="edit-single-product-fields"
+                                        {{-- <div id="edit-single-product-fields"
                                             style="display: {{ old('has_variants', $product->has_variants) == 0 ? 'block' : 'none' }};">
                                             <div class="card mb-3">
                                                 <div class="card-body">
@@ -207,12 +207,12 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> --}}
 
                                         {{-- BLOCK: CHỌN THUỘC TÍNH VÀ GIÁ TRỊ DÙNG CHECKBOX --}}
                                         <div id="edit-variant-attribute-selection"
                                             style="display: {{ old('has_variants', $product->has_variants) == 1 ? 'block' : 'none' }};">
-                                            <div class="card mb-3">
+                                            {{-- <div class="card mb-3">
                                                 <div class="card-body">
                                                     <h6 class="fw-bold mb-3">Chọn thuộc tính và giá trị cho biến thể</h6>
                                                     <input type="text" class="form-control mb-3"
@@ -503,8 +503,6 @@
                                                             </div>
                                                         </div> --}}
                                                     </div>
-
-
                                                     @endforeach
                                                 </div>
                                             </div>
