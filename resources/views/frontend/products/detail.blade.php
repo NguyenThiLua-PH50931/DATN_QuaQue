@@ -177,12 +177,6 @@
                                         </button>
                                     </div>
                                 </form>
-                                <div class="buy-box">
-                                    <a href="wishlist.html">
-                                        <i data-feather="heart"></i>
-                                        <span>Add To Wishlist</span>
-                                    </a>
-                                </div>
 
                                 <div class="pickup-box">
 
@@ -461,71 +455,7 @@
     </section>
     <!-- Releted Product Section End -->
     <!-- Quick View Modal Box Start -->
-    <div class="modal fade theme-modal view-modal" id="quickviewModal" tabindex="-1"
-        aria-labelledby="quickviewModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-xl modal-fullscreen-sm-down">
-            <div class="modal-content">
-                <div class="modal-header p-0">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="row g-sm-4 g-2">
-                        <div class="col-lg-6">
-                            <div class="slider-image">
-                                <img src="" id="quickview-image" class="img-fluid blur-up lazyload"
-                                    alt="Product Image" />
-                            </div>
-                        </div>
 
-                        <div class="col-lg-6">
-                            <div class="right-sidebar-modal">
-                                <h4 class="title-name" id="quickview-name">Tên sản phẩm</h4>
-                                <h4 class="price" id="quickview-price">Giá</h4>
-                                <div class="product-rating">
-                                    <ul class="rating" id="quickview-rating">
-                                        <!-- JS render stars -->
-                                    </ul>
-                                    <span class="ms-2" id="quickview-review-count">Đánh giá</span>
-                                </div>
-
-                                <div class="product-detail">
-                                    <h4>Mô tả sản phẩm:</h4>
-                                    <div id="quickview-description"></div>
-                                </div>
-
-                                <ul class="brand-list">
-                                    <li>
-                                        <div class="brand-box">
-                                            <h5>Danh mục:</h5>
-                                            <h6 id="quickview-category-name"></h6>
-                                        </div>
-                                    </li>
-                                </ul>
-
-                                <div id="quickview-attributes-container" class="select-size">
-                                    <!-- Thuộc tính biến thể render ở đây -->
-                                </div>
-
-                                <div class="modal-button">
-                                    {{-- <button
-                                    id="quickview-add-to-cart"
-                                    class="btn btn-md add-cart-button icon">
-                                    Thêm vào giỏ hàng
-                                </button> --}}
-                                    <button id="quickview-view-details"
-                                        class="btn theme-bg-color view-button icon text-white fw-bold btn-md">
-                                        Xem chi tiết
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
 
     <!-- Quick View Modal Box End -->
@@ -1016,7 +946,7 @@
                     icon: 'error', // hoặc 'success'
                     title: 'Lỗi vượt quá số lượng tồn kho',
                     text: '{{ session('
-                                                    error ') }}',
+                                                                                                                                                        error ') }}',
                     confirmButtonColor: '#0da487',
                     width: 350, // giảm chiều ngang
                     padding: '1rem 1.5rem', // giảm padding
@@ -1033,7 +963,7 @@
                     icon: 'success',
                     title: 'Thành công',
                     text: '{{ session('
-                                                    success ') }}',
+                                                                                                                                                        success ') }}',
                     confirmButtonColor: '#0da487',
                     width: 350,
                     padding: '1rem 1.5rem',
@@ -1046,81 +976,7 @@
             @endif
         });
     </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.quickview-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const slug = this.dataset.slug;
-                    if (!slug) return alert('Không có slug sản phẩm.');
 
-                    const modal = document.getElementById('quickviewModal');
-                    if (!modal) return alert('Modal Quick View chưa tồn tại trên trang.');
-
-                    // Reset modal trước khi load dữ liệu mới
-                    modal.querySelector('#quickview-image').src = '';
-                    modal.querySelector('#quickview-name').textContent = '';
-                    modal.querySelector('#quickview-price').textContent = '';
-                    modal.querySelector('#quickview-description').innerHTML = '';
-                    modal.querySelector('#quickview-category-name').textContent = '';
-                    modal.querySelector('#quickview-review-count').textContent = '';
-                    modal.querySelector('#quickview-rating').innerHTML = '';
-
-                    // Mở modal Bootstrap
-                    const bsModal = new bootstrap.Modal(modal);
-                    bsModal.show();
-
-                    fetch(`/client/san-pham/quickview/${slug}`)
-                        .then(res => {
-                            if (!res.ok) throw new Error(`Lỗi tải dữ liệu (${res.status})`);
-                            return res.json();
-                        })
-                        .then(data => {
-                            const product = data.product;
-
-                            modal.querySelector('#quickview-image').src = product.image ||
-                                '/assets/images/no-image.png';
-                            modal.querySelector('#quickview-name').textContent = product.name;
-                            modal.querySelector('#quickview-description').innerHTML = product
-                                .description || '';
-                            modal.querySelector('#quickview-category-name').textContent =
-                                product.category_name || '';
-                            modal.querySelector('#quickview-review-count').textContent =
-                                `${product.review_count} Reviews`;
-
-                            // Biến thể đã là mảng chuẩn, lấy biến thể đầu tiên
-                            const variantsArray = product.variants || [];
-                            if (variantsArray.length > 0) {
-                                modal.querySelector('#quickview-price').textContent = Number(
-                                    variantsArray[0].price).toLocaleString() + ' đ';
-                            } else {
-                                modal.querySelector('#quickview-price').textContent = 'Liên hệ';
-                            }
-
-                            // Render rating sao
-                            const ratingEl = modal.querySelector('#quickview-rating');
-                            ratingEl.innerHTML = '';
-                            for (let i = 1; i <= 5; i++) {
-                                ratingEl.innerHTML +=
-                                    `<li><i data-feather="star" class="${i <= product.avg_rating ? 'fill' : ''}"></i></li>`;
-                            }
-                            feather.replace();
-
-                            // Nút xem chi tiết chuyển đến trang chi tiết sản phẩm
-                            modal.querySelector('#quickview-view-details').onclick = () => {
-                                window.location.href = `/client/san-pham/${slug}`;
-                            };
-
-                            // TODO: Bạn có thể thêm xử lý chọn biến thể, cập nhật giá, thêm giỏ hàng tại đây
-                        })
-                        .catch(err => {
-                            console.error('Lỗi tải Quick View:', err);
-                            alert('Không thể tải thông tin sản phẩm, vui lòng thử lại sau.');
-                            bsModal.hide();
-                        });
-                });
-            });
-        });
-    </script>
     <style>
         .swal2-popup-small {
             font-size: 14px !important;

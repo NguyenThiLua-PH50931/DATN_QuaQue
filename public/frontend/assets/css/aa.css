@@ -12,7 +12,6 @@
     margin-top: 10px; /* Giảm margin trên của mỗi thẻ */
     margin-right: 5px;
     margin-bottom: 10px; /* Giảm margin dưới của mỗi thẻ */
-
 }
 
 .product-detail {
@@ -37,7 +36,8 @@
     margin-top: auto;
 }
 
-.product-rating, .add-to-cart-box {
+.product-rating,
+.add-to-cart-box {
     margin-top: auto;
 }
 
@@ -68,7 +68,7 @@
     position: absolute;
     top: 10px;
     left: 10px;
-    z-index: 5;
+    z-index: 1;
     background: linear-gradient(135deg, #ff5722, #e91e63);
     color: #fff;
     font-weight: bold;
@@ -82,8 +82,15 @@
 }
 
 @keyframes pulse {
-    0%, 100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.1); opacity: 0.85; }
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.85;
+    }
 }
 
 .home-detail h1,
@@ -92,23 +99,25 @@
 .home-detail h4,
 .home-detail h6,
 .home-detail p {
-  background: linear-gradient(90deg, #ffffff, #00f0ff); /* Hồng → Tím */
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.6); /* Viền đen nổi bật */
+    background: linear-gradient(90deg, #ffffff, #00f0ff); /* Hồng → Tím */
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.6); /* Viền đen nổi bật */
 }
-
-
 
 .offer-text,
 .coupon-code {
-  text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.75);
+    text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.75);
 }
 
 .label-tagg-top {
-    background: linear-gradient(135deg, #21f38a, #00bcd4); /* xanh dương sang xanh ngọc */
+    background: linear-gradient(
+        135deg,
+        #21f38a,
+        #00bcd4
+    ); /* xanh dương sang xanh ngọc */
     border: 2px solid #1976d2; /* viền xanh dương đậm */
     color: #fff;
 }

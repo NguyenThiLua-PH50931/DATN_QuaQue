@@ -162,6 +162,21 @@ $order = \App\Models\admin\Order::create([
             'total'                     => ($item->price ?? 0) * ($item->quantity ?? 1),
         ]);
         // Trừ kho...
+        // Trừ kho
+if ($item->variant_id) {
+    $variant = \App\Models\admin\ProductVariant::find($item->variant_id);
+    if ($variant) {
+        $variant->stock = max(0, $variant->stock - $item->quantity);
+        $variant->save();
+    }
+} else {
+    $product = \App\Models\admin\Product::find($item->product_id);
+    if ($product) {
+        $product->stock = max(0, $product->stock - $item->quantity);
+        $product->save();
+    }
+}
+
     }
     if ($orderDiscountCode && $orderDiscountCode->scope === 'global') {
     $orderDiscountCode->increment('used_count');
@@ -169,6 +184,17 @@ $order = \App\Models\admin\Order::create([
 if ($freeShippingCode && $freeShippingCode->scope === 'global') {
     $freeShippingCode->increment('used_count');
 }
+  $order->loadMissing('user');
+            if ($order->user && $order->user->email) {
+                try {
+                    \Mail::to($order->user->email)->send(new \App\Mail\OrderStatusUpdated($order));
+                } catch (\Throwable $e) {
+                    \Log::warning('Không gửi được mail trạng thái đơn hàng', [
+                        'order_id' => $order->id,
+                        'error' => $e->getMessage()
+                    ]);
+                }
+            }
 
 
     // Xoá cart và session các thông tin đặt hàng
@@ -265,17 +291,17 @@ $validDiscountCodes = \App\Models\admin\DiscountCode::where('active', 1)
 ->filter(function ($code) use ($subtotal, $user) {
     $singleUseConditionTypes = ['new_user_30d', 'first_order'];
 
-    // Check nếu user đã có đơn chưa hủy dùng mã này thì không hiển thị nữa
-    $hasUncancelledOrder = \App\Models\admin\Order::where('user_id', $user->id)
-        ->where(function($q) use ($code) {
-            $q->where('discount_code', $code->code)
-              ->orWhere('free_shipping_code', $code->code);
-        })
-        ->where('status', '!=', 'cancelled') // hoặc 'canceled', tùy bạn dùng status gì cho hủy đơn
-        ->exists();
-    if ($hasUncancelledOrder) return false;
+    // FIRST ORDER
+    if ($code->scope === 'conditional' && $code->condition_type === 'first_order') {
+        $hasOrder = \App\Models\admin\Order::where('user_id', $user->id)
+            ->where('status', '!=', 'cancelled')
+            ->exists();
+        if ($hasOrder) return false;
+        if ($code->min_order_amount && $subtotal < $code->min_order_amount) return false;
+        return true;
+    }
 
-    // Check cho mã conditional
+    // Các loại conditional khác (new_user_30d...)
     if ($code->scope === 'conditional' && in_array($code->condition_type, $singleUseConditionTypes)) {
         $alreadyUsed = \App\Models\admin\DiscountCodeUsage::where('discount_code_id', $code->id)
             ->where('user_id', $user->id)
@@ -285,16 +311,32 @@ $validDiscountCodes = \App\Models\admin\DiscountCode::where('active', 1)
             $days = $user->created_at->diffInDays(now());
             if ($days >= 30) return false;
         }
-        // Kiểm tra min_order_amount với cả conditional!
-        if ($code->min_order_amount && $subtotal < $code->min_order_amount) {
-            return false;
-        }
+        if ($code->min_order_amount && $subtotal < $code->min_order_amount) return false;
         return true;
     }
 
-    // Các mã global khác: kiểm tra min_order_amount (nếu có)
+    // GLOBAL COUPON: CẦN THÊM ĐIỀU KIỆN NÀY!
+    if ($code->scope === 'global') {
+        // Check đã dùng chưa (user đã đặt đơn - chưa bị hủy - dùng mã này)
+        $alreadyUsed = \App\Models\admin\Order::where('user_id', $user->id)
+            ->where(function($q) use ($code) {
+                $q->where('discount_code', $code->code)
+                  ->orWhere('free_shipping_code', $code->code);
+            })
+            ->where('status', '!=', 'cancelled')
+            ->exists();
+        if ($alreadyUsed) return false;
+
+        // Check tổng lượt dùng toàn hệ thống, đã hết chưa
+        if ($code->usage_limit && $code->used_count >= $code->usage_limit) return false;
+        if ($code->min_order_amount && $subtotal < $code->min_order_amount) return false;
+        return true;
+    }
+
+    // Các loại mã khác nếu có
     return !$code->min_order_amount || $subtotal >= $code->min_order_amount;
 });
+
 
     // =========================
     // END FILTER COUPON

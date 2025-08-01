@@ -15,7 +15,7 @@
                                         <h5>Tạo mã giảm giá</h5>
                                     </div>
 
-                                    @if ($errors->any())
+                                    {{-- @if ($errors->any())
                                         <div class="alert alert-danger">
                                             <ul class="mb-0">
                                                 @foreach ($errors->all() as $error)
@@ -23,7 +23,7 @@
                                                 @endforeach
                                             </ul>
                                         </div>
-                                    @endif
+                                    @endif --}}
 
                                     <form class="theme-form theme-form-2 mega-form" method="POST"
                                         action="{{ route('admin.coupon.store') }}">
@@ -165,8 +165,7 @@
                                             </div>
 
                                             {{-- Giá trị giảm --}}
-                                            <div class="mb-4 row align-items-center group-discount"
-                                                id="discount-value-row">
+                                            <div class="mb-4 row align-items-center group-discount" id="discount-value-row">
                                                 <label class="form-label-title col-lg-2 col-md-3 mb-0">Giá trị giảm</label>
                                                 <div class="col-md-9 col-lg-10">
                                                     <input class="form-control" type="number" step="0.01"

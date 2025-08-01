@@ -339,13 +339,20 @@ class ProductController extends Controller
 
         $avgRating = round($product->reviews->avg('rating') ?? 0);
 
+        // Lấy ảnh mô tả từ bảng product_images
+        $descriptionImages = $product->images->map(function ($image) {
+            return asset('storage/' . $image->image_url);
+        })->toArray();
+
         return response()->json([
             'product' => [
                 'id' => $product->id,
                 'name' => $product->name,
                 'description' => $product->description,
+                'origin' => $product->origin,
                 'category_name' => $product->category->name ?? '',
                 'image' => $product->image ? asset('storage/' . $product->image) : null, // Ảnh product
+                'description_images' => $descriptionImages, // Ảnh mô tả
                 'variants' => $variantMap, // Mảng variant
                 'attributes' => $attributeOptions,
                 'avg_rating' => $avgRating,

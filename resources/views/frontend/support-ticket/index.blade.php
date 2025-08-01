@@ -83,7 +83,7 @@
                                         <label for="title" class="form-label fw-medium">Tiêu đề</label>
                                         <div class="input-group">
                                             <input type="text" name="title" class="form-control" id="title"
-                                                required placeholder="Nhập tiêu đề">
+                                                placeholder="Nhập tiêu đề">
                                         </div>
                                     </div>
 
@@ -92,7 +92,7 @@
                                         <label for="editor" class="form-label fw-medium">Nội dung</label>
                                         <div class="input-group"></div>
 
-                                        <textarea name="content" class="form-control" id="editor" required placeholder="Nhập nội dung" rows="4"></textarea>
+                                        <textarea name="content" class="form-control" id="editor" placeholder="Nhập nội dung" rows="4"></textarea>
                                     </div>
                             </div>
 

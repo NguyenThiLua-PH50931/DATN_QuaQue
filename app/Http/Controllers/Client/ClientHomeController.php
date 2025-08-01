@@ -119,7 +119,7 @@ class ClientHomeController extends Controller
 
     $availableLatestProducts = collect();
     foreach ($latestProducts as $product) {
-        if ($availableLatestProducts->count() >= 8) break;
+        if ($availableLatestProducts->count() >= 12) break;
         if ($product->has_variants) {
             $availableVariants = $product->variants->where('stock', '>', 0)->where('active', 1);
             if ($availableVariants->count() > 0) {
@@ -143,7 +143,7 @@ class ClientHomeController extends Controller
             ->get();
 
         foreach ($additionalLatestProducts as $product) {
-            if ($availableLatestProducts->count() >= 8) break;
+            if ($availableLatestProducts->count() >= 12) break;
             if ($product->has_variants) {
                 $availableVariants = $product->variants->where('stock', '>', 0)->where('active', 1);
                 if ($availableVariants->count() > 0) {
@@ -156,7 +156,7 @@ class ClientHomeController extends Controller
             }
         }
     }
-    $latestProducts = $availableLatestProducts->take(8);
+    $latestProducts = $availableLatestProducts->take(12);
 
     // ---------------------- CATEGORIES ----------------------
     $categories = Category::all();
