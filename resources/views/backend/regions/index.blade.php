@@ -121,7 +121,8 @@
                         @endif
                         <div class="mb-3">
                             <label for="name" class="form-label">Tên vùng miền</label>
-                            <input type="text" class="form-control" id="name" name="name" required value="{{ old('name') }}">
+                            <input type="text" class="form-control" id="name" name="name"
+                                value="{{ old('name') }}">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -147,7 +148,7 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="edit_name" class="form-label">Tên vùng miền</label>
-                            <input type="text" class="form-control" id="edit_name" name="name" required>
+                            <input type="text" class="form-control" id="edit_name" name="name">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -264,7 +265,7 @@
     </div>
 
     @includeIf('backend.footer')
-        <script>
+    <script>
         $(document).ready(function() {
             $('#table_id').DataTable({
                 language: {
@@ -359,7 +360,7 @@
                                     toastr.info(response.message);
                                 }
                                 window.location
-                            .reload(); // Tải lại trang sau khi hoàn thành
+                                    .reload(); // Tải lại trang sau khi hoàn thành
                             },
                             error: function(xhr) {
                                 $('#bulkDeleteModal').modal('hide');
@@ -399,4 +400,3 @@
     </script>
 
 @endsection
-

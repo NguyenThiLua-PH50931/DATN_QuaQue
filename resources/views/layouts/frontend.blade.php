@@ -608,6 +608,39 @@ document.querySelectorAll('input[name="shipping_method_id"]').forEach(function(r
                 });
             }
         });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sửa lỗi overlay đen không tắt và không khóa scroll khi đóng modal (áp dụng cho mọi modal)
+            document.querySelectorAll('.modal').forEach(function(modal) {
+                modal.addEventListener('hidden.bs.modal', function () {
+                    setTimeout(function() {
+                        if (!document.querySelector('.modal.show')) {
+                            var backdrop = document.querySelector('.modal-backdrop');
+                            if (backdrop) backdrop.remove();
+                            document.body.classList.remove('modal-open');
+                            document.body.style.overflow = '';
+                        }
+                    }, 100);
+                });
+            });
+            document.querySelectorAll('.btn-close').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    setTimeout(function() {
+                        if (!document.querySelector('.modal.show')) {
+                            var backdrop = document.querySelector('.modal-backdrop');
+                            if (backdrop) backdrop.remove();
+                            document.body.classList.remove('modal-open');
+                            document.body.style.overflow = '';
+                        }
+                    }, 100);
+                });
+            });
+        });
+    </script>
+    @stack('scripts')
+</body>
+</body>
             </script>
         <style >
             .onhover-div-login {
