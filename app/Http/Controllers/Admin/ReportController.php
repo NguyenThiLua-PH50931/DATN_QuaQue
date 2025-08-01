@@ -13,122 +13,142 @@ use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
-    public function dashboard(Request $request)
-    {
-        if ($request->has('reset')) {
-            return redirect()->route('admin.dashboard');
-        }
-
-        $year = date('Y');
-        $date = $request->input('rating_date');
-        $from = $request->input('rating_from_date');
-        $to   = $request->input('rating_to_date');
-
-        // Khởi tạo query
-        $orderQuery = Order::query();
-        $orderItemQuery = OrderItem::query();
-        $reviewQuery = Review::query();
-        $userQuery = User::query();
-
-        // Apply filters nếu có
-        if ($date) {
-            $orderQuery->whereDate('orders.created_at', $date);
-            $orderItemQuery->whereDate('order_items.created_at', $date);
-            $reviewQuery->whereDate('reviews.created_at', $date);
-            $userQuery->whereDate('users.created_at', $date);
-        } else {
-            if ($from) {
-                $orderQuery->whereDate('orders.created_at', '>=', $from);
-                $orderItemQuery->whereDate('order_items.created_at', '>=', $from);
-                $reviewQuery->whereDate('reviews.created_at', '>=', $from);
-                $userQuery->whereDate('users.created_at', '>=', $from);
-            }
-            if ($to) {
-                $orderQuery->whereDate('orders.created_at', '<=', $to);
-                $orderItemQuery->whereDate('order_items.created_at', '<=', $to);
-                $reviewQuery->whereDate('reviews.created_at', '<=', $to);
-                $userQuery->whereDate('users.created_at', '<=', $to);
-            }
-        }
-
-        // Tổng doanh thu
-        $totalRevenue = (clone $orderQuery)
-            ->where('status', 'delivered')
-            ->sum('total_amount');
-
-        // Số đơn hoàn thành
-        $completedOrders = (clone $orderQuery)
-            ->where('status', 'delivered')
-            ->count();
-
-        // Sản phẩm bán chạy nhất
-        $topProduct = (clone $orderItemQuery)
-            ->join('orders', 'order_items.order_id', '=', 'orders.id')
-            ->where('orders.status', 'completed')
-            ->join('products', 'order_items.product_id', '=', 'products.id')
-            ->select(
-                'products.name',
-                DB::raw('SUM(order_items.total) as total_revenue')
-            )
-            ->groupBy('products.id', 'products.name')
-            ->orderByDesc('total_revenue')
-            ->first();
-
-        // Vùng bán chạy nhất
-     $topRegion = (clone $orderQuery)
-    ->where('orders.status', 'completed')
-    ->select(
-        'orders.full_address',
-        DB::raw('SUM(orders.total_amount) as total_revenue')
-    )
-    ->groupBy('orders.full_address')
-    ->orderByDesc('total_revenue')
-    ->first();
-
-
-        // Người dùng mới trong tháng hiện tại
-        $newUsers = User::whereMonth('created_at', date('m'))
-            ->whereYear('created_at', $year)
-            ->count();
-
-        // Tổng số yêu cầu hỗ trợ
-        $totalRequests = SupportRequest::count();
-
-        // Sản phẩm được đánh giá cao nhất
-        $topRatedProduct = (clone $reviewQuery)
-            ->join('products', 'reviews.product_id', '=', 'products.id')
-            ->select(
-                'products.name',
-                DB::raw('AVG(reviews.rating) as average_rating')
-            )
-            ->groupBy('products.id', 'products.name')
-            ->orderByDesc('average_rating')
-            ->first();
-
-        // Thống kê trạng thái đơn hàng
-        $completed = (clone $orderQuery)->where('status', 'completed')->count();
-        $canceled  = (clone $orderQuery)->where('status', 'cancelled')->count();
-
-        // Xử lý trường hợp không có dữ liệu
-        // $topProduct = $topProduct ?? (object)['name' => 'N/A', 'total_revenue' => 0];
-        // $topRegion = $topRegion ?? (object)['address' => 'N/A', 'total_revenue' => 0];
-        // $topRatedProduct = $topRatedProduct ?? (object)['name' => 'N/A', 'average_rating' => 0];
-
-        return view('backend.reports.dashboard', compact(
-            'totalRevenue',
-            'completedOrders',
-            'topProduct',
-            'topRegion',
-            'newUsers',
-            'totalRequests',
-            'topRatedProduct',
-            'completed',
-            'canceled',
-            'date',
-            'from',
-            'to'
-        ));
+public function dashboard(Request $request)
+{
+    if ($request->has('reset')) {
+        return redirect()->route('admin.dashboard');
     }
+
+    // ---- LẤY NĂM từ request, dùng cho biểu đồ trend ----
+    $year = $request->input('year', date('Y')); // <--- CHỈ DÙNG DÒNG NÀY!
+    $date = $request->input('rating_date');
+    $from = $request->input('rating_from_date');
+    $to   = $request->input('rating_to_date');
+
+    // Khởi tạo query cho filter ngày/tháng (cho card, table,...)
+    $orderQuery = Order::query();
+    $orderItemQuery = OrderItem::query();
+    $reviewQuery = Review::query();
+    $userQuery = User::query();
+
+    // Apply filter ngày nếu có
+    if ($date) {
+        $orderQuery->whereDate('orders.created_at', $date);
+        $orderItemQuery->whereDate('order_items.created_at', $date);
+        $reviewQuery->whereDate('reviews.created_at', $date);
+        $userQuery->whereDate('users.created_at', $date);
+    } else {
+        if ($from) {
+            $orderQuery->whereDate('orders.created_at', '>=', $from);
+            $orderItemQuery->whereDate('order_items.created_at', '>=', $from);
+            $reviewQuery->whereDate('reviews.created_at', '>=', $from);
+            $userQuery->whereDate('users.created_at', '>=', $from);
+        }
+        if ($to) {
+            $orderQuery->whereDate('orders.created_at', '<=', $to);
+            $orderItemQuery->whereDate('order_items.created_at', '<=', $to);
+            $reviewQuery->whereDate('reviews.created_at', '<=', $to);
+            $userQuery->whereDate('users.created_at', '<=', $to);
+        }
+    }
+
+    // Card thống kê chính
+    $totalRevenue = (clone $orderQuery)->where('status', 'delivered')->sum('total_amount');
+    $completedOrders = (clone $orderQuery)->where('status', 'delivered')->count();
+
+    // ------ PHẦN ĐANG LÀM: Trend chart theo NĂM ------
+    $monthlyStats = Order::select(
+        DB::raw('MONTH(created_at) as month'),
+        DB::raw('SUM(total_amount) as revenue'),
+        DB::raw('COUNT(id) as orders')
+    )
+    ->where('status', 'delivered')
+    ->whereYear('created_at', $year)
+    ->groupBy(DB::raw('MONTH(created_at)'))
+    ->orderBy('month')
+    ->get();
+
+    // ...Các phần khác bạn giữ nguyên như cũ
+    $topProductVariants = OrderItem::join('orders', 'order_items.order_id', '=', 'orders.id')
+        ->join('product_variants', 'order_items.product_variant_value_id', '=', 'product_variants.id')
+        ->join('products', 'product_variants.product_id', '=', 'products.id')
+        ->where('orders.status', 'delivered')
+        ->select(
+            'product_variants.id',
+            'products.name as product_name',
+            'product_variants.name as variant_name',
+            'product_variants.image',
+            'product_variants.price',
+            'product_variants.stock',
+            DB::raw('SUM(order_items.quantity) as sold_quantity'),
+            DB::raw('SUM(order_items.quantity * order_items.price) as total_revenue')
+        )
+        ->groupBy(
+            'product_variants.id',
+            'products.name',
+            'product_variants.name',
+            'product_variants.image',
+            'product_variants.price',
+            'product_variants.stock'
+        )
+        ->orderByDesc('sold_quantity')
+        ->get();
+
+    $regionSales = OrderItem::join('orders', 'order_items.order_id', '=', 'orders.id')
+        ->join('product_variants', 'order_items.product_variant_value_id', '=', 'product_variants.id')
+        ->join('products', 'product_variants.product_id', '=', 'products.id')
+        ->join('regions', 'products.region_id', '=', 'regions.id')
+        ->where('orders.status', 'delivered')
+        ->select(
+            'regions.id',
+            'regions.name',
+            DB::raw('SUM(order_items.quantity * order_items.price) as total_revenue'),
+            DB::raw('SUM(order_items.quantity) as total_quantity_sold')
+        )
+        ->groupBy('regions.id', 'regions.name')
+        ->orderByDesc('total_quantity_sold')
+        ->get();
+
+    $newUsers = User::whereMonth('created_at', date('m'))
+        ->whereYear('created_at', $year)
+        ->count();
+
+    $totalRequests = SupportRequest::count();
+
+    $ratedProducts = Review::join('products', 'reviews.product_id', '=', 'products.id')
+        ->select(
+            'products.id',
+            'products.name as product_name',
+            'products.image',
+            DB::raw('AVG(reviews.rating) as average_rating'),
+            DB::raw('COUNT(reviews.id) as review_count')
+        )
+        ->groupBy('products.id', 'products.name', 'products.image')
+        ->orderByDesc('average_rating')
+        ->get();
+
+    $completed = (clone $orderQuery)->where('status', 'delivered')->count();
+    $canceled  = (clone $orderQuery)->where('status', 'cancelled')->count();
+
+    // Trả về view với đầy đủ biến (truyền luôn $year để filter năm trên view nếu muốn)
+    return view('backend.reports.dashboard', compact(
+        'year',
+        'monthlyStats',
+        'totalRevenue',
+        'completedOrders',
+        'topProductVariants',
+        'regionSales',
+        'newUsers',
+        'totalRequests',
+        'ratedProducts',
+        'completed',
+        'canceled',
+        'date',
+        'from',
+        'to'
+    ));
+}
+
 
 
     public function revenueByMonthYear(Request $request)

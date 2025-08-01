@@ -41,6 +41,8 @@
     @stack('styles')
     <link rel="stylesheet" href="{{ asset('backend/assets/css/aa.css') }}">
     <link rel="stylesheet" href="{{ asset('backend/assets/css/modal-fix.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+
 </head>
 
 <body>
@@ -106,7 +108,7 @@
     <script src="{{ asset('backend/assets/js/scrollbar/custom.js') }}"></script>
     <script src="{{ asset('backend/assets/js/config.js') }}"></script>
     <script src="{{ asset('backend/assets/js/tooltip-init.js') }}"></script>
-{{--     <script src="{{ asset('backend/assets/js/notify/bootstrap-notify.min.js') }}"></script>
+    {{--     <script src="{{ asset('backend/assets/js/notify/bootstrap-notify.min.js') }}"></script>
     <script src="{{ asset('backend/assets/js/notify/index.js') }}"></script> --}}
     <!-- Chỉ tải ApexCharts cho trang cần thiết -->
     @if (Request::is('dashboard*'))
