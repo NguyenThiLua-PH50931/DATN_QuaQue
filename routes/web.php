@@ -198,6 +198,10 @@ Route::post('/checkout/save-address-snapshot', function (Request $request) {
 
     // AI Chatbot
 
+    // --- Thêm API lấy trạng thái đơn hàng cho polling ---
+Route::middleware('auth')->get('/orders/{order}/status', [OrdersController::class, 'orderStatus'])->name('orders.status');
+
+
 });
 
 //----------------------------------------------------------
@@ -250,6 +254,8 @@ Route::post('/save-shipping-method', function (Request $request) {
     return response()->json(['success' => true]);
 });
 
+// route api real-time admin/orders 
+Route::get('/admin/orders/latest-id', [App\Http\Controllers\Admin\OrderController::class, 'latestOrderId']);
 
 // ADMIN:
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin'], function () {

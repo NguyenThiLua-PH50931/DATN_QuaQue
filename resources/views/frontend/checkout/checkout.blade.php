@@ -578,6 +578,12 @@
                             @endif
                             <button type="submit" id="submit-order-btn"
                                 class="btn theme-bg-color text-white btn-md w-100 mt-4 fw-bold">Đặt hàng</button>
+                            <a href="{{ route('client.cart.index') }}"
+                                class="btn btn-outline-secondary btn-md w-100 mt-2 fw-bold d-flex align-items-center justify-content-center"
+                                style="gap: 6px;">
+                                <i class="fa-solid fa-arrow-left"></i>
+                                Quay lại giỏ hàng
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -633,7 +639,13 @@
             }
 
             if (momoBtn) momoBtn.addEventListener('click', showModal);
-            if (btnCancel) btnCancel.onclick = hideModal;
+            if (btnCancel) {
+                btnCancel.onclick = function() {
+                    hideModal();
+                    document.getElementById('cash')?.click(); // <-- Bắt buộc phải đặt ở đây!
+                }
+            }
+
 
             if (btnOk) {
                 btnOk.onclick = function() {
