@@ -798,6 +798,7 @@
             const orderDiscountCode = document.getElementById('order_discount_code')?.value || '';
             const freeShippingCode = document.getElementById('free_shipping_code')?.value || '';
             const shippingMethodId = document.querySelector('input[name="shipping_method"]:checked')?.value || '';
+            const province = document.getElementById('province')?.value || ''; // <-- lấy tỉnh
 
             const selectedCartItemIds = Array.from(document.querySelectorAll('input[name="selected_cart_item_ids[]"]'))
                 .map(input => parseInt(input.value));
@@ -812,7 +813,8 @@
                         shipping_method: shippingMethodId,
                         order_discount_code: orderDiscountCode,
                         free_shipping_code: freeShippingCode,
-                        selected_cart_item_ids: selectedCartItemIds
+                        selected_cart_item_ids: selectedCartItemIds,
+                        province: province // <-- Gửi lên backend!
                     })
                 })
                 .then(res => res.json())
@@ -849,9 +851,11 @@
                 freeShippingSelect.addEventListener('change', updateOrderSummary);
                 if (!freeShippingSelect.value) freeShippingSelect.selectedIndex = 0;
             }
+            document.getElementById('province')?.addEventListener('change', updateOrderSummary);
 
             // Gọi một lần để chắc chắn giá đúng khi load trang
-            updateOrderSummary();
+            setTimeout(updateOrderSummary, 200);
+
         });
     </script>
 
