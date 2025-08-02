@@ -232,4 +232,12 @@ public function updateStatus(Request $request, Order $order)
             'payment_status' => $order->payment_status,
         ]);
     }
+    // Controller: Admin\OrderController
+public function latestOrderId()
+{
+    // Dùng model nào cũng được vì đều là bảng 'orders'
+    $latestOrder = \App\Models\admin\Order::orderByDesc('id')->first();
+    return response()->json(['latest_id' => $latestOrder?->id ?? 0]);
+}
+
 }

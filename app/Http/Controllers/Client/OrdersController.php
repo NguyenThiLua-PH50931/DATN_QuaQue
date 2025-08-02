@@ -77,6 +77,10 @@ public function cancel(Request $request, $id)
     $user = Auth::user();
 
     $order = ClientOrder::with(['items'])->where('user_id', $user->id)->where('id', $id)->firstOrFail();
+        if ($order->status !== 'pending') {
+        return redirect()->back()
+            ->with('error', 'Đơn hàng đã được xác nhận hoặc không còn ở trạng thái chờ xác nhận, không thể hủy.');
+    }
 
     if (in_array($order->status, ['cancelled', 'failed_delivery'])) {
         return redirect()->route('client.orders.index')
@@ -154,6 +158,13 @@ if ($order->free_shipping_code) {
     return redirect()->route('client.orders.index')
         ->with('success', 'Huỷ đơn hàng thành công!');
 }
-
+public function orderStatus($id)
+{
+    $user = Auth::user();
+    $order = \App\Models\Client\Order::where('id', $id)
+        ->where('user_id', $user->id)
+        ->firstOrFail();
+    return response()->json(['status' => $order->status]);
+}
 
 }

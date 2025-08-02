@@ -574,4 +574,16 @@
         <!-- Container-fluid Ends-->
         @includeIf('backend.footer')
     </div>
+    <script>
+        let lastOrderId = {{ $orders->first()->id ?? 0 }};
+        setInterval(function() {
+            fetch('/admin/orders/latest-id')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.latest_id > lastOrderId) {
+                        location.reload();
+                    }
+                });
+        }, 1000); // hoặc 2000, tùy bạn
+    </script>
 @endsection

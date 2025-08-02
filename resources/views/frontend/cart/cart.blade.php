@@ -129,7 +129,15 @@
                                     </table>
 
                                     <!-- ✅ Nút xoá mục đã chọn -->
-                                    <div class="mt-3">
+                                    <div class="mt-3 d-flex align-items-center gap-3">
+                                        <!-- Nút/chọn tất cả -->
+                                        <div>
+                                            <input type="checkbox" id="select-all-checkbox" style="accent-color: #07a37f;">
+                                            <label for="select-all-checkbox"
+                                                style="background-color: #07a37f; padding: 6px 16px; font-size: 0.875rem; border-radius: 4px; color:#ffffff;">Chọn
+                                                tất cả</label>
+                                        </div>
+                                        <!-- Nút xóa -->
                                         <button type="submit" class="btn btn-sm text-white" id="bulk-delete-button"
                                             style="background-color: #ffa53b; padding: 6px 16px; font-size: 0.875rem; border-radius: 4px;">
                                             <i class="fa-solid fa-trash-can me-1"></i> Xoá mục đã chọn
@@ -137,6 +145,26 @@
                                     </div>
 
                                 </form>
+                                {{-- chọn tất cả --}}
+                                <script>
+                                    // Chọn tất cả / bỏ chọn tất cả
+                                    document.getElementById('select-all-checkbox').addEventListener('change', function() {
+                                        let checked = this.checked;
+                                        document.querySelectorAll('input[type=checkbox][name="selected_items[]"]').forEach(function(cb) {
+                                            cb.checked = checked;
+                                            cb.dispatchEvent(new Event('change'));
+                                        });
+                                    });
+
+                                    // Nếu tick hết từng cái thì chọn tất cả cũng tự tick
+                                    document.querySelectorAll('input[type=checkbox][name="selected_items[]"]').forEach(function(cb) {
+                                        cb.addEventListener('change', function() {
+                                            let all = document.querySelectorAll('input[type=checkbox][name="selected_items[]"]');
+                                            let allChecked = Array.from(all).every(cb => cb.checked);
+                                            document.getElementById('select-all-checkbox').checked = allChecked;
+                                        });
+                                    });
+                                </script>
 
                                 <!-- ✅ Modal CHỌN BIẾN THỂ -->
                                 @foreach ($cartItems as $item)
@@ -196,7 +224,8 @@
                                     id="checkout-selected-form">
                                     @csrf
                                     <div id="selected-items-hidden"></div>
-                                    <button type="submit" class="btn btn-danger w-100">Đặt hàng</button>
+                                    <button type="submit" id="submit-order-btn"
+                                        class="btn theme-bg-color text-white btn-md w-100 mt-4 fw-bold">Đặt hàng</button>
                                 </form>
                                 <a href="{{ route('client.product.index') }}"
                                     class="btn btn-outline-secondary w-100 mt-3">
@@ -689,8 +718,8 @@
                 }
 
                 /* .modal-footer .btn-secondary:hover {
-                                                                                                                                                                                color: #fdfefe;
-                                                                                                                                                                            } */
+                                                                                                                                                                                                                                                                                                        color: #fdfefe;
+                                                                                                                                                                                                                                                                                                    } */
 
                 /* Nút Xác nhận */
                 .modal-footer .btn-primary {
