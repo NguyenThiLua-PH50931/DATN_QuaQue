@@ -10,6 +10,7 @@ use App\Models\admin\ProductVariant;
 use App\Models\admin\Review;
 use App\Models\admin\Comment;
 use App\Models\admin\ProductImage;
+use App\Models\ProductSearch;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
@@ -137,5 +138,9 @@ class Product extends Model
     public function firstImage()
     {
         return $this->hasOne(ProductImage::class, 'product_id')->inRandomOrder();
+    }
+    public function searches()
+    {
+        return $this->hasMany(ProductSearch::class);
     }
 }
