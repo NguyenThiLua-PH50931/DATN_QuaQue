@@ -14,6 +14,7 @@ use App\Models\Client\CommentReply;
 use App\Models\Client\Review;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\ProductSearch;
 
 class ProductController extends Controller
 {
@@ -140,7 +141,7 @@ class ProductController extends Controller
     /**
      * Hiển thị chi tiết sản phẩm.
      */
-    public function show($slug)
+public function show($slug, Request $request)
     {
         $product = Product::with([
             'images',
@@ -158,6 +159,11 @@ class ProductController extends Controller
             ->firstOrFail();
 
         $this->increaseView($product);
+            ProductSearch::create([
+        'user_id'    => auth()->id(),
+        'product_id' => $product->id,
+        'keyword'    => $request->input('q'), // truyền từ url nếu có, không thì null cũng được
+    ]);
 
         $variants = $product->variants()->where('active', 1)
             ->with('attributeValues.attribute')->get();
