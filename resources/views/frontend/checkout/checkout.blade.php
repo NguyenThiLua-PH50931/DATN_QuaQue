@@ -764,4 +764,39 @@
             }
         });
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const addressFields = [
+                'recipient_name', 'phone', 'address',
+                'province', 'district', 'ward'
+            ];
+            addressFields.forEach(function(field) {
+                document.querySelector(`[name="${field}"]`)?.addEventListener('change', sendAddressUpdate);
+            });
+
+            function sendAddressUpdate() {
+                // Chỉ update khi có pending MoMo (order đã thanh toán chưa đặt hàng)
+                const momoOrderId = document.querySelector('input[name="momo_order_id"]')?.value;
+                if (!momoOrderId) return;
+                fetch('/client/checkout/update-pending-payment-address', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        momo_order_id: momoOrderId,
+                        recipient_name: document.querySelector('input[name="recipient_name"]')
+                            .value,
+                        phone: document.querySelector('input[name="phone"]').value,
+                        address: document.querySelector('input[name="address"]').value,
+                        province: document.querySelector('select[name="province"]').value,
+                        district: document.querySelector('select[name="district"]').value,
+                        ward: document.querySelector('select[name="ward"]').value,
+                    })
+                });
+            }
+        });
+    </script>
+
 @endsection

@@ -75,10 +75,9 @@
                             <span class="text-muted">Không có mã giảm giá</span>
                         @endif
                     </li>
-                
-                    @if (in_array($order->status, ['pending', 'confirmed', 'processing']) &&
-                       !(in_array($order->payment_method, ['momo', 'bank']) && $order->payment_status === 'paid'))
 
+                    @if (in_array($order->status, ['pending']) &&
+                            !(in_array($order->payment_method, ['momo', 'bank']) && $order->payment_status === 'paid'))
                         <!-- Nút chỉ mở modal -->
                         <button type="button" id="btn-cancel-order" class="btn btn-danger btn-sm">
                             <i class="fa fa-times"></i>Huỷ đơn hàng
@@ -87,15 +86,17 @@
 
 
 
-                      <!-- Modal chọn lý do huỷ -->
-                    <div class="modal fade" id="cancelReasonModal" tabindex="-1" aria-labelledby="cancelReasonModalLabel" aria-hidden="true">
+                    <!-- Modal chọn lý do huỷ -->
+                    <div class="modal fade" id="cancelReasonModal" tabindex="-1" aria-labelledby="cancelReasonModalLabel"
+                        aria-hidden="true">
                         <div class="modal-dialog">
                             <form method="POST" action="{{ route('client.orders.cancel', $order->id) }}">
                                 @csrf
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h5 class="modal-title">Chọn lý do huỷ đơn hàng</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Đóng"></button>
                                     </div>
                                     <div class="modal-body">
                                         @php
@@ -110,7 +111,8 @@
 
                                         @foreach ($cancelReasons as $reason)
                                             <div class="form-check mb-2">
-                                                <input class="form-check-input reason-radio" type="radio" name="cancel_reason" value="{{ $reason }}" required>
+                                                <input class="form-check-input reason-radio" type="radio"
+                                                    name="cancel_reason" value="{{ $reason }}" required>
                                                 <label class="form-check-label">{{ $reason }}</label>
                                             </div>
                                         @endforeach
@@ -123,7 +125,8 @@
                                     </div>
 
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Đóng</button>
                                         <button type="submit" class="btn btn-danger">Xác nhận huỷ</button>
                                     </div>
                                 </div>
@@ -133,7 +136,7 @@
 
                     <!-- Script điều khiển hiển thị "Lý do khác" -->
                     <script>
-                        document.addEventListener('DOMContentLoaded', function () {
+                        document.addEventListener('DOMContentLoaded', function() {
                             const btn = document.getElementById('btn-cancel-order');
                             const modalEl = document.getElementById('cancelReasonModal');
                             const modal = new bootstrap.Modal(modalEl);
@@ -141,13 +144,13 @@
                             const otherGroup = document.getElementById('other-reason-group');
 
                             if (btn) {
-                                btn.addEventListener('click', function () {
+                                btn.addEventListener('click', function() {
                                     modal.show();
                                 });
                             }
 
                             reasonRadios.forEach(radio => {
-                                radio.addEventListener('change', function () {
+                                radio.addEventListener('change', function() {
                                     if (this.value === 'Lý do khác') {
                                         otherGroup.classList.remove('d-none');
                                     } else {
@@ -162,7 +165,7 @@
 
                 </div>
                 <!-- NGƯỜI NHẬN -->
-                    <div class="border rounded-3 p-3 bg-white mb-3 shadow-sm">
+                <div class="border rounded-3 p-3 bg-white mb-3 shadow-sm">
                     <div class="fw-bold mb-2" style="color:#f47721">Người nhận</div>
                     <div><strong>Họ tên:</strong> {{ $order->recipient_name ?? '---' }}</div>
                     <div><strong>Điện thoại:</strong> {{ $order->phone ?? '---' }}</div>
@@ -252,7 +255,8 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="text-center text-muted">Chưa có lịch sử thay đổi trạng thái.</td>
+                                <td colspan="5" class="text-center text-muted">Chưa có lịch sử thay đổi trạng thái.
+                                </td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -262,7 +266,8 @@
 
 
         <div class="text-end">
-            <a href="{{ route('client.orders.index') }}" class="btn btn-outline-secondary"><i class="fa fa-arrow-left"></i>
+            <a href="{{ route('client.orders.index') }}" class="btn btn-outline-secondary"><i
+                    class="fa fa-arrow-left"></i>
                 Quay lại danh sách</a>
         </div>
     </div>

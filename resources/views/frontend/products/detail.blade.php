@@ -35,11 +35,11 @@
                             </ol>
                         </nav>
                     </div>
-
                 </div>
             </div>
         </div>
     </section>
+
     <!-- Breadcrumb Section End -->
 
 
@@ -70,43 +70,30 @@
                                 <div class="row g-2">
                                     <div class="col-xxl-10 col-lg-12 col-md-10 order-xxl-2 order-lg-1 order-md-2">
                                         <div class="product-main-2 no-arrow">
-                                            <div>
-                                                <div class="slider-image">
-                                                    <img src="{{ $mainImages[0] ?? 'default-image.jpg' }}" id="mainImage"
-                                                        class="img-fluid blur-up lazyload" alt="Ảnh sản phẩm chính" />
+                                            @foreach ($mainImages as $i => $img)
+                                                <div>
+                                                    <div class="slider-image">
+                                                        <img src="{{ $img }}" id="img-{{ $i + 1 }}"
+                                                            data-zoom-image="{{ $img }}"
+                                                            class="img-fluid image_zoom_cls-{{ $i }} blur-up lazyload"
+                                                            alt="Ảnh sản phẩm {{ $i + 1 }}" />
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            @endforeach
                                         </div>
-
                                     </div>
 
                                     <div class="col-xxl-2 col-lg-12 col-md-2 order-xxl-1 order-lg-2 order-md-1">
                                         <div class="left-slider-image-2 left-slider no-arrow slick-top">
                                             @foreach ($thumbImages as $i => $img)
-                                                @php
-                                                    // Tìm biến thể có ảnh trùng với ảnh thumbnail này
-                                                    $variantIdForImg = null;
-                                                    foreach ($variants as $variant) {
-                                                        $variantImageUrl = $variant->image
-                                                            ? asset('storage/' . $variant->image)
-                                                            : null;
-                                                        if ($variantImageUrl === $img) {
-                                                            $variantIdForImg = $variant->id;
-                                                            break;
-                                                        }
-                                                    }
-                                                @endphp
                                                 <div>
                                                     <div class="sidebar-image">
-                                                        <img src="{{ $img }}"
-                                                            class="img-fluid blur-up lazyload variant-thumbnail"
-                                                            alt="Thumbnail {{ $i + 1 }}"
-                                                            data-variant-id="{{ $variantIdForImg }}" />
+                                                        <img src="{{ $img }}" class="img-fluid blur-up lazyload"
+                                                            alt="Thumbnail {{ $i + 1 }}" />
                                                     </div>
                                                 </div>
                                             @endforeach
                                         </div>
-
 
                                     </div>
                                 </div>
@@ -146,22 +133,9 @@
                                         </div>
                                         <ul class="select-packege">
                                             @foreach ($attr['values'] as $valueId => $value)
-                                                @php
-                                                    // Tìm ảnh biến thể tương ứng với giá trị biến thể hiện tại
-                                                    $variantImage = null;
-                                                    foreach ($variants as $variant) {
-                                                        if (in_array($valueId, $variant->value_ids ?? [])) {
-                                                            $variantImage = $variant->image
-                                                                ? asset('storage/' . $variant->image)
-                                                                : null;
-                                                            break;
-                                                        }
-                                                    }
-                                                @endphp
                                                 <li>
                                                     <a href="javascript:void(0)" data-attr="{{ $attrId }}"
                                                         data-value="{{ $valueId }}"
-                                                        data-variant-image="{{ $variantImage }}"
                                                         class="attribute-select {{ isset($defaultSelected[$attrId]) && $defaultSelected[$attrId] == $valueId ? 'active2' : '' }}">
                                                         {{ $value }}
                                                     </a>
@@ -203,12 +177,12 @@
                                         </button>
                                     </div>
                                 </form>
-                                {{-- <div class="buy-box">
+                                <div class="buy-box">
                                     <a href="wishlist.html">
                                         <i data-feather="heart"></i>
                                         <span>Add To Wishlist</span>
                                     </a>
-                                </div> --}}
+                                </div>
 
                                 <div class="pickup-box">
 
@@ -643,9 +617,9 @@
                                                         <i data-feather="eye"></i>
                                                     </a>
                                                 </li>
-                                                {{-- <li data-bs-toggle="tooltip" data-bs-placement="top" title="So sánh">
+                                                <li data-bs-toggle="tooltip" data-bs-placement="top" title="So sánh">
                                                     <a href="{{ url('compare') }}"><i data-feather="refresh-cw"></i></a>
-                                                </li> --}}
+                                                </li>
                                                 <li data-bs-toggle="tooltip" data-bs-placement="top" title="Yêu thích">
                                                     <form action="{{ route('client.wishlist.store') }}" method="POST"
                                                         style="display:inline-block;">
@@ -666,7 +640,7 @@
                                         <div class="product-detail">
                                             <span class="span-name">{{ $product->category->name ?? '' }}</span>
                                             <a href="{{ route('client.product.detail', ['slug' => $product->slug]) }}">
-                                               <h5 class="name" style="height: 48px;"> {{ $product->name }}</h5>
+                                                <h5 class="name">{{ $product->name }}</h5>
                                             </a>
                                             <div class="product-rating mt-2">
                                                 <ul class="rating">
@@ -1217,19 +1191,15 @@
                 let attr = parseInt(btn.getAttribute('data-attr'));
                 let val = parseInt(btn.getAttribute('data-value'));
 
-                // Bỏ active của các option cùng nhóm, set active cho cái được click
                 btn.closest('ul').querySelectorAll('a').forEach(a => a.classList.remove('active2'));
-                btn.classList.add('active2');
 
-                // Cập nhật biến selected
+                btn.classList.add('active2');
                 selected[attr] = val;
 
-                // Cập nhật trạng thái disable của các option còn lại
                 updateDisabledStates();
 
-                const attributesCount = Object.keys(@json($attributes)).length;
-
-                if (Object.keys(selected).length === attributesCount) {
+                // Tìm variant và cập nhật thông tin + mô tả biến thể mỗi lần chọn
+                if (Object.keys(selected).length === Object.keys(@json($attributes)).length) {
                     let attrValueIds = Object.values(selected).map(Number).sort((a, b) => a - b);
                     let found = variants.find(v =>
                         v.value_ids.length === attrValueIds.length &&
@@ -1242,39 +1212,29 @@
                         document.getElementById('product-stock').textContent = found.stock ?? 'N/A';
                         document.getElementById('product-price').textContent = found.price ? (Number(found
                             .price).toLocaleString() + ' đ') : 'Liên hệ';
-
-                        updateVariantDescription(found);
-
-                        // Cập nhật ảnh chính
-                        if (found.image) {
-                            const mainImg = document.getElementById('mainImage');
-                            if (mainImg) {
-                                mainImg.src = found.image;
-                            }
-                        }
                     } else {
-                        // Nếu biến thể không tồn tại hoặc inactive thì reset về mặc định
-                        resetVariantInfo();
+                        document.getElementById('product-sku').textContent = '—';
+                        document.getElementById('product-stock').textContent = '—';
+                        document.getElementById('product-price').textContent = '—';
                     }
+
+                    updateVariantDescription(found);
+
                 } else {
-                    // Chưa chọn đủ thuộc tính -> reset info và mô tả
-                    resetVariantInfo();
+                    document.getElementById('product-sku').textContent = '—';
+                    document.getElementById('product-stock').textContent = '—';
+                    document.getElementById('product-price').textContent = '—';
+
+                    // Chưa chọn đủ thì mô tả biến thể về mặc định mô tả sản phẩm chung
+                    document.getElementById('variant-description').innerHTML = `{!! addslashes($product->description) !!}`;
+                }
+
+                var img = btn.getAttribute('data-variant-image');
+                if (img) {
+                    document.getElementById('mainImage').src = img;
                 }
             });
         });
-
-        // Hàm reset về trạng thái mặc định khi chưa chọn đủ hoặc biến thể không hợp lệ
-        function resetVariantInfo() {
-            document.getElementById('product-sku').textContent = '—';
-            document.getElementById('product-stock').textContent = '—';
-            document.getElementById('product-price').textContent = '—';
-            document.getElementById('variant-description').innerHTML = `{!! addslashes($product->description) !!}`;
-
-            const mainImg = document.getElementById('mainImage');
-            if (mainImg) {
-                mainImg.src = '{{ $mainImages[0] ?? 'default-image.jpg' }}'; // ảnh mặc định sản phẩm
-            }
-        }
     </script>
     {{-- cộng trừ số lượng giỏ  --}}
     <script>
@@ -1449,7 +1409,7 @@
                 ['blur', 'change'].forEach(evt => {
                     qtyInput.addEventListener(evt, function() {
                         const maxStock = parseInt(qtyInput.getAttribute('data-stock'), 10) ||
-                            999999;
+                        999999;
                         let val = parseInt(qtyInput.value, 10);
 
                         if (isNaN(val) || val < 1) {
@@ -1518,7 +1478,7 @@
                     // Nếu chọn đủ biến thể thì tìm biến thể phù hợp
                     if (Object.keys(selected).length === attributesCount) {
                         let attrValueIds = Object.values(selected).map(Number).sort((a, b) => a -
-                            b);
+                        b);
 
                         // Tìm biến thể trùng
                         let found = window.VARIANTS.find(v =>
@@ -1612,7 +1572,7 @@
                     icon: 'error', // hoặc 'success'
                     title: 'Lỗi vượt quá số lượng tồn kho',
                     text: '{{ session('
-                                                                                                                                    error ') }}',
+                                error ') }}',
                     confirmButtonColor: '#0da487',
                     width: 350, // giảm chiều ngang
                     padding: '1rem 1.5rem', // giảm padding
@@ -1629,7 +1589,7 @@
                     icon: 'success',
                     title: 'Thành công',
                     text: '{{ session('
-                                                                                                                                    success ') }}',
+                                success ') }}',
                     confirmButtonColor: '#0da487',
                     width: 350,
                     padding: '1rem 1.5rem',
@@ -1713,62 +1673,6 @@
                             alert('Không thể tải thông tin sản phẩm, vui lòng thử lại sau.');
                             bsModal.hide();
                         });
-                });
-            });
-        });
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.variant-thumbnail').forEach(img => {
-                img.addEventListener('click', () => {
-                    console.log('Clicked thumbnail:', img.src); // Debug xem có click không
-                    const variantId = img.getAttribute('data-variant-id');
-                    console.log('Variant ID:', variantId);
-                    if (!variantId) return;
-
-                    const variant = window.VARIANTS.find(v => v.id == variantId);
-                    console.log('Found variant:', variant);
-                    if (!variant) return;
-
-                    // Cập nhật ảnh lớn chính
-                    const mainImg = document.getElementById('mainImage');
-                    if (mainImg) {
-                        mainImg.src = img.src;
-                        console.log('Main image src set to:', img.src);
-                    }
-
-                    // Xóa active các nút biến thể cũ
-                    document.querySelectorAll('.attribute-select.active2').forEach(el => el
-                        .classList.remove('active2'));
-
-                    // Tự động chọn biến thể dựa trên value_ids
-                    variant.value_ids.forEach(valueId => {
-                        const btn = document.querySelector(
-                            `.attribute-select[data-value="${valueId}"]`);
-                        if (btn) btn.classList.add('active2');
-                    });
-
-                    // Cập nhật biến selected trong JS
-                    selected = {};
-                    variant.value_ids.forEach(valueId => {
-                        const btn = document.querySelector(
-                            `.attribute-select[data-value="${valueId}"]`);
-                        if (btn) {
-                            const attrId = parseInt(btn.getAttribute('data-attr'));
-                            selected[attrId] = parseInt(valueId);
-                        }
-                    });
-
-                    // Cập nhật trạng thái disabled và info sản phẩm
-                    updateDisabledStates();
-
-                    document.getElementById('product-sku').textContent = variant.sku || 'N/A';
-                    document.getElementById('product-stock').textContent = variant.stock ?? 'N/A';
-                    document.getElementById('product-price').textContent = variant.price ? (Number(
-                        variant.price).toLocaleString() + ' đ') : 'Liên hệ';
-
-                    updateVariantDescription(variant);
-                    updateStockOfInput(variant);
                 });
             });
         });

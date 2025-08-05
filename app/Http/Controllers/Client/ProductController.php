@@ -384,11 +384,20 @@ class ProductController extends Controller
             ->join('orders', 'order_items.order_id', '=', 'orders.id')
             ->where('order_items.product_variant_id', $request->product_variant_id)
             ->where('orders.user_id', $user->id)
-            ->where('orders.status', 'delivered') // giả sử status 'delivered' là đã giao
+            ->where('orders.status', 'delivered') // status 'delivered' là đã giao
             ->exists();
 
         if (!$hasDeliveredVariant) {
             return redirect()->back()->withErrors(['Bạn chỉ có thể đánh giá sản phẩm sau khi đã nhận hàng.']);
+        }
+
+        // Kiểm tra đã đánh giá chưa
+        $hasReviewed = Review::where('user_id', $user->id)
+            ->where('product_variant_id', $request->product_variant_id)
+            ->exists();
+
+        if ($hasReviewed) {
+            return redirect()->back()->withErrors(['Bạn chỉ được đánh giá sản phẩm này một lần.']);
         }
 
         // Lưu đánh giá
@@ -400,8 +409,9 @@ class ProductController extends Controller
             'comment'             => $request->comment,
         ]);
 
-        return redirect()->back()->with('success', 'Đánh giá của bạn đã được gửi.');
+        return redirect()->back()->with('success', 'Cảm ơn bạn đã đánh giá sản phẩm. Lưu ý: Bạn chỉ được đánh giá 1 lần cho mỗi sản phẩm.');
     }
+
 
     public function filterReviews(Request $request, $slug)
     {

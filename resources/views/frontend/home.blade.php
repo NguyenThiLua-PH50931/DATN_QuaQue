@@ -321,38 +321,41 @@
                                                                         }
                                                                     }
                                                                 }
-
-                                                                // Map variants
-                                                                $variantMap = $product->variants->map(function ($v) {
-                                                                    return [
-                                                                        'id' => $v->id,
-                                                                        'sku' => $v->sku,
-                                                                        'stock' => $v->stock,
-                                                                        'price' => $v->price,
-                                                                        'image' => $v->image
-                                                                            ? asset('storage/' . $v->image)
-                                                                            : null,
-                                                                        'value_ids' => $v->attributeValues
-                                                                            ->pluck('id')
-                                                                            ->sort()
-                                                                            ->values()
-                                                                            ->all(),
-                                                                    ];
-                                                                });
-
-                                                                // Map attributes grouped by attribute_id
-                                                                $attributesMap = $product->variants->flatMap->attributeValues
-                                                                    ->groupBy('attribute_id')
-                                                                    ->map(function ($values, $attrId) {
-                                                                        return [
-                                                                            'name' => $values->first()->attribute->name,
-                                                                            'values' => $values->pluck('value', 'id'),
-                                                                        ];
-                                                                    });
                                                             @endphp
-
                                                             <li data-bs-toggle="tooltip" data-bs-placement="top"
                                                                 title="Xem nhanh">
+                                                                @php
+                                                                    $variantMap = $product->variants->map(function (
+                                                                        $v,
+                                                                    ) {
+                                                                        return [
+                                                                            'id' => $v->id,
+                                                                            'sku' => $v->sku,
+                                                                            'stock' => $v->stock,
+                                                                            'price' => $v->price,
+                                                                            'image' => $v->image
+                                                                                ? asset('storage/' . $v->image)
+                                                                                : null,
+                                                                            'value_ids' => $v->attributeValues
+                                                                                ->pluck('id')
+                                                                                ->sort()
+                                                                                ->values()
+                                                                                ->all(),
+                                                                        ];
+                                                                    });
+                                                                    $attributesMap = $product->variants->flatMap->attributeValues
+                                                                        ->groupBy('attribute_id')
+                                                                        ->map(function ($values, $attrId) {
+                                                                            return [
+                                                                                'name' => $values->first()->attribute
+                                                                                    ->name,
+                                                                                'values' => $values->pluck(
+                                                                                    'value',
+                                                                                    'id',
+                                                                                ),
+                                                                            ];
+                                                                        });
+                                                                @endphp
                                                                 <a href="javascript:void(0)" data-bs-toggle="modal"
                                                                     data-bs-target="#view" class="quickview-btn"
                                                                     data-name="{{ $product->name }}"
@@ -370,28 +373,22 @@
                                                                     <i data-feather="eye"></i>
                                                                 </a>
                                                             </li>
-                                                            {{-- <li data-bs-toggle="tooltip" data-bs-placement="top" title="So sánh">
-                                                                <a href="{{ url('compare') }}">
-                                                                    <i data-feather="refresh-cw"></i>
-                                                                </a>
-                                                            </li> --}}
 
                                                             <li data-bs-toggle="tooltip" data-bs-placement="top"
-                                                                title="Thêm vào yêu thích">
+                                                                title="Yêu thích">
                                                                 <form action="{{ route('client.wishlist.store') }}"
-                                                                    method="POST" class="d-inline">
+                                                                    method="POST" style="display:inline-block;">
                                                                     @csrf
                                                                     <input type="hidden" name="product_id"
                                                                         value="{{ $product->id }}">
                                                                     <button type="submit" class="notifi-wishlist btn p-0"
-                                                                        style="margin-left: 7px; width: 17px;">
-                                                                        <i data-feather="heart"
+                                                                        style="border:none; background:none; width: 18px; height: 18px; margin-top: 10px">
+                                                                        <i data-feather="heart" style="color: #4a5568"
                                                                             @if (auth()->check() && auth()->user()->wishlist()->where('product_id', $product->id)->exists()) class="text-red-500" @endif></i>
                                                                     </button>
                                                                 </form>
                                                             </li>
                                                         </ul>
-
                                                     </div>
                                                     <div class="product-detail">
                                                         <a
@@ -403,7 +400,7 @@
                                                             <span
                                                                 class="theme-color price">{{ number_format($product->price) }}₫</span>
                                                         </h5>
-                                                        <div class="product-rating mt-sm-2 mt-1">
+                                                        {{-- <div class="product-rating mt-sm-2 mt-1">
                                                             <ul class="rating">
                                                                 <li><i data-feather="star" class="fill"></i></li>
                                                                 <li><i data-feather="star" class="fill"></i></li>
@@ -412,7 +409,7 @@
                                                                 <li><i data-feather="star"></i></li>
                                                             </ul>
                                                             <h6 class="theme-color">Còn hàng</h6>
-                                                        </div>
+                                                        </div> --}}
                                                         <div class="add-to-cart-box">
                                                             {{-- <button class="btn btn-add-cart addcart-button">Add
                                                                 <span class="add-icon"><i
@@ -626,7 +623,7 @@
                                                         <del>{{ number_format($product->old_price, 0, ',', '.') }}₫</del>
                                                     @endif
                                                 </h5>
-                                                <div class="product-rating mt-sm-2 mt-1">
+                                                {{-- <div class="product-rating mt-sm-2 mt-1">
                                                     <ul class="rating">
                                                         @for ($i = 1; $i <= 5; $i++)
                                                             <li>
@@ -637,7 +634,7 @@
                                                     </ul>
                                                     <h6 class="theme-color">
                                                         {{ $product->stock > 0 ? 'Còn hàng' : 'Out of Stock' }}</h6>
-                                                </div>
+                                                </div> --}}
                                                 <div class="add-to-cart-box">
                                                     {{-- <button class="btn btn-add-cart addcart-button">Add
                                                         <span class="add-icon">
@@ -773,7 +770,7 @@
                                                                     <input type="hidden" name="product_id"
                                                                         value="{{ $product->id }}">
                                                                     <button type="submit" class="notifi-wishlist btn p-0"
-                                                                        style="margin-left: 7px; width: 17px;">
+                                                                        style="width: 17px;">
                                                                         <i data-feather="heart"
                                                                             @if (auth()->check() && auth()->user()->wishlist()->where('product_id', $product->id)->exists()) class="text-red-500" @endif></i>
                                                                     </button>
@@ -781,6 +778,9 @@
                                                             </li>
                                                         </ul>
                                                     </div>
+                                                    <style>
+                                                        
+                                                    </style>
 
                                                     <div class="product-detail">
                                                         <a
@@ -793,7 +793,7 @@
                                                         </h5>
                                                         <p class="text-muted small">Đã bán:
                                                             {{ $product->total_sold ?? 0 }}</p> <!-- ✅ dòng mới -->
-                                                        <div class="product-rating mt-sm-2 mt-1">
+                                                        {{-- <div class="product-rating mt-sm-2 mt-1">
                                                             <ul class="rating">
                                                                 <li><i data-feather="star" class="fill"></i></li>
                                                                 <li><i data-feather="star" class="fill"></i></li>
@@ -802,7 +802,7 @@
                                                                 <li><i data-feather="star"></i></li>
                                                             </ul>
                                                             <h6 class="theme-color">Còn hàng</h6>
-                                                        </div>
+                                                        </div> --}}
                                                     </div>
 
                                                 </div> <!-- .product-box -->
@@ -884,6 +884,5 @@
             display: block;
             background: #f8f8f8;
         }
-
     </style>
-    @endsection
+@endsection

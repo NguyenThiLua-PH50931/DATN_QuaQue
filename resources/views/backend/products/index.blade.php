@@ -20,7 +20,7 @@
                             </div>
                         </div>
 
-                        @if (session('success'))
+                        @if (session('success'))z
                         <div class="alert alert-success">
                             {{ session('success') }}
                         </div>
@@ -120,8 +120,8 @@
                         </nav>
 
 
-                        <div class="table-responsive" style="overflow-x:unset;"> {{-- bỏ thuộc tính max-width nếu có --}}
-                            <table class="table w-100" id="productTable" style="min-width: 100%;">
+                        <div> {{-- bỏ thuộc tính max-width nếu có --}}
+                            <table class="table w-100" id="productTable">
                                 <thead>
                                     <tr>
                                         <th style="color: black; background-color: #f8f9fa; width: 30px;">
@@ -131,7 +131,6 @@
                                         <th style="color: black; background-color: #f8f9fa;">Ảnh</th>
                                         <th style="color: black; background-color: #f8f9fa;">Danh mục</th>
                                         <th style="color: black; background-color: #f8f9fa;">Vùng miền</th>
-                                        <th style="color: black; background-color: #f8f9fa;">Cập nhật lúc</th>
                                         <th style="color: black; background-color: #f8f9fa;">Trạng thái</th>
                                         <th style="color: black; background-color: #f8f9fa;">Hành động</th>
                                     </tr>
@@ -145,7 +144,7 @@
                                         <td>
                                             <div>
                                                 <a href="{{ route('admin.products.show', $product->slug) }}" class="fw-bold text-primary" style="font-size:16px;">
-                                                    {{ $product->name }}
+                                                    {{ \Illuminate\Support\Str::limit($product->name, 20, '...') }}
                                                 </a>
                                                 <div class="small text-muted mt-1">
                                                     {{ $product->short_desc ?? '' }}
@@ -158,7 +157,6 @@
                                         </td>
                                         <td>{{ $product->category->name ?? '' }}</td>
                                         <td>{{ $product->region->name ?? '' }}</td>
-                                        <td>{{ $product->updated_at->format('d-m-Y H:i:s') }}</td>
                                         <td class="{{ $product->active ? 'status-close' : 'status-danger' }}">
                                             <span class="badge status-badge"
                                                 style="cursor:pointer"
@@ -512,8 +510,10 @@
 
 
     body.dark .filter-dropdown-menu {
-        background-color: #2c2c2c !important; /* Đảm bảo nền tối hơn */
-        color: #007bff !important; /* Màu chữ xanh dương sáng hơn */
+        background-color: #2c2c2c !important;
+        /* Đảm bảo nền tối hơn */
+        color: #007bff !important;
+        /* Màu chữ xanh dương sáng hơn */
     }
 
     body.dark .filter-dropdown-menu .filter-search-input {
@@ -523,15 +523,18 @@
     }
 
     body.dark .filter-dropdown-menu .filter-search-input::placeholder {
-        color: #888 !important; /* Thay đổi màu placeholder cho phù hợp */
+        color: #888 !important;
+        /* Thay đổi màu placeholder cho phù hợp */
     }
 
     body.dark .filter-dropdown-menu label {
-        color: #007bff !important; /* Đảm bảo màu chữ hiển thị rõ */
+        color: #007bff !important;
+        /* Đảm bảo màu chữ hiển thị rõ */
     }
 
     body.dark .filter-dropdown-menu label span {
-        color: #007bff !important; /* Đảm bảo màu chữ hiển thị rõ */
+        color: #007bff !important;
+        /* Đảm bảo màu chữ hiển thị rõ */
     }
 
     body.dark .filter-dropdown-menu .filter-selected-items {
@@ -539,7 +542,8 @@
     }
 
     body.dark .filter-dropdown-toggle {
-        color: #007bff !important; /* Đảm bảo nút filter hiển thị rõ chữ */
+        color: #007bff !important;
+        /* Đảm bảo nút filter hiển thị rõ chữ */
         border-color: #555 !important;
         background-color: #3a3a3a !important;
     }
@@ -547,7 +551,6 @@
     body.dark .filter-dropdown-toggle:hover {
         background-color: #4a4a4a !important;
     }
-
 </style>
 
 <script>
@@ -751,7 +754,7 @@
             },
             columnDefs: [{
                 orderable: false,
-                targets: [0, 2, 7]
+                targets: [0, 2, 6]
             }]
         });
 
