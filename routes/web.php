@@ -254,7 +254,7 @@ Route::post('/save-shipping-method', function (Request $request) {
     return response()->json(['success' => true]);
 });
 
-// route api real-time admin/orders 
+// route api real-time admin/orders
 Route::get('/admin/orders/latest-id', [App\Http\Controllers\Admin\OrderController::class, 'latestOrderId']);
 
 // ADMIN:
@@ -447,6 +447,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         Route::get('/{commentId}/reply/{replyId}/edit', [CommentController::class, 'editReply'])->name('editReply');
         Route::put('/{commentId}/reply/{replyId}', [CommentController::class, 'updateReply'])->name('updateReply');
         Route::delete('/{commentId}/reply/{replyId}', [CommentController::class, 'destroyReply'])->name('destroyReply');
+        Route::post('/{id}/approve', [CommentController::class, 'approve'])->name('approve');
+        Route::post('/{id}/reject', [CommentController::class, 'reject'])->name('reject');
     });
 
     // SupportTicket
