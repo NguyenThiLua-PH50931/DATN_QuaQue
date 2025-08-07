@@ -64,10 +64,12 @@
                                                                 alt="{{ $item->product->name }}"
                                                                 style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
                                                             <div>
-                                                                <a href="{{ route('client.product.detail', ['slug' => $item->product->slug]) }}"><h6 class="mb-1 fw-semibold text-truncate"
-                                                                    style="max-width: 300px;">
-                                                                    {{ $item->product->name }}
-                                                                </h6>
+                                                                <a
+                                                                    href="{{ route('client.product.detail', ['slug' => $item->product->slug]) }}">
+                                                                    <h6 class="mb-1 fw-semibold text-truncate"
+                                                                        style="max-width: 300px;">
+                                                                        {{ $item->product->name }}
+                                                                    </h6>
                                                                 </a>
                                                             </div>
                                                         </td>
@@ -127,7 +129,15 @@
                                     </table>
 
                                     <!-- ✅ Nút xoá mục đã chọn -->
-                                    <div class="mt-3">
+                                    <div class="mt-3 d-flex align-items-center gap-3">
+                                        <!-- Nút/chọn tất cả -->
+                                        <div>
+                                            <input type="checkbox" id="select-all-checkbox" style="accent-color: #07a37f;">
+                                            <label for="select-all-checkbox"
+                                                style="background-color: #07a37f; padding: 6px 16px; font-size: 0.875rem; border-radius: 4px; color:#ffffff;">Chọn
+                                                tất cả</label>
+                                        </div>
+                                        <!-- Nút xóa -->
                                         <button type="submit" class="btn btn-sm text-white" id="bulk-delete-button"
                                             style="background-color: #ffa53b; padding: 6px 16px; font-size: 0.875rem; border-radius: 4px;">
                                             <i class="fa-solid fa-trash-can me-1"></i> Xoá mục đã chọn
@@ -135,6 +145,26 @@
                                     </div>
 
                                 </form>
+                                {{-- chọn tất cả --}}
+                                <script>
+                                    // Chọn tất cả / bỏ chọn tất cả
+                                    document.getElementById('select-all-checkbox').addEventListener('change', function() {
+                                        let checked = this.checked;
+                                        document.querySelectorAll('input[type=checkbox][name="selected_items[]"]').forEach(function(cb) {
+                                            cb.checked = checked;
+                                            cb.dispatchEvent(new Event('change'));
+                                        });
+                                    });
+
+                                    // Nếu tick hết từng cái thì chọn tất cả cũng tự tick
+                                    document.querySelectorAll('input[type=checkbox][name="selected_items[]"]').forEach(function(cb) {
+                                        cb.addEventListener('change', function() {
+                                            let all = document.querySelectorAll('input[type=checkbox][name="selected_items[]"]');
+                                            let allChecked = Array.from(all).every(cb => cb.checked);
+                                            document.getElementById('select-all-checkbox').checked = allChecked;
+                                        });
+                                    });
+                                </script>
 
                                 <!-- ✅ Modal CHỌN BIẾN THỂ -->
                                 @foreach ($cartItems as $item)
@@ -194,7 +224,8 @@
                                     id="checkout-selected-form">
                                     @csrf
                                     <div id="selected-items-hidden"></div>
-                                    <button type="submit" class="btn btn-danger w-100">Đặt hàng</button>
+                                    <button type="submit" id="submit-order-btn"
+                                        class="btn theme-bg-color text-white btn-md w-100 mt-4 fw-bold">Đặt hàng</button>
                                 </form>
                                 <a href="{{ route('client.product.index') }}"
                                     class="btn btn-outline-secondary w-100 mt-3">
@@ -213,24 +244,54 @@
                     hiddenDiv.innerHTML = '';
 
                     const checked = document.querySelectorAll(
-                        '#bulk-action-form input[type=checkbox][name="selected_items[]"]:checked');
-
-                    checked.forEach(function(checkbox) {
-                        const input = document.createElement('input');
-                        input.type = 'hidden';
-                        input.name = 'selected_cart_item_ids[]';
-                        input.value = checkbox.value;
-                        hiddenDiv.appendChild(input);
-                    });
+                        '#bulk-action-form input[type=checkbox][name="selected_items[]"]:checked'
+                    );
 
                     if (checked.length === 0) {
                         e.preventDefault();
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Thông báo',
-                            text: 'Bạn chưa chọn sản phẩm nào để đặt hàng!'
-                        });
+                        showNotificationModal('Bạn chưa chọn sản phẩm nào để đặt hàng!');
+                        return;
                     }
+
+                    // Lấy id các cart item đã chọn
+                    const selectedIds = Array.from(checked).map(cb => cb.value);
+
+                    // Gửi AJAX kiểm tra tồn kho
+                    e.preventDefault(); // Ngăn submit form mặc định
+                    fetch('{{ route('client.cart.checkStock') }}', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                selected_cart_item_ids: selectedIds
+                            }),
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Nếu còn hàng thì submit form thật sự
+                                // Đổ lại các input hidden
+                                selectedIds.forEach(function(id) {
+                                    const input = document.createElement('input');
+                                    input.type = 'hidden';
+                                    input.name = 'selected_cart_item_ids[]';
+                                    input.value = id;
+                                    hiddenDiv.appendChild(input);
+                                });
+                                // submit lại form (bỏ chặn)
+                                e.target.submit();
+                            } else {
+                                // Không đủ hàng → show popup/modal cảnh báo
+                                showNotificationModal(data.messages.join('\n'));
+                            }
+                        })
+                        .catch(error => {
+                            showNotificationModal('Đã có lỗi khi kiểm tra tồn kho. Vui lòng thử lại!');
+                        });
+>>>>>>> 8238e0675ffb75fd8022261ab9f65fa2004e8c75
                 });
             </script>
 
@@ -656,10 +717,9 @@
                     padding: 6px 20px;
                     border-radius: 4px;
                 }
+                                                                                                                                                                                                                                                                                 color: #fdfefe;
+                                                                                                                                                                                                                                                                                                    } */
 
-                /* .modal-footer .btn-secondary:hover {
-                                                                                                                                            color: #fdfefe;
-                                                                                                                                        } */
 
                 /* Nút Xác nhận */
                 .modal-footer .btn-primary {
@@ -893,7 +953,8 @@
                     });
                 });
             </script>
-             {{-- Script đồng bộ selected checkbox cho đặt hàng --}}
+
+             {{-- Script đồng bộ selected checkbox cho đặt hàng
             <script>
                 document.getElementById('checkout-selected-form').addEventListener('submit', function(e) {
                     const hiddenDiv = document.getElementById('selected-items-hidden');
@@ -919,5 +980,6 @@
                         });
                     }
                 });
-            </script>
+            </script> --}}
+
         @endsection

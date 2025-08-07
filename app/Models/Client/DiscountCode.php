@@ -32,7 +32,7 @@ class DiscountCode extends Model
     // Một mã giảm giá có thể áp dụng cho nhiều đơn hàng
     public function orders()
     {
-        return $this->hasMany(Order::class, 'discount_code_id');
+        return $this->hasMany(Order::class, 'discount_code');
     }
 
     // Nếu có liên kết sản phẩm qua coupon_product (nếu có)

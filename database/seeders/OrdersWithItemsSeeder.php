@@ -53,8 +53,8 @@ class OrdersWithItemsSeeder extends Seeder
                 'order_code' => 'ORD' . strtoupper(Str::random(6)),
                 'user_id' => $user->id,
                 'address_id' => $address->id,
-                'shipping_method_id' => 1,
-                'discount_code_id' => null,
+                'shipping_method' => 1,
+                'discount_code' => null,
                 'discount_amount' => 0,
                 'total_amount' => 0,
                 'shipping_cost' => 20000,
@@ -125,7 +125,7 @@ class OrdersWithItemsSeeder extends Seeder
             $discountCode = $discounts->random();
             $discountAmount = $discountCode->calculateDiscount($subtotal);
 
-            $order->discount_code_id = $discountCode->id;
+            $order->discount_code = $discountCode->id;
             $order->discount_amount = $discountAmount;
             $order->total_amount = max(0, $subtotal - $discountAmount + $order->shipping_cost);
             $order->save();
@@ -138,7 +138,7 @@ class OrdersWithItemsSeeder extends Seeder
             $order = $orderInfo['order'];
             $subtotal = $orderInfo['subtotal'];
 
-            if (!$order->discount_code_id) {
+            if (!$order->discount_code) {
                 $order->total_amount = max(0, $subtotal + $order->shipping_cost);
                 $order->save();
             }

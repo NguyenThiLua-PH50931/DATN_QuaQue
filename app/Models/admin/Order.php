@@ -14,8 +14,9 @@ class Order extends Model
     'order_code',
     'user_id',
     'address_id',
-    'shipping_method_id',
-    'discount_code_id',
+    'shipping_method',
+    'discount_code',
+    'free_shipping_code',
     'discount_amount',
     'total_amount',
     'shipping_cost',
@@ -45,13 +46,13 @@ class Order extends Model
     // Phương thức giao hàng
     public function shippingMethod()
     {
-        return $this->belongsTo(\App\Models\admin\ShippingMethod::class, 'shipping_method_id');
+        return $this->belongsTo(\App\Models\admin\ShippingMethod::class, 'shipping_method');
     }
 
     // Mã giảm giá (nếu có)
     public function discountCode()
 {
-    return $this->belongsTo(\App\Models\admin\DiscountCode::class, 'discount_code_id');
+    return $this->belongsTo(\App\Models\admin\DiscountCode::class, 'discount_code');
 }
 
     public function items()
@@ -67,7 +68,7 @@ public function statusLogs()
 }
 public function freeShippingCode()
     {
-        return $this->belongsTo(DiscountCode::class, 'free_shipping_code_id');
+        return $this->belongsTo(DiscountCode::class, 'free_shipping_code');
     }
     protected static function boot()
 {

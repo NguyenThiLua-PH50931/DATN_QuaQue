@@ -6,6 +6,7 @@ use App\Filters\ReviewFilter;
 use App\Http\Controllers\Controller;
 use App\Models\admin\Product;
 use App\Models\admin\Review;
+use App\Models\Client\ProductVariant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -20,7 +21,7 @@ class ReviewController extends Controller
         $products = Product::all();
         $users = \App\Models\User::where('role', 'member')->get();
 
- 
+
         $reviewsQuery = Review::with(['user', 'product']);
 
         if (!empty(array_filter($request->all()))) {
@@ -31,8 +32,8 @@ class ReviewController extends Controller
 
         $reviews = $reviewsQuery->latest()
             ->paginate($request->query('per_page', 10));
-
-        return view('backend.product-review.index', compact('reviews', 'products', 'users'));
+        $variantNames = ProductVariant::pluck('name', 'id')->toArray();
+        return view('backend.product-review.index', compact('reviews', 'products', 'users', 'variantNames'));
     }
 
 

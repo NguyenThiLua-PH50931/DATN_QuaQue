@@ -10,6 +10,8 @@
     <meta name="keywords"
         content="admin template, Fastkart admin template, dashboard template, flat admin template, responsive admin template, web app">
     <meta name="author" content="pixelstrap">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <link rel="icon" href="{{ asset('frontend/assets/images/favicon/icon.png') }}" type="image/x-icon">
     <link rel="shortcut icon" href="{{ asset('frontend/assets/images/favicon/icon.png') }}" type="image/x-icon">
     <title>@yield('title', 'Admin Panel')</title>
@@ -39,6 +41,8 @@
     @stack('styles')
     <link rel="stylesheet" href="{{ asset('backend/assets/css/aa.css') }}">
     <link rel="stylesheet" href="{{ asset('backend/assets/css/modal-fix.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+
 </head>
 
 <body>
@@ -62,15 +66,7 @@
             @yield('content')
 
             <!-- Footer Start -->
-            <div class="container-fluid">
-                <footer class="footer">
-                    <div class="row">
-                        <div class="col-md-12 footer-copyright text-center">
-                            <p class="mb-0">Copyright 2022 © Fastkart theme by pixelstrap</p>
-                        </div>
-                    </div>
-                </footer>
-            </div>
+            @include('backend.footer')
             <!-- Footer End -->
             <!-- Loader Start -->
             <div class="fullpage-loader">
@@ -112,8 +108,8 @@
     <script src="{{ asset('backend/assets/js/scrollbar/custom.js') }}"></script>
     <script src="{{ asset('backend/assets/js/config.js') }}"></script>
     <script src="{{ asset('backend/assets/js/tooltip-init.js') }}"></script>
-    <script src="{{ asset('backend/assets/js/notify/bootstrap-notify.min.js') }}"></script>
-    <script src="{{ asset('backend/assets/js/notify/index.js') }}"></script>
+    {{--     <script src="{{ asset('backend/assets/js/notify/bootstrap-notify.min.js') }}"></script>
+    <script src="{{ asset('backend/assets/js/notify/index.js') }}"></script> --}}
     <!-- Chỉ tải ApexCharts cho trang cần thiết -->
     @if (Request::is('dashboard*'))
         <script src="{{ asset('backend/assets/js/chart/apex-chart/apex-chart1.js') }}"></script>
@@ -186,204 +182,288 @@
     @stack('scripts')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        // Xử lý chuyển trạng thái đơn hàng (có alert thành công, disable đúng option theo luồng trạng thái)
-        document.querySelectorAll('.status-select').forEach(function(select) {
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.status-select').forEach(function(select) {
+                // Kiểm tra trang show (chỉ có badge, 1 đơn)
+                const isShowPage = !!document.getElementById('order-status-badge') && select.id ===
+                    'order-status-select';
+                // Lấy orderId, endpoint, token...
+                const orderId = select.getAttribute('data-order-id');
+                let updateUrl = '';
+                let token = '';
+                let statusBadge = null;
+                let form = null;
 
-            // Hàm kiểm soát các trạng thái được phép chuyển tiếp
-            function updateStatusOptions() {
-                const current = select.value;
-                let allowed = [];
-
-                switch (current) {
-                    case 'pending':
-                        allowed = ['confirmed'];
-                        break;
-                    case 'confirmed':
-                        allowed = ['processing'];
-                        break;
-                    case 'processing':
-                        allowed = ['shipped'];
-                        break;
-                    case 'shipped':
-                        allowed = ['in_transit'];
-                        break;
-                    case 'in_transit':
-                        allowed = ['delivered', 'failed_delivery'];
-                        break;
-                    default:
-                        allowed = [];
+                if (isShowPage) {
+                    updateUrl = `/admin/orders/${orderId}/update-status`;
+                    token = '{{ csrf_token() }}';
+                    statusBadge = document.getElementById('order-status-badge');
+                } else {
+                    form = document.getElementById('status-form-' + orderId);
+                    updateUrl = form ? form.action : '';
+                    token = form ? form.querySelector('input[name="_token"]').value : '';
                 }
 
-                Array.from(select.options).forEach(opt => {
-                    // Luôn enable option hiện tại để không gây lỗi giao diện
-                    if (opt.value !== current && !allowed.includes(opt.value)) {
-                        opt.disabled = true;
-                    } else {
-                        opt.disabled = false;
+                // Giới hạn trạng thái chuyển tiếp
+                function updateStatusOptions() {
+                    const current = select.value;
+                    let allowed = [];
+                    switch (current) {
+                        case 'pending':
+                            allowed = ['confirmed'];
+                            break;
+                        case 'confirmed':
+                            allowed = ['processing'];
+                            break;
+                        case 'processing':
+                            allowed = ['shipped'];
+                            break;
+                        case 'shipped':
+                            allowed = ['in_transit'];
+                            break;
+                        case 'in_transit':
+                            allowed = ['delivered', 'failed_delivery'];
+                            break;
+                        default:
+                            allowed = [];
                     }
-                });
-            }
-
-            // Gọi hàm này khi trang vừa load xong
-            updateStatusOptions();
-
-            // Xử lý khi user đổi trạng thái
-            select.addEventListener('change', function() {
-                const orderId = this.getAttribute('data-order-id');
-                const newStatus = this.value;
-                const form = document.getElementById('status-form-' + orderId);
-                const token = form.querySelector('input[name="_token"]').value;
-                const currentStatus = this.getAttribute('data-current-status');
-                const tr = form.closest('tr');
-                const ul = tr.querySelector('td:last-child ul');
-
-                fetch(form.action, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': token,
-                            'Accept': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            status: newStatus
-                        }),
-                    })
-                    .then(response => {
-                        if (!response.ok) return response.json().then(err => {
-                            throw err;
-                        });
-                        return response.json();
-                    })
-                    .then(data => {
-                        alert(data.message || 'Cập nhật trạng thái thành công');
-                        select.setAttribute('data-current-status', newStatus);
-                        select.classList.remove('status-' + currentStatus);
-                        select.classList.add('status-' + newStatus);
-
-                        // Cập nhật payment-status (nếu có)
-                        const paymentStatusTd = document.getElementById('payment-status-' + orderId);
-                        if (paymentStatusTd) {
-                            let paymentText = {
-                                paid: 'Đã thanh toán',
-                                unpaid: 'Chưa thanh toán',
-                                failed: 'Thất bại'
-                            } [data.payment_status] || data.payment_status;
-
-                            paymentStatusTd.textContent = paymentText;
-                            paymentStatusTd.classList.remove('payment-paid', 'payment-unpaid',
-                                'payment-failed');
-                            switch (data.payment_status) {
-                                case 'paid':
-                                    paymentStatusTd.classList.add('payment-paid');
-                                    break;
-                                case 'unpaid':
-                                    paymentStatusTd.classList.add('payment-unpaid');
-                                    break;
-                                case 'failed':
-                                    paymentStatusTd.classList.add('payment-failed');
-                                    break;
-                            }
-                        }
-
-                        // Render lại nút chức năng
-                        const isHidden = !!data.is_hidden;
-                        ul.innerHTML = `
-                        <li>
-                            <a href="${form.action.replace('/update-status', '')}">
-                                <i class="ri-eye-line"></i>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="${form.action.replace('/update-status', '/tracking')}">
-                                <i class="ri-map-pin-line"></i>
-                            </a>
-                        </li>
-                    `;
-                        if (!isHidden && ['delivered', 'cancelled', 'failed_delivery'].includes(
-                                newStatus)) {
-                            const li = document.createElement('li');
-                            const hideForm = document.createElement('form');
-                            hideForm.action = form.action.replace('update-status', 'hide');
-                            hideForm.method = 'POST';
-                            hideForm.innerHTML = `
-                            <input type="hidden" name="_token" value="${token}">
-                            <input type="hidden" name="_method" value="PATCH">
-                            <button type="submit" class="border-0 bg-transparent" title="Ẩn">
-                                <i class="ri-eye-off-line text-warning"></i>
-                            </button>
-                        `;
-                            li.appendChild(hideForm);
-                            ul.appendChild(li);
-                        }
-                        if (isHidden) {
-                            const li = document.createElement('li');
-                            const deleteForm = document.createElement('form');
-                            deleteForm.action = form.action.replace('update-status', 'destroy');
-                            deleteForm.method = 'POST';
-                            deleteForm.innerHTML = `
-                            <input type="hidden" name="_token" value="${token}">
-                            <input type="hidden" name="_method" value="DELETE">
-                            <button type="submit" class="border-0 bg-transparent" title="Xóa vĩnh viễn">
-                                <i class="ri-delete-bin-line text-danger"></i>
-                            </button>
-                        `;
-                            li.appendChild(deleteForm);
-                            ul.appendChild(li);
-                        }
-
-                        // Gọi lại để disable đúng option
-                        updateStatusOptions();
-                    })
-                    .catch(error => {
-                        // alert(error.message || 'Lỗi khi cập nhật trạng thái');
-                        this.value = currentStatus;
-                        updateStatusOptions();
+                    Array.from(select.options).forEach(opt => {
+                        if (opt.value !== current && !allowed.includes(opt.value)) opt.disabled =
+                            true;
+                        else opt.disabled = false;
                     });
+                }
+                updateStatusOptions();
+
+                select.addEventListener('change', function() {
+                    const newStatus = this.value;
+
+                    // Nếu là trang show, cập nhật badge trước
+                    if (isShowPage && statusBadge) {
+                        statusBadge.textContent = "Đang cập nhật...";
+                        statusBadge.className = "badge status-pending";
+                    }
+
+                    fetch(updateUrl, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': token,
+                                'X-Requested-With': 'XMLHttpRequest',
+                            },
+                            body: JSON.stringify({
+                                status: newStatus
+                            }),
+                        })
+                        .then(async res => {
+                            let data = {};
+                            try {
+                                data = await res.json();
+                            } catch (e) {}
+                            if (res.ok && (data.success || data.message)) {
+                                // Trang show
+                                if (isShowPage && statusBadge) {
+                                    const statusTextMap = {
+                                        pending: "Chờ xác nhận",
+                                        confirmed: "Đã xác nhận",
+                                        processing: "Đang chuẩn bị",
+                                        shipped: "Đã gửi hàng",
+                                        in_transit: "Đang vận chuyển",
+                                        delivered: "Đã giao hàng",
+                                        cancelled: "Đã hủy",
+                                        failed_delivery: "Giao thất bại"
+                                    };
+                                    statusBadge.textContent = statusTextMap[newStatus] ||
+                                        newStatus;
+                                    statusBadge.className = 'badge status-' + newStatus;
+                                    // Swal ở show
+                                    if (window.Swal) {
+                                        Swal.fire({
+                                            title: 'Cập nhật trạng thái!',
+                                            text: data.message ||
+                                                'Trạng thái đã được cập nhật.',
+                                            icon: 'success',
+                                            confirmButtonText: 'OK',
+                                            allowOutsideClick: false,
+                                            allowEscapeKey: false
+                                        });
+                                    } else {
+                                        alert(data.message ||
+                                            'Cập nhật trạng thái thành công');
+                                    }
+                                }
+
+                                // Trang list
+                                if (!isShowPage && form) {
+                                    // Swal cho list
+                                    if (window.Swal) {
+                                        Swal.fire({
+                                            title: 'Cập nhật trạng thái!',
+                                            text: data.message ||
+                                                'Cập nhật trạng thái thành công',
+                                            icon: 'success',
+                                            confirmButtonText: 'OK',
+                                            allowOutsideClick: false,
+                                            allowEscapeKey: false
+                                        });
+                                    } else {
+                                        alert(data.message ||
+                                            'Cập nhật trạng thái thành công');
+                                    }
+                                    // Cập nhật trạng thái cho select
+                                    const currentStatus = select.getAttribute(
+                                        'data-current-status');
+                                    select.setAttribute('data-current-status', newStatus);
+                                    select.classList.remove('status-' + currentStatus);
+                                    select.classList.add('status-' + newStatus);
+
+                                    // --------- UPDATE CỘT TTTT (thanh toán) NGAY SAU KHI ĐỔI TRẠNG THÁI ---------
+                                    // Lấy <tr> hiện tại
+                                    const tr = form.closest('tr');
+                                    if (tr) {
+                                        const tds = tr.querySelectorAll('td');
+                                        const paymentTd = tds[
+                                            5
+                                        ]; // cột TTTT (thanh toán) là cột thứ 6 (index 5)
+                                        if (paymentTd) {
+                                            if (data.payment_method === 'bank') {
+                                                paymentTd.innerHTML = `
+                                            <select class="form-select payment-status-select${data.payment_status === 'paid' ? ' payment-paid-bank' : ''}" data-order-id="${orderId}">
+                                                <option value="unpaid"${data.payment_status === 'unpaid' ? ' selected' : ''}>Chưa thanh...</option>
+                                                <option value="paid"${data.payment_status === 'paid' ? ' selected' : ''}>Đã thanh...</option>
+                                            </select>
+                                        `;
+                                                // Gắn lại event nếu muốn cho phép đổi TTTT trực tiếp trên select này
+                                            } else {
+                                                let labelClass =
+                                                    "payment-status-label payment-" + data
+                                                    .payment_status;
+                                                let text = 'Chưa thanh toán';
+                                                if (data.payment_status === 'paid' || (data
+                                                        .payment_method === 'cod' && data
+                                                        .status === 'delivered')) {
+                                                    labelClass =
+                                                        "payment-status-label payment-paid";
+                                                    text = 'Đã thanh toán';
+                                                } else if (data.payment_status ===
+                                                    'failed') {
+                                                    labelClass =
+                                                        "payment-status-label payment-failed";
+                                                    text = 'Thanh toán thất bại';
+                                                }
+                                                paymentTd.innerHTML =
+                                                    `<span class="${labelClass}" data-payment-method="${data.payment_method}">${text}</span>`;
+                                            }
+                                        }
+                                    }
+                                    // ------------------------------------------------------------------------
+
+                                    // Cập nhật action nếu có ul
+                                    const ul = tr ? tr.querySelector('td:last-child ul') :
+                                        null;
+                                    if (ul) {
+                                        const isHidden = !!data.is_hidden;
+                                        ul.innerHTML = `
+    <li>
+        <a href="${form.action.replace('/update-status', '')}">
+            <i class="ri-eye-line"></i>
+        </a>
+    </li>
+    <li>
+        <a href="${form.action.replace('/update-status', '/tracking')}">
+            <i class="ri-map-pin-line"></i>
+        </a>
+    </li>
+`;
+
+
+
+                                    }
+                                }
+                            } else {
+                                // Báo lỗi
+                                const errMsg = (data && data.message) ? data.message :
+                                    "Cập nhật thất bại.";
+                                if (isShowPage && statusBadge) {
+                                    statusBadge.textContent = "Lỗi!";
+                                    statusBadge.className = 'badge status-cancelled';
+                                    if (window.Swal) {
+                                        Swal.fire({
+                                            title: 'Lỗi!',
+                                            text: errMsg,
+                                            icon: 'error',
+                                            confirmButtonText: 'OK',
+                                            allowOutsideClick: false,
+                                            allowEscapeKey: false
+                                        });
+                                    } else {
+                                        alert('Lỗi: ' + errMsg);
+                                    }
+                                } else {
+                                    if (window.Swal) {
+                                        Swal.fire({
+                                            title: 'Lỗi!',
+                                            text: errMsg,
+                                            icon: 'error',
+                                            confirmButtonText: 'OK',
+                                            allowOutsideClick: false,
+                                            allowEscapeKey: false
+                                        });
+                                    } else {
+                                        alert(errMsg);
+                                    }
+                                    // Reset về trạng thái cũ nếu có
+                                    const currentStatus = select.getAttribute(
+                                        'data-current-status');
+                                    if (currentStatus) select.value = currentStatus;
+                                }
+                            }
+                            updateStatusOptions();
+                        })
+                        .catch((err) => {
+                            if (isShowPage && statusBadge) {
+                                statusBadge.textContent = "Lỗi!";
+                                statusBadge.className = 'badge status-cancelled';
+                                if (window.Swal) {
+                                    Swal.fire({
+                                        title: 'Lỗi!',
+                                        text: 'Không thể cập nhật trạng thái!',
+                                        icon: 'error',
+                                        confirmButtonText: 'OK',
+                                        allowOutsideClick: false,
+                                        allowEscapeKey: false
+                                    });
+                                } else {
+                                    alert('Không thể cập nhật trạng thái!');
+                                }
+                            } else {
+                                if (window.Swal) {
+                                    Swal.fire({
+                                        title: 'Lỗi!',
+                                        text: 'Không thể cập nhật trạng thái!',
+                                        icon: 'error',
+                                        confirmButtonText: 'OK',
+                                        allowOutsideClick: false,
+                                        allowEscapeKey: false
+                                    });
+                                } else {
+                                    alert('Không thể cập nhật trạng thái!');
+                                }
+                                // Reset về trạng thái cũ nếu có
+                                const currentStatus = select.getAttribute(
+                                    'data-current-status');
+                                if (currentStatus) select.value = currentStatus;
+                            }
+                            updateStatusOptions();
+                        });
+                });
             });
         });
-
-        // Xử lý nút ẨN và XOÁ (giữ nguyên như cũ)
-        document.addEventListener('submit', function(e) {
-            // Nút ẨN: KHÔNG alert, không confirm
-            if (e.target.matches('form[action*="hide"]')) {
-                e.preventDefault();
-                const form = e.target;
-                const token = form.querySelector('input[name="_token"]').value;
-                const action = form.action;
-                const tr = form.closest('tr');
-
-                fetch(action, {
-                        method: 'PATCH',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': token,
-                            'Accept': 'application/json',
-                        },
-                        body: JSON.stringify({}),
-                    })
-                    .then(response => {
-                        if (!response.ok) return response.json().then(err => {
-                            throw err;
-                        });
-                        return response.json();
-                    })
-                    .then(() => {
-                        tr.remove();
-                    })
-                    .catch(error => {
-                        alert(error.message || 'Ẩn đơn hàng thất bại!');
-                    });
-            }
-
-            // Nút XOÁ: CÓ confirm
-            if (e.target.matches('form[action*="destroy"]')) {
-                if (!confirm('Bạn có chắc chắn muốn xoá vĩnh viễn đơn hàng này không?')) {
-                    e.preventDefault();
-                }
-            }
-        });
     </script>
+
 
     <script>
         document.addEventListener('submit', function(e) {

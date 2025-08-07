@@ -30,6 +30,7 @@ use App\Http\Controllers\Client\CartController;
 
 use App\Http\Controllers\Client\BlogCommentController as ClientBlogCommentController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
+use App\Http\Controllers\Client\ReviewController as ClientReviewController;
 use App\Http\Controllers\Client\ClientSupportTicketController;
 use App\Http\Controllers\Client\ContactController;
 use App\Http\Controllers\Client\ForgotController;
@@ -52,7 +53,10 @@ Route::redirect('/', '/client/home');
 
 Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
     Route::get('home', [ClientHomeController::class, 'home'])->name('home');
-
+    // đánh giá
+    Route::group(['prefix' => 'danh-gia', 'as' => 'review.'], function () {
+        Route::post('store', [ClientReviewController::class, 'store'])->name('store');
+    });
     // AI CHAT BOT
     Route::post('chatbot', [ChatbotController::class, 'chat'])->name('chatbot.send');
 
@@ -94,6 +98,7 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
         Route::get('index', [CartController::class, 'index'])->name('index');
         Route::post('add', [CartController::class, 'add'])->name('add');
         Route::delete('delete/{id}', [CartController::class, 'delete'])->name('delete');
+        Route::post('/store-quick', [CartController::class, 'storeQuick'])->name('storeQuick');
         // checkbox
         Route::post('bulkDelete', [CartController::class, 'bulkDelete'])->name('bulkDelete');
         // update số lượng giỏ
@@ -118,12 +123,26 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
         Route::post('/checkout/remove-discount', [CheckoutController::class, 'removeDiscount'])->name('checkout.removeDiscount');
         Route::post('/checkout/bank-confirm', [CheckoutController::class, 'bankConfirm'])->name('client.checkout.bankConfirm');
         Route::post('/checkout/update-pending-payment-address', [CheckoutController::class, 'updatePendingPaymentAddress'])->name('checkout.updatePendingPaymentAddress');
+         Route::post('/checkout/check-discount-before-momo', [CheckoutController::class, 'checkDiscountBeforeMomo'])
+        ->name('checkout.checkDiscountBeforeMomo');
     });
     Route::get('/checkout/success', function () {
         return view('frontend.checkout.checkoutsuccess');
     })->name('checkout.success');
 
-
+Route::post('/checkout/save-address-snapshot', function (Request $request) {
+    session([
+        'address_snapshot' => [
+            'recipient_name' => $request->input('recipient_name'),
+            'phone' => $request->input('phone'),
+            'address' => $request->input('address'),
+            'province' => $request->input('province'),
+            'district' => $request->input('district'),
+            'ward' => $request->input('ward'),
+        ]
+    ]);
+    return response()->json(['ok' => true]);
+})->name('checkout.saveAddressSnapshot');
 
     Route::middleware('auth')->group(function () {
         Route::get('/orders', [OrdersController::class, 'index'])->name('orders.index');
@@ -179,6 +198,10 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
 
     // AI Chatbot
 
+    // --- Thêm API lấy trạng thái đơn hàng cho polling ---
+Route::middleware('auth')->get('/orders/{order}/status', [OrdersController::class, 'orderStatus'])->name('orders.status');
+
+
 });
 
 //----------------------------------------------------------
@@ -227,10 +250,12 @@ Route::group(['prefix' => 'client', 'as' => 'client.', 'middleware' => 'auth'], 
     Route::get('/checkout', [CheckoutController::class, 'checkout'])->name('checkout');
 });
 Route::post('/save-shipping-method', function (Request $request) {
-    session(['shipping_method_id' => (int) $request->shipping_method_id]);
+    session(['shipping_method' => (int) $request->shipping_method]);
     return response()->json(['success' => true]);
 });
 
+// route api real-time admin/orders 
+Route::get('/admin/orders/latest-id', [App\Http\Controllers\Admin\OrderController::class, 'latestOrderId']);
 
 // ADMIN:
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin'], function () {
@@ -270,6 +295,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         Route::get('/{id}/description', [AdminProductController::class, 'getDescription'])->name('description');
         Route::get('/variant/{id}/description', [AdminProductController::class, 'getVariantDescription'])->name('variant.description');
         Route::post('/variant/{id}/toggle-status', [AdminProductController::class, 'toggleVariantStatus'])->name('variant.toggleStatus');
+        Route::post('/variant/{id}/update-stock', [AdminProductController::class, 'updateVariantStock'])->name('variant.updateStock');
         Route::get('/trashed', [AdminProductController::class, 'trashed'])->name('trashed');
         Route::get('/{slug}', [AdminProductController::class, 'show'])->name('show');
         Route::post('/bulk-restore', [AdminProductController::class, 'bulkRestore'])->name('bulkRestore');
@@ -356,14 +382,17 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
 
     // Order
     Route::group(['prefix' => 'orders', 'as' => 'orders.'], function () {
-        Route::get('/', [OrderController::class, 'index'])->name('index');                // Hiển thị danh sách
-        Route::get('/{order}', [OrderController::class, 'show'])->name('show');          // Chi tiết đơn hàng
-        Route::get('/{order}/tracking', [OrderController::class, 'tracking'])->name('tracking');  // Tracking
-        Route::delete('/{order}', [OrderController::class, 'destroy'])->name('destroy'); // Xóa cứng
-        Route::put('/{order}/update-status', [OrderController::class, 'updateStatus'])->name('updateStatus'); // Cập nhật trạng thái
-        Route::patch('/{order}/hide', [OrderController::class, 'hide'])->name('hide');   // Ẩn đơn hàng ✅
+        // ĐẶC BIỆT ĐẶT TRƯỚC!!!
+        Route::put('/{order}/update-status', [OrderController::class, 'updateStatus'])->name('updateStatus');
         Route::put('/{order}/update-payment-status', [OrderController::class, 'updatePaymentStatus'])->name('updatePaymentStatus');
+        Route::patch('/{order}/hide', [OrderController::class, 'hide'])->name('hide');
+        Route::get('/{order}/tracking', [OrderController::class, 'tracking'])->name('tracking');
+        // Các route chung để sau cùng!
+        Route::delete('/{order}', [OrderController::class, 'destroy'])->name('destroy');
+        Route::get('/{order}', [OrderController::class, 'show'])->name('show');
+        Route::get('/', [OrderController::class, 'index'])->name('index');
     });
+
 
 
     // User

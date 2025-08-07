@@ -160,7 +160,7 @@
                                         </div>
 
                                         {{-- BLOCK: THÔNG TIN CHO SẢN PHẨM KHÔNG CÓ BIẾN THỂ --}}
-                                        <div id="edit-single-product-fields"
+                                        {{-- <div id="edit-single-product-fields"
                                             style="display: {{ old('has_variants', $product->has_variants) == 0 ? 'block' : 'none' }};">
                                             <div class="card mb-3">
                                                 <div class="card-body">
@@ -207,12 +207,12 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> --}}
 
                                         {{-- BLOCK: CHỌN THUỘC TÍNH VÀ GIÁ TRỊ DÙNG CHECKBOX --}}
                                         <div id="edit-variant-attribute-selection"
                                             style="display: {{ old('has_variants', $product->has_variants) == 1 ? 'block' : 'none' }};">
-                                            <div class="card mb-3">
+                                            {{-- <div class="card mb-3">
                                                 <div class="card-body">
                                                     <h6 class="fw-bold mb-3">Chọn thuộc tính và giá trị cho biến thể</h6>
                                                     <input type="text" class="form-control mb-3"
@@ -329,15 +329,24 @@
                                                                     $product->variants->where('name', '!=', 'Mặc định')
                                                                     as $variant
                                                                 ) {
-                                                                    $variantData = $variant->toArray();
-                                                                    $variantData[
-                                                                        'attribute_value_ids'
-                                                                    ] = $variant->attributeValues
-                                                                        ->pluck('id')
-                                                                        ->toArray();
+                                                                    // Luôn hiển thị tất cả biến thể (trừ 'Mặc định')
+                                                                    $variantData = [
+                                                                        'id' => $variant->id,
+                                                                        'price' => $variant->price,
+                                                                        'stock' => $variant->stock,
+                                                                        'sku' => $variant->sku,
+                                                                        'name' => $variant->name,
+                                                                        'description' => $variant->description,
+                                                                        'image' => $variant->image, // Đảm bảo lấy image
+                                                                        'active' => $variant->active,
+                                                                        'attribute_value_ids' => $variant->attributeValues->pluck('id')->toArray(),
+                                                                    ];
                                                                     $currentVariants[] = $variantData;
                                                                 }
                                                             }
+
+                                                            // Debug: Log thông tin variants
+                                                            \Log::info('Current variants in view:', $currentVariants);
                                                         @endphp
 
                                                         @foreach ($currentVariants as $i => $variant)
@@ -357,7 +366,7 @@
                                                                     class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 btn-remove-variant"
                                                                     title="Xóa biến thể">&times;</button>
 
-                                                                <div class="mb-2 fw-semibold">
+                                                                <div class="mb-2 fw-semibold" style="color: black;">
                                                                     Giá trị thuộc tính:
                                                                     <span>
                                                                         @php
@@ -387,7 +396,7 @@
                                                                         <input type="number"
                                                                             name="variants[{{ $i }}][price]"
                                                                             min="0" step="0.01"
-                                                                            class="form-control mb-3"
+                                                                            class="form-control"
                                                                             value="{{ old("variants.$i.price", $variant['price'] ?? '') }}"
                                                                             required>
                                                                         @error("variants.$i.price")
@@ -399,7 +408,7 @@
                                                                         <label class="form-label">Tồn kho</label>
                                                                         <input type="number"
                                                                             name="variants[{{ $i }}][stock]"
-                                                                            min="0" class="form-control mb-3"
+                                                                            min="0" class="form-control"
                                                                             value="{{ old("variants.$i.stock", $variant['stock'] ?? '') }}"
                                                                             required>
                                                                         @error("variants.$i.stock")
@@ -411,44 +420,80 @@
                                                                         <label class="form-label">SKU</label>
                                                                         <input type="text"
                                                                             name="variants[{{ $i }}][sku]"
-                                                                            class="form-control sku-auto mb-3" readonly
+                                                                            class="form-control sku-auto" readonly
                                                                             value="{{ old("variants.$i.sku", $variant['sku'] ?? '') }}">
                                                                         @error("variants.$i.sku")
                                                                             <small
                                                                                 class="text-danger">{{ $message }}</small>
                                                                         @enderror
                                                                     </div>
+                                                                    <div class="col-6 col-md-3">
+                                                                        <input type="hidden"
+                                                                            name="variants[{{ $i }}][old_image]"
+                                                                            value="{{ old("variants.$i.old_image", $variant['image'] ?? '') }}">
+                                                                    </div>
+                                                                </div>
+
+                                                                {{-- Phần hiển thị ảnh hiện tại và thay đổi ảnh --}}
+                                                                <div class="row mt-3">
+                                                                    <div class="col-12">
+                                                                        <label class="form-label fw-bold text-success">Ảnh hiện tại của biến thể</label>
+                                                                        @php
+                                                                            $variantImage = $variant['image'] ?? '';
+                                                                        @endphp
+
+                                                                                                                                                @if (!empty($variantImage))
+                                                                            <div class="d-flex justify-content-center mb-3">
+                                                                                <div class="border rounded p-3 bg-light shadow-sm" style="max-width: 200px;">
+                                                                                    <img src="{{ asset('storage/' . $variantImage) }}"
+                                                                                        alt="Ảnh biến thể hiện tại"
+                                                                                        style="width: 100%; height: 150px; object-fit: cover; border-radius: 6px;"
+                                                                                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block'; this.nextElementSibling.nextElementSibling.style.display='block';">
+                                                                                    <div style="display: none; text-align: center; color: #dc3545; font-size: 12px; padding: 20px;">
+                                                                                        <i class="fas fa-exclamation-triangle"></i><br>
+                                                                                        Lỗi tải ảnh<br>
+                                                                                        <small>{{ $variantImage }}</small>
+                                                                    </div>
+                                                                                    <div style="display: none; text-align: center; color: #6c757d; font-size: 12px; padding: 20px;">
+                                                                                        <i class="fas fa-info-circle"></i><br>
+                                                                                        File ảnh không tồn tại<br>
+                                                                                        <small>Vui lòng upload lại ảnh</small>
+                                                                </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        @else
+                                                                            <div class="d-flex justify-content-center mb-3">
+                                                                                <div class="border rounded p-3 bg-light text-center text-muted shadow-sm" style="max-width: 200px;">
+                                                                                    <i class="fas fa-image" style="font-size: 64px; opacity: 0.3;"></i>
+                                                                                    <br><small class="fw-bold">Chưa có ảnh</small>
+                                                                                </div>
+                                                                        </div>
+                                                                    @endif
+
+                                                                        {{-- Thay đổi ảnh biến thể --}}
+                                                                        <div class="mb-3">
+                                                                            <label class="form-label">Thay đổi ảnh biến thể</label>
+                                                                    <input type="file"
+                                                                        name="variants[{{ $i }}][image]"
+                                                                                class="form-control" accept="image/*">
+                                                                            <small class="text-muted">Để trống nếu không muốn thay đổi ảnh</small>
+                                                                    @error("variants.$i.image")
+                                                                        <small class="text-danger">{{ $message }}</small>
+                                                                    @enderror
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                {{-- Mô tả biến thể --}}
+                                                                <div class="row mt-3">
                                                                     <div class="col-12">
                                                                         <label class="form-label">Mô tả biến thể</label>
                                                                         <textarea name="variants[{{ $i }}][description]" rows="2"
                                                                             class="form-control variant-description-editor">{{ old("variants.$i.description", $variant['description'] ?? '') }}</textarea>
                                                                         @error("variants.$i.description")
-                                                                            <small
-                                                                                class="text-danger">{{ $message }}</small>
+                                                                            <small class="text-danger">{{ $message }}</small>
                                                                         @enderror
                                                                     </div>
-                                                                </div>
-                                                                <div class="col-6 col-md-3">
-                                                                    <label class="form-label">Ảnh biến thể hiện
-                                                                        tại</label>
-                                                                    @if (!empty($variant['image'] ?? ''))
-                                                                        <div class="mb-2">
-                                                                            <img src="{{ asset('storage/' . $variant['image']) }}"
-                                                                                alt="Ảnh biến thể"
-                                                                                style="max-width: 100px;">
-                                                                        </div>
-                                                                    @endif
-                                                                    <input type="hidden"
-                                                                        name="variants[{{ $i }}][old_image]"
-                                                                        value="{{ old("variants.$i.old_image", $variant['image'] ?? '') }}">
-                                                                    <label class="form-label">Thay đổi ảnh biến
-                                                                        thể</label>
-                                                                    <input type="file"
-                                                                        name="variants[{{ $i }}][image]"
-                                                                        class="form-control mb-3" accept="image/*">
-                                                                    @error("variants.$i.image")
-                                                                        <small class="text-danger">{{ $message }}</small>
-                                                                    @enderror
                                                                 </div>
                                                             </div>
                                                             {{-- <div class="col-12">
@@ -671,560 +716,190 @@
         }
     </style>
     <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Thêm xử lý form submit
-            const mainForm = document.getElementById('main-form');
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // ====== CKEditor ======
+    let mainEditor = null;
+    let variantEditors = [];
+    let variantDescriptionsCache = {};
+
+    function initMainEditor() {
+        const mainDesc = document.getElementById('main-description');
+        if (mainDesc && !mainDesc.classList.contains('ck-editor-initialized')) {
+            ClassicEditor.create(mainDesc).then(editor => {
+                mainEditor = editor;
+                editor.ui.view.editable.element.style.color = '#222';
+                editor.ui.view.editable.element.style.background = '#fff';
+                mainDesc.classList.add('ck-editor-initialized');
+            });
+        }
+    }
+
+    function initVariantEditors() {
+        document.querySelectorAll('.variant-description-editor').forEach(textarea => {
+            if (!textarea.classList.contains('ck-editor-initialized')) {
+                ClassicEditor.create(textarea).then(editor => {
+                    variantEditors.push(editor);
+                    textarea.classList.add('ck-editor-initialized');
+                    editor.ui.view.editable.element.style.color = '#222';
+                    editor.ui.view.editable.element.style.background = '#fff';
+                });
+            }
+        });
+    }
+
+    function syncCKEditors() {
+        if (mainEditor) {
             const mainDesc = document.getElementById('main-description');
-            let mainEditor = null;
-            if (mainForm) {
-                mainForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-
-                    // Đồng bộ dữ liệu CKEditor về textarea trước khi submit
-                    if (mainEditor && mainDesc) {
-                        mainDesc.value = mainEditor.getData();
-                    }
-
-                    const formData = new FormData(this);
-
-                    fetch(this.action, {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                'X-Requested-With': 'XMLHttpRequest'
-                            },
-                            body: formData
-                        })
-                        .then(response => {
-                            if (!response.ok) {
-                                return response.json().then(err => Promise.reject(err));
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            if (data.success) {
-                                toastr.success('Cập nhật sản phẩm thành công!');
-                                setTimeout(() => {
-                                    window.location.href =
-                                        '{{ route('admin.products.index') }}';
-                                }, 1500);
-                            } else {
-                                toastr.error(data.message || 'Có lỗi xảy ra khi cập nhật sản phẩm!');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            if (error.errors) {
-                                // Xử lý validation errors
-                                Object.keys(error.errors).forEach(key => {
-                                    toastr.error(error.errors[key][0]);
-                                });
-                            } else {
-                                toastr.error(error.message || 'Có lỗi xảy ra khi cập nhật sản phẩm!');
-                            }
-                        });
-                });
-            }
-
-            // ================== Khởi tạo CKEditor cho mô tả chính ==================
-            function initMainEditor() {
-                if (mainDesc && !mainDesc.classList.contains('ck-editor-initialized')) {
-                    ClassicEditor.create(mainDesc).then(editor => {
-                        mainEditor = editor;
-                        editor.ui.view.editable.element.style.color = '#222';
-                        editor.ui.view.editable.element.style.background = '#fff';
-                        mainDesc.classList.add('ck-editor-initialized');
-                    });
-                }
-            }
-
-            // ================== Khởi tạo CKEditor cho mô tả biến thể ==================
-            let variantEditors = [];
-
-            function initVariantEditors() {
-                document.querySelectorAll('.variant-description-editor').forEach(textarea => {
-                    if (!textarea.classList.contains('ck-editor-initialized')) {
-                        ClassicEditor.create(textarea).then(editor => {
-                            variantEditors.push(editor);
-                            textarea.classList.add('ck-editor-initialized');
-                            editor.ui.view.editable.element.style.color = '#222';
-                            editor.ui.view.editable.element.style.background = '#fff';
-                        });
-                    }
-                });
-            }
-
-            // ================== Xóa CKEditor cho biến thể (trước khi rebuild) ==================
-            function destroyVariantEditors() {
-                variantEditors.forEach(editor => editor.destroy());
-                variantEditors = [];
-                document.querySelectorAll('.variant-description-editor').forEach(textarea => {
-                    textarea.classList.remove('ck-editor-initialized');
-                });
-            }
-
-            // ================== Hàm tính tích Descartes (Cartesian product) ==================
-            function cartesianProduct(arr) {
-                return arr.reduce((a, b) =>
-                    a.flatMap(d => b.map(e => [...d, e])), [
-                        []
-                    ]
-                );
-            }
-
-            // ================== Hàm lọc bỏ dấu tiếng Việt ==================
-            function removeVietnameseTones(str) {
-                let from = "áàảãạăắằẳẵặâấầẩẫậđéèẻẽẹêếềểễệíìỉĩịóòỏõọôốồổỗộơớờởỡợúùủũụưứừửữựýỳỷỹỵ";
-                let to = "aaaaaaaaaaaaaaaaadeeeeeeeeeeeiiiiiooooooooooooooooouuuuuuuuuuuyyyyy";
-                str = str.toLowerCase();
-                for (let i = 0; i < from.length; i++) {
-                    str = str.replace(new RegExp(from[i], 'g'), to[i]);
-                }
-                return str;
-            }
-
-            // ================== Filter tìm thuộc tính (checkbox group) ==================
-            const filterInput = document.getElementById('filter-attributes');
-            filterInput.addEventListener('input', () => {
-                const filterRaw = filterInput.value.trim().toLowerCase();
-                const filter = removeVietnameseTones(filterRaw);
-
-                document.querySelectorAll('.attribute-group').forEach(group => {
-                    const attrNameRaw = group.dataset.attrName;
-                    const attrName = removeVietnameseTones(attrNameRaw);
-                    if (attrName.includes(filter)) {
-                        group.style.display = '';
-                        const collapseEl = group.querySelector('.collapse');
-                        if (collapseEl && !collapseEl.classList.contains('show')) {
-                            const bsCollapse = bootstrap.Collapse.getOrCreateInstance(collapseEl);
-                            bsCollapse.show();
-                        }
-                    } else {
-                        group.style.display = 'none';
-                    }
-                });
-            });
-
-            // ================== Cập nhật sự kiện change checkbox để sinh biến thể ==================
-            function registerCheckboxListeners() {
-                document.querySelectorAll('.attribute-value-checkbox').forEach(cb => {
-                    cb.removeEventListener('change', generateVariants); // Tránh trùng lặp listener
-                    cb.addEventListener('change', generateVariants);
-                });
-            }
-
-            // ================== Hiển thị / ẩn nút xóa biến thể ==================
-            function showRemoveButtons() {
-                const rows = document.querySelectorAll('.variant-row');
-                rows.forEach(row => {
-                    const btn = row.querySelector('.btn-remove-variant');
-                    if (btn) btn.style.display = rows.length > 1 ? 'inline-block' : 'none';
-                });
-            }
-
-            // ================== Xóa biến thể khi click nút xóa ==================
-            document.addEventListener('click', function(e) {
-                if (e.target.classList.contains('btn-remove-variant')) {
-                    e.target.closest('.variant-row').remove();
-                    showRemoveButtons();
-                    updateSkuAll();
+            if (mainDesc) mainDesc.value = mainEditor.getData();
+        }
+        if (variantEditors.length > 0) {
+            variantEditors.forEach(editor => {
+                if (editor.sourceElement) {
+                    editor.sourceElement.value = editor.getData();
                 }
             });
+        }
+    }
 
-            // ================== Tự động sinh SKU cho biến thể ==================
-            function updateSkuAll() {
-                const rows = document.querySelectorAll('.variant-row');
-                const timestamp = Date.now();
-                rows.forEach((row, index) => {
-                    const skuInput = row.querySelector('.sku-auto');
-                    const attrSpan = row.querySelector('div.mb-2 span');
-                    if (skuInput) {
-                        let sku = '';
-                        if (attrSpan) {
-                            const suffix = attrSpan.textContent.trim().replace(/\s+/g, '').toUpperCase()
-                                .substring(0, 6);
-                            sku = `PRD-${timestamp}-${suffix}-${index}`;
-                        } else {
-                            sku = `PRD-${timestamp}-MANUAL-${Math.floor(Math.random() * 1000)}`;
-                        }
-                        skuInput.value = sku;
-                    }
-                });
-            }
+    // ============ AJAX SUBMIT FORM SỬA SẢN PHẨM ============
+    const mainForm = document.getElementById('main-form');
+    if (mainForm) {
+        mainForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            syncCKEditors();
 
-            // ================== Sinh biến thể từ checkbox đã chọn ==================
-            function generateVariants() {
-                const checkboxes = document.querySelectorAll('.attribute-value-checkbox');
-                let attrMap = {};
+            const formData = new FormData(this);
+            formData.append('_method', 'POST');
 
-                checkboxes.forEach(cb => {
-                    if (cb.checked) {
-                        const attrId = cb.dataset.attrid;
-                        if (!attrMap[attrId]) attrMap[attrId] = [];
-                        attrMap[attrId].push({
-                            id: cb.value,
-                            text: cb.nextElementSibling.textContent.trim()
-                        });
-                    }
-                });
-
-                const variantArea = document.getElementById('variants-list');
-                if (!variantArea) return;
-
-                destroyVariantEditors(); // Hủy các instance CKEditor cũ
-                variantArea.innerHTML = ''; // Xóa tất cả biến thể hiện có
-
-                const attrArrays = Object.values(attrMap);
-                if (attrArrays.length === 0) {
-                    // Nếu không có thuộc tính nào được chọn, hiển thị lại biến thể mặc định nếu có hoặc tạo rỗng
-                    // Lấy biến thể mặc định từ product nếu có và old input không có biến thể
-                    const defaultVariant = {!! $product->variants->where('name', 'Mặc định')->first()
-                        ? json_encode($product->variants->where('name', 'Mặc định')->first()->toArray())
-                        : 'null' !!};
-                    const oldHasVariants = '{{ old('has_variants', $product->has_variants) }}';
-
-                    if (defaultVariant && oldHasVariants == 0) {
-                        const html = `
-                    <div class="variant-row border rounded p-3 mb-3 bg-white position-relative">
-                      <input type="hidden" name="variants[0][id]" value="${defaultVariant.id}">
-                      <div class="mb-2 fw-semibold">Giá trị thuộc tính: <span>Mặc định</span></div>
-                      <div class="row gx-2 gy-2">
-                        <div class="col-6 col-md-3">
-                          <label class="form-label">Giá bán</label>
-                          <input type="number" name="variants[0][price]" min="0" step="0.01" class="form-control" value="${defaultVariant.price}" required>
-                        </div>
-                        <div class="col-6 col-md-3">
-                          <label class="form-label">Tồn kho</label>
-                          <input type="number" name="variants[0][stock]" min="0" class="form-control" value="${defaultVariant.stock}" required>
-                        </div>
-                        <div class="col-6 col-md-3">
-                          <label class="form-label">SKU</label>
-                          <input type="text" name="variants[0][sku]" class="form-control sku-auto" readonly value="${defaultVariant.sku}">
-                        </div>
-                        <div class="col-6 col-md-3">
-                          <label class="form-label">Ảnh biến thể hiện tại</label>
-                          ${defaultVariant.image ? `<div class="mb-2"><img src="{{ asset('storage/') }}/${defaultVariant.image}" alt="Ảnh biến thể" style="max-width: 100px;"></div>` : ''}
-                          <input type="hidden" name="variants[0][old_image]" value="${defaultVariant.image || ''}">
-                          <label class="form-label">Thay đổi ảnh biến thể</label>
-                          <input type="file" name="variants[0][image]" class="form-control" accept="image/*">
-                        </div>
-
-                      </div>
-                    </div>
-                    `;
-                        //  <div class="col-12">
-                        //       <label class="form-label">Mô tả biến thể</label>
-                        //       <textarea name="variants[0][description]" rows="2" class="form-control variant-description-editor">${defaultVariant.description || ''}</textarea>
-                        //     </div>
-                        variantArea.insertAdjacentHTML('beforeend', html);
-                    }
-                    showRemoveButtons();
-                    initVariantEditors(); // Khởi tạo lại nếu có biến thể mặc định
-                    updateSkuAll();
-                    return;
-                }
-
-                const variantsComb = cartesianProduct(attrArrays);
-
-                variantsComb.forEach((combo, idx) => {
-                    const ids = combo.map(c => c.id);
-                    const names = combo.map(c => c.text);
-
-                    // Cố gắng tìm biến thể cũ khớp để giữ lại dữ liệu
-                    const existingVariant = {!! json_encode($product->variants->where('name', '!=', 'Mặc định')->values()->toArray()) !!}.find(v => {
-                        const existingIds = (v.attribute_values || []).map(av => av.id.toString());
-                        return existingIds.sort().join('-') === ids.sort().join('-');
+            fetch(this.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thành công',
+                        text: data.message || 'Cập nhật sản phẩm thành công!',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        window.location.href = '{{ route('admin.products.index') }}';
                     });
-
-                    let oldPrice = existingVariant ? existingVariant.price : '';
-                    let oldStock = existingVariant ? existingVariant.stock : '';
-                    let oldSku = existingVariant ? existingVariant.sku : '';
-                    let oldImage = existingVariant ? (existingVariant.image || '') : '';
-                    let oldDescription = existingVariant ? (existingVariant.description || '') : '';
-                    let oldVariantId = existingVariant ? existingVariant.id : '';
-
-                    // Ưu tiên dữ liệu từ old() nếu có lỗi validation
-                    @php
-                        $oldVariantsInput = old('variants', []);
-                    @endphp
-                    if (Object.keys({!! json_encode($oldVariantsInput) !!}).length > 0) {
-                        const oldInputVariant = {!! json_encode($oldVariantsInput) !!}.find(v => {
-                            const oldInputIds = (v.attribute_value_ids || []).map(id => id
-                                .toString());
-                            return oldInputIds.sort().join('-') === ids.sort().join('-');
-                        });
-                        if (oldInputVariant) {
-                            oldPrice = oldInputVariant.price || oldPrice;
-                            oldStock = oldInputVariant.stock || oldStock;
-                            oldSku = oldInputVariant.sku || oldSku;
-                            oldImage = oldInputVariant.old_image || oldInputVariant.image ||
-                                oldImage; // old_image cho file, image cho URL mới
-                            oldDescription = oldInputVariant.description || oldDescription;
-                            oldVariantId = oldInputVariant.id || oldVariantId;
-                        }
-                    }
-
-                    const html = `
-                <div class="variant-row border rounded p-3 mb-3 bg-white position-relative">
-                  ${ids.map(id => `<input type="hidden" name="variants[${idx}][attribute_value_ids][]" value="${id}">`).join('')}
-                  <input type="hidden" name="variants[${idx}][id]" value="${oldVariantId}">
-                  <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 btn-remove-variant" title="Xóa biến thể">&times;</button>
-                  <div class="mb-2 fw-semibold">Giá trị thuộc tính: <span>${names.join(' - ')}</span></div>
-                  <div class="row gx-2 gy-2">
-                    <div class="col-6 col-md-3">
-                      <label class="form-label">Giá bán</label>
-                      <input type="number" name="variants[${idx}][price]" min="0" step="0.01" class="form-control" value="${oldPrice}" required>
-                    </div>
-                    <div class="col-6 col-md-3">
-                      <label class="form-label">Tồn kho</label>
-                      <input type="number" name="variants[${idx}][stock]" min="0" class="form-control" value="${oldStock}" required>
-                    </div>
-                    <div class="col-6 col-md-3">
-                      <label class="form-label">SKU</label>
-                      <input type="text" name="variants[${idx}][sku]" class="form-control sku-auto" readonly value="${oldSku}">
-                    </div>
-                    <div class="col-6 col-md-3">
-                      <label class="form-label">Ảnh biến thể hiện tại</label>
-                      ${oldImage ? `<div class="mb-2"><img src="{{ asset('storage/') }}/${oldImage}" alt="Ảnh biến thể" style="max-width: 100px;"></div>` : ''}
-                      <input type="hidden" name="variants[${idx}][old_image]" value="${oldImage}">
-                      <label class="form-label">Thay đổi ảnh biến thể</label>
-                      <input type="file" name="variants[${idx}][image]" class="form-control" accept="image/*">
-                    </div>
-                    <div class="col-12">
-                      <label class="form-label">Mô tả biến thể</label>
-                      <textarea name="variants[${idx}][description]" rows="2" class="form-control variant-description-editor">${oldDescription}</textarea>
-                    </div>
-                  </div>
-                </div>
-                `;
-                    variantArea.insertAdjacentHTML('beforeend', html);
-                });
-
-                showRemoveButtons();
-                initVariantEditors(); // Khởi tạo CKEditor cho các biến thể mới
-                updateSkuAll();
-            }
-
-            // ================== Toggle hiển thị các phần dựa trên lựa chọn biến thể (cho trang EDIT) ==================
-            function toggleEditProductTypeFields() {
-                const hasVariantsYesRadio = document.getElementById('editHasVariantsYes');
-                const hasVariantsNoRadio = document.getElementById('editHasVariantsNo');
-                const hasVariants = hasVariantsYesRadio.checked;
-
-                const singleProductFields = document.getElementById('edit-single-product-fields');
-                const variantAttributeSelection = document.getElementById('edit-variant-attribute-selection');
-                const variantsList = document.getElementById('variants-list');
-
-                if (hasVariants) {
-                    // Ẩn khối sản phẩm đơn, hiện khối biến thể
-                    singleProductFields.style.display = 'none';
-                    variantAttributeSelection.style.display = 'block';
-
-                    // Disable input sản phẩm đơn
-                    singleProductFields.querySelectorAll('input, select, textarea').forEach(el => {
-                        el.setAttribute('disabled', 'true');
-                        el.removeAttribute('required');
-                    });
-
-                    // Enable input biến thể
-                    variantAttributeSelection.querySelectorAll('input, select, textarea').forEach(el => {
-                        el.removeAttribute('disabled');
-                    });
-
-                    // Nếu vừa chuyển từ không có biến thể sang có biến thể, cần sinh lại biến thể từ checkbox
-                    if (variantsList && variantsList.innerHTML.trim() === '') {
-                        generateVariants();
-                    }
-
-                    initVariantEditors();
-                    registerCheckboxListeners();
                 } else {
-                    // Hiện khối sản phẩm đơn, ẩn khối biến thể
-                    singleProductFields.style.display = 'block';
-                    variantAttributeSelection.style.display = 'none';
-
-                    // Enable input sản phẩm đơn
-                    singleProductFields.querySelectorAll('input, select, textarea').forEach(el => {
-                        el.removeAttribute('disabled');
-                        if (el.name === 'price' || el.name === 'stock') {
-                            el.setAttribute('required', 'true');
-                        }
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi',
+                        text: data.message || 'Có lỗi xảy ra khi cập nhật!',
+                        confirmButtonText: 'OK'
                     });
-
-                    // Disable input biến thể
-                    variantAttributeSelection.querySelectorAll('input, select, textarea').forEach(el => {
-                        el.setAttribute('disabled', 'true');
-                        el.removeAttribute('required');
-                    });
-
-                    // KHÔNG xóa checkbox thuộc tính khi chuyển sang không có biến thể nữa để giữ lại giá trị biến thể
-                    destroyVariantEditors();
                 }
-            }
+            })
+            .catch(err => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi hệ thống',
+                    text: 'Vui lòng thử lại hoặc liên hệ IT!',
+                    confirmButtonText: 'OK'
+                });
+            });
+        });
+    }
 
-            // ================== Đăng ký ajax submit cho các form modal ==================
-            function ajaxFormSubmit(formId, modalId, selectName, optionKeyName, errorElementId, onSuccessCallback) {
-                const form = document.getElementById(formId);
-                if (!form) return;
-
-                form.addEventListener('submit', function(e) {
-                    e.preventDefault();
-
-                    const formData = new FormData(form);
-                    const url = form.action;
-
-                    if (errorElementId) {
-                        const errorDiv = document.getElementById(errorElementId);
-                        if (errorDiv) {
-                            errorDiv.innerText = '';
-                            errorDiv.style.display = 'none';
+    // ========== AJAX CHO MODAL (THÊM DANH MỤC, VÙNG MIỀN, THUỘC TÍNH, GIÁ TRỊ THUỘC TÍNH) ==========
+    function ajaxModalForm(formId, modalId, selectName, optionKey, onSuccessCustom) {
+        const form = document.getElementById(formId);
+        if (!form) return;
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            fetch(this.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    // Ẩn modal
+                    const modalEl = document.getElementById(modalId);
+                    if (modalEl) {
+                        const bsModal = bootstrap.Modal.getInstance(modalEl);
+                        if (bsModal) bsModal.hide();
+                    }
+                    // Thêm vào select nếu cần
+                    if (selectName && data[optionKey]) {
+                        const select = document.querySelector(`select[name="${selectName}"]`);
+                        if (select) {
+                            const newOption = document.createElement('option');
+                            newOption.value = data[optionKey].id;
+                            newOption.text = data[optionKey].name || data[optionKey].value || '';
+                            newOption.selected = true;
+                            select.appendChild(newOption);
+                            select.dispatchEvent(new Event('change'));
                         }
                     }
+                    // Gọi callback tuỳ loại modal (thuộc tính, giá trị thuộc tính ...)
+                    if (typeof onSuccessCustom === 'function') onSuccessCustom(data);
 
-                    fetch(url, {
-                            method: 'POST',
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest',
-                                'X-CSRF-TOKEN': formData.get('_token'),
-                            },
-                            body: formData,
-                        })
-                        .then(res => {
-                            if (!res.ok) {
-                                if (res.status === 422) return res.json().then(data => Promise.reject(
-                                    data));
-                                throw new Error('Lỗi server');
-                            }
-                            return res.json();
-                        })
-                        .then(data => {
-                            if (data.success) {
-                                const modalEl = document.getElementById(modalId);
-                                if (modalEl) {
-                                    const bsModal = bootstrap.Modal.getInstance(modalEl);
-                                    if (bsModal) bsModal.hide();
-                                }
-
-                                if (selectName && data[optionKeyName]) {
-                                    const select = document.querySelector(
-                                        `select[name="${selectName}"]`);
-                                    if (select) {
-                                        const newOption = document.createElement('option');
-                                        newOption.value = data[optionKeyName].id;
-                                        newOption.text = data[optionKeyName].name || data[optionKeyName]
-                                            .value || '';
-                                        newOption.selected = true;
-                                        select.appendChild(newOption);
-                                        select.dispatchEvent(new Event('change'));
-                                    }
-                                }
-
-                                if (formId === 'quickAttributeForm' && data.attribute) {
-                                    updateAttributeFilterUI(data.attribute, data.attributeValues || []);
-                                }
-
-                                if (formId === 'quickAttributeValueForm' && data.attributeValues && data
-                                    .attribute_id && data.attribute_name) {
-                                    updateAttributeValueFilterUI(data.attribute_id, data.attribute_name,
-                                        data.attributeValues);
-                                }
-
-                                form.reset();
-                                if (typeof onSuccessCallback === 'function') {
-                                    onSuccessCallback(data);
-                                }
-                            } else {
-                                if (errorElementId) {
-                                    const errorDiv = document.getElementById(errorElementId);
-                                    if (errorDiv) {
-                                        errorDiv.innerText = data.message || 'Có lỗi xảy ra';
-                                        errorDiv.style.display = 'block';
-                                    }
-                                } else {
-                                    alert(data.message || 'Có lỗi xảy ra');
-                                }
-                            }
-                        })
-                        .catch(err => {
-                            if (err.errors) {
-                                showValidationErrors(form, err.errors);
-                            } else {
-                                if (errorElementId) {
-                                    const errorDiv = document.getElementById(errorElementId);
-                                    if (errorDiv) {
-                                        errorDiv.innerText = 'Lỗi server, thử lại sau.';
-                                        errorDiv.style.display = 'block';
-                                    }
-                                } else {
-                                    alert('Lỗi server, thử lại sau.');
-                                }
-                                console.error(err);
-                            }
-                        });
-                });
-            }
-
-            // ================== Hiển thị lỗi validate ajax ==================
-            function showValidationErrors(form, errors) {
-                form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
-                form.querySelectorAll('.invalid-feedback').forEach(div => {
-                    div.innerText = '';
-                    div.style.display = 'none';
-                });
-
-                for (const field in errors) {
-                    const messages = errors[field];
-                    const input = form.querySelector(`[name="${field}"]`);
-                    if (input) {
-                        input.classList.add('is-invalid');
-                        let errorDiv = form.querySelector(`#${field.replace(/\./g, '-')}-error`);
-                        if (!errorDiv) {
-                            errorDiv = input.nextElementSibling && input.nextElementSibling.classList.contains(
-                                    'invalid-feedback') ?
-                                input.nextElementSibling : null;
-                        }
-                        if (errorDiv) {
-                            errorDiv.innerText = messages.join(', ');
-                            errorDiv.style.display = 'block';
-                        }
-                    } else { // Xử lý lỗi cho các trường con như variants[i].price
-                        const parts = field.split('.');
-                        if (parts.length > 1 && parts[0] === 'variants') {
-                            const index = parts[1];
-                            const subField = parts.slice(2).join('.');
-                            const variantRow = document.querySelectorAll('.variant-row')[index];
-                            if (variantRow) {
-                                const variantInput = variantRow.querySelector(
-                                    `[name^="variants[${index}][${subField}]"]`);
-                                if (variantInput) {
-                                    variantInput.classList.add('is-invalid');
-                                    let errorDiv = variantInput.nextElementSibling && variantInput
-                                        .nextElementSibling.classList.contains('invalid-feedback') ?
-                                        variantInput.nextElementSibling : null;
-                                    if (!errorDiv) {
-                                        // Thêm một div feedback nếu chưa có
-                                        errorDiv = document.createElement('small');
-                                        errorDiv.classList.add('text-danger', 'invalid-feedback');
-                                        variantInput.parentNode.appendChild(errorDiv);
-                                    }
-                                    if (errorDiv) {
-                                        errorDiv.innerText = messages.join(', ');
-                                        errorDiv.style.display = 'block';
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thành công!',
+                        text: data.message || 'Thêm thành công!',
+                        timer: 1200,
+                        showConfirmButton: false
+                    });
+                    this.reset();
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi',
+                        text: data.message || 'Thêm mới thất bại!',
+                        confirmButtonText: 'OK'
+                    });
                 }
-            }
+            })
+            .catch(err => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi hệ thống',
+                    text: 'Vui lòng thử lại!',
+                    confirmButtonText: 'OK'
+                });
+            });
+        });
+    }
 
-            // ================== Cập nhật UI thêm thuộc tính mới ==================
-            function updateAttributeFilterUI(attribute, attributeValues) {
-                const container = document.querySelector('.attribute-filters');
-                if (!container) return;
+    // Đăng ký các modal AJAX
+    ajaxModalForm('quickCategoryForm', 'addCategoryModal', 'category_id', 'category');
+    ajaxModalForm('quickRegionForm', 'addRegionModal', 'region_id', 'region');
+    ajaxModalForm('quickAttributeForm', 'addAttributeModal', null, 'attribute', function(data) {
+        // Thêm thuộc tính mới vào UI filter
+        if (data.attribute && data.attributeValues) {
+            updateAttributeFilterUI(data.attribute, data.attributeValues);
+        }
+    });
+    ajaxModalForm('quickAttributeValueForm', 'addAttributeValueModal', null, 'attributeValue', function(data) {
+        // Thêm giá trị thuộc tính mới vào UI
+        if (data.attributeValues && data.attribute_id && data.attribute_name) {
+            updateAttributeValueFilterUI(data.attribute_id, data.attribute_name, data.attributeValues);
+        }
+    });
 
-                const valuesHtml = attributeValues.map(val => `
+    // ========== HÀM HỖ TRỢ CẬP NHẬT UI FILTER THUỘC TÍNH & GIÁ TRỊ ==========
+    function updateAttributeFilterUI(attribute, attributeValues) {
+        const container = document.querySelector('.attribute-filters');
+        if (!container) return;
+        const valuesHtml = attributeValues.map(val => `
             <label class="form-check form-check-inline d-block">
                 <input
                     class="form-check-input attribute-value-checkbox"
@@ -1237,12 +912,10 @@
                 <span class="form-check-label">${val.value}</span>
             </label>
         `).join('');
-
-                const attrGroup = document.createElement('div');
-                attrGroup.className = 'attribute-group mb-3';
-                attrGroup.dataset.attrName = attribute.name.toLowerCase();
-
-                attrGroup.innerHTML = `
+        const attrGroup = document.createElement('div');
+        attrGroup.className = 'attribute-group mb-3';
+        attrGroup.dataset.attrName = attribute.name.toLowerCase();
+        attrGroup.innerHTML = `
             <button class="btn btn-link p-0 mb-1" type="button" data-bs-toggle="collapse" data-bs-target="#attr-${attribute.id}" aria-expanded="true" aria-controls="attr-${attribute.id}">
                 ${attribute.name} (${attributeValues.length})
             </button>
@@ -1252,61 +925,51 @@
                 </div>
             </div>
         `;
+        container.appendChild(attrGroup);
+        registerCheckboxListeners();
+    }
 
-                container.appendChild(attrGroup);
-                registerCheckboxListeners();
-                toggleEditProductTypeFields(); // Gọi lại để đảm bảo trạng thái hiển thị đúng
-            }
-
-            // ================== Cập nhật UI thêm giá trị thuộc tính mới ==================
-            function updateAttributeValueFilterUI(attributeId, attributeName, attributeValues) {
-                const container = document.querySelector('.attribute-filters');
-                if (!container) return;
-
-                const attrNameLower = attributeName.toLowerCase();
-                let attrGroup = container.querySelector(`.attribute-group[data-attr-name="${attrNameLower}"]`);
-
-                if (!attrGroup) {
-                    // Nếu chưa có nhóm, tạo mới và append
-                    attrGroup = document.createElement('div');
-                    attrGroup.className = 'attribute-group mb-3';
-                    attrGroup.dataset.attrName = attrNameLower;
-
-                    // Tạo HTML nhóm với tất cả giá trị mới
-                    attrGroup.innerHTML = `
-        <button class="btn btn-link p-0 mb-1" type="button" data-bs-toggle="collapse" data-bs-target="#attr-${attributeId}" aria-expanded="true" aria-controls="attr-${attributeId}">
-            ${attributeName} (${attributeValues.length})
-        </button>
-        <div class="collapse show" id="attr-${attributeId}">
-            <div class="values-list" style="max-height: 150px; overflow-y:auto; border:1px solid #ddd; padding:8px; border-radius:4px;">
-                ${attributeValues.map(val => `
-                                <label class="form-check form-check-inline d-block">
-                                    <input
-                                        class="form-check-input attribute-value-checkbox"
-                                        type="checkbox"
-                                        data-attrid="${attributeId}"
-                                        value="${val.id}"
-                                        name="attribute_values_checkbox[${attributeId}][]"
-                                        checked
-                                    >
-                                    <span class="form-check-label">${val.value}</span>
-                                </label>
-                            `).join('')}
-            </div>
-        </div>
-    `;
-                    container.appendChild(attrGroup);
-                } else {
-                    // Nếu nhóm đã có, chỉ thêm giá trị mới vào container con 'values-list'
-                    const valuesList = attrGroup.querySelector('.values-list');
-                    if (valuesList) {
-                        const existingIds = new Set(Array.from(valuesList.querySelectorAll(
-                            'input.attribute-value-checkbox')).map(input => input.value));
-                        attributeValues.forEach(val => {
-                            if (!existingIds.has(val.id.toString())) {
-                                const label = document.createElement('label');
-                                label.className = 'form-check form-check-inline d-block';
-                                label.innerHTML = `
+    function updateAttributeValueFilterUI(attributeId, attributeName, attributeValues) {
+        const container = document.querySelector('.attribute-filters');
+        if (!container) return;
+        const attrNameLower = attributeName.toLowerCase();
+        let attrGroup = container.querySelector(`.attribute-group[data-attr-name="${attrNameLower}"]`);
+        if (!attrGroup) {
+            attrGroup = document.createElement('div');
+            attrGroup.className = 'attribute-group mb-3';
+            attrGroup.dataset.attrName = attrNameLower;
+            attrGroup.innerHTML = `
+                <button class="btn btn-link p-0 mb-1" type="button" data-bs-toggle="collapse" data-bs-target="#attr-${attributeId}" aria-expanded="true" aria-controls="attr-${attributeId}">
+                    ${attributeName} (${attributeValues.length})
+                </button>
+                <div class="collapse show" id="attr-${attributeId}">
+                    <div class="values-list" style="max-height: 150px; overflow-y:auto; border:1px solid #ddd; padding:8px; border-radius:4px;">
+                        ${attributeValues.map(val => `
+                            <label class="form-check form-check-inline d-block">
+                                <input
+                                    class="form-check-input attribute-value-checkbox"
+                                    type="checkbox"
+                                    data-attrid="${attributeId}"
+                                    value="${val.id}"
+                                    name="attribute_values_checkbox[${attributeId}][]"
+                                    checked
+                                >
+                                <span class="form-check-label">${val.value}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            container.appendChild(attrGroup);
+        } else {
+            const valuesList = attrGroup.querySelector('.values-list');
+            if (valuesList) {
+                const existingIds = new Set(Array.from(valuesList.querySelectorAll('input.attribute-value-checkbox')).map(input => input.value));
+                attributeValues.forEach(val => {
+                    if (!existingIds.has(val.id.toString())) {
+                        const label = document.createElement('label');
+                        label.className = 'form-check form-check-inline d-block';
+                        label.innerHTML = `
                             <input
                                 class="form-check-input attribute-value-checkbox"
                                 type="checkbox"
@@ -1317,79 +980,37 @@
                             >
                             <span class="form-check-label">${val.value}</span>
                         `;
-                                valuesList.appendChild(label);
-                            }
-                        });
-                        const btn = attrGroup.querySelector('button');
-                        if (btn) {
-                            const totalValues = valuesList.querySelectorAll('input.attribute-value-checkbox')
-                                .length;
-                            btn.textContent = `${attributeName} (${totalValues})`;
-                        }
+                        valuesList.appendChild(label);
                     }
-                }
-
-                registerCheckboxListeners();
-                toggleEditProductTypeFields(); // Gọi lại để đảm bảo trạng thái hiển thị đúng
-            }
-
-            // ================== Khởi tạo ban đầu ==================
-            initMainEditor();
-            toggleEditProductTypeFields(); // Gọi lần đầu để thiết lập trạng thái ban đầu
-            showRemoveButtons();
-            updateSkuAll();
-
-            // Đăng ký lại sự kiện cho radio button chuyển đổi biến thể
-            document.getElementById('editHasVariantsYes').addEventListener('change', toggleEditProductTypeFields);
-            document.getElementById('editHasVariantsNo').addEventListener('change', toggleEditProductTypeFields);
-        });
-    </script>
-
-    <script>
-        $(document).ready(function() {
-            // DIAGNOSTIC SCRIPT: Attempt to re-bind click event directly after a small delay
-            setTimeout(function() {
-                $('.product-image-delete-btn').each(function() {
-                    var button = $(this);
-                    // First, ensure no previous handlers are interfering if possible (though .on() should handle this)
-                    button.off('click').on('click', function(e) {
-                        e.preventDefault();
-                        console.log('DIAGNOSTIC: Direct button click detected!', button
-                            .data('id')); // This MUST show if clickable
-
-                        var imageId = button.data('id');
-                        var url = button.data('url');
-
-                        if (confirm('Bạn có chắc muốn xóa ảnh này?')) {
-                            $.ajax({
-                                url: url,
-                                type: 'DELETE',
-                                data: {
-                                    _token: '{{ csrf_token() }}'
-                                },
-                                success: function(response) {
-                                    if (response.success) {
-                                        button.closest('.image-item').remove();
-                                        alert('Xóa ảnh thành công!');
-                                    } else {
-                                        alert('Có lỗi xảy ra khi xóa ảnh!');
-                                    }
-                                },
-                                error: function(xhr) {
-                                    console.error(
-                                        "Error deleting image (DIAGNOSTIC): ",
-                                        xhr);
-                                    alert(
-                                        'Có lỗi xảy ra khi xóa ảnh. Vui lòng thử lại!'
-                                    );
-                                }
-                            });
-                        }
-                    });
                 });
-                console.log('DIAGNOSTIC: Direct click handlers re-attached.');
-            }, 1000); // 1-second delay to allow other scripts to initialize
+                const btn = attrGroup.querySelector('button');
+                if (btn) {
+                    const totalValues = valuesList.querySelectorAll('input.attribute-value-checkbox').length;
+                    btn.textContent = `${attributeName} (${totalValues})`;
+                }
+            }
+        }
+        registerCheckboxListeners();
+    }
+
+    // ========== HÀM ĐĂNG KÝ LẠI SỰ KIỆN CHECKBOX GIÁ TRỊ THUỘC TÍNH ==========
+    function registerCheckboxListeners() {
+        document.querySelectorAll('.attribute-value-checkbox').forEach(cb => {
+            cb.removeEventListener('change', generateVariants);
+            cb.addEventListener('change', generateVariants);
         });
-    </script>
+    }
+
+    // ========== CÁC HÀM KHỞI TẠO KHÁC (sinh biến thể, toggle loại sản phẩm, v.v...) ==========
+    // ...giữ nguyên như bạn đang dùng...
+
+    // ====== Khởi tạo ban đầu ======
+    initMainEditor();
+    initVariantEditors();
+    // ... các hàm khởi tạo khác nếu cần ...
+});
+</script>
+
+
 
 @endsection

@@ -43,7 +43,7 @@
 
                         <div class="mb-3 d-flex">
                             <label class="form-label fw-semibold me-2" style="min-width: 90px;">Nội dung:</label>
-                            <div class="form-control-plaintext flex-grow-1">{{ $ticket->content }}</div>
+                            <div class="form-control-plaintext flex-grow-1">{!! $ticket->content !!}</div>
                         </div>
 
                         <div class="mb-3 d-flex">

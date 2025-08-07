@@ -125,7 +125,8 @@
                         @endif
                         <div class="mb-3">
                             <label for="name" class="form-label">Tên danh mục</label>
-                            <input type="text" class="form-control" id="name" name="name" required value="{{ old('name') }}">
+                            <input type="text" class="form-control" id="name" name="name"
+                                value="{{ old('name') }}">
                         </div>
                         <div class="mb-3">
                             <label for="image" class="form-label">Icon (Ảnh)</label>
@@ -156,7 +157,7 @@
                         <input type="hidden" id="edit_id" name="id">
                         <div class="mb-3">
                             <label for="edit_name" class="form-label">Tên danh mục</label>
-                            <input type="text" class="form-control" id="edit_name" name="name" required>
+                            <input type="text" class="form-control" id="edit_name" name="name">
                         </div>
                         <div class="mb-3">
                             <label for="edit_image" class="form-label">Icon (Ảnh)</label>
@@ -421,27 +422,26 @@
         });
     </script>
 
-<style>
-    .btn.btn-warning {
-        background-color: #ffc107 !important;
-        /* Màu vàng */
-        border-color: #ffc107 !important;
-        color: #212529 !important;
-        /* Màu chữ đen */
-    }
+    <style>
+        .btn.btn-warning {
+            background-color: #ffc107 !important;
+            /* Màu vàng */
+            border-color: #ffc107 !important;
+            color: #212529 !important;
+            /* Màu chữ đen */
+        }
 
-    .btn.btn-danger {
-        background-color: #dc3545 !important;
-        /* Màu đỏ */
-        border-color: #dc3545 !important;
-        color: #fff !important;
-        /* Màu chữ trắng */
-    }
+        .btn.btn-danger {
+            background-color: #dc3545 !important;
+            /* Màu đỏ */
+            border-color: #dc3545 !important;
+            color: #fff !important;
+            /* Màu chữ trắng */
+        }
 
-    .w-20 {
-        width: 50px !important;
-        height: 50px !important;
-    }
-</style>
+        .w-20 {
+            width: 50px !important;
+            height: 50px !important;
+        }
+    </style>
 @endsection
-

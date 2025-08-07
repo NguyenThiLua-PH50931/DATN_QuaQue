@@ -131,6 +131,9 @@
                                         <th style="color: black; background-color: #f8f9fa;">Ảnh</th>
                                         <th style="color: black; background-color: #f8f9fa;">Danh mục</th>
                                         <th style="color: black; background-color: #f8f9fa;">Vùng miền</th>
+
+                                        {{-- <th style="color: black; background-color: #f8f9fa;">Vùng miền</th> --}}
+                                      <th style="color: black; background-color: #f8f9fa;">Cập nhật lúc</th>
                                         <th style="color: black; background-color: #f8f9fa;">Trạng thái</th>
                                         <th style="color: black; background-color: #f8f9fa;">Hành động</th>
                                     </tr>
@@ -145,6 +148,19 @@
                                             <div>
                                                 <a href="{{ route('admin.products.show', $product->slug) }}" class="fw-bold text-primary" style="font-size:16px;">
                                                     {{ \Illuminate\Support\Str::limit($product->name, 20, '...') }}
+                                                <a href="javascript:void(0)"
+                                                    class="fw-bold text-primary product-name"
+                                                    style="font-size:16px;"
+                                                    data-id="{{ $product->id }}"
+                                                    data-slug="{{ $product->slug }}"
+                                                    data-name="{{ $product->name }}"
+                                                    data-desc="{{ $product->short_desc ?? '' }}"
+                                                    data-image="{{ asset('storage/' . $product->image) }}"
+                                                    data-category="{{ $product->category->name ?? '' }}"
+                                                    data-region="{{ $product->region->name ?? '' }}"
+                                                    data-updated="{{ $product->updated_at->format('d-m-Y H:i:s') }}"
+                                                    data-status="{{ $product->active ? 'Đang bán' : 'Ngừng bán' }}">
+                                                    {{ Str::limit($product->name, 20) }}
                                                 </a>
                                                 <div class="small text-muted mt-1">
                                                     {{ $product->short_desc ?? '' }}
@@ -156,7 +172,11 @@
                                                 class="w-20 h-20 object-cover" width="100px">
                                         </td>
                                         <td>{{ $product->category->name ?? '' }}</td>
+
                                         <td>{{ $product->region->name ?? '' }}</td>
+
+                                        {{-- <td>{{ $product->region->name ?? '' }}</td> --}}
+                                         <td>{{ $product->updated_at->format('d-m-Y H:i:s') }}</td> 
                                         <td class="{{ $product->active ? 'status-close' : 'status-danger' }}">
                                             <span class="badge status-badge"
                                                 style="cursor:pointer"
@@ -169,6 +189,9 @@
 
                                         <td>
                                             <div class="d-flex align-items-center justify-content-center gap-2 action-icons">
+                                                <a href="{{ route('client.product.detail', $product->slug) }}" class="text-primary" title="Xem (Client)" target="_blank" rel="noopener">
+                                                    <i class="ri-links-line"></i>
+                                                </a>
                                                 <a href="{{ route('admin.products.show', $product->slug) }}" class="text-secondary" title="Xem">
                                                     <i class="ri-eye-line"></i>
                                                 </a>
@@ -311,10 +334,103 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="productInfoModal" tabindex="-1" aria-labelledby="productInfoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="productInfoLabel">Thông tin sản phẩm</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-borderless">
+                    <tbody>
+                        <tr>
+                            <th>Thông tin:</th>
+                            <td id="modalNameDesc"></td>
+                        </tr>
+                        <tr>
+                            <th>Ảnh thumb:</th>
+                            <td><img id="modalImage" src="" alt="" style="max-width:100px;"></td>
+                        </tr>
+                        <tr>
+                            <th>Thể loại:</th>
+                            <td id="modalCategory"></td>
+                        </tr>
+                        <tr>
+                            <th>Vùng miền:</th>
+                            <td id="modalRegion"></td>
+                        </tr>
+                        <tr>
+                            <th>Cập nhật lúc:</th>
+                            <td id="modalUpdated"></td>
+                        </tr>
+                        <tr>
+                            <th>Trạng thái:</th>
+                            <td id="modalStatus"></td>
+                        </tr>
+                        <tr>
+                            <th>Hành động:</th>
+                            <td>
+                                <div class="d-flex align-items-center justify-content-center gap-2 action-icons">
+
+                                    <!-- Link client.product.detail -->
+                                    <a href="#" id="modalClientView" class="text-primary" title="Xem (Client)" target="_blank" rel="noopener">
+                                        <i class="ri-links-line"></i>
+                                    </a>
+
+                                    <!-- Link admin.products.show -->
+                                    <a href="#" id="modalAdminView" class="text-secondary" title="Xem (Admin)">
+                                        <i class="ri-eye-line"></i>
+                                    </a>
+
+                                    <!-- Link admin.products.edit -->
+                                    <a href="#" id="modalEdit" class="text-primary" title="Sửa">
+                                        <i class="ri-pencil-line"></i>
+                                    </a>
+
+                                    <!-- Nút xóa modal -->
+                                    <a href="javascript:void(0)" id="modalDelete" class="delete-btn text-danger" title="Xóa"
+                                        data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                        <i class="ri-delete-bin-line"></i>
+                                    </a>
+                                </div>
+                            </td>
+
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
 @includeIf('backend.footer')
 <script src="{{ asset('backend/js/product.js') }}"></script>
 <style>
+    .modal-content {
+        border: none !important;
+    }
+
+    .modal-body table th {
+        width: 120px;
+        text-align: right;
+        vertical-align: top;
+        padding-right: 10px;
+        white-space: nowrap;
+    }
+
+    .modal-body table td {
+        text-align: left;
+        vertical-align: top;
+    }
+
+    /* Nếu cần icon căn lề đẹp hơn */
+    .modal-body a {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
     /* Container dropdown filter */
     .filter-dropdown {
         position: relative;
@@ -925,6 +1041,55 @@
         $('#errorMessageModal').modal('show');
         @endif
 
+    });
+    // modal thong tin nhanh
+    $(document).ready(function() {
+        // Khi click vào tên sản phẩm mở modal thông tin
+        $(document).on('click', '.product-name', function() {
+            var el = $(this);
+
+            // Cập nhật thông tin modal
+            $('#modalNameDesc').html(el.data('name') + '<br>' + el.data('desc'));
+            $('#modalImage').attr('src', el.data('image')).attr('alt', el.data('name'));
+            $('#modalCategory').text(el.data('category'));
+            $('#modalRegion').text(el.data('region'));
+            $('#modalUpdated').text(el.data('updated'));
+
+            var statusText = el.data('status');
+            var statusClass = (statusText === 'Đang bán') ? 'status-close' : 'status-danger';
+            $('#modalStatus').text(statusText).removeClass('status-close status-danger').addClass(statusClass);
+
+            var productId = el.data('id');
+            var productSlug = el.data('slug');
+
+            // Cập nhật link hành động trong modal
+            $('#modalClientView').attr('href', '/client/san-pham/' + productSlug); // Client detail
+            $('#modalAdminView').attr('href', '/admin/products/' + productSlug); // Admin xem chi tiết
+            $('#modalPreview').attr('href', '/admin/products/' + productSlug + '/preview'); // Admin xem trước
+            $('#modalEdit').attr('href', '/admin/products/' + productSlug + '/edit'); // Admin sửa
+
+            // Cập nhật nút xóa
+            $('#modalDelete').attr('data-id', productId);
+            $('#modalDelete').attr('data-name', el.data('name'));
+
+            // Mở modal thông tin
+            $('#productInfoModal').modal('show');
+        });
+
+        // Khi click nút xóa trong modal thông tin mở modal xác nhận xóa
+        $('#modalDelete').off('click').on('click', function() {
+            var productId = $(this).attr('data-id');
+            var deleteUrl = '/admin/products/' + productId;
+
+            // Set action cho form delete
+            $('#deleteForm').attr('action', deleteUrl);
+
+            // Đóng modal thông tin
+            $('#productInfoModal').modal('hide');
+
+            // Mở modal xác nhận xóa
+            $('#deleteModal').modal('show');
+        });
     });
 </script>
 @endsection

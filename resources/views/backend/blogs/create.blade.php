@@ -24,7 +24,7 @@
 
                                     <div class="tab-content" id="pills-tabContent">
                                         <div class="tab-pane fade show active" id="pills-home" role="tabpanel">
-                                            @if ($errors->any())
+                                            {{-- @if ($errors->any())
                                                 <div class="alert alert-danger">
                                                     <ul>
                                                         @foreach ($errors->all() as $error)
@@ -32,16 +32,18 @@
                                                         @endforeach
                                                     </ul>
                                                 </div>
-                                            @endif
+                                            @endif --}}
 
                                             <form class="theme-form theme-form-2 mega-form" method="POST"
                                                 action="{{ route('admin.blog.store') }}" enctype="multipart/form-data">
                                                 @csrf
 
                                                 <div class="mb-4 row align-items-center">
-                                                    <label class="col-lg-2 col-md-3 col-form-label form-label-title">Tiêu đề</label>
+                                                    <label class="col-lg-2 col-md-3 col-form-label form-label-title">Tiêu
+                                                        đề</label>
                                                     <div class="col-md-9 col-lg-10">
-                                                        <input class="form-control" type="text" name="title" value="{{ old('title') }}">
+                                                        <input class="form-control" type="text" name="title"
+                                                            value="{{ old('title') }}">
                                                         @error('title')
                                                             <p class="text-danger">{{ $message }}</p>
                                                         @enderror
@@ -49,9 +51,11 @@
                                                 </div>
 
                                                 <div class="mb-4 row align-items-center">
-                                                    <label class="col-lg-2 col-md-3 col-form-label form-label-title">Đường link</label>
+                                                    <label class="col-lg-2 col-md-3 col-form-label form-label-title">Đường
+                                                        link</label>
                                                     <div class="col-md-9 col-lg-10">
-                                                        <input class="form-control" type="text" name="slug" value="{{ old('slug') }}">
+                                                        <input class="form-control" type="text" name="slug"
+                                                            value="{{ old('slug') }}">
                                                         @error('slug')
                                                             <p class="text-danger">{{ $message }}</p>
                                                         @enderror
@@ -59,7 +63,8 @@
                                                 </div>
 
                                                 <div class="mb-4 row align-items-center">
-                                                    <label class="col-lg-2 col-md-3 col-form-label form-label-title">Nội dung</label>
+                                                    <label class="col-lg-2 col-md-3 col-form-label form-label-title">Nội
+                                                        dung</label>
                                                     <div class="col-md-9 col-lg-10">
                                                         <textarea class="form-control content-editor" name="content">{{ old('content') }}</textarea>
                                                         @error('content')
@@ -69,9 +74,11 @@
                                                 </div>
 
                                                 <div class="mb-4 row align-items-center">
-                                                    <label class="col-lg-2 col-md-3 col-form-label form-label-title">Ảnh</label>
+                                                    <label
+                                                        class="col-lg-2 col-md-3 col-form-label form-label-title">Ảnh</label>
                                                     <div class="col-md-9 col-lg-10">
-                                                        <input class="form-control" type="file" name="thumbnail" accept="image/*">
+                                                        <input class="form-control" type="file" name="thumbnail"
+                                                            accept="image/*">
                                                         @error('thumbnail')
                                                             <p class="text-danger">{{ $message }}</p>
                                                         @enderror
@@ -79,30 +86,36 @@
                                                 </div>
 
                                                 <div class="mb-4 row align-items-center">
-                                                    <label for="start_date" class="col-lg-2 col-md-3 col-form-label form-label-title">Ngày hiển thị</label>
+                                                    <label for="start_date"
+                                                        class="col-lg-2 col-md-3 col-form-label form-label-title">Ngày hiển
+                                                        thị</label>
                                                     <div class="col-md-3 col-lg-3">
-                                                        <input type="date" class="form-control" id="start_date" name="start_date"
+                                                        <input type="date" class="form-control" id="start_date"
+                                                            name="start_date"
                                                             value="{{ old('start_date', date('Y-m-d')) }}">
                                                         @error('start_date')
                                                             <div class="text-danger">{{ $message }}</div>
                                                         @enderror
                                                     </div>
                                                 </div>
-                    
+
                                                 <div class="mb-4 row align-items-center">
-                                                    <label for="end_date" class="col-lg-2 col-md-3 col-form-label form-label-title">Ngày dừng hiển thị</label>
+                                                    <label for="end_date"
+                                                        class="col-lg-2 col-md-3 col-form-label form-label-title">Ngày dừng
+                                                        hiển thị</label>
                                                     <div class="col-md-3 col-lg-3">
-                                                        <input type="date" class="form-control" id="end_date" name="end_date"
-                                                            value="{{ old('end_date') }}">
+                                                        <input type="date" class="form-control" id="end_date"
+                                                            name="end_date" value="{{ old('end_date') }}">
                                                         @error('end_date')
                                                             <div class="text-danger">{{ $message }}</div>
                                                         @enderror
-                                                    </div>   
+                                                    </div>
                                                 </div>
 
                                                 <div class="row">
                                                     <div class="col-12 d-flex justify-content-end mt-4">
-                                                        <a href="{{ route('admin.blog.index') }}" class="btn btn-secondary me-2">Hủy</a>
+                                                        <a href="{{ route('admin.blog.index') }}"
+                                                            class="btn btn-secondary me-2">Hủy</a>
                                                         <button type="submit" class="btn btn-primary">Tạo mới</button>
                                                     </div>
                                                 </div>
@@ -137,7 +150,10 @@
             document.querySelectorAll('.content-editor').forEach((textarea) => {
                 if (!textarea.classList.contains('ck-editor-initialized')) {
                     ClassicEditor.create(textarea).then(editor => {
-                        contentEditors.push({ editor, textarea });
+                        contentEditors.push({
+                            editor,
+                            textarea
+                        });
                         textarea.classList.add('ck-editor-initialized');
                     });
                 }
@@ -146,10 +162,13 @@
 
         initContentEditors();
 
-        document.querySelector('form').addEventListener('submit', function (e) {
+        document.querySelector('form').addEventListener('submit', function(e) {
             let isValid = true;
 
-            contentEditors.forEach(({ editor, textarea }) => {
+            contentEditors.forEach(({
+                editor,
+                textarea
+            }) => {
                 const data = editor.getData().trim();
                 textarea.value = data;
 

@@ -57,10 +57,16 @@ class ProductController extends Controller
         if ($request->filled('sort')) {
             switch ($request->sort) {
                 case 'price_asc':
-                    $query->orderByRaw('(SELECT MIN(price) FROM product_variants WHERE product_id = products.id) ASC');
+                    $query->orderByRaw('(
+                        SELECT MIN(price) FROM product_variants
+                        WHERE product_id = products.id AND stock > 0 AND active = 1
+                    ) ASC');
                     break;
                 case 'price_desc':
-                    $query->orderByRaw('(SELECT MIN(price) FROM product_variants WHERE product_id = products.id) DESC');
+                    $query->orderByRaw('(
+                        SELECT MIN(price) FROM product_variants
+                        WHERE product_id = products.id AND stock > 0 AND active = 1
+                    ) DESC');
                     break;
                 case 'rating':
                     $query->withAvg('reviews', 'rating')->orderByDesc('reviews_avg_rating');
@@ -75,16 +81,59 @@ class ProductController extends Controller
                     $query->orderBy('id', 'desc');
             }
         } else {
-            $query->orderBy('id', 'desc');
+            // Mặc định: sắp xếp theo stock (có hàng trước, hết hàng sau)
+            $query->orderByRaw('
+                CASE
+                    WHEN products.has_variants = 1 THEN
+                        (SELECT COUNT(*) FROM product_variants WHERE product_id = products.id AND stock > 0 AND active = 1)
+                    ELSE
+                        0
+                END DESC
+            ')->orderBy('id', 'desc');
         }
-        // Phân trang
-        $products = $query->paginate(12)->appends($request->query());
+        // Lấy tất cả sản phẩm (không phân trang ở đây)
+        $allProducts = $query->get();
+
+        // Phân loại sản phẩm còn hàng và hết hàng
+        $inStockProducts = collect();
+        $outOfStockProducts = collect();
+        foreach ($allProducts as $product) {
+            if ($product->has_variants) {
+                // Có biến thể
+                $hasInStockVariant = $product->variants->where('stock', '>', 0)->where('active', 1)->count() > 0;
+                if ($hasInStockVariant) {
+                    $inStockProducts->push($product);
+                } else {
+                    $outOfStockProducts->push($product);
+                }
+            } else {
+                // Không có biến thể
+                $defaultVariant = $product->variants->first();
+                if ($defaultVariant && $defaultVariant->stock > 0) {
+                    $inStockProducts->push($product);
+                } else {
+                    $outOfStockProducts->push($product);
+                }
+            }
+        }
+        // Gộp lại: còn hàng trước, hết hàng sau
+        $finalProducts = $inStockProducts->concat($outOfStockProducts);
+
+        // Phân trang thủ công
+        $perPage = 12;
+        $currentPage = $request->input('page', 1);
+        $pagedProducts = $finalProducts->forPage($currentPage, $perPage);
+        $products = new \Illuminate\Pagination\LengthAwarePaginator(
+            $pagedProducts,
+            $finalProducts->count(),
+            $perPage,
+            $currentPage,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
 
         // Lấy danh sách danh mục và vùng miền cho filter
         $categories = \App\Models\admin\Category::all();
         $regions = \App\Models\admin\Region::all();
-
-
 
         return view('frontend.products.index', compact('products', 'categories', 'regions', 'priceMin', 'priceMax'));
     }
@@ -99,6 +148,7 @@ class ProductController extends Controller
             'region',
             'variants.attributeValues.attribute',
             'reviews.user',
+            'reviews.productVariantId',
             'comments.user',
             'comments.replies.user'
         ])
@@ -198,18 +248,21 @@ class ProductController extends Controller
             ->orderByDesc('view_month')
             ->limit(4)
             ->get();
-        $reviews = $product->reviews()->with('user')->latest()->get();
-        $user = Auth::user();
-        $canReview = false;
+        $reviews = $product->reviews()
+            ->with(['user', 'productVariantId'])
+            ->orderByDesc('created_at')
+            ->get();
+        $totalReviews = $reviews->count();
+        $averageRating = $totalReviews > 0
+            ? round($reviews->avg('rating'), 2)
+            : 0;
 
-        if ($user) {
-            $canReview = DB::table('order_items')
-                ->join('orders', 'order_items.order_id', '=', 'orders.id')
-                ->where('orders.user_id', $user->id)
-                ->where('orders.status', 'delivered')
-                ->whereIn('order_items.product_variant_value_id', $variants->pluck('id'))
-                ->exists();
+        // Đếm số lượng review mỗi mức sao
+        $ratingsCount = [];
+        for ($i = 1; $i <= 5; $i++) {
+            $ratingsCount[$i] = $reviews->where('rating', $i)->count();
         }
+        $user = Auth::user();
         $currentUser = Auth::user();
         // LẤY BÌNH LUẬN KÈM TRẢ LỜI CHO SẢN PHẨM
         $comments = $product->comments()
@@ -217,7 +270,9 @@ class ProductController extends Controller
             ->where('status', 'visible')
             ->latest()
             ->get();
-
+        $starOptions = $reviews->pluck('rating')->unique()->sortDesc()->values();
+        // Lọc các phân loại đang có review
+        $variantOptions = $reviews->pluck('product_variant_value_id')->unique()->values();
         return view('frontend.products.detail', [
             'product'                 => $product,
             'variants'                => $variants,
@@ -229,9 +284,13 @@ class ProductController extends Controller
             'productSectionPromoLeftTop' => $productSectionPromoLeftTop,
             'reviews'    => $reviews,
             'topViewedProducts'       => $topViewedProducts,
-            'canReview'               => $canReview,
             'comments'                => $comments,    // thêm biến comments vào view
             'currentUser'             => $currentUser,
+            'averageRating'           => $averageRating,
+            'totalReviews'            => $totalReviews,
+            'ratingsCount'            => $ratingsCount,
+            'starOptions' => $starOptions,
+                'variantOptions' => $variantOptions,
         ]);
     }
     public function quickView($slug)
@@ -280,13 +339,20 @@ class ProductController extends Controller
 
         $avgRating = round($product->reviews->avg('rating') ?? 0);
 
+        // Lấy ảnh mô tả từ bảng product_images
+        $descriptionImages = $product->images->map(function ($image) {
+            return asset('storage/' . $image->image_url);
+        })->toArray();
+
         return response()->json([
             'product' => [
                 'id' => $product->id,
                 'name' => $product->name,
                 'description' => $product->description,
+                'origin' => $product->origin,
                 'category_name' => $product->category->name ?? '',
                 'image' => $product->image ? asset('storage/' . $product->image) : null, // Ảnh product
+                'description_images' => $descriptionImages, // Ảnh mô tả
                 'variants' => $variantMap, // Mảng variant
                 'attributes' => $attributeOptions,
                 'avg_rating' => $avgRating,

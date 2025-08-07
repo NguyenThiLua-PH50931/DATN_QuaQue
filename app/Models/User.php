@@ -64,6 +64,9 @@ public function addresses()
 {
     return $this->hasMany(\App\Models\Client\Address::class, 'user_id');
 }
-
+public function orders()
+    {
+        return $this->hasMany(\App\Models\admin\Order::class, 'user_id');
+    }
 
 }

@@ -177,12 +177,6 @@
                                         </button>
                                     </div>
                                 </form>
-                                <div class="buy-box">
-                                    <a href="wishlist.html">
-                                        <i data-feather="heart"></i>
-                                        <span>Add To Wishlist</span>
-                                    </a>
-                                </div>
 
                                 <div class="pickup-box">
 
@@ -282,236 +276,7 @@
 
                                     <div class="tab-pane fade" id="review" role="tabpanel"
                                         aria-labelledby="review-tab">
-                                        <div class="review-box">
-                                            <div class="row g-4">
-                                                <div class="col-xl-6">
-                                                    <div class="review-title">
-                                                        <h4 class="fw-500">
-                                                            Đánh giá
-                                                        </h4>
-                                                    </div>
-
-                                                    <div class="d-flex">
-                                                        <div class="product-rating">
-                                                            <ul class="rating">
-                                                                <li>
-                                                                    <i data-feather="star" class="fill"></i>
-                                                                </li>
-                                                                <li>
-                                                                    <i data-feather="star" class="fill"></i>
-                                                                </li>
-                                                                <li>
-                                                                    <i data-feather="star" class="fill"></i>
-                                                                </li>
-                                                                <li>
-                                                                    <i data-feather="star"></i>
-                                                                </li>
-                                                                <li>
-                                                                    <i data-feather="star"></i>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                        {{-- <h6 class="ms-3">
-                                                        4.2 Out Of 5
-                                                    </h6> --}}
-                                                    </div>
-
-                                                    <div class="rating-box">
-                                                        <ul>
-                                                            <li>
-                                                                <div class="rating-list">
-                                                                    <h5>
-                                                                        5
-                                                                        Sao
-                                                                    </h5>
-                                                                    <div class="progress">
-                                                                        <div class="progress-bar" role="progressbar"
-                                                                            style="width: 68%;" aria-valuenow="100"
-                                                                            aria-valuemin="0" aria-valuemax="100">
-                                                                            68%
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </li>
-
-                                                            <li>
-                                                                <div class="rating-list">
-                                                                    <h5>
-                                                                        4
-                                                                        Sao
-                                                                    </h5>
-                                                                    <div class="progress">
-                                                                        <div class="progress-bar" role="progressbar"
-                                                                            style="width: 67%;" aria-valuenow="100"
-                                                                            aria-valuemin="0" aria-valuemax="100">
-                                                                            67%
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </li>
-
-                                                            <li>
-                                                                <div class="rating-list">
-                                                                    <h5>
-                                                                        3
-                                                                        Sao
-                                                                    </h5>
-                                                                    <div class="progress">
-                                                                        <div class="progress-bar" role="progressbar"
-                                                                            style="width: 42%;" aria-valuenow="100"
-                                                                            aria-valuemin="0" aria-valuemax="100">
-                                                                            42%
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </li>
-
-                                                            <li>
-                                                                <div class="rating-list">
-                                                                    <h5>
-                                                                        2
-                                                                        Sao
-                                                                    </h5>
-                                                                    <div class="progress">
-                                                                        <div class="progress-bar" role="progressbar"
-                                                                            style="width: 30%;" aria-valuenow="100"
-                                                                            aria-valuemin="0" aria-valuemax="100">
-                                                                            30%
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </li>
-
-                                                            <li>
-                                                                <div class="rating-list">
-                                                                    <h5>
-                                                                        1
-                                                                        Sao
-                                                                    </h5>
-                                                                    <div class="progress">
-                                                                        <div class="progress-bar" role="progressbar"
-                                                                            style="width: 24%;" aria-valuenow="100"
-                                                                            aria-valuemin="0" aria-valuemax="100">
-                                                                            24%
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-xl-6">
-                                                    <div class="review-title">
-                                                        {{-- <h4 class="fw-500">
-                                                        Đánh giá
-                                                    </h4> --}}
-                                                    </div>
-                                                    @if ($canReview)
-                                                        {{-- Form đánh giá --}}
-
-                                                        <form action="{{ route('client.product.reviews.store') }}"
-                                                            method="POST">
-                                                            @csrf
-                                                            <input type="hidden" name="product_id"
-                                                                value="{{ $product->id }}">
-                                                            {{-- Nếu bạn cần đánh giá theo biến thể cụ thể, thêm input hidden cho variant_id --}}
-
-                                                            <div class="mb-3">
-                                                                <label for="rating">Đánh giá sao:</label>
-                                                                <select name="rating" class="form-select" required>
-                                                                    <option value="">Chọn số sao</option>
-                                                                    @for ($i = 5; $i >= 1; $i--)
-                                                                        <option value="{{ $i }}">
-                                                                            {{ $i }} sao</option>
-                                                                    @endfor
-                                                                </select>
-                                                            </div>
-
-                                                            <div class="mb-3">
-                                                                <label for="comment">Nội dung đánh giá:</label>
-                                                                <textarea name="comment" class="form-control" rows="4" required placeholder="Viết đánh giá..."></textarea>
-                                                            </div>
-
-                                                            <button type="submit" class="btn btn-primary">Gửi đánh
-                                                                giá</button>
-                                                        </form>
-                                                    @else
-                                                        <div class="alert alert-warning">
-                                                            Bạn chỉ có thể đánh giá sau khi đã nhận được sản phẩm.
-                                                        </div>
-                                                    @endif
-                                                </div>
-
-                                                <div class="col-12">
-                                                    <div class="review-title">
-                                                        <h4 class="fw-500">
-                                                            Câu hỏi của khách hàng
-                                                        </h4>
-                                                    </div>
-                                                    <label for="filter_star">Lọc theo số sao:</label>
-                                                    <select id="filter_star" class="form-select w-auto d-inline-block">
-                                                        <option value="">Tất cả</option>
-                                                        @for ($i = 5; $i >= 1; $i--)
-                                                            <option value="{{ $i }}">{{ $i }} sao
-                                                            </option>
-                                                        @endfor
-                                                    </select>
-                                                    <div class="review-people" id="review-container">
-                                                        <ul class="review-list">
-                                                            @forelse ($reviews as $review)
-                                                                <li>
-                                                                    <div class="people-box">
-                                                                        <div>
-                                                                            <div class="people-image">
-                                                                                <img src="{{ asset('assets/images/review/default.jpg') }}"
-                                                                                    class="img-fluid blur-up lazyload"
-                                                                                    alt="{{ $review->user->name ?? 'User' }}" />
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <div class="people-comment">
-                                                                            <a class="name" href="javascript:void(0)">
-                                                                                {{ $review->user->name ?? 'Người dùng' }}
-                                                                            </a>
-
-                                                                            <div class="date-time">
-                                                                                <h6 class="text-content">
-                                                                                    {{ $review->created_at->format('d M, Y \a\t H:i') }}
-                                                                                </h6>
-
-                                                                                <div class="product-rating">
-                                                                                    <ul class="rating">
-                                                                                        @for ($i = 1; $i <= 5; $i++)
-                                                                                            <li>
-                                                                                                <i data-feather="star"
-                                                                                                    class="{{ $i <= $review->rating ? 'fill' : '' }}"></i>
-                                                                                            </li>
-                                                                                        @endfor
-                                                                                    </ul>
-                                                                                </div>
-                                                                            </div>
-
-                                                                            <div class="reply">
-                                                                                <p>
-                                                                                    {{ $review->comment }}
-                                                                                    {{-- <a href="javascript:void(0)">Reply</a> --}}
-                                                                                </p>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </li>
-                                                            @empty
-                                                                <li>
-                                                                    <p class="text-muted">Chưa có đánh giá nào.</p>
-                                                                </li>
-                                                            @endforelse
-                                                        </ul>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                        </div>
+                                        @includeIf('frontend.products.review')
                                     </div>
                                 </div>
                             </div>
@@ -594,7 +359,7 @@
                 </h2>
                 <span class="title-leaf">
                     <svg class="icon-width">
-                        <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
+                        <use xlink:href="../frontend/assets/svg/leaf.svg#leaf"></use>
                     </svg>
                 </span>
             </div>
@@ -610,15 +375,17 @@
                                                 <img src="{{ asset('storage/' . $product->image) }}"
                                                     class="img-fluid blur-up lazyload" alt="{{ $product->name }}" />
                                             </a>
+                                            <style>
+                                                .product-option li {
+                                                    width: 50% !important;
+                                                }
+                                            </style>
                                             <ul class="product-option">
                                                 <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
                                                     <a href="javascript:void(0)" class="quickview-btn"
                                                         data-slug="{{ $product->slug }}" title="Xem nhanh">
                                                         <i data-feather="eye"></i>
                                                     </a>
-                                                </li>
-                                                <li data-bs-toggle="tooltip" data-bs-placement="top" title="So sánh">
-                                                    <a href="{{ url('compare') }}"><i data-feather="refresh-cw"></i></a>
                                                 </li>
                                                 <li data-bs-toggle="tooltip" data-bs-placement="top" title="Yêu thích">
                                                     <form action="{{ route('client.wishlist.store') }}" method="POST"
@@ -674,335 +441,6 @@
                                                     <span class="theme-color">Liên hệ</span>
                                                 @endif
                                             </h5>
-                                            {{-- <div class="add-to-cart-box bg-white">
-                                        <button class="btn btn-add-cart addcart-button">
-                                            Add
-                                            <span class="add-icon bg-light-gray">
-                                                <i class="fa-solid fa-plus"></i>
-                                            </span>
-                                        </button>
-                                        <div class="cart_qty qty-box">
-                                            <div class="input-group bg-white">
-                                                <button type="button" class="qty-left-minus bg-gray" data-type="minus" data-field="">
-                                                    <i class="fa fa-minus" aria-hidden="true"></i>
-                                                </button>
-                                                <input class="form-control input-number qty-input" type="text" name="quantity" value="0" />
-                                                <button type="button" class="qty-right-plus bg-gray" data-type="plus" data-field="">
-                                                    <i class="fa fa-plus" aria-hidden="true"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-
-
-                                        <!-- Input ẩn lưu dữ liệu biến thể, JS sẽ cập nhật giá trị này khi người dùng chọn biến thể -->
-                                        <input type="hidden" id="variant_attributes" name="variant_attributes"
-                                            value="" />
-
-                                        <button type="submit" class="btn btn-md bg-dark cart-button text-white w-100">
-                                            Thêm vào giỏ hàng
-                                        </button>
-                                    </div>
-                                </form>
-                                <div class="buy-box">
-                                    <a href="wishlist.html">
-                                        <i data-feather="heart"></i>
-                                        <span>Add To Wishlist</span>
-                                    </a>
-                                </div>
-
-                                <div class="pickup-box">
-
-                                    <div class="product-info">
-                                        <ul class="product-info-list product-info-list-2">
-                                            <li>SKU : <a href="javascript:void(0)" id="product-sku">—</a></li>
-                                            <li>Số lượng : <a href="javascript:void(0)" id="product-stock">—</a></li>
-                                            <li>Tags : <a
-                                                    href="javascript:void(0)">{{ $product->category->name ?? '' }}</a></li>
-                                    </ul>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-12">
-                        <div class="product-section-box">
-                            <ul class="nav nav-tabs custom-nav" id="myTab" role="tablist">
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link active" id="description-tab" data-bs-toggle="tab"
-                                        data-bs-target="#description" type="button" role="tab"
-                                        aria-controls="description" aria-selected="true">
-                                        Mô tả
-                                    </button>
-                                </li>
-
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link" id="info-tab" data-bs-toggle="tab"
-                                        data-bs-target="#info" type="button" role="tab" aria-controls="info"
-                                        aria-selected="false">
-                                        Mô tả Biến thể
-                                    </button>
-                                </li>
-
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link" id="care-tab" data-bs-toggle="tab"
-                                        data-bs-target="#care" type="button" role="tab" aria-controls="care"
-                                        aria-selected="false">
-                                        Bình luận
-                                    </button>
-                                </li>
-
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link" id="review-tab" data-bs-toggle="tab"
-                                        data-bs-target="#review" type="button" role="tab"
-                                        aria-controls="review" aria-selected="false">
-                                        Review
-                                    </button>
-                                </li>
-                            </ul>
-
-                            <div class="tab-content custom-tab" id="myTabContent">
-                                <div class="tab-pane fade show active" id="description" role="tabpanel"
-                                    aria-labelledby="description-tab">
-                                    <div class="product-description">
-                                        {!! $product->description !!}
-                                    </div>
-                                </div>
-
-                                <div class="tab-pane fade" id="info" role="tabpanel"
-                                    aria-labelledby="info-tab">
-                                    <div class="table-responsive">
-                                        <div class="table-responsive" id="variant-description">
-                                            {!! $product->variants[0]->description ?? '<p>Chưa có mô tả biến thể</p>' !!}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="tab-pane fade" id="care" role="tabpanel"
-                                    aria-labelledby="care-tab">
-                                    <div class="information-box">
-                                        bình luận
-                                    </div>
-                                </div>
-
-                                <div class="tab-pane fade" id="review" role="tabpanel"
-                                    aria-labelledby="review-tab">
-                                    <div class="review-box">
-                                        <div class="row g-4">
-                                            <div class="col-xl-6">
-                                                <div class="review-title">
-                                                    <h4 class="fw-500">
-                                                        Đánh giá
-                                                    </h4>
-                                                </div>
-
-                                                <div class="d-flex">
-                                                    <div class="product-rating">
-                                                        <ul class="rating">
-                                                            <li>
-                                                                <i data-feather="star" class="fill"></i>
-                                                            </li>
-                                                            <li>
-                                                                <i data-feather="star" class="fill"></i>
-                                                            </li>
-                                                            <li>
-                                                                <i data-feather="star" class="fill"></i>
-                                                            </li>
-                                                            <li>
-                                                                <i data-feather="star"></i>
-                                                            </li>
-                                                            <li>
-                                                                <i data-feather="star"></i>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                    <h6 class="ms-3">
-                                                        4.2 Out Of 5
-                                                    </h6>
-                                                </div>
-
-                                                <div class="rating-box">
-                                                    <ul>
-                                                        <li>
-                                                            <div class="rating-list">
-                                                                <h5>
-                                                                    5
-                                                                    Star
-                                                                </h5>
-                                                                <div class="progress">
-                                                                    <div class="progress-bar" role="progressbar"
-                                                                        style="width: 68%;" aria-valuenow="100"
-                                                                        aria-valuemin="0" aria-valuemax="100">
-                                                                        68%
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </li>
-
-                                                        <li>
-                                                            <div class="rating-list">
-                                                                <h5>
-                                                                    4
-                                                                    Star
-                                                                </h5>
-                                                                <div class="progress">
-                                                                    <div class="progress-bar" role="progressbar"
-                                                                        style="width: 67%;" aria-valuenow="100"
-                                                                        aria-valuemin="0" aria-valuemax="100">
-                                                                        67%
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </li>
-
-                                                        <li>
-                                                            <div class="rating-list">
-                                                                <h5>
-                                                                    3
-                                                                    Star
-                                                                </h5>
-                                                                <div class="progress">
-                                                                    <div class="progress-bar" role="progressbar"
-                                                                        style="width: 42%;" aria-valuenow="100"
-                                                                        aria-valuemin="0" aria-valuemax="100">
-                                                                        42%
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </li>
-
-                                                        <li>
-                                                            <div class="rating-list">
-                                                                <h5>
-                                                                    2
-                                                                    Star
-                                                                </h5>
-                                                                <div class="progress">
-                                                                    <div class="progress-bar" role="progressbar"
-                                                                        style="width: 30%;" aria-valuenow="100"
-                                                                        aria-valuemin="0" aria-valuemax="100">
-                                                                        30%
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </li>
-
-                                                        <li>
-                                                            <div class="rating-list">
-                                                                <h5>
-                                                                    1
-                                                                    Star
-                                                                </h5>
-                                                                <div class="progress">
-                                                                    <div class="progress-bar" role="progressbar"
-                                                                        style="width: 24%;" aria-valuenow="100"
-                                                                        aria-valuemin="0" aria-valuemax="100">
-                                                                        24%
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-xl-6">
-                                                <div class="review-title">
-                                                    <h4 class="fw-500">
-                                                        Add a review
-                                                    </h4>
-                                                </div>
-
-                                                <div class="row g-4">
-
-                                                    <div class="col-12">
-                                                        <div class="form-floating theme-form-floating">
-                                                            <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2"
-                                                                style="
-                                                                            height: 150px;
-                                                                        "></textarea>
-                                                            <label for="floatingTextarea2">Write
-                                                                Your
-                                                                Comment</label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-12">
-                                                <div class="review-title">
-                                                    <h4 class="fw-500">
-                                                        Customer
-                                                        questions &
-                                                        answers
-                                                    </h4>
-                                                </div>
-
-                                                <div class="review-people">
-                                                    <ul class="review-list">
-                                                        <li>
-                                                            <div class="people-box">
-                                                                <div>
-                                                                    <div class="people-image">
-                                                                        <img src="../assets/images/review/1.jpg"
-                                                                            class="img-fluid blur-up lazyload"
-                                                                            alt="" />
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="people-comment">
-                                                                    <a class="name"
-                                                                        href="javascript:void(0)">Tracey</a>
-                                                                    <div class="date-time">
-                                                                        <h6 class="text-content">
-                                                                            14
-                                                                            Jan,
-                                                                            2022
-                                                                            at
-                                                                            12.58
-                                                                            AM
-                                                                        </h6>
-
-                                                                        <div class="product-rating">
-                                                                            <ul class="rating">
-                                                                                <li>
-                                                                                    <i data-feather="star"
-                                                                                        class="fill"></i>
-                                                                                </li>
-                                                                                <li>
-                                                                                    <i data-feather="star"
-                                                                                        class="fill"></i>
-                                                                                </li>
-                                                                                <li>
-                                                                                    <i data-feather="star"
-                                                                                        class="fill"></i>
-                                                                                </li>
-                                                                                <li>
-                                                                                    <i data-feather="star"></i>
-                                                                                </li>
-                                                                                <li>
-                                                                                    <i data-feather="star"></i>
-                                                                                </li>
-                                                                            </ul>
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="reply">
-                                                                        <p>
-                                                                            nội dung đánh giá.<a
-                                                                                href="javascript:void(0)">Reply</a>
-                                                                        </p>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div> --}}
                                         </div>
                                     </div>
                                 </div>
@@ -1017,71 +455,7 @@
     </section>
     <!-- Releted Product Section End -->
     <!-- Quick View Modal Box Start -->
-    <div class="modal fade theme-modal view-modal" id="quickviewModal" tabindex="-1"
-        aria-labelledby="quickviewModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-xl modal-fullscreen-sm-down">
-            <div class="modal-content">
-                <div class="modal-header p-0">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="row g-sm-4 g-2">
-                        <div class="col-lg-6">
-                            <div class="slider-image">
-                                <img src="" id="quickview-image" class="img-fluid blur-up lazyload"
-                                    alt="Product Image" />
-                            </div>
-                        </div>
 
-                        <div class="col-lg-6">
-                            <div class="right-sidebar-modal">
-                                <h4 class="title-name" id="quickview-name">Tên sản phẩm</h4>
-                                <h4 class="price" id="quickview-price">Giá</h4>
-                                <div class="product-rating">
-                                    <ul class="rating" id="quickview-rating">
-                                        <!-- JS render stars -->
-                                    </ul>
-                                    <span class="ms-2" id="quickview-review-count">Đánh giá</span>
-                                </div>
-
-                                <div class="product-detail">
-                                    <h4>Mô tả sản phẩm:</h4>
-                                    <div id="quickview-description"></div>
-                                </div>
-
-                                <ul class="brand-list">
-                                    <li>
-                                        <div class="brand-box">
-                                            <h5>Danh mục:</h5>
-                                            <h6 id="quickview-category-name"></h6>
-                                        </div>
-                                    </li>
-                                </ul>
-
-                                <div id="quickview-attributes-container" class="select-size">
-                                    <!-- Thuộc tính biến thể render ở đây -->
-                                </div>
-
-                                <div class="modal-button">
-                                    {{-- <button
-                                    id="quickview-add-to-cart"
-                                    class="btn btn-md add-cart-button icon">
-                                    Thêm vào giỏ hàng
-                                </button> --}}
-                                    <button id="quickview-view-details"
-                                        class="btn theme-bg-color view-button icon text-white fw-bold btn-md">
-                                        Xem chi tiết
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
 
     <!-- Quick View Modal Box End -->
@@ -1409,7 +783,7 @@
                 ['blur', 'change'].forEach(evt => {
                     qtyInput.addEventListener(evt, function() {
                         const maxStock = parseInt(qtyInput.getAttribute('data-stock'), 10) ||
-                        999999;
+                            999999;
                         let val = parseInt(qtyInput.value, 10);
 
                         if (isNaN(val) || val < 1) {
@@ -1478,7 +852,7 @@
                     // Nếu chọn đủ biến thể thì tìm biến thể phù hợp
                     if (Object.keys(selected).length === attributesCount) {
                         let attrValueIds = Object.values(selected).map(Number).sort((a, b) => a -
-                        b);
+                            b);
 
                         // Tìm biến thể trùng
                         let found = window.VARIANTS.find(v =>
@@ -1572,7 +946,7 @@
                     icon: 'error', // hoặc 'success'
                     title: 'Lỗi vượt quá số lượng tồn kho',
                     text: '{{ session('
-                                error ') }}',
+                                                                                                                                                        error ') }}',
                     confirmButtonColor: '#0da487',
                     width: 350, // giảm chiều ngang
                     padding: '1rem 1.5rem', // giảm padding
@@ -1589,7 +963,7 @@
                     icon: 'success',
                     title: 'Thành công',
                     text: '{{ session('
-                                success ') }}',
+                                                                                                                                                        success ') }}',
                     confirmButtonColor: '#0da487',
                     width: 350,
                     padding: '1rem 1.5rem',
@@ -1602,81 +976,7 @@
             @endif
         });
     </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.quickview-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const slug = this.dataset.slug;
-                    if (!slug) return alert('Không có slug sản phẩm.');
 
-                    const modal = document.getElementById('quickviewModal');
-                    if (!modal) return alert('Modal Quick View chưa tồn tại trên trang.');
-
-                    // Reset modal trước khi load dữ liệu mới
-                    modal.querySelector('#quickview-image').src = '';
-                    modal.querySelector('#quickview-name').textContent = '';
-                    modal.querySelector('#quickview-price').textContent = '';
-                    modal.querySelector('#quickview-description').innerHTML = '';
-                    modal.querySelector('#quickview-category-name').textContent = '';
-                    modal.querySelector('#quickview-review-count').textContent = '';
-                    modal.querySelector('#quickview-rating').innerHTML = '';
-
-                    // Mở modal Bootstrap
-                    const bsModal = new bootstrap.Modal(modal);
-                    bsModal.show();
-
-                    fetch(`/client/san-pham/quickview/${slug}`)
-                        .then(res => {
-                            if (!res.ok) throw new Error(`Lỗi tải dữ liệu (${res.status})`);
-                            return res.json();
-                        })
-                        .then(data => {
-                            const product = data.product;
-
-                            modal.querySelector('#quickview-image').src = product.image ||
-                                '/assets/images/no-image.png';
-                            modal.querySelector('#quickview-name').textContent = product.name;
-                            modal.querySelector('#quickview-description').innerHTML = product
-                                .description || '';
-                            modal.querySelector('#quickview-category-name').textContent =
-                                product.category_name || '';
-                            modal.querySelector('#quickview-review-count').textContent =
-                                `${product.review_count} Reviews`;
-
-                            // Biến thể đã là mảng chuẩn, lấy biến thể đầu tiên
-                            const variantsArray = product.variants || [];
-                            if (variantsArray.length > 0) {
-                                modal.querySelector('#quickview-price').textContent = Number(
-                                    variantsArray[0].price).toLocaleString() + ' đ';
-                            } else {
-                                modal.querySelector('#quickview-price').textContent = 'Liên hệ';
-                            }
-
-                            // Render rating sao
-                            const ratingEl = modal.querySelector('#quickview-rating');
-                            ratingEl.innerHTML = '';
-                            for (let i = 1; i <= 5; i++) {
-                                ratingEl.innerHTML +=
-                                    `<li><i data-feather="star" class="${i <= product.avg_rating ? 'fill' : ''}"></i></li>`;
-                            }
-                            feather.replace();
-
-                            // Nút xem chi tiết chuyển đến trang chi tiết sản phẩm
-                            modal.querySelector('#quickview-view-details').onclick = () => {
-                                window.location.href = `/client/san-pham/${slug}`;
-                            };
-
-                            // TODO: Bạn có thể thêm xử lý chọn biến thể, cập nhật giá, thêm giỏ hàng tại đây
-                        })
-                        .catch(err => {
-                            console.error('Lỗi tải Quick View:', err);
-                            alert('Không thể tải thông tin sản phẩm, vui lòng thử lại sau.');
-                            bsModal.hide();
-                        });
-                });
-            });
-        });
-    </script>
     <style>
         .swal2-popup-small {
             font-size: 14px !important;

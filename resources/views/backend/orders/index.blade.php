@@ -575,14 +575,15 @@
         @includeIf('backend.footer')
     </div>
     <script>
-        document.querySelectorAll('.status-select').forEach(select => {
-            select.addEventListener('change', function() {
-                const formId = 'status-form-' + this.dataset.orderId;
-                const form = document.getElementById(formId);
-                if (form) {
-                    form.submit();
-                }
-            });
-        });
+        let lastOrderId = {{ $orders->first()->id ?? 0 }};
+        setInterval(function() {
+            fetch('/admin/orders/latest-id')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.latest_id > lastOrderId) {
+                        location.reload();
+                    }
+                });
+        }, 1000); // hoặc 2000, tùy bạn
     </script>
 @endsection
