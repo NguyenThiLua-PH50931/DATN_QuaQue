@@ -10,7 +10,6 @@ use App\Models\admin\ProductVariant;
 use App\Models\admin\Review;
 use App\Models\admin\Comment;
 use App\Models\admin\ProductImage;
-use App\Models\ProductSearch;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
@@ -20,8 +19,6 @@ class Product extends Model
     protected $table = 'products';
 
     protected $fillable = [
-        'seller_id',
-        'category_id',
         'region_id',
         'name',
         'slug',
@@ -40,10 +37,12 @@ class Product extends Model
     ];
 
     // Relationships
-    public function category()
+    // trong model AdminProduct.php
+    public function categories()
     {
-        return $this->belongsTo(Category::class, 'category_id');
+        return $this->belongsToMany(Category::class, 'product_category', 'product_id', 'category_id');
     }
+
 
     public function region()
     {
@@ -70,8 +69,8 @@ class Product extends Model
         return $this->hasMany(ProductImage::class, 'product_id', 'id');
     }
 
-    
-     // Quan hệ với Comment
+
+    // Quan hệ với Comment
     public function comments()
     {
         return $this->hasMany(Comment::class);
@@ -128,7 +127,10 @@ class Product extends Model
         $variant = $this->first_variant;
         return $variant ? $variant->price : 0;
     }
-
+    public function attribute_values()
+    {
+        return $this->hasManyThrough(AttributeValue::class, ProductVariant::class, 'product_id', 'id', 'id', 'attribute_value_id');
+    }
     public function getStockAttribute()
     {
         $variant = $this->first_variant;
@@ -138,9 +140,5 @@ class Product extends Model
     public function firstImage()
     {
         return $this->hasOne(ProductImage::class, 'product_id')->inRandomOrder();
-    }
-    public function searches()
-    {
-        return $this->hasMany(ProductSearch::class);
     }
 }

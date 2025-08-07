@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\admin\Category;
 use App\Models\admin\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
@@ -15,7 +16,7 @@ class CategoryController extends Controller
     // Trang quản trị: hiển thị danh sách categories (có phân trang)
     public function index(Request $request)
     {
-        $categories = Category::paginate(10);
+        $categories = Category::all();
 
         if ($request->ajax()) {
             return response()->json(['categories' => $categories], 200);
@@ -48,13 +49,13 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:100|unique:categories',
-            'image' => 'nullable|image|max:2048', // Hỗ trợ upload ảnh, tối đa 2MB
+            'name' => 'required|string|max:100|unique:categories,name',
+            'image' => 'nullable|image|max:2048',
         ], [
-            'name.required' => 'Tên danh mục bắt buộc.',
-            'name.unique' => 'Tên danh mục đã tồn tại.',
+            'name.required' => 'Tên danh mục không được để trống.',
+            'name.unique' => 'Tên danh mục đã tồn tại, vui lòng chọn tên khác.',
             'name.max' => 'Tên danh mục không được vượt quá 100 ký tự.',
-            'image.image' => 'File phải là ảnh.',
+            'image.image' => 'Tệp tải lên phải là ảnh hợp lệ.',
             'image.max' => 'Kích thước ảnh không được vượt quá 2MB.',
         ]);
 
@@ -76,17 +77,19 @@ class CategoryController extends Controller
         return redirect()->route('admin.categories.index');
     }
 
+    // Cập nhật category (update)
     public function update(Request $request, $id)
     {
         $category = Category::findOrFail($id);
 
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:100',
+            'name' => 'required|string|max:100|unique:categories,name,' . $id,
             'image' => 'nullable|image|max:2048',
         ], [
-            'name.required' => 'Tên danh mục bắt buộc.',
+            'name.required' => 'Tên danh mục không được để trống.',
+            'name.unique' => 'Tên danh mục đã tồn tại, vui lòng chọn tên khác.',
             'name.max' => 'Tên danh mục không được vượt quá 100 ký tự.',
-            'image.image' => 'File phải là ảnh.',
+            'image.image' => 'Tệp tải lên phải là ảnh hợp lệ.',
             'image.max' => 'Kích thước ảnh không được vượt quá 2MB.',
         ]);
 
@@ -98,7 +101,7 @@ class CategoryController extends Controller
         $data['slug'] = Str::slug($request->name);
 
         if ($request->hasFile('image')) {
-            // Xóa ảnh cũ nếu tồn tại
+            // Xóa ảnh cũ nếu có
             if ($category->image && Storage::disk('public')->exists($category->image)) {
                 Storage::disk('public')->delete($category->image);
             }
@@ -116,8 +119,8 @@ class CategoryController extends Controller
     {
         $category = Category::findOrFail($id);
 
-        // Kiểm tra xem danh mục có liên kết với bất kỳ sản phẩm nào không
-        if (Product::where('category_id', $id)->exists()) {
+        // Kiểm tra xem danh mục có liên kết với bất kỳ sản phẩm nào không (bảng pivot)
+        if (DB::table('product_category')->where('category_id', $id)->exists()) {
             session()->flash('error', 'Không thể xóa danh mục này vì đang có sản phẩm liên kết.');
             return redirect()->route('admin.categories.index');
         }
@@ -129,14 +132,13 @@ class CategoryController extends Controller
         return redirect()->route('admin.categories.index');
     }
 
+
     // Xóa cứng (force delete)
     public function forceDelete($id)
     {
         $category = Category::withTrashed()->findOrFail($id);
 
-        // Kiểm tra xem danh mục có liên kết với bất kỳ sản phẩm nào không
-        // Nếu một danh mục đã bị xóa mềm nhưng vẫn còn liên kết với sản phẩm, chúng ta vẫn không cho phép xóa cứng.
-        if (Product::where('category_id', $id)->exists()) {
+        if (DB::table('product_category')->where('category_id', $id)->exists()) {
             return response()->json(['message' => 'Không thể xóa vĩnh viễn danh mục này vì đang có sản phẩm liên kết.', 'status' => 'error'], 400);
         }
 
@@ -144,6 +146,7 @@ class CategoryController extends Controller
 
         return response()->json(['message' => 'Xóa vĩnh viễn danh mục thành công', 'status' => 'success'], 200);
     }
+
 
     // Khôi phục soft deleted
     public function restore($id)
@@ -167,7 +170,7 @@ class CategoryController extends Controller
     {
         $ids = $request->input('ids');
         if (!is_array($ids)) {
-            $ids = explode(',', $ids); // Đảm bảo $ids là một mảng
+            $ids = explode(',', $ids);
         }
 
         $deletedCount = 0;
@@ -176,10 +179,10 @@ class CategoryController extends Controller
         foreach ($ids as $id) {
             $category = Category::find($id);
             if ($category) {
-                if (Product::where('category_id', $id)->exists()) {
-                    $notDeletedNames[] = $category->name; // Lưu tên danh mục không thể xóa
+                if (DB::table('product_category')->where('category_id', $id)->exists()) {
+                    $notDeletedNames[] = $category->name;
                 } else {
-                    $category->delete(); // Xóa mềm danh mục
+                    $category->delete();
                     $deletedCount++;
                 }
             }
@@ -201,6 +204,7 @@ class CategoryController extends Controller
         return response()->json(['message' => $message, 'status' => 'success', 'deletedCount' => $deletedCount], 200);
     }
 
+
     public function bulkRestore(Request $request)
     {
         $ids = $request->input('ids');
@@ -217,11 +221,9 @@ class CategoryController extends Controller
     {
         $ids = explode(',', $request->input('ids'));
 
-        // Kiểm tra từng danh mục xem có sản phẩm liên kết không (ngay cả khi đã xóa mềm)
         foreach ($ids as $id) {
-            // Tìm danh mục bao gồm cả những cái đã bị xóa mềm
             $category = Category::withTrashed()->find($id);
-            if ($category && Product::where('category_id', $id)->exists()) {
+            if ($category && DB::table('product_category')->where('category_id', $id)->exists()) {
                 return response()->json(['message' => 'Không thể xóa vĩnh viễn một hoặc nhiều danh mục đã chọn vì đang có sản phẩm liên kết.', 'status' => 'error'], 400);
             }
         }
@@ -230,6 +232,7 @@ class CategoryController extends Controller
 
         return response()->json(['message' => 'Đã xóa vĩnh viễn các danh mục đã chọn thành công.', 'status' => 'success'], 200);
     }
+
 
     public function storeQuick(Request $request)
     {
