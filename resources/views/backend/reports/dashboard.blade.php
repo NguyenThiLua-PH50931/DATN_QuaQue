@@ -205,6 +205,14 @@
                                                 style="display:none; position:absolute; right:0; top:40px; background:#fff; box-shadow:0 4px 16px #0002; border-radius:6px; min-width:140px; z-index:9999;">
                                                 <div class="form-check px-3 py-2">
                                                     <input class="form-check-input" type="radio"
+                                                        name="filterCampaignsTime" id="filterCampaignsDay"
+                                                        value="day">
+                                                    <label class="form-check-label" for="filterCampaignsDay">Hôm
+                                                        nay</label>
+                                                </div>
+
+                                                <div class="form-check px-3 py-2">
+                                                    <input class="form-check-input" type="radio"
                                                         name="filterCampaignsTime" id="filterCampaignsWeek"
                                                         value="week" checked>
                                                     <label class="form-check-label" for="filterCampaignsWeek">Tuần
@@ -1906,7 +1914,7 @@
         // renderRegionList();
         fetchRegionSales('week');
     </script>
-
+    {{-- BIỂU ĐỒ THỐNG KÊ CẢ NĂM --}}
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script>
         let monthlyStats = @json($monthlyStats);
@@ -2098,6 +2106,7 @@
             renderRevenueChart();
         });
     </script>
+    {{-- THỐNG KÊ BIỂU ĐỒ --}}
     <script>
         // Biến lưu chart hiện tại
         let campaignsChart;
@@ -2252,7 +2261,8 @@
         document.addEventListener('DOMContentLoaded', function() {
             let completed = 0;
             let canceled = 0;
-            let campaignsFilterType = "week"; // mặc định tuần này
+            let campaignsFilterType = "day";
+            // mặc định tuần này
 
             // Hàm vẽ donut chart
             function renderDonut(target) {
@@ -2360,6 +2370,7 @@
                 e.stopPropagation();
                 const dd = document.getElementById('campaignsFilterDropdown');
                 dd.style.display = (dd.style.display === 'block') ? 'none' : 'block';
+                document.getElementById('filterCampaignsDay').checked = (campaignsFilterType === 'day');
                 document.getElementById('filterCampaignsWeek').checked = (campaignsFilterType === 'week');
                 document.getElementById('filterCampaignsMonth').checked = (campaignsFilterType === 'month');
                 document.getElementById('filterCampaignsYear').checked = (campaignsFilterType === 'year');
@@ -2393,10 +2404,12 @@
                 };
             }
 
-            // Lần đầu load trang, mặc định tuần này
-            fetchDonutStats('week');
+            // Lần đầu load trang, mặc định hôm nay
+            fetchDonutStats(campaignsFilterType); // ✅ load đúng theo biến mặc định
+
         });
     </script>
+    {{-- TOP USER; CATEGORY ; SEARCH ; CẦN XÁC NHẬN ĐƠN HÀNG --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Mở dropdown
