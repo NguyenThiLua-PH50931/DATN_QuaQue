@@ -60,6 +60,7 @@ public function dashboard(Request $request)
     $totalRequests    = $ticketQuery->count();
 
     // ==== Chart: Doanh thu, đơn từng tháng trong năm chọn ====
+    $now = now();
     $monthlyStats = Order::select(
         DB::raw('MONTH(created_at) as month'),
         DB::raw('SUM(total_amount) as revenue'),
@@ -67,6 +68,7 @@ public function dashboard(Request $request)
     )
     ->where('status', 'delivered')
     ->whereYear('created_at', $year)
+    ->where('created_at', '<=', $now)
     ->groupBy(DB::raw('MONTH(created_at)'))
     ->orderBy('month')->get();
 
@@ -691,23 +693,32 @@ public function ajaxRegionSales(Request $request)
 public function ajaxDonutStats(Request $request)
 {
     $type = $request->input('type', 'week');
+    $now = now();
+
     $from = null; $to = null;
-    if ($type === 'week') {
-        $from = \Carbon\Carbon::now()->startOfWeek(); $to = \Carbon\Carbon::now()->endOfWeek();
+
+    if ($type === 'day') {
+        $from = $now->copy()->startOfDay();
+        $to = $now;
+    } elseif ($type === 'week') {
+        $from = $now->copy()->startOfWeek();
+        $to = $now;
     } elseif ($type === 'month') {
-        $from = \Carbon\Carbon::now()->startOfMonth(); $to = \Carbon\Carbon::now()->endOfMonth();
+        $from = $now->copy()->startOfMonth();
+        $to = $now; // ✅ chỉ đến thời điểm hiện tại
     } elseif ($type === 'year') {
-        $from = \Carbon\Carbon::now()->startOfYear(); $to = \Carbon\Carbon::now()->endOfYear();
+        $from = $now->copy()->startOfYear();
+        $to = $now;
     }
 
-    $completed = \App\Models\Admin\Order::where('status', 'delivered')
-        ->when($from, fn($q) => $q->whereDate('created_at', '>=', $from))
-        ->when($to, fn($q) => $q->whereDate('created_at', '<=', $to))
+    $completed = Order::where('status', 'delivered')
+        ->when($from, fn($q) => $q->where('created_at', '>=', $from))
+        ->when($to, fn($q) => $q->where('created_at', '<=', $to))
         ->count();
 
-    $canceled = \App\Models\Admin\Order::where('status', 'cancelled')
-        ->when($from, fn($q) => $q->whereDate('created_at', '>=', $from))
-        ->when($to, fn($q) => $q->whereDate('created_at', '<=', $to))
+    $canceled = Order::where('status', 'cancelled')
+        ->when($from, fn($q) => $q->where('created_at', '>=', $from))
+        ->when($to, fn($q) => $q->where('created_at', '<=', $to))
         ->count();
 
     return response()->json([
@@ -715,6 +726,7 @@ public function ajaxDonutStats(Request $request)
         'canceled' => $canceled,
     ]);
 }
+
 public function topCustomer(Request $request)
 {
     $range = $this->getDateRange($request->type, true);
