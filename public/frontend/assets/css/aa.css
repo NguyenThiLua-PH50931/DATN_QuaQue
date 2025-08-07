@@ -68,11 +68,7 @@
     position: absolute;
     top: 10px;
     left: 10px;
-<<<<<<< HEAD
     z-index: 1 !important;
-=======
-    z-index: 1;
->>>>>>> 8238e0675ffb75fd8022261ab9f65fa2004e8c75
     background: linear-gradient(135deg, #ff5722, #e91e63);
     color: #fff;
     font-weight: bold;

@@ -234,10 +234,6 @@
     </div>
     <!-- Location Modal End -->
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 8238e0675ffb75fd8022261ab9f65fa2004e8c75
     {{-- <!-- Cookie Bar Box Start -->
     <div class="cookie-bar-box">
 
@@ -258,11 +254,8 @@
         </div>
     </div>
     <!-- Cookie Bar Box End --> --}}
-<<<<<<< HEAD
     </div> 
     <!-- Cookie Bar Box End -->
-=======
->>>>>>> 8238e0675ffb75fd8022261ab9f65fa2004e8c75
 
     <!-- Deal Box Modal Start -->
     <div class="modal fade theme-modal deal-modal" id="deal-box" tabindex="-1">
