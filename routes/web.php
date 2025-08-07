@@ -254,15 +254,42 @@ Route::post('/save-shipping-method', function (Request $request) {
     return response()->json(['success' => true]);
 });
 
-// route api real-time admin/orders 
+// route api real-time admin/orders
 Route::get('/admin/orders/latest-id', [App\Http\Controllers\Admin\OrderController::class, 'latestOrderId']);
 
 // ADMIN:
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin'], function () {
 
-    // Route::get('home', [HomeController::class, 'home'])->name('home');
-    // Route cho dashboard tổng quan và báo cáo
+    // Dashboard chính
     Route::get('/reports', [ReportController::class, 'dashboard'])->name('dashboard');
+
+    // AJAX báo cáo theo từng phần
+    Route::prefix('reports')->name('reports.')->group(function () {
+        Route::get('/top-customer', [ReportController::class, 'topCustomer'])->name('topCustomer');
+        Route::get('/processing-orders', [ReportController::class, 'processingOrders'])->name('processingOrders');
+        Route::get('/top-category', [ReportController::class, 'topCategory'])->name('topCategory');
+        Route::get('/top-searched-product', [ReportController::class, 'topSearchedProduct'])->name('topSearchedProduct');
+        Route::get('/top-customers', [ReportController::class, 'ajaxTopCustomers'])->name('topCustomers');
+
+        // Các route thêm khác (giữ lại nếu cần thiết)
+        Route::get('/top-selling-products', [ReportController::class, 'topSellingProducts'])->name('topSellingProducts');
+        Route::get('/yearly-data', [ReportController::class, 'yearlyData'])->name('yearlyData');
+        Route::get('/best-sellers', [ReportController::class, 'ajaxBestSellers'])->name('bestSellersAjax');
+        Route::get('/top-rated-products', [ReportController::class, 'ajaxTopRatedProducts'])->name('topRatedProductsAjax');
+        Route::get('/cancelled-products', [ReportController::class, 'ajaxCancelledProducts'])->name('cancelledProductsAjax');
+        Route::get('/region-sales', [ReportController::class, 'ajaxRegionSales'])->name('regionSalesAjax');
+        Route::get('/donut-stats', [ReportController::class, 'ajaxDonutStats'])->name('donutStatsAjax');
+        Route::get('/ajax', [ReportController::class, 'ajaxDashboard'])->name('ajaxDashboard');
+    });
+
+
+
+
+
+
+
+
+
 
     // Route::group(['prefix' => 'reports', 'as' => 'reports.'], function () {
     //     Route::get('/', [ReportController::class, 'dashboard'])->name('dashboard');
@@ -420,6 +447,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         Route::get('/{commentId}/reply/{replyId}/edit', [CommentController::class, 'editReply'])->name('editReply');
         Route::put('/{commentId}/reply/{replyId}', [CommentController::class, 'updateReply'])->name('updateReply');
         Route::delete('/{commentId}/reply/{replyId}', [CommentController::class, 'destroyReply'])->name('destroyReply');
+        Route::post('/{id}/approve', [CommentController::class, 'approve'])->name('approve');
+        Route::post('/{id}/reject', [CommentController::class, 'reject'])->name('reject');
     });
 
     // SupportTicket

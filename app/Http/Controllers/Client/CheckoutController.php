@@ -75,9 +75,15 @@ if ($isMomoCallback && $request->input('resultCode') == 0) {
     // ...Các bước lấy discount code, shipping method, tính toán, giống như trong processOrder...
 
     // Ví dụ:
-    $shippingMethodId = session('shipping_method', 1);
-    $shippingMethod = \App\Models\admin\ShippingMethod::find($shippingMethodId);
-    $shippingCost = $shippingMethod ? $shippingMethod->cost : 0;
+$shippingMethodId = session('shipping_method', 1);
+$shippingMethod = \App\Models\admin\ShippingMethod::find($shippingMethodId);
+
+// Lấy tên hoặc id tỉnh/thành từ address
+$province = $address->province ?? null;
+
+// Lấy phí ship động theo tỉnh và phương thức:
+$shippingCost = $this->getShippingCostByProvince($province, $shippingMethodId);
+
 
     $orderDiscountCodeStr = session('order_discount_code');
     $freeShippingCodeStr  = session('free_shipping_code');
@@ -355,10 +361,9 @@ $validDiscountCodes = \App\Models\admin\DiscountCode::where('active', 1)
         }
         $discountAmount = min($discountAmount, $subtotal);
     }
-
-    $shippingCost = $freeShippingCode ? 0 : ($shippingMethod ? $shippingMethod->cost : 0);
-    $total = $subtotal + $shippingCost - $discountAmount;
-
+$province = $address->province ?? null; // Địa chỉ user đã chọn
+$shippingCost = $freeShippingCode ? 0 : $this->getShippingCostByProvince($province, $shippingMethodId);
+$total = $subtotal + $shippingCost - $discountAmount;
     // Coupon đang được áp dụng (nếu có)
     $appliedDiscountCodes = collect();
     if ($orderDiscountCode) $appliedDiscountCodes->push($orderDiscountCode);
@@ -452,8 +457,9 @@ foreach ($cartItems as $item) {
 }
 
 
-            $shippingMethod = \App\Models\admin\ShippingMethod::find($shipping_method);
-            $originalShippingCost = $shippingMethod ? $shippingMethod->cost : 0;
+$shippingMethod = \App\Models\admin\ShippingMethod::find($shipping_method);
+// Lấy tỉnh/thành từ address đã validate
+$province = $address->province ?? $request->input('province');
 
             // ==== PHẦN QUAN TRỌNG: LẤY MÃ VÀ LOCK ROW ====
             $orderDiscountCodeStr = session('order_discount_code');
@@ -517,7 +523,7 @@ foreach ($cartItems as $item) {
                 $discountAmount = min($discountAmount, $subtotal);
             }
 
-            $shippingCost = $freeShippingCode ? 0 : $originalShippingCost;
+       $shippingCost = $freeShippingCode ? 0 : $this->getShippingCostByProvince($province, $shipping_method);
             $total = $subtotal + $shippingCost - $discountAmount;
             $status = $payment_method === 'momo' ? 'confirmed' : 'pending';
 
@@ -733,9 +739,9 @@ if (
         }
         $discountAmount = min($discountAmount, $subtotal);
     }
-
-    $shippingCost = $freeShippingCode ? 0 : ($shippingMethod ? $shippingMethod->cost : 0);
-    $total = $subtotal + $shippingCost - $discountAmount;
+$province = $request->input('province');
+$shippingCost = $freeShippingCode ? 0 : $this->getShippingCostByProvince($province, $shippingMethodId);
+$total = $subtotal + $shippingCost - $discountAmount;
 
     return response()->json([
         'shipping_cost'   => (int) $shippingCost,
@@ -939,5 +945,29 @@ public function checkDiscountBeforeMomo(Request $request)
     // Nếu còn lượt dùng
     return response()->json(['valid' => true]);
 }
+
+private function getShippingCostByProvince($province, $shippingMethodId)
+{
+    $path = public_path('data/ship_cost_by_province.json');
+    if (!file_exists($path)) return 0;
+
+    $json = json_decode(file_get_contents($path), true);
+    if (!$json) return 0;
+
+    foreach ($json as $item) {
+        if (
+            $item['province_id'] == $province ||
+            $item['province_name'] == $province
+        ) {
+            foreach ($item['shipping_methods'] as $method) {
+                if ($method['id'] == $shippingMethodId) {
+                    return $method['cost'];
+                }
+            }
+        }
+    }
+    return 0;
+}
+
 
 }

@@ -61,7 +61,7 @@
     </style>
 @endpush
 
-@section('title', 'Sửa trạng thái bình luận')
+@section('title', 'Chi tiết bình luận')
 
 @section('content')
 <div class="page-body">
@@ -70,7 +70,7 @@
             <div class="container-fluid">
                 <div class="card">
                     <div class="card-header">
-                        <h1 class="mb-0">Sửa trạng thái bình luận</h1>
+                        <h2 class="mb-0">Chi tiết bình luận</h2>
                     </div>
                     <div class="card-body">
                         @if (session('success'))
@@ -91,7 +91,6 @@
                                 <h4>Thông tin bình luận</h4>
                                 <p><strong>Người dùng:</strong> {{ $comment->user->name }}</p>
                                 <p><strong>Sản phẩm:</strong> {{ $comment->product->name }}</p>
-                                <p><strong>Nội dung:</strong> {{ $comment->content }}</p>
                                 <p><strong>Trạng thái hiện tại:</strong>
                                     @if ($comment->status == 'visible')
                                         <span class="badge badge-success">Hiện</span>
@@ -109,7 +108,7 @@
                                     <label for="content">Nội dung bình luận</label>
                                     <textarea name="content" class="form-control" rows="5" readonly>{{ $comment->content }}</textarea>
                                 </div>
-                                <div class="form-group mb-3">
+                                {{-- <div class="form-group mb-3">
                                     <label for="status">Cập nhật trạng thái</label>
                                     <select name="status" class="form-control" required>
                                         <option value="visible" {{ $comment->status == 'visible' ? 'selected' : '' }}>Hiện</option>
@@ -119,7 +118,7 @@
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                <button type="submit" class="btn btn-primary btn-sm">Cập nhật trạng thái</button>
+                                <button type="submit" class="btn btn-primary btn-sm">Cập nhật trạng thái</button> --}}
                                 <a href="{{ route('admin.comments.index') }}" class="btn btn-secondary btn-sm">Quay lại</a>
                             </form>
 

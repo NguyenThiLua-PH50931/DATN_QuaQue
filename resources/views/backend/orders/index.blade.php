@@ -574,7 +574,7 @@
         <!-- Container-fluid Ends-->
         @includeIf('backend.footer')
     </div>
-    <script>
+    {{-- <script>
         let lastOrderId = {{ $orders->first()->id ?? 0 }};
         setInterval(function() {
             fetch('/admin/orders/latest-id')
@@ -584,6 +584,6 @@
                         location.reload();
                     }
                 });
-        }, 1000); // hoặc 2000, tùy bạn
-    </script>
+        }, 1000);
+    </script> --}}
 @endsection

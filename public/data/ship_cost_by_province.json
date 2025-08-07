@@ -1,0 +1,994 @@
+[
+    {
+        "province_id": "01",
+        "province_name": "Thành phố Hà Nội",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 20000
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 10000
+            }
+        ]
+    },
+    {
+        "province_id": "27",
+        "province_name": "Tỉnh Bắc Ninh",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 20322
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 10322
+            }
+        ]
+    },
+    {
+        "province_id": "33",
+        "province_name": "Tỉnh Hưng Yên",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 20645
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 10645
+            }
+        ]
+    },
+    {
+        "province_id": "26",
+        "province_name": "Tỉnh Vĩnh Phúc",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 20967
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 10967
+            }
+        ]
+    },
+    {
+        "province_id": "35",
+        "province_name": "Tỉnh Hà Nam",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 21290
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 11290
+            }
+        ]
+    },
+    {
+        "province_id": "30",
+        "province_name": "Tỉnh Hải Dương",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 21612
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 11612
+            }
+        ]
+    },
+    {
+        "province_id": "36",
+        "province_name": "Tỉnh Nam Định",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 21935
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 11935
+            }
+        ]
+    },
+    {
+        "province_id": "34",
+        "province_name": "Tỉnh Thái Bình",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 22258
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 12258
+            }
+        ]
+    },
+    {
+        "province_id": "37",
+        "province_name": "Tỉnh Ninh Bình",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 22580
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 12580
+            }
+        ]
+    },
+    {
+        "province_id": "25",
+        "province_name": "Tỉnh Phú Thọ",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 22903
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 12903
+            }
+        ]
+    },
+    {
+        "province_id": "24",
+        "province_name": "Tỉnh Bắc Giang",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 23870
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 13870
+            }
+        ]
+    },
+    {
+        "province_id": "38",
+        "province_name": "Tỉnh Thanh Hóa",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 24193
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 14193
+            }
+        ]
+    },
+    {
+        "province_id": "19",
+        "province_name": "Tỉnh Thái Nguyên",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 24516
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 14516
+            }
+        ]
+    },
+    {
+        "province_id": "06",
+        "province_name": "Tỉnh Bắc Kạn",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 24838
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 14838
+            }
+        ]
+    },
+    {
+        "province_id": "08",
+        "province_name": "Tỉnh Tuyên Quang",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 25161
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 15161
+            }
+        ]
+    },
+    {
+        "province_id": "15",
+        "province_name": "Tỉnh Yên Bái",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 25483
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 15483
+            }
+        ]
+    },
+    {
+        "province_id": "17",
+        "province_name": "Tỉnh Hoà Bình",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 29900
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 19900
+            }
+        ]
+    },
+    {
+        "province_id": "10",
+        "province_name": "Tỉnh Lào Cai",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 25806
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 15806
+            }
+        ]
+    },
+    {
+        "province_id": "14",
+        "province_name": "Tỉnh Sơn La",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 26129
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 16129
+            }
+        ]
+    },
+    {
+        "province_id": "11",
+        "province_name": "Tỉnh Điện Biên",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 26451
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 16451
+            }
+        ]
+    },
+    {
+        "province_id": "12",
+        "province_name": "Tỉnh Lai Châu",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 26774
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 16774
+            }
+        ]
+    },
+    {
+        "province_id": "02",
+        "province_name": "Tỉnh Hà Giang",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 27096
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 17096
+            }
+        ]
+    },
+    {
+        "province_id": "04",
+        "province_name": "Tỉnh Cao Bằng",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 27419
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 17419
+            }
+        ]
+    },
+    {
+        "province_id": "20",
+        "province_name": "Tỉnh Lạng Sơn",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 27741
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 17741
+            }
+        ]
+    },
+    {
+        "province_id": "22",
+        "province_name": "Tỉnh Quảng Ninh",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 28064
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 18064
+            }
+        ]
+    },
+    {
+        "province_id": "40",
+        "province_name": "Tỉnh Nghệ An",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 28387
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 18387
+            }
+        ]
+    },
+    {
+        "province_id": "42",
+        "province_name": "Tỉnh Hà Tĩnh",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 28709
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 18709
+            }
+        ]
+    },
+    {
+        "province_id": "44",
+        "province_name": "Tỉnh Quảng Bình",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 29032
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 19032
+            }
+        ]
+    },
+    {
+        "province_id": "45",
+        "province_name": "Tỉnh Quảng Trị",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 29354
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 19354
+            }
+        ]
+    },
+    {
+        "province_id": "46",
+        "province_name": "Tỉnh Thừa Thiên Huế",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 29677
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 19677
+            }
+        ]
+    },
+    {
+        "province_id": "48",
+        "province_name": "Thành phố Đà Nẵng",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 30000
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 20000
+            }
+        ]
+    },
+    {
+        "province_id": "49",
+        "province_name": "Tỉnh Quảng Nam",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 30322
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 20322
+            }
+        ]
+    },
+    {
+        "province_id": "51",
+        "province_name": "Tỉnh Quảng Ngãi",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 30645
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 20645
+            }
+        ]
+    },
+    {
+        "province_id": "62",
+        "province_name": "Tỉnh Kon Tum",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 30967
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 20967
+            }
+        ]
+    },
+    {
+        "province_id": "64",
+        "province_name": "Tỉnh Gia Lai",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 31290
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 21290
+            }
+        ]
+    },
+    {
+        "province_id": "52",
+        "province_name": "Tỉnh Bình Định",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 31612
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 21612
+            }
+        ]
+    },
+    {
+        "province_id": "54",
+        "province_name": "Tỉnh Phú Yên",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 31935
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 21935
+            }
+        ]
+    },
+    {
+        "province_id": "66",
+        "province_name": "Tỉnh Đắk Lắk",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 32258
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 22258
+            }
+        ]
+    },
+    {
+        "province_id": "67",
+        "province_name": "Tỉnh Đắk Nông",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 32580
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 22580
+            }
+        ]
+    },
+    {
+        "province_id": "56",
+        "province_name": "Tỉnh Khánh Hòa",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 32903
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 22903
+            }
+        ]
+    },
+    {
+        "province_id": "58",
+        "province_name": "Tỉnh Ninh Thuận",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 33225
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 23225
+            }
+        ]
+    },
+    {
+        "province_id": "60",
+        "province_name": "Tỉnh Bình Thuận",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 33548
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 23548
+            }
+        ]
+    },
+    {
+        "province_id": "68",
+        "province_name": "Tỉnh Lâm Đồng",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 33870
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 23870
+            }
+        ]
+    },
+    {
+        "province_id": "72",
+        "province_name": "Tỉnh Tây Ninh",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 34193
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 24193
+            }
+        ]
+    },
+    {
+        "province_id": "70",
+        "province_name": "Tỉnh Bình Phước",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 34516
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 24516
+            }
+        ]
+    },
+    {
+        "province_id": "74",
+        "province_name": "Tỉnh Bình Dương",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 34838
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 24838
+            }
+        ]
+    },
+    {
+        "province_id": "75",
+        "province_name": "Tỉnh Đồng Nai",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 35161
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 25161
+            }
+        ]
+    },
+    {
+        "province_id": "77",
+        "province_name": "Tỉnh Bà Rịa - Vũng Tàu",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 35483
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 25483
+            }
+        ]
+    },
+    {
+        "province_id": "79",
+        "province_name": "Thành phố Hồ Chí Minh",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 35806
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 25806
+            }
+        ]
+    },
+    {
+        "province_id": "80",
+        "province_name": "Tỉnh Long An",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 36129
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 26129
+            }
+        ]
+    },
+    {
+        "province_id": "87",
+        "province_name": "Tỉnh Đồng Tháp",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 36451
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 26451
+            }
+        ]
+    },
+    {
+        "province_id": "82",
+        "province_name": "Tỉnh Tiền Giang",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 36774
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 26774
+            }
+        ]
+    },
+    {
+        "province_id": "89",
+        "province_name": "Tỉnh An Giang",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 37096
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 27096
+            }
+        ]
+    },
+    {
+        "province_id": "83",
+        "province_name": "Tỉnh Bến Tre",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 37419
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 27419
+            }
+        ]
+    },
+    {
+        "province_id": "86",
+        "province_name": "Tỉnh Vĩnh Long",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 37741
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 27741
+            }
+        ]
+    },
+    {
+        "province_id": "84",
+        "province_name": "Tỉnh Trà Vinh",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 38064
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 28064
+            }
+        ]
+    },
+    {
+        "province_id": "93",
+        "province_name": "Tỉnh Hậu Giang",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 38387
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 28387
+            }
+        ]
+    },
+    {
+        "province_id": "92",
+        "province_name": "Thành phố Cần Thơ",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 38709
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 28709
+            }
+        ]
+    },
+    {
+        "province_id": "94",
+        "province_name": "Tỉnh Sóc Trăng",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 39032
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 29032
+            }
+        ]
+    },
+    {
+        "province_id": "91",
+        "province_name": "Tỉnh Kiên Giang",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 39354
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 29354
+            }
+        ]
+    },
+    {
+        "province_id": "95",
+        "province_name": "Tỉnh Bạc Liêu",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 39677
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 29677
+            }
+        ]
+    },
+    {
+        "province_id": "96",
+        "province_name": "Tỉnh Cà Mau",
+        "shipping_methods": [
+            {
+                "id": 1,
+                "name": "Giao hàng nhanh",
+                "cost": 40000
+            },
+            {
+                "id": 2,
+                "name": "Giao hàng tiết kiệm",
+                "cost": 30000
+            }
+        ]
+    }
+]

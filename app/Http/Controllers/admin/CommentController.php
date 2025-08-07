@@ -46,6 +46,11 @@ class CommentController extends Controller
     {
         $comment = Comment::findOrFail($id);
         $comment->delete();
+
+        if (request()->wantsJson() || request()->header('Accept') === 'application/json') {
+            return response()->json(['success' => true, 'message' => 'Bình luận đã được xóa thành công!']);
+        }
+
         return redirect()->route('admin.comments.index')->with('success', 'Bình luận đã được xóa thành công!');
     }
 
@@ -75,6 +80,14 @@ class CommentController extends Controller
             }
         }
 
+        if (request()->wantsJson() || request()->header('Accept') === 'application/json') {
+            return response()->json([
+                'success' => true,
+                'message' => 'Trạng thái bình luận đã được cập nhật thành công!',
+                'status' => $request->status
+            ]);
+        }
+
         return redirect()->route('admin.comments.index')->with('success', 'Trạng thái bình luận đã được cập nhật thành công!');
     }
 
@@ -88,6 +101,11 @@ class CommentController extends Controller
         } catch (\Exception $e) {
             \Log::error('Failed to send approval email for comment ' . $id . ': ' . $e->getMessage());
         }
+
+        if (request()->wantsJson() || request()->header('Accept') === 'application/json') {
+            return response()->json(['success' => true, 'message' => 'Bình luận đã được hiển thị!']);
+        }
+
         return redirect()->route('admin.comments.index')->with('success', 'Bình luận đã được hiển thị!');
     }
 
@@ -101,6 +119,11 @@ class CommentController extends Controller
         } catch (\Exception $e) {
             \Log::error('Failed to send rejection email for comment ' . $id . ': ' . $e->getMessage());
         }
+
+        if (request()->wantsJson() || request()->header('Accept') === 'application/json') {
+            return response()->json(['success' => true, 'message' => 'Bình luận đã bị ẩn!']);
+        }
+
         return redirect()->route('admin.comments.index')->with('success', 'Bình luận đã bị ẩn!');
     }
 
