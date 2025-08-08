@@ -91,7 +91,7 @@
             <div class="col-xxl-3 col-xl-4 d-none d-xl-block">
                 <div class="p-sticky">
                     <div class="category-menu">
-                        <h3>Danh Mục</h3>
+                        {{-- <h3>Danh Mục</h3>
                         <ul>
                             @foreach ($categories as $category)
                             @php
@@ -110,6 +110,31 @@
                                     <h5>
                                         <a
                                             href="{{ route('client.product.index', ['category_id' => $category->id]) }}">{{ $category->name }}</a>
+                                    </h5>
+                                </div>
+                            </li>
+                            @endforeach
+                        </ul> --}}
+                        <h3>Danh Mục</h3>
+                        <ul>
+                            @foreach ($categories as $category)
+                            @php
+                                // Xử lý tên ảnh nếu cần
+                                $imgName = strtolower($category->name);
+                                $imgName = str_replace([' ', '&'], '-', $imgName);
+                                $imgName = preg_replace('/[^a-z0-9\-]/', '', $imgName);
+                            @endphp
+
+                            <li @if ($loop->last) class="pb-30" @endif>
+                                <div class="category-list">
+                                    <img src="{{ asset('storage/' . $category->image) }}"
+                                        alt="{{ $category->name }}"
+                                        style="filter:none !important; mix-blend-mode:normal !important; opacity:1 !important;"
+                                        class="w-20 h-20 object-cover">
+                                    <h5>
+                                        <a href="{{ route('client.product.catalog', ['dm' => [$category->id]]) }}">
+                                            {{ $category->name }}
+                                        </a>
                                     </h5>
                                 </div>
                             </li>
@@ -141,6 +166,7 @@
                             </li>
                         </ul>
                     </div>
+                    
 
                     @if ($productSectionPromoLeftTop)
                     <div class="ratio_156 section-t-space">
@@ -458,7 +484,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="title">
+                {{-- <div class="title">
                     <h2>Sản phẩm theo danh mục</h2>
                     <span class="title-leaf">
                         <svg class="icon-width">
@@ -484,7 +510,35 @@
                     @empty
                     <p>Không có danh mục nào.</p>
                     @endforelse
+                </div> --}}
+                <div class="title">
+                <h2>Sản phẩm theo danh mục</h2>
+                <span class="title-leaf">
+                    <svg class="icon-width">
+                        <use xlink:href="{{ asset('frontend/assets/svg/leaf.svg#leaf') }}"></use>
+                    </svg>
+                </span>
+                <p>Khám phá đa dạng các loại đặc sản</p>
+            </div>
+
+            <div class="category-slider-2 product-wrapper no-arrow">
+                @forelse ($categories as $category)
+                <div>
+                    <a href="{{ route('client.product.catalog', ['dm' => [$category->id]]) }}"
+                        class="category-box category-dark">
+                        <div>
+                            <img src="{{ asset('storage/' . $category->image) }}"
+                                alt="{{ $category->name }}"
+                                style="filter:none !important; mix-blend-mode:normal !important; opacity:1 !important;">
+                            <h5>{{ $category->name }}</h5>
+                        </div>
+                    </a>
                 </div>
+                @empty
+                <p>Không có danh mục nào.</p>
+                @endforelse
+            </div>
+
 
                 <div class="section-t-space section-b-space">
                     <div class="row g-md-4 g-3">
@@ -873,6 +927,9 @@
 <!-- NEWSLETTER SECTION END -->
 
 <style>
+    .row {
+        justify-content: left !important;
+    }
     /* Ảnh sản phẩm ở các phần nổi bật, mới, bán chạy */
     .product-box .product-image,
     .product-image,

@@ -56,7 +56,7 @@
                                  alt="Logo Quà Quê" style="height: 50px;">
                          </a>
                          {{-- TÌM KIẾM SẢN PHẨM --}}
-                         <div class="middle-box">
+                         {{-- <div class="middle-box">
 
                              <div class="search-box">
                                  <div class="input-group">
@@ -167,7 +167,110 @@
                                      });
                                  });
                              </script>
-                         </div>
+                         </div> --}}
+                         <div class="middle-box">
+    <div class="search-box">
+        <div class="input-group">
+            <input type="search" class="form-control" id="searchInput"
+                placeholder="Tìm kiếm..." aria-label="Tìm kiếm"
+                aria-describedby="button-addon2"
+                value="{{ request('q') ?? '' }}"/>
+            <button class="btn" type="button" id="button-addon2">
+                <i data-feather="search"></i>
+            </button>
+        </div>
+        <div id="searchResults" class="search-results list-group"
+            style="
+                width: inherit;
+                max-width: 100%;
+                z-index: 1000;
+                display: none;
+                border: 1px solid #ccc;
+                background: #fff;
+                max-height: 200px;
+                overflow-y: auto;">
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Click nút search
+            $('#button-addon2').on('click', function() {
+                const query = $('#searchInput').val().trim();
+                if (query.length > 0) {
+                    // Redirect về trang catalog với param q
+                    window.location.href = '/client/san-pham?q=' + encodeURIComponent(query);
+                }
+            });
+
+            // Nhấn enter trong ô input
+            $('#searchInput').on('keypress', function(e) {
+                if (e.which == 13) { // Enter key
+                    const query = $(this).val().trim();
+                    if (query.length > 0) {
+                        window.location.href = '/client/san-pham?q=' + encodeURIComponent(query);
+                    }
+                }
+            });
+
+            // Tự động search khi nhập trên 2 ký tự
+            $('#searchInput').on('input', function() {
+                const query = $(this).val().trim();
+                if (query.length > 2) {
+                    performSearch(query);
+                } else {
+                    $('#searchResults').hide().empty();
+                }
+            });
+
+            // Hàm ajax search gợi ý
+            function performSearch(query) {
+                $.ajax({
+                    url: '/client/san-pham/search-ajax',
+                    type: 'GET',
+                    data: { q: query },  // gửi param q giống catalog
+                    success: function(response) {
+                        $('#searchResults').empty();
+
+                        if (response.length > 0) {
+                            response.forEach(product => {
+                                $('#searchResults').append(`
+                                    <a href="/client/san-pham/${product.slug}" class="list-group-item list-group-item-action d-flex align-items-center">
+                                        <img src="${product.image ? '/storage/' + product.image : '/images/default.jpg'}"
+                                            alt="${product.name}"
+                                            style="width: 50px; height: 50px; margin-right: 10px; object-fit: cover;" />
+                                        ${product.name}
+                                    </a>`);
+                            });
+                            if (response.length > 3) {
+                                $('#searchResults').append(
+                                    `<a href="/client/san-pham?q=${encodeURIComponent(query)}"
+                                    class="list-group-item list-group-item-action text-center text-primary">
+                                    Xem tất cả kết quả cho "${query}"</a>`
+                                );
+                            }
+                            $('#searchResults').show();
+                        } else {
+                            $('#searchResults').append('<div class="list-group-item">Không tìm thấy sản phẩm.</div>').show();
+                        }
+                    },
+                    error: function(xhr) {
+                        $('#searchResults').append('<div class="list-group-item">Có lỗi xảy ra: ' + xhr.status + '</div>').show();
+                    }
+                });
+            }
+
+            // Ẩn kết quả khi click ngoài search box
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('.search-box').length) {
+                    $('#searchResults').hide();
+                }
+            });
+        });
+    </script>
+</div>
+
                          {{-- END TÌM KIẾM SẢN PHẨM --}}
 
                          <div class="rightside-box">
@@ -988,7 +1091,7 @@
                                             </li> --}}
 
                                          <li class="nav-item">
-                                             <a class="nav-link" href="{{ route('client.product.index') }}">Sản
+                                             <a class="nav-link" href="{{ route('client.product.catalog') }}">Sản
                                                  phẩm</a>
                                          </li>
                                          {{-- <li class="nav-item dropdown dropdown-mega">

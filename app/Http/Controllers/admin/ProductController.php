@@ -67,7 +67,7 @@ class ProductController extends Controller
             });
 
         if ($categoryId) {
-            $categoryIds = is_array($categoryId) ? $categoryId : [$categoryId];
+            $categoryIds = is_array($categoryId) ? $categoryId : [$categoryId]; 
             $productsQuery->whereHas('categories', function ($q) use ($categoryIds) {
                 $q->whereIn('category_id', $categoryIds);
             });
