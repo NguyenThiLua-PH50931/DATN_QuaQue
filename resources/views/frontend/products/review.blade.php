@@ -112,7 +112,7 @@
                         <div class="reply mt-1">
                             <div class="product-variant mb-2 text-muted">
                                 Phân loại:
-                                <b>{{ $review->productVariantId->name ?? 'Không xác định' }}</b>
+                                <b>{{ $review->product_variant_name ?? 'Không xác định' }}</b>
                             </div>
                             <p class="mb-0">{{ $review->content }}</p>
                         </div>

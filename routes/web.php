@@ -62,7 +62,12 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
 
     // Sản phẩm:
     Route::group(['prefix' => 'san-pham', 'as' => 'product.'], function () {
+        // web.php
+        Route::get('/', [ClientProductController::class, 'catalog'])->name('catalog');
+
         Route::get('/all', [ClientProductController::class, 'index'])->name('index');
+        // Route::get('/catalog', [ClientProductController::class, 'catalog'])->name('catalog');
+        Route::get('/catalog/ajax', [ClientProductController::class, 'catalogAjax'])->name('catalog.ajax');
         Route::get('/search', [AdminProductController::class, 'searchPage'])->name('search');
         Route::get('/search-ajax', [ClientProductController::class, 'searchAjax'])->name('searchAjax');
         Route::get('/{slug}/reviews', [ClientProductController::class, 'filterReviews'])->name('reviews.filter');
@@ -123,26 +128,26 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
         Route::post('/checkout/remove-discount', [CheckoutController::class, 'removeDiscount'])->name('checkout.removeDiscount');
         Route::post('/checkout/bank-confirm', [CheckoutController::class, 'bankConfirm'])->name('client.checkout.bankConfirm');
         Route::post('/checkout/update-pending-payment-address', [CheckoutController::class, 'updatePendingPaymentAddress'])->name('checkout.updatePendingPaymentAddress');
-         Route::post('/checkout/check-discount-before-momo', [CheckoutController::class, 'checkDiscountBeforeMomo'])
-        ->name('checkout.checkDiscountBeforeMomo');
+        Route::post('/checkout/check-discount-before-momo', [CheckoutController::class, 'checkDiscountBeforeMomo'])
+            ->name('checkout.checkDiscountBeforeMomo');
     });
     Route::get('/checkout/success', function () {
         return view('frontend.checkout.checkoutsuccess');
     })->name('checkout.success');
 
-Route::post('/checkout/save-address-snapshot', function (Request $request) {
-    session([
-        'address_snapshot' => [
-            'recipient_name' => $request->input('recipient_name'),
-            'phone' => $request->input('phone'),
-            'address' => $request->input('address'),
-            'province' => $request->input('province'),
-            'district' => $request->input('district'),
-            'ward' => $request->input('ward'),
-        ]
-    ]);
-    return response()->json(['ok' => true]);
-})->name('checkout.saveAddressSnapshot');
+    Route::post('/checkout/save-address-snapshot', function (Request $request) {
+        session([
+            'address_snapshot' => [
+                'recipient_name' => $request->input('recipient_name'),
+                'phone' => $request->input('phone'),
+                'address' => $request->input('address'),
+                'province' => $request->input('province'),
+                'district' => $request->input('district'),
+                'ward' => $request->input('ward'),
+            ]
+        ]);
+        return response()->json(['ok' => true]);
+    })->name('checkout.saveAddressSnapshot');
 
     Route::middleware('auth')->group(function () {
         Route::get('/orders', [OrdersController::class, 'index'])->name('orders.index');
@@ -199,9 +204,7 @@ Route::post('/checkout/save-address-snapshot', function (Request $request) {
     // AI Chatbot
 
     // --- Thêm API lấy trạng thái đơn hàng cho polling ---
-Route::middleware('auth')->get('/orders/{order}/status', [OrdersController::class, 'orderStatus'])->name('orders.status');
-
-
+    Route::middleware('auth')->get('/orders/{order}/status', [OrdersController::class, 'orderStatus'])->name('orders.status');
 });
 
 //----------------------------------------------------------
