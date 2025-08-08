@@ -379,6 +379,7 @@
                     <input type="hidden" name="order_item_id" value="">
                     <input type="hidden" name="product_id" value="">
                     <input type="hidden" name="product_variant_value_id" value="">
+                    <input type="hidden" name="product_variant_name" value="">
                     <input type="hidden" name="rating" id="ratingInput" value="">
 
                     <div class="modal-header">
@@ -441,109 +442,111 @@
     </div>
 
     <!-- js danh gia -->
-    <script>
-        // Hiệu ứng sao vàng
-        function setStars(num) {
-            $('#ratingStars li').each(function(i, el) {
-                let svg = $(el).find('svg');
-                if (i < num) {
-                    svg.addClass('fill');
-                } else {
-                    svg.removeClass('fill');
+<script>
+    // Hiệu ứng sao vàng
+    function setStars(num) {
+        $('#ratingStars li').each(function(i, el) {
+            let svg = $(el).find('svg');
+            if (i < num) {
+                svg.addClass('fill');
+            } else {
+                svg.removeClass('fill');
+            }
+        });
+    }
+
+    // Toast bằng SweetAlert2
+    function showToastSwal(msg, success = true) {
+        Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: success ? 'success' : 'error',
+            title: msg,
+            showConfirmButton: false,
+            timer: 7000,
+            timerProgressBar: true,
+            customClass: {
+                popup: 'swal2-smaller-toast'
+            }
+        });
+    }
+
+    // Mở modal và reset form, lưu lại nút đánh giá đang thao tác
+    $(document).on('click', '.btn-danhgia', function(e) {
+        e.preventDefault();
+        let $btn = $(this);
+        $('#productReviewForm').data('review-btn', $btn);
+
+        $('#productReviewForm input[name=order_id]').val($btn.data('order-id'));
+        $('#productReviewForm input[name=order_item_id]').val($btn.data('order-item-id'));
+        $('#productReviewForm input[name=product_id]').val($btn.data('product-id'));
+        $('#productReviewForm input[name=product_variant_value_id]').val($btn.data('product-variant-value-id'));
+        $('#productReviewForm input[name=product_variant_name]').val($btn.data('product-variant-name')); // Gán tên biến thể
+
+        $('#productReviewForm input[name=rating]').val('');
+        $('#productReviewForm textarea[name=content]').val('');
+
+        $('#productName').text($btn.data('product-name'));
+        $('#productImage').attr('src', $btn.data('product-image'));
+        $('#productPrice').text($btn.data('product-price'));
+        $('#productVariantName').text($btn.data('product-variant-name'));
+
+        setStars(0);
+    });
+
+    // Hover sao vàng tạm thời
+    $('#ratingStars li').on('mouseenter', function() {
+        let value = $(this).data('value');
+        setStars(value);
+    });
+    $('#ratingStars li').on('mouseleave', function() {
+        let selected = $('#ratingInput').val() || 0;
+        setStars(selected);
+    });
+
+    // Click chọn sao
+    $('#ratingStars li').on('click', function() {
+        let value = $(this).data('value');
+        $('#ratingInput').val(value);
+        setStars(value);
+    });
+
+    // Submit form đánh giá
+    $('#productReviewForm').on('submit', function(e) {
+        e.preventDefault();
+        let $form = $(this);
+        let $btnSubmit = $form.find('button[type=submit]');
+        let $reviewBtn = $form.data('review-btn');
+
+        $btnSubmit.prop('disabled', true).text('Đang gửi...');
+
+        $.ajax({
+            url: '/client/danh-gia/store',
+            method: 'POST',
+            data: $form.serialize(),  // dữ liệu sẽ có product_variant_name vì bạn đã thêm input ẩn và gán bên trên
+            success: function(res) {
+                showToastSwal(res.message || 'Đã gửi đánh giá!', true);
+                $('#writeReviewModal').modal('hide');
+                // Thay nút Đánh Giá thành badge "Đã đánh giá"
+                if ($reviewBtn) {
+                    $reviewBtn.replaceWith(
+                        '<span class="btn fw-bold" style="background-color: #0da487; color: white; pointer-events: none;">Đã đánh giá</span>'
+                    );
                 }
-            });
-        }
-
-        // Toast bằng SweetAlert2
-        function showToastSwal(msg, success = true) {
-            Swal.fire({
-                toast: true,
-                position: 'top-end',
-                icon: success ? 'success' : 'error',
-                title: msg,
-                showConfirmButton: false,
-                timer: 7000,
-                timerProgressBar: true,
-                customClass: {
-                    popup: 'swal2-smaller-toast'
-                }
-            });
-        }
-
-        // Mở modal và reset form, lưu lại nút đánh giá đang thao tác
-        $(document).on('click', '.btn-danhgia', function(e) {
-            e.preventDefault();
-            let $btn = $(this);
-            $('#productReviewForm').data('review-btn', $btn);
-
-            $('#productReviewForm input[name=order_id]').val($btn.data('order-id'));
-            $('#productReviewForm input[name=order_item_id]').val($btn.data('order-item-id'));
-            $('#productReviewForm input[name=product_id]').val($btn.data('product-id'));
-            $('#productReviewForm input[name=product_variant_value_id]').val($btn.data('product-variant-value-id'));
-            $('#productReviewForm input[name=rating]').val('');
-            $('#productReviewForm textarea[name=content]').val('');
-
-            $('#productName').text($btn.data('product-name'));
-            $('#productImage').attr('src', $btn.data('product-image'));
-            $('#productPrice').text($btn.data('product-price'));
-            $('#productVariantName').text($btn.data('product-variant-value-name'));
-
-            setStars(0);
+            },
+            error: function(xhr) {
+                let msg = 'Đã có lỗi xảy ra!';
+                if (xhr.status == 401) msg = 'Bạn cần đăng nhập để đánh giá!';
+                else if (xhr.responseJSON && xhr.responseJSON.message) msg = xhr.responseJSON.message;
+                showToastSwal(msg, false);
+            },
+            complete: function() {
+                $btnSubmit.prop('disabled', false).text('Gửi đánh giá');
+            }
         });
+    });
+</script>
 
-        // Hover sao vàng tạm thời
-        $('#ratingStars li').on('mouseenter', function() {
-            let value = $(this).data('value');
-            setStars(value);
-        });
-        $('#ratingStars li').on('mouseleave', function() {
-            let selected = $('#ratingInput').val() || 0;
-            setStars(selected);
-        });
-
-        // Click chọn sao
-        $('#ratingStars li').on('click', function() {
-            let value = $(this).data('value');
-            $('#ratingInput').val(value);
-            setStars(value);
-        });
-
-        // Submit form đánh giá
-        $('#productReviewForm').on('submit', function(e) {
-            e.preventDefault();
-            let $form = $(this);
-            let $btnSubmit = $form.find('button[type=submit]');
-            let $reviewBtn = $form.data('review-btn');
-
-            $btnSubmit.prop('disabled', true).text('Đang gửi...');
-
-            $.ajax({
-                url: '/client/danh-gia/store',
-                method: 'POST',
-                data: $form.serialize(),
-                success: function(res) {
-                    showToastSwal(res.message || 'Đã gửi đánh giá!', true);
-                    $('#writeReviewModal').modal('hide');
-                    // Thay nút Đánh Giá thành badge "Đã đánh giá"
-                    if ($reviewBtn) {
-                        $reviewBtn.replaceWith(
-                            '<span class="btn fw-bold" style="background-color: #0da487; color: white; pointer-events: none;">Đã đánh giá</span>'
-                        );
-                    }
-                },
-                error: function(xhr) {
-                    let msg = 'Đã có lỗi xảy ra!';
-                    if (xhr.status == 401) msg = 'Bạn cần đăng nhập để đánh giá!';
-                    else if (xhr.responseJSON && xhr.responseJSON.message) msg = xhr.responseJSON
-                        .message;
-                    showToastSwal(msg, false);
-                },
-                complete: function() {
-                    $btnSubmit.prop('disabled', false).text('Gửi đánh giá');
-                }
-            });
-        });
-    </script>
 
     <!-- Script popup hủy đơn -->
     <script>
