@@ -20,7 +20,7 @@
                             </div>
                         </div>
 
-                        @if (session('success'))z
+                        @if (session('success'))
                         <div class="alert alert-success">
                             {{ session('success') }}
                         </div>
@@ -119,9 +119,8 @@
                             </ul>
                         </nav>
 
-
-                        <div> {{-- bỏ thuộc tính max-width nếu có --}}
-                            <table class="table w-100" id="productTable">
+                        <div class="table-responsive" style="overflow-x:unset;"> {{-- bỏ thuộc tính max-width nếu có --}}
+                            <table class="table w-100" id="productTable" style="min-width: 100%;">
                                 <thead>
                                     <tr>
                                         <th style="color: black; background-color: #f8f9fa; width: 30px;">
@@ -130,10 +129,8 @@
                                         <th style="color: black; background-color: #f8f9fa;">Tên sản phẩm</th>
                                         <th style="color: black; background-color: #f8f9fa;">Ảnh</th>
                                         <th style="color: black; background-color: #f8f9fa;">Danh mục</th>
-                                        <th style="color: black; background-color: #f8f9fa;">Vùng miền</th>
-
                                         {{-- <th style="color: black; background-color: #f8f9fa;">Vùng miền</th> --}}
-                                      <th style="color: black; background-color: #f8f9fa;">Cập nhật lúc</th>
+                                        <th style="color: black; background-color: #f8f9fa;">Cập nhật lúc</th>
                                         <th style="color: black; background-color: #f8f9fa;">Trạng thái</th>
                                         <th style="color: black; background-color: #f8f9fa;">Hành động</th>
                                     </tr>
@@ -146,8 +143,6 @@
                                         </td>
                                         <td>
                                             <div>
-                                                <a href="{{ route('admin.products.show', $product->slug) }}" class="fw-bold text-primary" style="font-size:16px;">
-                                                    {{ \Illuminate\Support\Str::limit($product->name, 20, '...') }}
                                                 <a href="javascript:void(0)"
                                                     class="fw-bold text-primary product-name"
                                                     style="font-size:16px;"
@@ -156,7 +151,7 @@
                                                     data-name="{{ $product->name }}"
                                                     data-desc="{{ $product->short_desc ?? '' }}"
                                                     data-image="{{ asset('storage/' . $product->image) }}"
-                                                    data-category="{{ $product->category->name ?? '' }}"
+                                                    data-category="{{ $product->categories->pluck('name')->implode(', ') }}"
                                                     data-region="{{ $product->region->name ?? '' }}"
                                                     data-updated="{{ $product->updated_at->format('d-m-Y H:i:s') }}"
                                                     data-status="{{ $product->active ? 'Đang bán' : 'Ngừng bán' }}">
@@ -171,12 +166,9 @@
                                             <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
                                                 class="w-20 h-20 object-cover" width="100px">
                                         </td>
-                                        <td>{{ $product->category->name ?? '' }}</td>
-
-                                        <td>{{ $product->region->name ?? '' }}</td>
-
+                                        <td>{{ $product->categories->pluck('name')->implode(', ') }}</td>
                                         {{-- <td>{{ $product->region->name ?? '' }}</td> --}}
-                                         <td>{{ $product->updated_at->format('d-m-Y H:i:s') }}</td> 
+                                        <td>{{ $product->updated_at->format('d-m-Y H:i:s') }}</td>
                                         <td class="{{ $product->active ? 'status-close' : 'status-danger' }}">
                                             <span class="badge status-badge"
                                                 style="cursor:pointer"
@@ -231,7 +223,6 @@
                         </form>
                     </div>
                     </li>
-
                 </div>
             </div>
         </div>
@@ -407,6 +398,39 @@
 @includeIf('backend.footer')
 <script src="{{ asset('backend/js/product.js') }}"></script>
 <style>
+    .table td,
+    .table th {
+        max-width: 150px;
+        /* Giới hạn chiều rộng từng cột, tùy chỉnh theo cột */
+        white-space: nowrap;
+        /* Không xuống dòng */
+        overflow: hidden;
+        /* Ẩn phần tràn */
+        text-overflow: ellipsis;
+        /* Hiển thị dấu ... */
+        vertical-align: middle;
+        /* Căn giữa dọc */
+    }
+
+    #modalCategory {
+        white-space: normal;
+        /* cho phép xuống dòng tự nhiên */
+        word-break: break-word;
+        /* ngắt từ khi quá dài */
+        max-width: 300px;
+        /* giới hạn chiều rộng (tuỳ chỉnh theo modal) */
+    }
+
+    table tbody tr:nth-child(odd) {
+        background-color: #ffffff;
+        /* màu trắng */
+    }
+
+    table tbody tr:nth-child(even) {
+        background-color: #f8f9fa;
+        /* xám nhạt, bạn có thể đổi màu theo ý thích */
+    }
+
     .modal-content {
         border: none !important;
     }

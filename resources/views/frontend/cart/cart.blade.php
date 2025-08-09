@@ -291,7 +291,6 @@
                         .catch(error => {
                             showNotificationModal('Đã có lỗi khi kiểm tra tồn kho. Vui lòng thử lại!');
                         });
->>>>>>> 8238e0675ffb75fd8022261ab9f65fa2004e8c75
                 });
             </script>
 
@@ -717,9 +716,10 @@
                     padding: 6px 20px;
                     border-radius: 4px;
                 }
-                                                                                                                                                                                                                                                                                 color: #fdfefe;
-                                                                                                                                                                                                                                                                                                    } */
 
+                /* .modal-footer .btn-secondary:hover {
+                                                                                                                                                                                                                                                                                                        color: #fdfefe;
+                                                                                                                                                                                                                                                                                                    } */
 
                 /* Nút Xác nhận */
                 .modal-footer .btn-primary {
@@ -953,33 +953,4 @@
                     });
                 });
             </script>
-
-             {{-- Script đồng bộ selected checkbox cho đặt hàng
-            <script>
-                document.getElementById('checkout-selected-form').addEventListener('submit', function(e) {
-                    const hiddenDiv = document.getElementById('selected-items-hidden');
-                    hiddenDiv.innerHTML = '';
-
-                    const checked = document.querySelectorAll(
-                        '#bulk-action-form input[type=checkbox][name="selected_items[]"]:checked');
-
-                    checked.forEach(function(checkbox) {
-                        const input = document.createElement('input');
-                        input.type = 'hidden';
-                        input.name = 'selected_cart_item_ids[]';
-                        input.value = checkbox.value;
-                        hiddenDiv.appendChild(input);
-                    });
-
-                    if (checked.length === 0) {
-                        e.preventDefault();
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Thông báo',
-                            text: 'Bạn chưa chọn sản phẩm nào để đặt hàng!'
-                        });
-                    }
-                });
-            </script> --}}
-
         @endsection
