@@ -147,113 +147,155 @@ class ProductController extends Controller
      * Hiển thị chi tiết sản phẩm.
      */
 
-    // ClientProductController.php
+
     public function catalog(Request $request)
     {
-        // Lấy params lọc từ query string
-        $keyword = $request->query('q', null);
-        $categoryIds = $request->query('dm', []);
-        $regionIds = $request->query('vm', []);
-        $priceRange = $request->query('gia', null);
-        $rating = $request->query('sao', []);
-        $sort = $request->query('sort', 'name_asc');  // Lấy param sort, mặc định là name_asc
+        $products = Product::with(['categories', 'variants', 'reviews'])
+            // ========== LỌC ==========
+            // Tìm kiếm theo tên
+            ->when(
+                $request->q,
+                fn($q, $kw) =>
+                $q->where('products.name', 'like', "%{$kw}%")
+            )
 
-        $minPrice = null;
-        $maxPrice = null;
-        if ($priceRange) {
-            $prices = explode('-', $priceRange);
-            $minPrice = $prices[0] ?? null;
-            $maxPrice = $prices[1] ?? null;
-        }
+            // Danh mục: AND (phải có đủ tất cả category đã chọn)
+            ->when($request->dm, function ($q, $dm) {
+                $ids = is_array($dm) ? $dm : explode(',', $dm);
+                $ids = array_values(array_unique(array_map('intval', $ids)));
+                if (!empty($ids)) {
+                    // đếm số category match phải = số category chọn
+                    $q->whereHas(
+                        'categories',
+                        fn($qq) => $qq->whereIn('categories.id', $ids),
+                        '=',
+                        count($ids)
+                    );
+                    // Cách tương thích rộng hơn (mọi phiên bản): foreach từng id
+                    // foreach ($ids as $id) {
+                    //     $q->whereHas('categories', fn($qq) => $qq->where('categories.id', $id));
+                    // }
+                }
+            })
 
-        // Xây dựng query sản phẩm
-        $query = Product::with(['variants', 'categories', 'reviews'])
-            ->where('active', 1);
+            // Vùng miền: IN (SP có 1 region_id nên AND là bất khả thi)
+            ->when($request->regions, function ($q, $regions) {
+                $ids = is_array($regions) ? $regions : explode(',', $regions);
+                $ids = array_values(array_unique(array_map('intval', $ids)));
+                if (!empty($ids)) {
+                    $q->whereIn('region_id', $ids);
+                }
+            })
 
-        if ($keyword) {
-            $query->where('name', 'like', "%$keyword%");
-        }
+            // Đánh giá: IN theo AVG sao đã làm tròn (ví dụ tick 4 và 5 => chỉ 4 hoặc 5)
+            ->when($request->rating, function ($q, $ratings) {
+                $vals = is_array($ratings) ? $ratings : explode(',', $ratings);
+                $vals = array_values(array_unique(array_map('intval', $vals)));
+                if (!empty($vals)) {
+                    $placeholders = implode(',', array_fill(0, count($vals), '?'));
+                    $q->whereRaw(
+                        "(SELECT ROUND(AVG(r.rating)) FROM reviews r WHERE r.product_id = products.id) IN ($placeholders)",
+                        $vals
+                    );
+                    // Nếu bạn muốn "tối thiểu" thay vì "IN", dùng:
+                    // $q->whereRaw('(SELECT ROUND(AVG(r.rating)) FROM reviews r WHERE r.product_id = products.id) >= ?', [min($vals)]);
+                }
+            })
 
-        if (!empty($categoryIds)) {
-            $query->whereHas('categories', function ($q) use ($categoryIds) {
-                $q->whereIn('categories.id', $categoryIds);
-            });
-        }
+            // Khoảng giá: áp cho biến thể active; vẫn giữ OOS (xuống cuối) dù không match giá
+            ->when($request->filled('min_price') || $request->filled('max_price'), function ($q) use ($request) {
+                $min = $request->input('min_price');
+                $max = $request->input('max_price');
 
-        if (!empty($regionIds)) {
-            $query->whereIn('region_id', $regionIds);
-        }
+                $q->where(function ($qq) use ($min, $max) {
+                    $qq->whereHas('variants', function ($v) use ($min, $max) {
+                        $v->where('active', 1)
+                            ->when($min !== null && $min !== '', fn($vv) => $vv->where('price', '>=', (int) $min))
+                            ->when($max !== null && $max !== '', fn($vv) => $vv->where('price', '<=', (int) $max));
+                    })
+                        // Giữ sản phẩm hết hàng dù không khớp giá
+                        ->orWhereRaw("
+                        products.active = 0
+                        OR NOT EXISTS (
+                            SELECT 1 FROM product_variants pv
+                            WHERE pv.product_id = products.id AND pv.active = 1
+                        )
+                    ");
+                });
+            })
 
-        if ($minPrice !== null || $maxPrice !== null) {
-            $query->whereHas('variants', function ($q) use ($minPrice, $maxPrice) {
-                if ($minPrice !== null) $q->where('price', '>=', $minPrice);
-                if ($maxPrice !== null) $q->where('price', '<=', $maxPrice);
-                $q->where('stock', '>', 0);
-            });
-        }
+            // ========== ƯU TIÊN CÒN HÀNG TRƯỚC ==========
+            ->orderByRaw("
+            CASE
+                WHEN products.active = 1
+                     AND EXISTS (
+                         SELECT 1 FROM product_variants pv
+                         WHERE pv.product_id = products.id AND pv.active = 1
+                     )
+                THEN 0
+                ELSE 1
+            END
+        ")
 
-        if (!empty($rating)) {
-            $minRating = min($rating);
-            $query->whereExists(function ($q) use ($minRating) {
-                $q->select(DB::raw(1))
-                    ->from('reviews')
-                    ->whereColumn('reviews.product_id', 'products.id')
-                    ->groupBy('reviews.product_id')
-                    ->havingRaw('AVG(rating) >= ?', [$minRating]);
-            });
-        }
+            // ========== SẮP XẾP ==========
+            ->when($request->sort, function ($q, $sort) {
+                switch ($sort) {
+                    case 'low': // min price (biến thể active)
+                        $q->orderBy(
+                            ProductVariant::select('price')
+                                ->whereColumn('product_id', 'products.id')
+                                ->where('active', 1)
+                                ->orderBy('price', 'asc')
+                                ->limit(1),
+                            'asc'
+                        );
+                        break;
 
-        // Xử lý sắp xếp theo param sort
-        switch ($sort) {
-            case 'pop':  // Phổ biến nhất
-                $query->orderBy('view_total', 'desc');
-                break;
-            case 'low':  // Giá thấp đến cao
-                // Bạn có thể join variants để sort theo giá, tạm order theo name
-                $query->orderBy('name', 'asc');
-                break;
-            case 'high': // Giá cao đến thấp
-                $query->orderBy('name', 'desc');
-                break;
-            case 'rating': // Đánh giá trung bình
-                // Cần join hoặc tính AVG rating, tạm order theo created_at
-                $query->orderBy('created_at', 'desc');
-                break;
-            case 'aToz':  // A - Z
-                $query->orderBy('name', 'asc');
-                break;
-            case 'zToa':  // Z - A
-                $query->orderBy('name', 'desc');
-                break;
-            default:
-                $query->orderBy('name', 'asc');
-        }
+                    case 'high': // max price (biến thể active)
+                        $q->orderBy(
+                            ProductVariant::select('price')
+                                ->whereColumn('product_id', 'products.id')
+                                ->where('active', 1)
+                                ->orderBy('price', 'desc')
+                                ->limit(1),
+                            'desc'
+                        );
+                        break;
 
-        // Phân trang 12 sản phẩm/trang, giữ query params khi phân trang
-        $products = $query->paginate(12)->appends($request->query());
+                    case 'rating':
+                        $q->withAvg('reviews', 'rating')
+                            ->orderBy('reviews_avg_rating', 'desc');
+                        break;
 
-        // Tách sản phẩm còn hàng & hết hàng trong trang hiện tại
-        $items = collect($products->items());
-        $productsInStock = $items->filter(fn($p) => $p->variants->contains(fn($v) => $v->stock > 0));
-        $productsOutOfStock = $items->filter(fn($p) => !$p->variants->contains(fn($v) => $v->stock > 0));
+                    case 'aToz':
+                        $q->orderBy('name', 'asc');
+                        break;
 
-        // Lấy categories và regions có đếm sản phẩm active
-        $categories = Category::withCount(['products' => fn($q) => $q->where('active', 1)])->get();
-        $regions = Region::withCount(['products' => fn($q) => $q->where('active', 1)])->get();
+                    case 'zToa':
+                        $q->orderBy('name', 'desc');
+                        break;
 
+                    default: // pop
+                        $q->orderBy('view_total', 'desc');
+                }
+            }, fn($q) => $q->orderBy('view_total', 'desc'))
+
+            // ========== PHÂN TRANG ==========
+            ->paginate(12)
+            ->withQueryString();
+
+        // Sidebar
+        $categories = Category::withCount('products')->get();
+        $regions = Region::withCount('products')->get();
+
+        // AJAX partial
         if ($request->ajax()) {
-            $html = view('frontend.products.partials.product-list', compact('productsInStock', 'productsOutOfStock'))->render();
-            $pagination = (string) $products->links();
-
-            return response()->json([
-                'html' => $html,
-                'pagination' => $pagination,
-            ]);
+            return view('frontend.products.partials.product-list', compact('products'))->render();
         }
 
-        return view('frontend.products.catalog', compact('products', 'productsInStock', 'productsOutOfStock', 'categories', 'regions'));
+        // Full page
+        return view('frontend.products.catalog', compact('products', 'categories', 'regions'));
     }
-
 
     public function show($slug, Request $request)
     {
@@ -316,27 +358,55 @@ class ProductController extends Controller
         // Lấy danh mục của sản phẩm (ids)
         $productCategoryIds = $product->categories->pluck('id')->toArray();
 
-        // Lấy sản phẩm cùng danh mục, active, không lấy sp hiện tại
-        $relatedProducts = Product::with(['images', 'variants' => function ($query) {
-            $query->where('active', 1);
-        }])
-            ->whereHas('categories', function ($query) use ($productCategoryIds) {
-                $query->whereIn('categories.id', $productCategoryIds);
-            })
+        // Nếu sản phẩm không có danh mục → fallback random luôn
+        if (empty($productCategoryIds)) {
+            $relatedProducts = Product::with([
+                'images',
+                'variants' => fn($q) => $q->where('active', 1),
+                'categories:id,name',
+            ])
+                ->where('active', 1)
+                ->whereNull('deleted_at')
+                ->whereKeyNot($product->id)
+                ->inRandomOrder()
+                ->limit(15)
+                ->get();
+
+            $relatedTitle = $relatedProducts->isEmpty()
+                ? 'Các sản phẩm nổi bật khác'
+                : 'Sản phẩm cùng danh mục';
+
+            return view('client.product.detail', compact('product', 'relatedProducts', 'relatedTitle'));
+        }
+
+        // Sản phẩm liên quan: cùng ÍT NHẤT 1 danh mục, sắp xếp theo số danh mục trùng
+        $relatedProducts = Product::with([
+            'images',
+            'variants' => fn($q) => $q->where('active', 1),
+            'categories:id,name',
+        ])
             ->where('active', 1)
-            ->where('id', '!=', $product->id)
             ->whereNull('deleted_at')
+            ->whereKeyNot($product->id)
+            ->whereHas('categories', fn($q) => $q->whereIn('categories.id', $productCategoryIds))
+            ->withCount([
+                'categories as same_categories_count' => fn($q) => $q->whereIn('categories.id', $productCategoryIds),
+            ])
+            ->orderByDesc('same_categories_count')
+            ->latest('products.id') // hoặc ->latest('created_at')
             ->limit(15)
             ->get();
 
-        // Nếu không có sản phẩm cùng danh mục thì lấy 15 sp random
+        // Nếu vẫn rỗng → random
         if ($relatedProducts->isEmpty()) {
-            $relatedProducts = Product::with(['images', 'variants' => function ($query) {
-                $query->where('active', 1);
-            }])
+            $relatedProducts = Product::with([
+                'images',
+                'variants' => fn($q) => $q->where('active', 1),
+                'categories:id,name',
+            ])
                 ->where('active', 1)
-                ->where('id', '!=', $product->id)
                 ->whereNull('deleted_at')
+                ->whereKeyNot($product->id)
                 ->inRandomOrder()
                 ->limit(15)
                 ->get();

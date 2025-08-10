@@ -29,8 +29,8 @@
     </section>
 
 
-    <section class="py-4 bg-white">
-        <div class="container">
+    <section class="pt-4 bg-white">
+        <div class="">
             <!-- Nội dung giỏ hàng và phần tổng tiền -->
             <section class="cart-section section-b-space">
                 <div class="container px-5">

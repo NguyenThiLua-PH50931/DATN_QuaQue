@@ -116,31 +116,32 @@
                             @endforeach
                         </ul> --}}
                         <h3>Danh Mục</h3>
-                        <ul>
-                            @foreach ($categories as $category)
-                            @php
-                                // Xử lý tên ảnh nếu cần
-                                $imgName = strtolower($category->name);
-                                $imgName = str_replace([' ', '&'], '-', $imgName);
-                                $imgName = preg_replace('/[^a-z0-9\-]/', '', $imgName);
-                            @endphp
+<ul>
+    @foreach ($categories as $category)
+        @php
+            // Xử lý tên ảnh nếu cần
+            $imgName = strtolower($category->name);
+            $imgName = str_replace([' ', '&'], '-', $imgName);
+            $imgName = preg_replace('/[^a-z0-9\-]/', '', $imgName);
+        @endphp
 
-                            <li @if ($loop->last) class="pb-30" @endif>
-                                <div class="category-list">
-                                    <img src="{{ asset('storage/' . $category->image) }}"
-                                        alt="{{ $category->name }}"
-                                        style="filter:none !important; mix-blend-mode:normal !important; opacity:1 !important;"
-                                        class="w-20 h-20 object-cover">
-                                    <h5>
-                                        <a href="{{ route('client.product.catalog', ['dm' => [$category->id]]) }}">
-                                            {{ $category->name }}
-                                        </a>
-                                    </h5>
-                                </div>
-                            </li>
-                            @endforeach
-                        </ul>
+        <li @if ($loop->last) class="pb-30" @endif>
+            <div class="category-list">
+                <img src="{{ asset('storage/' . $category->image) }}"
+                     alt="{{ $category->name }}"
+                     style="filter:none !important; mix-blend-mode:normal !important; opacity:1 !important;"
+                     class="w-20 h-20 object-cover">
 
+                <h5>
+                    {{-- dùng dm[] để request('dm') là mảng và sidebar sẽ tick sẵn --}}
+                    <a href="{{ route('client.product.catalog', ['dm[]' => $category->id, 'page' => 1]) }}">
+                        {{ $category->name }}
+                    </a>
+                </h5>
+            </div>
+        </li>
+    @endforeach
+</ul>
 
                         <ul class="value-list">
                             <li>
@@ -512,32 +513,35 @@
                     @endforelse
                 </div> --}}
                 <div class="title">
-                <h2>Sản phẩm theo danh mục</h2>
-                <span class="title-leaf">
-                    <svg class="icon-width">
-                        <use xlink:href="{{ asset('frontend/assets/svg/leaf.svg#leaf') }}"></use>
-                    </svg>
-                </span>
-                <p>Khám phá đa dạng các loại đặc sản</p>
-            </div>
+    <h2>Sản phẩm theo danh mục</h2>
+    <span class="title-leaf">
+        <svg class="icon-width">
+            <use xlink:href="{{ asset('frontend/assets/svg/leaf.svg#leaf') }}"></use>
+        </svg>
+    </span>
+    <p>Khám phá đa dạng các loại đặc sản</p>
+</div>
 
-            <div class="category-slider-2 product-wrapper no-arrow">
-                @forelse ($categories as $category)
+<div class="category-slider-2 product-wrapper no-arrow">
+    @forelse ($categories as $category)
+        <div>
+            {{-- đẩy dm[] để request('dm') nhận dạng là mảng và checkbox được tick --}}
+            <a href="{{ route('client.product.catalog', ['dm[]' => $category->id, 'page' => 1]) }}"
+               class="category-box category-dark"
+               title="Xem {{ $category->name }}">
                 <div>
-                    <a href="{{ route('client.product.catalog', ['dm' => [$category->id]]) }}"
-                        class="category-box category-dark">
-                        <div>
-                            <img src="{{ asset('storage/' . $category->image) }}"
-                                alt="{{ $category->name }}"
-                                style="filter:none !important; mix-blend-mode:normal !important; opacity:1 !important;">
-                            <h5>{{ $category->name }}</h5>
-                        </div>
-                    </a>
+                    <img src="{{ asset('storage/' . $category->image) }}"
+                         alt="{{ $category->name }}"
+                         style="filter:none !important; mix-blend-mode:normal !important; opacity:1 !important;">
+                    <h5>{{ $category->name }}</h5>
                 </div>
-                @empty
-                <p>Không có danh mục nào.</p>
-                @endforelse
-            </div>
+            </a>
+        </div>
+    @empty
+        <p>Không có danh mục nào.</p>
+    @endforelse
+</div>
+
 
 
                 <div class="section-t-space section-b-space">
