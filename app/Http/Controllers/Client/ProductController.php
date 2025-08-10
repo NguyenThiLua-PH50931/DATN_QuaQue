@@ -151,7 +151,7 @@ class ProductController extends Controller
     public function catalog(Request $request)
     {
         $products = Product::with(['categories', 'variants', 'reviews'])
-            // ========== LỌC SẢN PHẨM ==========
+            // ========== LỌC ==========
             // Tìm kiếm theo tên
             ->when(
                 $request->q,
@@ -159,36 +159,61 @@ class ProductController extends Controller
                 $q->where('products.name', 'like', "%{$kw}%")
             )
 
-            // Danh mục (dm có thể là mảng hoặc CSV)
+            // Danh mục: AND (phải có đủ tất cả category đã chọn)
             ->when($request->dm, function ($q, $dm) {
                 $ids = is_array($dm) ? $dm : explode(',', $dm);
-                $q->whereHas('categories', fn($qq) => $qq->whereIn('categories.id', $ids));
+                $ids = array_values(array_unique(array_map('intval', $ids)));
+                if (!empty($ids)) {
+                    // đếm số category match phải = số category chọn
+                    $q->whereHas(
+                        'categories',
+                        fn($qq) => $qq->whereIn('categories.id', $ids),
+                        '=',
+                        count($ids)
+                    );
+                    // Cách tương thích rộng hơn (mọi phiên bản): foreach từng id
+                    // foreach ($ids as $id) {
+                    //     $q->whereHas('categories', fn($qq) => $qq->where('categories.id', $id));
+                    // }
+                }
             })
 
-            // Vùng miền (regions có thể là mảng hoặc CSV)
+            // Vùng miền: IN (SP có 1 region_id nên AND là bất khả thi)
             ->when($request->regions, function ($q, $regions) {
                 $ids = is_array($regions) ? $regions : explode(',', $regions);
-                $q->whereIn('region_id', $ids);
+                $ids = array_values(array_unique(array_map('intval', $ids)));
+                if (!empty($ids)) {
+                    $q->whereIn('region_id', $ids);
+                }
             })
 
-            // Đánh giá tối thiểu (giữ cả OOS)
+            // Đánh giá: IN theo AVG sao đã làm tròn (ví dụ tick 4 và 5 => chỉ 4 hoặc 5)
             ->when($request->rating, function ($q, $ratings) {
-                $stars = is_array($ratings) ? $ratings : explode(',', $ratings);
-                $minStars = (int) min($stars);
-                // Dùng subquery để lọc theo AVG(rating) của sản phẩm
-                $q->whereRaw('(SELECT ROUND(AVG(r.rating)) FROM reviews r WHERE r.product_id = products.id) >= ?', [$minStars]);
+                $vals = is_array($ratings) ? $ratings : explode(',', $ratings);
+                $vals = array_values(array_unique(array_map('intval', $vals)));
+                if (!empty($vals)) {
+                    $placeholders = implode(',', array_fill(0, count($vals), '?'));
+                    $q->whereRaw(
+                        "(SELECT ROUND(AVG(r.rating)) FROM reviews r WHERE r.product_id = products.id) IN ($placeholders)",
+                        $vals
+                    );
+                    // Nếu bạn muốn "tối thiểu" thay vì "IN", dùng:
+                    // $q->whereRaw('(SELECT ROUND(AVG(r.rating)) FROM reviews r WHERE r.product_id = products.id) >= ?', [min($vals)]);
+                }
             })
 
-            // Khoảng giá: áp cho biến thể đang active.
-            // Nhưng vẫn giữ OOS trong kết quả (xuống cuối), nên bọc OR điều kiện OOS.
+            // Khoảng giá: áp cho biến thể active; vẫn giữ OOS (xuống cuối) dù không match giá
             ->when($request->filled('min_price') || $request->filled('max_price'), function ($q) use ($request) {
-                $q->where(function ($qq) use ($request) {
-                    $qq->whereHas('variants', function ($v) use ($request) {
+                $min = $request->input('min_price');
+                $max = $request->input('max_price');
+
+                $q->where(function ($qq) use ($min, $max) {
+                    $qq->whereHas('variants', function ($v) use ($min, $max) {
                         $v->where('active', 1)
-                            ->when($request->min_price, fn($vv, $min) => $vv->where('price', '>=', $min))
-                            ->when($request->max_price, fn($vv, $max) => $vv->where('price', '<=', $max));
+                            ->when($min !== null && $min !== '', fn($vv) => $vv->where('price', '>=', (int) $min))
+                            ->when($max !== null && $max !== '', fn($vv) => $vv->where('price', '<=', (int) $max));
                     })
-                        // Giữ sản phẩm hết hàng dù không match giá
+                        // Giữ sản phẩm hết hàng dù không khớp giá
                         ->orWhereRaw("
                         products.active = 0
                         OR NOT EXISTS (
@@ -212,10 +237,10 @@ class ProductController extends Controller
             END
         ")
 
-            // ========== SẮP XẾP THEO DROPDOWN ==========
+            // ========== SẮP XẾP ==========
             ->when($request->sort, function ($q, $sort) {
                 switch ($sort) {
-                    case 'low': // Giá thấp → cao (min price của biến thể active)
+                    case 'low': // min price (biến thể active)
                         $q->orderBy(
                             ProductVariant::select('price')
                                 ->whereColumn('product_id', 'products.id')
@@ -226,7 +251,7 @@ class ProductController extends Controller
                         );
                         break;
 
-                    case 'high': // Giá cao → thấp (max price của biến thể active)
+                    case 'high': // max price (biến thể active)
                         $q->orderBy(
                             ProductVariant::select('price')
                                 ->whereColumn('product_id', 'products.id')
@@ -237,7 +262,7 @@ class ProductController extends Controller
                         );
                         break;
 
-                    case 'rating': // Đánh giá trung bình
+                    case 'rating':
                         $q->withAvg('reviews', 'rating')
                             ->orderBy('reviews_avg_rating', 'desc');
                         break;
@@ -250,7 +275,7 @@ class ProductController extends Controller
                         $q->orderBy('name', 'desc');
                         break;
 
-                    default: // 'pop' hoặc rỗng → phổ biến nhất
+                    default: // pop
                         $q->orderBy('view_total', 'desc');
                 }
             }, fn($q) => $q->orderBy('view_total', 'desc'))
@@ -259,11 +284,11 @@ class ProductController extends Controller
             ->paginate(12)
             ->withQueryString();
 
-        // Dữ liệu sidebar
+        // Sidebar
         $categories = Category::withCount('products')->get();
         $regions = Region::withCount('products')->get();
 
-        // AJAX: trả partial (để JS thay đúng #product-list-wrapper)
+        // AJAX partial
         if ($request->ajax()) {
             return view('frontend.products.partials.product-list', compact('products'))->render();
         }
@@ -333,27 +358,55 @@ class ProductController extends Controller
         // Lấy danh mục của sản phẩm (ids)
         $productCategoryIds = $product->categories->pluck('id')->toArray();
 
-        // Lấy sản phẩm cùng danh mục, active, không lấy sp hiện tại
-        $relatedProducts = Product::with(['images', 'variants' => function ($query) {
-            $query->where('active', 1);
-        }])
-            ->whereHas('categories', function ($query) use ($productCategoryIds) {
-                $query->whereIn('categories.id', $productCategoryIds);
-            })
+        // Nếu sản phẩm không có danh mục → fallback random luôn
+        if (empty($productCategoryIds)) {
+            $relatedProducts = Product::with([
+                'images',
+                'variants' => fn($q) => $q->where('active', 1),
+                'categories:id,name',
+            ])
+                ->where('active', 1)
+                ->whereNull('deleted_at')
+                ->whereKeyNot($product->id)
+                ->inRandomOrder()
+                ->limit(15)
+                ->get();
+
+            $relatedTitle = $relatedProducts->isEmpty()
+                ? 'Các sản phẩm nổi bật khác'
+                : 'Sản phẩm cùng danh mục';
+
+            return view('client.product.detail', compact('product', 'relatedProducts', 'relatedTitle'));
+        }
+
+        // Sản phẩm liên quan: cùng ÍT NHẤT 1 danh mục, sắp xếp theo số danh mục trùng
+        $relatedProducts = Product::with([
+            'images',
+            'variants' => fn($q) => $q->where('active', 1),
+            'categories:id,name',
+        ])
             ->where('active', 1)
-            ->where('id', '!=', $product->id)
             ->whereNull('deleted_at')
+            ->whereKeyNot($product->id)
+            ->whereHas('categories', fn($q) => $q->whereIn('categories.id', $productCategoryIds))
+            ->withCount([
+                'categories as same_categories_count' => fn($q) => $q->whereIn('categories.id', $productCategoryIds),
+            ])
+            ->orderByDesc('same_categories_count')
+            ->latest('products.id') // hoặc ->latest('created_at')
             ->limit(15)
             ->get();
 
-        // Nếu không có sản phẩm cùng danh mục thì lấy 15 sp random
+        // Nếu vẫn rỗng → random
         if ($relatedProducts->isEmpty()) {
-            $relatedProducts = Product::with(['images', 'variants' => function ($query) {
-                $query->where('active', 1);
-            }])
+            $relatedProducts = Product::with([
+                'images',
+                'variants' => fn($q) => $q->where('active', 1),
+                'categories:id,name',
+            ])
                 ->where('active', 1)
-                ->where('id', '!=', $product->id)
                 ->whereNull('deleted_at')
+                ->whereKeyNot($product->id)
                 ->inRandomOrder()
                 ->limit(15)
                 ->get();

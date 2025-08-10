@@ -202,7 +202,7 @@
                     <li>TAG:
                         @if($product->categories->isNotEmpty())
                             @foreach($product->categories as $category)
-                                <a href="{{ route('client.product.catalog', ['dm' => [$category->id]]) }}">
+                                <a href="{{ route('client.product.catalog', ['dm[]' => $category->id, 'page' => 1]) }}">
                                     {{ $category->name }}
                                 </a>@if(!$loop->last), @endif
                             @endforeach
