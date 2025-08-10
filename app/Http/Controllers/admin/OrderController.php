@@ -45,7 +45,9 @@ class OrderController extends Controller
 
         $orders = $query->with('user', 'items')->orderBy('created_at', 'desc')->paginate(15);
 
-        return view('backend.orders.index', compact('orders'));
+$lastOrderId = \App\Models\admin\Order::orderByDesc('id')->value('id') ?? 0;
+return view('backend.orders.index', compact('orders', 'lastOrderId'));
+
     }
 
     public function show(Order $order)

@@ -38,11 +38,10 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('backend/assets/css/vendors/bootstrap-tagsinput.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-    @stack('styles')
     <link rel="stylesheet" href="{{ asset('backend/assets/css/aa.css') }}">
     <link rel="stylesheet" href="{{ asset('backend/assets/css/modal-fix.css') }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
-
+    @stack('styles')
 </head>
 
 <body>

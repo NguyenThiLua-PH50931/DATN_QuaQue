@@ -574,16 +574,17 @@
         <!-- Container-fluid Ends-->
         @includeIf('backend.footer')
     </div>
-    {{-- <script>
-        let lastOrderId = {{ $orders->first()->id ?? 0 }};
+    <script>
+        let lastOrderId = @json($lastOrderId);
         setInterval(function() {
             fetch('/admin/orders/latest-id')
                 .then(res => res.json())
                 .then(data => {
-                    if (data.latest_id > lastOrderId) {
+                    if (data.latest_id && data.latest_id > lastOrderId) {
                         location.reload();
                     }
                 });
-        }, 1000);
-    </script> --}}
+        }, 1000); // nên để 3 giây để giảm tải server
+    </script>
+
 @endsection

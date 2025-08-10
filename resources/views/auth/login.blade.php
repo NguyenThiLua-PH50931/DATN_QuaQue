@@ -63,6 +63,10 @@
                                     </button>
                                 </div>
                             </form>
+                            <div class="sign-up-box">
+                            <h4>Bạn chưa có tài khoản?</h4>
+                            <a href="{{ route('register') }}">Đăng ký</a>
+                        </div>
                         </div>
 
                         {{-- <div class="other-log-in">

@@ -205,6 +205,14 @@
                                                 style="display:none; position:absolute; right:0; top:40px; background:#fff; box-shadow:0 4px 16px #0002; border-radius:6px; min-width:140px; z-index:9999;">
                                                 <div class="form-check px-3 py-2">
                                                     <input class="form-check-input" type="radio"
+                                                        name="filterCampaignsTime" id="filterCampaignsDay"
+                                                        value="day">
+                                                    <label class="form-check-label" for="filterCampaignsDay">Hôm
+                                                        nay</label>
+                                                </div>
+
+                                                <div class="form-check px-3 py-2">
+                                                    <input class="form-check-input" type="radio"
                                                         name="filterCampaignsTime" id="filterCampaignsWeek"
                                                         value="week" checked>
                                                     <label class="form-check-label" for="filterCampaignsWeek">Tuần
@@ -344,6 +352,13 @@
                                                 style="display:none; position:absolute; right:0; top:38px; background:#fff; box-shadow:0 4px 16px #0002; border-radius:6px; min-width:140px; z-index:9999;">
                                                 <div class="form-check px-3 py-2">
                                                     <input class="form-check-input" type="radio" name="filterTime"
+                                                        id="filterTodayOption" value="today">
+                                                    <label class="form-check-label" for="filterTodayOption">Hôm
+                                                        nay</label>
+                                                </div>
+
+                                                <div class="form-check px-3 py-2">
+                                                    <input class="form-check-input" type="radio" name="filterTime"
                                                         id="filterWeek" value="week" checked>
                                                     <label class="form-check-label" for="filterWeek">Tuần
                                                         này</label>
@@ -444,6 +459,12 @@
                                                 style="display:none; position:absolute; right:0; top:38px; background:#fff; box-shadow:0 4px 16px #0002; border-radius:6px; min-width:140px; z-index:9999;">
                                                 <div class="form-check px-3 py-2">
                                                     <input class="form-check-input" type="radio" name="filterRatedTime"
+                                                        id="filterRatedToday" value="today">
+                                                    <label class="form-check-label" for="filterRatedToday">Hôm nay</label>
+                                                </div>
+
+                                                <div class="form-check px-3 py-2">
+                                                    <input class="form-check-input" type="radio" name="filterRatedTime"
                                                         id="filterRatedWeek" value="week" checked>
                                                     <label class="form-check-label" for="filterRatedWeek">Tuần này</label>
                                                 </div>
@@ -530,7 +551,12 @@
                                         'value' => $topCustomer->name ?? 'Không có',
                                         'sub' => number_format($topCustomer->total_amount ?? 0) . '₫',
                                         'color' => 'primary',
-                                        'filter' => ['week' => 'Tuần này', 'month' => 'Tháng này', 'year' => 'Năm nay'],
+                                        'filter' => [
+                                            'today' => 'Hôm nay',
+                                            'week' => 'Tuần này',
+                                            'month' => 'Tháng này',
+                                            'year' => 'Năm nay',
+                                        ],
                                     ],
                                     [
                                         'title' => 'Đơn cần xử lý',
@@ -551,7 +577,12 @@
                                         'value' => $topCategory->name ?? 'Không có',
                                         'sub' => number_format($topCategory->total_sold ?? 0) . ' sản phẩm',
                                         'color' => 'success',
-                                        'filter' => ['week' => 'Tuần này', 'month' => 'Tháng này', 'year' => 'Năm nay'],
+                                        'filter' => [
+                                            'today' => 'Hôm nay',
+                                            'week' => 'Tuần này',
+                                            'month' => 'Tháng này',
+                                            'year' => 'Năm nay',
+                                        ],
                                     ],
                                     [
                                         'title' => 'TOP tìm kiếm',
@@ -631,11 +662,21 @@
                                                 style="display:none; position:absolute; right:0; top:38px; background:#fff; box-shadow:0 4px 16px #0002; border-radius:6px; min-width:140px; z-index:9999;">
                                                 <div class="form-check px-3 py-2">
                                                     <input class="form-check-input" type="radio"
+                                                        name="filterCancelledTime" id="filterCancelledToday"
+                                                        value="today" checked>
+                                                    <label class="form-check-label" for="filterCancelledToday">Hôm
+                                                        nay</label>
+                                                </div>
+
+
+                                                <div class="form-check px-3 py-2">
+                                                    <input class="form-check-input" type="radio"
                                                         name="filterCancelledTime" id="filterCancelledWeek"
-                                                        value="week" checked>
+                                                        value="week">
                                                     <label class="form-check-label" for="filterCancelledWeek">Tuần
                                                         này</label>
                                                 </div>
+
                                                 <div class="form-check px-3 py-2">
                                                     <input class="form-check-input" type="radio"
                                                         name="filterCancelledTime" id="filterCancelledMonth"
@@ -717,6 +758,13 @@
                                             <!-- Filter dropdown -->
                                             <div id="regionFilterDropdown"
                                                 style="display:none; position:absolute; right:0; top:38px; background:#fff; box-shadow:0 4px 16px #0002; border-radius:6px; min-width:140px; z-index:9999;">
+                                                <div class="form-check px-3 py-2">
+                                                    <input class="form-check-input" type="radio"
+                                                        name="filterRegionTime" id="filterRegionToday" value="today">
+                                                    <label class="form-check-label" for="filterRegionToday">Hôm
+                                                        nay</label>
+                                                </div>
+
                                                 <div class="form-check px-3 py-2">
                                                     <input class="form-check-input" type="radio"
                                                         name="filterRegionTime" id="filterRegionWeek" value="week"
@@ -836,7 +884,7 @@
     {{-- SẢN PHẨM BÁN CHẠY --}}
     <script>
         let products = window.PRODUCTS || [];
-        let filterType = "week"; // Mặc định tuần này
+        let filterType = "today"; // Mặc định tuần này
         let filteredData = [];
         let currentPage = 1;
         let pageSize = 5;
@@ -862,6 +910,10 @@
             return data.filter(p => {
                 if (!p.created_at) return false;
                 const d = new Date(p.created_at);
+                if (type === 'today') {
+                    return now.toDateString() === d.toDateString();
+                }
+
                 if (type === 'week') {
                     return now.getFullYear() === d.getFullYear() && getWeekNumber(now) === getWeekNumber(d);
                 }
@@ -975,6 +1027,7 @@
             const dd = document.getElementById('filterDropdown');
             dd.style.display = (dd.style.display === 'block') ? 'none' : 'block';
             // Set lại trạng thái checked
+            document.getElementById('filterTodayOption').checked = (filterType === 'today');
             document.getElementById('filterWeek').checked = (filterType === 'week');
             document.getElementById('filterMonth').checked = (filterType === 'month');
             document.getElementById('filterYear').checked = (filterType === 'year');
@@ -985,7 +1038,6 @@
                 document.getElementById('filterDropdown').style.display = 'none';
             }
         };
-        // Chọn filter radio
         // Chọn filter radio
         document.querySelectorAll('input[name="filterTime"]').forEach(radio => {
             radio.onchange = function() {
@@ -1072,7 +1124,7 @@
         };
 
         // =================== Khởi tạo lần đầu ===================
-        fetchBestSellers('week');
+        fetchBestSellers('today');
         document.addEventListener('DOMContentLoaded', function() {
             // --- Các phần tử filter ---
             const filterForm = document.getElementById('dashboardFilter');
@@ -1178,7 +1230,7 @@
     <script>
         // ====================== SẢN PHẨM ĐÁNH GIÁ CAO NHẤT ======================
         let topRatedProducts = window.TOP_RATED || [];
-        let ratedFilterType = "week"; // mặc định tuần này
+        let ratedFilterType = "today"; // mặc định tuần này
         let filteredRatedData = [];
         let ratedCurrentPage = 1;
         let ratedPageSize = 5;
@@ -1204,6 +1256,10 @@
             return data.filter(p => {
                 if (!p.created_at) return false;
                 const d = new Date(p.created_at);
+                if (type === 'today') {
+                    return now.toDateString() === d.toDateString();
+                }
+
                 if (type === 'week') {
                     return now.getFullYear() === d.getFullYear() && getWeekNumber(now) === getWeekNumber(d);
                 }
@@ -1311,6 +1367,8 @@
             const dd = document.getElementById('topRatedFilterDropdown');
             dd.style.display = (dd.style.display === 'block') ? 'none' : 'block';
             // Set lại trạng thái checked
+            document.getElementById('filterRatedToday').checked = (ratedFilterType === 'today');
+
             document.getElementById('filterRatedWeek').checked = (ratedFilterType === 'week');
             document.getElementById('filterRatedMonth').checked = (ratedFilterType === 'month');
             document.getElementById('filterRatedYear').checked = (ratedFilterType === 'year');
@@ -1405,13 +1463,13 @@
         // =================== Khởi tạo lần đầu ===================
         // filteredRatedData = filterRatedByTime(topRatedProducts, ratedFilterType);
         // renderRatedTable();
-        fetchTopRatedProducts('week');
+        fetchTopRatedProducts('today');
     </script>
     {{-- SẢN PHẨM BỊ HỦY NHIỀU NHẤT --}}
     <script>
         // ====================== SẢN PHẨM BỊ HỦY NHIỀU NHẤT ======================
         let cancelledProducts = window.CANCELLED_PRODUCTS || [];
-        let cancelledFilterType = "week"; // Mặc định tuần này
+        let cancelledFilterType = "today";
         let filteredCancelledData = [];
         let cancelledCurrentPage = 1;
         let cancelledPageSize = 5;
@@ -1437,6 +1495,9 @@
             return data.filter(p => {
                 if (!p.last_cancelled) return false;
                 const d = new Date(p.last_cancelled);
+                if (type === 'today') {
+                    return now.toDateString() === d.toDateString();
+                }
                 if (type === 'week') {
                     return now.getFullYear() === d.getFullYear() && getWeekNumber(now) === getWeekNumber(d);
                 }
@@ -1449,6 +1510,7 @@
                 return true;
             });
         }
+
 
         // Render bảng
         function renderCancelledTable(page = 1, size = 5, data = filteredCancelledData) {
@@ -1656,7 +1718,7 @@
         // =================== Khởi tạo lần đầu ===================
         // filteredCancelledData = filterCancelledByTime(cancelledProducts, cancelledFilterType);
         // renderCancelledTable();
-        fetchCancelledProducts('week');
+        fetchCancelledProducts('today');
 
         function showCancelledVariants(idx) {
             const product = filteredCancelledData[idx];
@@ -1738,7 +1800,7 @@
         }
 
         let regionSales = @json($regionSales ?? []); // <-- Laravel trả về vùng miền
-        let regionFilterType = "week";
+        let regionFilterType = "today";
         let filteredRegionData = [];
         let regionCurrentPage = 1;
         let regionPageSize = 3;
@@ -1831,6 +1893,7 @@
             e.stopPropagation();
             const dd = document.getElementById('regionFilterDropdown');
             dd.style.display = (dd.style.display === 'block') ? 'none' : 'block';
+            document.getElementById('filterRegionToday').checked = (regionFilterType === 'today');
             document.getElementById('filterRegionWeek').checked = (regionFilterType === 'week');
             document.getElementById('filterRegionMonth').checked = (regionFilterType === 'month');
             document.getElementById('filterRegionYear').checked = (regionFilterType === 'year');
@@ -1904,9 +1967,9 @@
         // =================== Khởi tạo lần đầu ===================
         // filteredRegionData = regionSales;
         // renderRegionList();
-        fetchRegionSales('week');
+        fetchRegionSales('today');
     </script>
-
+    {{-- BIỂU ĐỒ THỐNG KÊ CẢ NĂM --}}
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script>
         let monthlyStats = @json($monthlyStats);
@@ -2098,6 +2161,7 @@
             renderRevenueChart();
         });
     </script>
+    {{-- THỐNG KÊ BIỂU ĐỒ --}}
     <script>
         // Biến lưu chart hiện tại
         let campaignsChart;
@@ -2252,7 +2316,8 @@
         document.addEventListener('DOMContentLoaded', function() {
             let completed = 0;
             let canceled = 0;
-            let campaignsFilterType = "week"; // mặc định tuần này
+            let campaignsFilterType = "day";
+            // mặc định tuần này
 
             // Hàm vẽ donut chart
             function renderDonut(target) {
@@ -2360,6 +2425,7 @@
                 e.stopPropagation();
                 const dd = document.getElementById('campaignsFilterDropdown');
                 dd.style.display = (dd.style.display === 'block') ? 'none' : 'block';
+                document.getElementById('filterCampaignsDay').checked = (campaignsFilterType === 'day');
                 document.getElementById('filterCampaignsWeek').checked = (campaignsFilterType === 'week');
                 document.getElementById('filterCampaignsMonth').checked = (campaignsFilterType === 'month');
                 document.getElementById('filterCampaignsYear').checked = (campaignsFilterType === 'year');
@@ -2393,10 +2459,12 @@
                 };
             }
 
-            // Lần đầu load trang, mặc định tuần này
-            fetchDonutStats('week');
+            // Lần đầu load trang, mặc định hôm nay
+            fetchDonutStats(campaignsFilterType); // ✅ load đúng theo biến mặc định
+
         });
     </script>
+    {{-- TOP USER; CATEGORY ; SEARCH ; CẦN XÁC NHẬN ĐƠN HÀNG --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Mở dropdown
@@ -2454,10 +2522,11 @@
             });
 
             // Load mặc định
-            fetchData('topCustomer', 'week');
+            fetchData('topCustomer', 'today');
             fetchData('processingOrders', 'today');
-            fetchData('topCategory', 'week');
+            fetchData('topCategory', 'today');
             fetchData('topSearchedProduct', 'today');
+
         });
     </script>
 
@@ -3097,7 +3166,7 @@
 </div>
 
 <!-- Modal Fullscreen -->
-<div id="cancelledModal"
+{{-- <div id="cancelledModal"
     style="display:none; position:fixed; z-index:9999999; left:0; top:0; width:100vw; height:100vh; background:rgba(30,40,60,0.33);">
     <div
         style="position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:90vw; max-width:1200px; background:#fff; box-shadow:0 0 24px 0 #0004; border-radius:10px; overflow:auto; max-height:95vh;">
@@ -3113,7 +3182,7 @@
             </div>
         </div>
     </div>
-</div>
+</div> --}}
 {{-- Modal Fullscreen --}}
 <div id="revenueModal"
     style="display:none; position:fixed; z-index:9999999; left:0; top:0; width:100vw; height:100vh; background:rgba(30,40,60,0.33);">

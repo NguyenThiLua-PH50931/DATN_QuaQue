@@ -66,9 +66,22 @@
                                                             <div>
                                                                 <a
                                                                     href="{{ route('client.product.detail', ['slug' => $item->product->slug]) }}">
+                                                    
+                                                                   @php
+                                                                        $words = explode(' ', $item->product->name);
+                                                                        $shortName =
+                                                                            count($words) > 4
+                                                                                ? implode(
+                                                                                        ' ',
+                                                                                        array_slice($words, 0, 4),
+                                                                                    ) . '...'
+                                                                                : $item->product->name;
+                                                                    @endphp
+
                                                                     <h6 class="mb-1 fw-semibold text-truncate"
-                                                                        style="max-width: 300px;">
-                                                                        {{ $item->product->name }}
+                                                                        style="max-width: 300px;"
+                                                                        title="{{ $item->product->name }}">
+                                                                        {{ $shortName }}
                                                                     </h6>
                                                                 </a>
                                                             </div>
