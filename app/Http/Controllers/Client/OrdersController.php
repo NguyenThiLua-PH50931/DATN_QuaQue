@@ -75,23 +75,21 @@ public function cancel(Request $request, $id)
 {
     $user = \Auth::user();
 
-    // 1) Tải đơn thuộc về user
     /** @var \App\Models\admin\Order $order */
     $order = \App\Models\admin\Order::with(['items', 'user'])
         ->where('user_id', $user->id)
         ->where('id', $id)
         ->firstOrFail();
 
-    // 2) Kiểm tra trạng thái cho phép hủy
+    // 1) Điều kiện cho phép hủy
     if (in_array($order->status, ['cancelled','delivered','failed_delivery'], true)) {
         return back()->with('error', 'Đơn hàng hiện tại không thể hủy.');
     }
     if ($order->status !== 'pending') {
-        // Nếu bạn muốn cho phép hủy thêm ở 'confirmed' thì nới điều kiện trên
         return back()->with('error', 'Đơn hàng đã được xử lý, không thể hủy.');
     }
 
-    // 3) Lý do hủy (bắt buộc)
+    // 2) Lý do hủy
     $request->validate([
         'cancel_reason' => 'required_without:other_reason|string|nullable|max:500',
         'other_reason'  => 'nullable|string|max:500',
@@ -101,56 +99,10 @@ public function cancel(Request $request, $id)
         : $request->input('cancel_reason')));
     if ($reason === '') $reason = 'Khách hàng yêu cầu hủy';
 
-    // 4) Có cần hoàn tiền không?
-    $isOnlineGateway = in_array($order->payment_method, ['momo','zalopay'], true);
-    $needRefund      = $isOnlineGateway && $order->payment_status === 'paid';
-
-    // 5) Nếu cần refund, chuẩn bị transaction_id (zp_trans_id)
-    $transactionId = $order->zp_trans_id ?: $order->payment_txn_id;
-    if ($needRefund && !$transactionId && $order->payment_method === 'zalopay') {
-        // thử lấy qua app_trans_id (đang lưu ở payment_ref)
-        try {
-            $appTransId   = (string) ($order->payment_ref ?? '');
-            if ($appTransId !== '') {
-                $found = app(\App\Services\Payments\RefundService::class)
-                    ->queryZlpTransIdByAppTransId($appTransId);
-                if ($found) {
-                    $transactionId           = $found;
-                    $order->zp_trans_id      = $found;
-                    $order->payment_txn_id   = $found;
-                    $order->save();
-                }
-            }
-        } catch (\Throwable $e) {
-            \Log::warning('[ClientCancel] query zp_trans_id fail', ['order_id' => $order->id, 'err' => $e->getMessage()]);
-        }
-    }
-
-    // 6) Gọi refund trước (để biết trạng thái), nếu cần
-    $refundRes   = null;
-    $refundCode  = 0; // 1=success, 3=processing, else fail
-    if ($needRefund) {
-        try {
-            $refundRes = app(\App\Services\Payments\RefundService::class)->refund($order, [
-                'amount'        => (int) round($order->total_amount),
-                'reason'        => $reason,
-                'initiator'     => 'client:' . $user->id,
-                'transaction_id'=> $transactionId, // có thể null -> service tự fallback thêm lần nữa
-            ]);
-            $refundCode = (int) ($refundRes->code ?? 0);
-            if (!$refundRes->success && $refundCode !== 3) {
-                return back()->with('error', $refundRes->message ?: 'Hoàn tiền thất bại. Vui lòng thử lại.');
-            }
-        } catch (\Throwable $e) {
-            \Log::error('[ClientCancel] refund exception', ['order_id' => $order->id, 'err' => $e->getMessage()]);
-            return back()->with('error', 'Không thể hoàn tiền lúc này. Vui lòng thử lại sau.');
-        }
-    }
-
-    // 7) Cập nhật tồn kho / coupon + set trạng thái đơn
+    // 3) HỦY ĐƠN TRƯỚC (idempotent) + hoàn kho/coupon
     try {
-        \DB::transaction(function () use ($order, $reason, $needRefund, $refundRes, $refundCode) {
-            // Hoàn kho (variant-only như hệ thống của bạn)
+        \DB::transaction(function () use ($order, $reason) {
+            // Hoàn kho
             foreach ($order->items as $item) {
                 if ($item->product_variant_value_id) {
                     $variant = \App\Models\admin\ProductVariant::find($item->product_variant_value_id);
@@ -158,7 +110,7 @@ public function cancel(Request $request, $id)
                 }
             }
 
-            // Trả lượt dùng coupon (nếu global)
+            // Trả coupon (nếu có)
             if ($order->discount_code) {
                 $d = \App\Models\admin\DiscountCode::where('code', $order->discount_code)->first();
                 if ($d && $d->scope === 'global' && $d->used_count > 0) $d->decrement('used_count');
@@ -167,6 +119,7 @@ public function cancel(Request $request, $id)
                         ->where('user_id', $order->user_id)->delete();
                 }
             }
+            // Trả freeship (nếu có)
             if ($order->free_shipping_code) {
                 $f = \App\Models\admin\DiscountCode::where('code', $order->free_shipping_code)->first();
                 if ($f && $f->scope === 'global' && $f->used_count > 0) $f->decrement('used_count');
@@ -176,39 +129,12 @@ public function cancel(Request $request, $id)
                 }
             }
 
-            // Trạng thái & thanh toán
+            // Đổi trạng thái đơn
             $order->status        = 'cancelled';
             $order->cancel_reason = $reason;
-
-            if ($needRefund) {
-                $order->refund_amount  = (int) round($order->total_amount);
-                $order->refund_ref     = $refundRes->reference ?? $order->refund_ref;
-                $order->refund_message = $refundRes->message  ?? $order->refund_message;
-
-                if ($refundCode === 1) {
-                    $order->refund_status  = 'success';
-                    $order->refunded_at    = now();
-                    $order->payment_status = 'refunded'; // nếu không muốn đổi thì comment dòng này
-                } elseif ($refundCode === 3) {
-                    $order->refund_status  = 'pending';
-                    // giữ payment_status = paid cho đến khi query_refund xác nhận
-                } else {
-                    $order->refund_status  = 'failed';
-                    // giữ payment_status = paid
-                }
-            } else {
-                // COD / unpaid
-                $order->payment_status = 'unpaid';
-                $order->refund_status  = 'none';
-                $order->refund_amount  = null;
-                $order->refund_ref     = null;
-                $order->refund_message = null;
-                $order->refunded_at    = null;
-            }
-
             $order->save();
 
-            // Log thay đổi (nếu có bảng log)
+            // Log trạng thái (nếu có bảng)
             try {
                 \App\Models\admin\OrderStatusLog::create([
                     'order_id'    => $order->id,
@@ -220,11 +146,66 @@ public function cancel(Request $request, $id)
             } catch (\Throwable $e) {}
         });
     } catch (\Throwable $e) {
-        \Log::error('[ClientCancel] DB transaction failed', ['order_id' => $order->id, 'err' => $e->getMessage()]);
-        return back()->with('error', 'Có lỗi khi cập nhật đơn hàng, vui lòng thử lại.');
+        \Log::error('[ClientCancel] cancel txn failed', ['order_id' => $order->id, 'err' => $e->getMessage()]);
+        return back()->with('error', 'Có lỗi khi hủy đơn hàng, vui lòng thử lại.');
     }
 
-    // 8) Gửi mail best-effort
+    // 4) XÁC ĐỊNH CÓ CẦN REFUND KHÔNG
+    $isOnlineGateway = in_array($order->payment_method, ['momo','zalopay'], true);
+    $needRefund      = $isOnlineGateway && $order->payment_status === 'paid';
+
+    // 5) REFUND (THỰC HIỆN SAU KHI ĐÃ HỦY)
+    $refundMsg = '';
+    if ($needRefund) {
+        // Với MoMo nên đã có transId ở IPN -> lưu tại payment_txn_id
+        // ZaloPay dùng zp_trans_id; RefundService có fallback query khi thiếu
+        $transactionId = $order->payment_txn_id ?: $order->zp_trans_id ?: null;
+
+        try {
+            /** @var \App\Services\Payments\RefundService $refundSvc */
+            $refundSvc = app(\App\Services\Payments\RefundService::class);
+
+            $refundRes  = $refundSvc->refund($order, [
+                'amount'        => (int) round($order->total_amount),
+                'reason'        => 'Huỷ đơn hàng: ' . $reason,
+                'initiator'     => 'client:' . $user->id,
+                'transaction_id'=> $transactionId, // có thể null -> service tự fallback
+            ]);
+            $refundCode = (int) ($refundRes->code ?? 0); // 1=success, 3=processing, else=fail
+
+            // Lưu kết quả refund (KHÔNG bao giờ roll-back việc hủy đơn)
+            $order->refund_amount  = (int) round($order->total_amount);
+            $order->refund_ref     = $refundRes->reference ?? $order->refund_ref;
+            $order->refund_message = $refundRes->message  ?? $order->refund_message;
+
+            if ($refundCode === 1) {
+                $order->refund_status  = 'success';
+                $order->refunded_at    = now();
+                $order->payment_status = 'refunded';
+                $refundMsg = ' Hoàn tiền thành công.';
+            } elseif ($refundCode === 3) {
+                $order->refund_status  = 'pending';
+                // giữ payment_status = paid cho đến khi confirm
+                $refundMsg = ' Yêu cầu hoàn tiền đang xử lý.';
+            } else {
+                $order->refund_status  = 'failed';
+                // giữ payment_status = paid để có thể retry
+                $refundMsg = ' Hoàn tiền thất bại: ' . ($refundRes->message ?? 'Unknown');
+            }
+            $order->save();
+        } catch (\Throwable $e) {
+            \Log::error('[ClientCancel] refund exception', ['order_id' => $order->id, 'err' => $e->getMessage()]);
+            // vẫn coi là đã hủy; chỉ thông báo refund lỗi
+            $refundMsg = ' Hoàn tiền thất bại (lỗi hệ thống).';
+        }
+    } else {
+        // Chưa thanh toán hoặc COD
+        $order->payment_status ??= 'unpaid';
+        $order->refund_status   = $order->refund_status ?? 'none';
+        $order->save();
+    }
+
+    // 6) Gửi mail (best-effort)
     try {
         if ($order->user && $order->user->email) {
             \Mail::to($order->user->email)->send(new \App\Mail\OrderStatusUpdated($order));
@@ -233,18 +214,15 @@ public function cancel(Request $request, $id)
         \Log::warning('[ClientCancel] send mail failed', ['order_id' => $order->id, 'err' => $e->getMessage()]);
     }
 
-    // 9) Trả về
-    $msg = 'Đã hủy đơn hàng.';
-    if ($needRefund) {
-        $msg .= ($refundCode === 1) ? ' Hoàn tiền thành công.' :
-                (($refundCode === 3) ? ' Yêu cầu hoàn tiền đang xử lý.' : ' Hoàn tiền thất bại.');
-    }
+    // 7) Phản hồi
+    $msg = 'Đã hủy đơn hàng.' . $refundMsg;
 
     if ($request->wantsJson() || $request->ajax()) {
         return response()->json(['success' => true, 'status' => 'cancelled', 'message' => $msg]);
     }
     return redirect()->route('client.orders.index')->with('success', $msg);
 }
+
 
 
 public function orderStatus($id)

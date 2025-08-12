@@ -437,7 +437,50 @@
                                                         </div>
                                                     @endif
 
-                                                    {{-- Thanh toán zalo pay --}}
+                                                    {{-- MOMO luôn hiển thị --}}
+                                                    <div class="accordion-item">
+                                                        <div class="accordion-header" id="flush-headingMomo">
+                                                            <div class="accordion-button collapsed"
+                                                                data-bs-toggle="collapse"
+                                                                data-bs-target="#flush-collapseMomo">
+                                                                <div class="custom-form-check form-check mb-0">
+                                                                    <label class="form-check-label" for="momo">
+                                                                        <input class="form-check-input mt-0"
+                                                                            type="radio" name="payment_method"
+                                                                            id="momo" value="momo"
+                                                                            {{ !empty($momoResult) && isset($momoResult['resultCode']) && $momoResult['resultCode'] == 0 ? 'checked' : '' }}>
+                                                                        Thanh toán qua MoMo
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div id="flush-collapseMomo" class="accordion-collapse collapse"
+                                                            data-bs-parent="#accordionFlushExample">
+                                                            <div class="accordion-body text-center">
+
+                                                                @if (empty($momoResult) || (isset($momoResult['resultCode']) && $momoResult['resultCode'] != 0))
+                                                                    <button type="button" class="btn btn-primary mt-2"
+                                                                        id="btn-momo-pay"></button>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+
+                                                    @if (!empty($momoResult))
+                                                        <div
+                                                            class="alert {{ $momoResult['resultCode'] == 0 ? 'alert-success' : 'alert-danger' }}">
+                                                            @if ($momoResult['resultCode'] == 0)
+                                                                ✅ Thanh toán MoMo thành công! Bạn hãy nhấn "Đặt hàng" để
+                                                                hoàn tất đơn.
+                                                            @else
+                                                                ❌ Thanh toán MoMo chưa thành công
+                                                                ({{ $momoResult['message'] ?? 'Lỗi không xác định' }})<br>
+                                                                Vui lòng chọn phương thức khác hoặc thử lại!
+                                                            @endif
+                                                        </div>
+                                                    @endif
                                                     <div class="accordion-item">
                                                         <div class="accordion-header" id="flush-headingZLP">
                                                             <div class="accordion-button collapsed"
@@ -448,9 +491,7 @@
                                                                         <input class="form-check-input mt-0"
                                                                             type="radio" name="payment_method"
                                                                             id="zalopay" value="zalopay">
-                                                                        Thanh toán qua<strong
-                                                                            style="margin-left: 4px;">ZaloPay</strong>
-
+                                                                        Thanh toán qua <strong>ZaloPay</strong>
                                                                     </label>
                                                                 </div>
                                                             </div>
@@ -468,53 +509,6 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    {{-- MOMO luôn hiển thị --}}
-                                                    <div class="accordion-item">
-                                                        <div class="accordion-header" id="flush-headingMomo">
-                                                            <div class="accordion-button collapsed"
-                                                                data-bs-toggle="collapse"
-                                                                data-bs-target="#flush-collapseMomo">
-                                                                <div class="custom-form-check form-check mb-0">
-                                                                    <label class="form-check-label" for="momo">
-                                                                        <input class="form-check-input mt-0"
-                                                                            type="radio" name="payment_method"
-                                                                            id="momo" value="momo" disabled
-                                                                            {{ !empty($momoResult) && isset($momoResult['resultCode']) && $momoResult['resultCode'] == 0 ? 'checked' : '' }}>
-                                                                        Thanh toán qua<strong
-                                                                            style="margin-left: 4px;">MoMo</strong>
-                                                                    </label>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div id="flush-collapseMomo" class="accordion-collapse collapse"
-                                                            data-bs-parent="#accordionFlushExample">
-                                                            <div class="accordion-body text-center">
-
-                                                                @if (empty($momoResult) || (isset($momoResult['resultCode']) && $momoResult['resultCode'] != 0))
-                                                                    {{-- <button type="button" class="btn btn-primary mt-2"
-                                                                        id="btn-momo-pay">MOMO hiện đang bảo chỉ, vui lòng
-                                                                        chọn phương thức thanh toán khác !</button> --}}
-                                                                    <div class="accordion-body text-start">
-                                                                        <p>MoMo hiện đang bảo trì, vui lòng chọn phương thức
-                                                                            thanh toán khác!</p>
-                                                                    </div>
-                                                                @endif
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    @if (!empty($momoResult))
-                                                        <div
-                                                            class="alert {{ $momoResult['resultCode'] == 0 ? 'alert-success' : 'alert-danger' }}">
-                                                            @if ($momoResult['resultCode'] == 0)
-                                                                ✅ Thanh toán MoMo thành công! Bạn hãy nhấn "Đặt hàng" để
-                                                                hoàn tất đơn.
-                                                            @else
-                                                                ❌ Thanh toán MoMo chưa thành công
-                                                                ({{ $momoResult['message'] ?? 'Lỗi không xác định' }})<br>
-                                                                Vui lòng chọn phương thức khác hoặc thử lại!
-                                                            @endif
-                                                        </div>
-                                                    @endif
                                                 </div>
                                             </div>
                                         </div>

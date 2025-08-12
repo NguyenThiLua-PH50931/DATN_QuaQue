@@ -42,6 +42,8 @@ public function checkout(Request $request)
     // ====== MoMo callback ======
     if ($isMomoCallback && (string)$request->input('resultCode') === '0') {
         \Log::info('MoMo callback success, creating order...');
+       $momoOrderId = (string) $request->input('orderId');   // orderId bạn gửi khi tạo thanh toán
+$momoTransId = (string) $request->input('transId');   // transId MoMo trả về
 
         $selectedIds = session('momo_selected_cart_item_ids', []);
         if (!is_array($selectedIds)) $selectedIds = explode(',', $selectedIds);
@@ -126,10 +128,17 @@ public function checkout(Request $request)
             'discount_amount'    => $discountAmount,
             'total_amount'       => $total,
             'shipping_cost'      => $shippingCost,
+            'payment_ref'    => $momoOrderId, // orderId MoMo – để đối soát/refund
+    'payment_txn_id' => $momoTransId,
             'status'             => 'pending',
             'payment_status'     => 'paid',
         ]);
-
+if (empty($order->payment_txn_id) && $order->payment_ref) {
+        if ($tid = cache()->pull('momo:ipn:' . $order->payment_ref)) {
+            $order->payment_txn_id = $tid;
+            $order->save();
+        }
+    }
         // giữ lại nếu IPN có set zp_trans_id (không ảnh hưởng MoMo)
         if (!$order->zp_trans_id) {
             if ($zpt = cache()->pull('zlp:ipn:' . $order->order_code)) {

@@ -160,7 +160,7 @@
                         @elseif($isRefundPending)
                             <span class="badge bg-warning text-dark">Đang hoàn tiền</span>
                         @elseif($isPaid)
-                            <span class="badge bg-success">Đã thanh toán</span>
+                            <span class="badge bg-success">Đã hoàn tiền</span>
                         @elseif($order->payment_status === 'failed')
                             <span class="badge bg-danger">Thanh toán thất bại</span>
                         @else
@@ -184,12 +184,12 @@
                             <span class="text-muted">Không có mã freeship</span>
                         @endif
                     </div>
-                    @if (in_array($order->status, ['pending']) &&
-                            !(in_array($order->payment_method, ['momo', 'bank']) && $order->payment_status === 'paid'))
+                    @if ($order->status === 'pending')
                         <button type="button" id="btn-cancel-order" class="btn btn-danger btn-sm mt-3">
                             <i class="fa fa-times"></i> Huỷ đơn hàng
                         </button>
                     @endif
+
                 </div>
                 <!-- Người nhận -->
                 <div class="border rounded-4 p-4 bg-white mb-4 shadow-sm">
@@ -592,6 +592,10 @@
                     modal.show();
                 });
             }
+            btn.addEventListener('click', function() {
+                btn.disabled = true;
+                setTimeout(() => btn.disabled = false, 1500);
+            });
 
             reasonRadios.forEach(radio => {
                 radio.addEventListener('change', function() {
