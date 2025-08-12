@@ -139,6 +139,7 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
 
         // Orders
         Route::get('/orders', [OrdersController::class, 'index'])->name('orders.index');
+        Route::get('/orders/status-bulk', [OrdersController::class, 'statusBulk'])->name('orders.statusBulk');
         Route::get('/orders/{order}', [OrdersController::class, 'show'])->name('orders.show');
         Route::post('/orders/{order}/cancel', [OrdersController::class, 'cancel'])->name('orders.cancel');
         Route::get('/orders/{order}/status', [OrdersController::class, 'orderStatus'])->name('orders.status');

@@ -437,40 +437,22 @@
                                                         $payText = 'Chưa thanh toán';
                                                         $payClass = 'payment-status-label payment-unpaid';
 
-                                                        // Ưu tiên trạng thái "đã hoàn tiền"
                                                         if ($order->payment_status === 'refunded') {
                                                             $payText = 'Đã hoàn tiền';
                                                             $payClass = 'payment-status-label payment-refunded';
-                                                        }
-                                                        // Đã thanh toán
-                                                        elseif (
+                                                        } elseif (
                                                             $order->payment_status === 'paid' ||
                                                             ($order->payment_method === 'cod' &&
                                                                 $order->status === 'delivered')
                                                         ) {
-                                                            // Nếu có theo dõi hoàn tiền
-                                                            if (($order->refund_status ?? null) === 'pending') {
-                                                                $payText = 'Đã hoàn tiền';
-                                                                $payClass =
-                                                                    'payment-status-label payment-refund-pending';
-                                                            } elseif (($order->refund_status ?? null) === 'success') {
-                                                                $payText = 'Đã hoàn tiền';
-                                                                $payClass = 'payment-status-label payment-refunded';
-                                                            } elseif (($order->refund_status ?? null) === 'failed') {
-                                                                $payText = 'Đã thanh toán (Hoàn tiền thất bại)';
-                                                                $payClass = 'payment-status-label payment-paid';
-                                                            } else {
-                                                                $payText = 'Đã thanh toán';
-                                                                $payClass = 'payment-status-label payment-paid';
-                                                            }
-                                                        }
-                                                        // Thanh toán thất bại
-                                                        elseif ($order->payment_status === 'failed') {
+                                                            $payText = 'Đã thanh toán';
+                                                            $payClass = 'payment-status-label payment-paid';
+                                                        } elseif ($order->payment_status === 'failed') {
                                                             $payText = 'Thanh toán thất bại';
                                                             $payClass = 'payment-status-label payment-failed';
                                                         }
 
-                                                        // Riêng BANK: giữ dropdown như cũ
+                                                        // Riêng BANK: vẫn giữ dropdown chỉnh sửa
                                                         $paymentSelectClass = 'payment-status-select';
                                                         if (
                                                             $order->payment_method === 'bank' &&
@@ -485,18 +467,22 @@
                                                             data-order-id="{{ $order->id }}">
                                                             <option value="unpaid" title="Chưa thanh toán"
                                                                 {{ $order->payment_status === 'unpaid' ? 'selected' : '' }}>
-                                                                Chưa thanh...</option>
+                                                                Chưa thanh...
+                                                            </option>
                                                             <option value="paid" title="Đã thanh toán"
                                                                 {{ $order->payment_status === 'paid' ? 'selected' : '' }}>
-                                                                Đã thanh...</option>
+                                                                Đã thanh...
+                                                            </option>
                                                         </select>
                                                     @else
                                                         <span id="payment-status-{{ $order->id }}"
                                                             class="{{ $payClass }}"
+                                                            title="{{ $order->refund_ref ? 'Mã hoàn: ' . $order->refund_ref : '' }}"
                                                             data-payment-method="{{ $order->payment_method }}">
                                                             {{ $payText }}
                                                         </span>
                                                     @endif
+
                                                 </td>
 
                                                 {{-- Trạng thái đơn hàng --}}

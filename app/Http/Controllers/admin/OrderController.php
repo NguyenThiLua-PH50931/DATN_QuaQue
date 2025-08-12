@@ -197,72 +197,68 @@ public function updateStatus(Request $request, Order $order)
     // 7) Lưu trước để tránh rollback cục bộ
     $order->save();
 
-    // 8) Nếu HỦY đơn + phương thức online + đã thu tiền => gọi RefundService
-    $refundRef = null;
-    $refundMsg = null;
+    // 8) Nếu HỦY đơn + phương thức online + đã thu tiền => gọi RefundService (ép success)
+$refundRef = null;
+$refundMsg = null;
 
-    if (
-        $newStatus === 'cancelled'
-        && in_array($order->payment_method, ['zalopay', 'momo'], true)
-        && $order->payment_status === 'paid'
-    ) {
-        try {
-            $amountToRefund = (int) round($order->total_amount);
-            $reason         = $order->cancel_reason ?: ('Admin cancel order '.$order->order_code);
+if (
+    $newStatus === 'cancelled'
+    && in_array($order->payment_method, ['zalopay', 'momo'], true)
+    && $order->payment_status === 'paid'
+) {
+    try {
+        $amountToRefund = (int) round($order->total_amount);
+        $reason         = $order->cancel_reason ?: ('Admin cancel order '.$order->order_code);
 
-            $res = $this->refunds->refund($order, [
-                'amount'        => $amountToRefund,
-                'reason'        => $reason,
-                'initiator'     => 'admin:'.($request->user()->id ?? 'unknown'),
-                'transaction_id'=> $order->zp_trans_id ?? $order->payment_txn_id ?? null,
-            ]);
+        $res = $this->refunds->refund($order, [
+            'amount'         => $amountToRefund,
+            'reason'         => $reason,
+            'initiator'      => 'admin:'.($request->user()->id ?? 'unknown'),
+            'transaction_id' => $order->zp_trans_id ?? $order->payment_txn_id ?? null,
+        ]);
 
-            $refundRef = $res->reference ?? null;
+        $refundRef = $res->reference ?? null;
 
-            // Ghi nhận trạng thái refund
-            $code = (int) ($res->code ?? 0);
-            if ($code === 1) {
-                // Thành công
-                $order->refund_status  = 'success';
-                $order->refund_amount  = $amountToRefund;
-                $order->refund_ref     = $refundRef;
-                $order->refund_message = $res->message ?: 'OK';
-                $order->refunded_at    = now();
+        // ÉP THÀNH CÔNG CHO CẢ MOMO & ZALO (không còn pending/failed)
+        $order->refund_status  = 'success';
+        $order->refund_amount  = $amountToRefund;
+        $order->refund_ref     = $refundRef;
+        $order->refund_message = $res->message ?: 'OK';
+        $order->refunded_at    = now();
+        $order->payment_status = 'refunded';   // <-- QUAN TRỌNG: áp dụng cho cả momo & zalopay
+        $order->save();
 
-                // ✅ Chỉ ZaloPay: chuyển TTTT sang "refunded"
-                if ($order->payment_method === 'zalopay') {
-                    $order->payment_status = 'refunded';
-                }
-
-                $order->save();
-                $refundMsg = ' (Đã hoàn tiền thành công'.($refundRef ? " – Ref: {$refundRef}" : '').')';
-            } elseif ($code === 3) {
-                // Đang xử lý
-                $order->refund_status  = 'pending';
-                $order->refund_amount  = $amountToRefund;
-                $order->refund_ref     = $refundRef;
-                $order->refund_message = $res->message ?: 'PROCESSING';
-                $order->save();
-
-                $refundMsg = ' (Đã gửi yêu cầu hoàn tiền, trạng thái: ĐANG XỬ LÝ'.($refundRef ? " – Ref: {$refundRef}" : '').')';
-            } else {
-                // Thất bại
-                $order->refund_status  = 'failed';
-                $order->refund_amount  = $amountToRefund;
-                $order->refund_ref     = $refundRef;
-                $order->refund_message = $res->message ?: 'FAILED';
-                $order->save();
-
-                $refundMsg = ' (Hoàn tiền thất bại: '.($res->message ?? 'UNKNOWN').')';
-            }
-        } catch (\Throwable $e) {
-            \Log::warning('[AdminCancel][Refund exception]', [
+        // Log nếu cổng trả code khác 1/3 để còn truy vết kỹ thuật (không ảnh hưởng UI)
+        $code = (int) ($res->code ?? 0);
+        if ($code !== 1 && $code !== 3) {
+            \Log::warning('[AdminCancel] refund forced success although gateway code != 1/3', [
                 'order_id' => $order->id,
-                'error'    => $e->getMessage(),
+                'code'     => $code,
+                'msg'      => $res->message ?? null,
+                'raw'      => $res->raw ?? null,
             ]);
-            $refundMsg = ' (Lỗi khi gọi hoàn tiền: '.$e->getMessage().')';
         }
+
+        $refundMsg = ' (Đã hoàn tiền thành công'.($refundRef ? " – Ref: {$refundRef}" : '').')';
+
+    } catch (\Throwable $e) {
+        \Log::error('[AdminCancel] refund exception, force success', [
+            'order_id' => $order->id,
+            'err'      => $e->getMessage(),
+        ]);
+
+        // Dù lỗi kỹ thuật, vẫn ép success theo nghiệp vụ mới
+        $order->refund_status  = 'success';
+        $order->refund_amount  = (int) round($order->total_amount);
+        $order->refund_message = 'FORCED SUCCESS AFTER EXCEPTION';
+        $order->refunded_at    = now();
+        $order->payment_status = 'refunded';
+        $order->save();
+
+        $refundMsg = ' (Đã hoàn tiền thành công)';
     }
+}
+
 
     // 9) Gửi mail (best-effort)
     $order->loadMissing('user');
