@@ -8,73 +8,99 @@ class PaymentController extends Controller
 {
     // ====== Giữ nguyên MoMo (code của bạn) ======
     public function payWithMomo(Request $request)
-    {
-        $amount = intval($request->input('amount', 10000));
-        $orderId = $request->input('orderId', uniqid());
-
-        // LẤY selected_cart_item_ids từ request (bắt buộc truyền từ frontend)
-        $selectedIds = $request->input('selected_cart_item_ids', []);
-        if (!is_array($selectedIds)) {
-            $selectedIds = explode(',', $selectedIds);
-        }
-        $selectedIds = array_filter(array_map('intval', $selectedIds));
-        // Lưu vào session để CheckoutController lấy snapshot sau khi thanh toán thành công
-        session(['momo_selected_cart_item_ids' => $selectedIds]);
-
-        // Cấu hình MoMo
-        $endpoint = "https://test-payment.momo.vn/v2/gateway/api/create";
-        $partnerCode = "MOMOSORK20250710_TEST";
-        $accessKey = "jVMp4nX1cGAq8sg3";
-        $secretKey = "smyMtdwl6o7XmNwZx8v90y0IR6v3Minu";
-
-        $redirectUrl = route('client.checkout'); // Địa chỉ MoMo redirect về
-        $ipnUrl = route('client.checkout');      // IPN cũng trả về luôn, cho demo
-        $requestId = time() . "";
-        $orderInfo = "Thanh toan don hang demo";
-        $extraData = "";
-        $requestType = "captureWallet";
-        $rawHash = "accessKey=$accessKey&amount=$amount&extraData=$extraData&ipnUrl=$ipnUrl&orderId=$orderId&orderInfo=$orderInfo&partnerCode=$partnerCode&redirectUrl=$redirectUrl&requestId=$requestId&requestType=$requestType";
-        $signature = hash_hmac("sha256", $rawHash, $secretKey);
-
-        $data = [
-            'partnerCode' => $partnerCode,
-            'partnerName' => "Test",
-            'storeId' => "MomoTestStore",
-            'requestId' => $requestId,
-            'amount' => $amount,
-            'orderId' => $orderId,
-            'orderInfo' => $orderInfo,
-            'redirectUrl' => $redirectUrl,
-            'ipnUrl' => $ipnUrl,
-            'lang' => 'vi',
-            'extraData' => $extraData,
-            'requestType' => $requestType,
-            'signature' => $signature
-        ];
-
-        $ch = curl_init($endpoint);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-        $result = curl_exec($ch);
-        $err = curl_error($ch);
-        curl_close($ch);
-        $jsonResult = json_decode($result, true);
-
-        if ($err) {
-            return response()->json(['error' => 'CURL error: ' . $err], 500);
-        }
-        if (empty($jsonResult)) {
-            return response()->json(['error' => 'Empty MoMo response', 'debug' => $result], 500);
-        }
-        if (!isset($jsonResult['payUrl'])) {
-            return response()->json(['error' => 'MoMo API error', 'debug' => $jsonResult], 500);
-        }
-
-        return response()->json([
-            'payUrl' => $jsonResult['payUrl']
-        ]);
+{
+    // 1) Input
+    $amount  = (int) $request->input('amount', 10000);
+    if ($amount < 1000) {
+        return response()->json(['error' => 'Số tiền phải >= 1000đ'], 422);
     }
+
+    $orderId = (string) ($request->input('orderId') ?: ('QQ' . date('Ymd') . '-' . now()->timestamp));
+
+    // Lưu cart items cho bước sau
+    $selectedIds = $request->input('selected_cart_item_ids', []);
+    if (!is_array($selectedIds)) $selectedIds = explode(',', $selectedIds);
+    $selectedIds = array_filter(array_map('intval', $selectedIds));
+    session(['momo_selected_cart_item_ids' => $selectedIds]);
+
+    // 2) Config (KHÔNG hardcode)
+    $cfg         = config('services.momo');
+    $endpoint    = 'https://test-payment.momo.vn/v2/gateway/api/create';
+$partnerCode = trim((string) ($cfg['partner_code'] ?? ''));
+$accessKey   = trim((string) ($cfg['access_key']   ?? ''));
+$secretKey   = trim((string) ($cfg['secret_key']   ?? ''));
+
+
+    if (!$partnerCode || !$accessKey || !$secretKey) {
+        return response()->json(['error' => 'Thiếu cấu hình MoMo (partner/access/secret)'], 500);
+    }
+
+    // 3) URL & params
+    $redirectUrl = route('client.checkout');
+    // 👉 TẠM thời để ipnUrl = redirectUrl cho chắc (giống code cũ, không cần IPN để tạo QR)
+    $ipnUrl      = $redirectUrl;
+
+    $requestId   = (string) now()->timestamp;
+    $orderInfo   = 'Thanh toán đơn hàng QQ';
+    $extraData   = '';
+    $requestType = 'captureWallet';
+
+    // 4) Signature đúng thứ tự theo spec
+    $rawHash = sprintf(
+        'accessKey=%s&amount=%d&extraData=%s&ipnUrl=%s&orderId=%s&orderInfo=%s&partnerCode=%s&redirectUrl=%s&requestId=%s&requestType=%s',
+        $accessKey, $amount, $extraData, $ipnUrl, $orderId, $orderInfo, $partnerCode, $redirectUrl, $requestId, $requestType
+    );
+    \Log::info('[MoMoCreate] key_tail', ['secret_last' => substr($secretKey, -4)]);
+
+    $signature = hash_hmac('sha256', $rawHash, $secretKey);
+
+    $payload = [
+        'partnerCode' => $partnerCode,
+        'partnerName' => 'QQ Store',
+        'storeId'     => 'QQStore',
+        'requestId'   => $requestId,
+        'amount'      => $amount,
+        'orderId'     => $orderId,   // nhớ sau này lưu vào orders.payment_ref
+        'orderInfo'   => $orderInfo,
+        'redirectUrl' => $redirectUrl,
+        'ipnUrl'      => $ipnUrl,
+        'lang'        => 'vi',
+        'extraData'   => $extraData,
+        'requestType' => $requestType,
+        'signature'   => $signature,
+    ];
+
+    session(['momo_order_id' => $orderId]);
+
+    // 5) Call API
+    $res = \Http::timeout(20)->retry(2, 200)
+        ->withHeaders(['Content-Type' => 'application/json'])
+        ->post($endpoint, $payload);
+
+    // Log để debug nếu cần
+    \Log::info('[MoMoCreate] status='.$res->status(), ['json' => $res->json(), 'text'=>(string)$res->body()]);
+
+    if (!$res->ok()) {
+        return response()->json([
+            'error' => 'MoMo HTTP '.$res->status(),
+            'debug' => (string) $res->body(),
+        ], 500);
+    }
+
+    $json = $res->json() ?? [];
+
+    // Nhận đủ các key có thể dùng để mở trang thanh toán
+    $payUrl = $json['payUrl'] ?? $json['deeplink'] ?? $json['qrCodeUrl'] ?? null;
+
+    if (!$payUrl) {
+        return response()->json([
+            'error' => 'MoMo API error',
+            'debug' => $json,
+        ], 500);
+    }
+
+    return response()->json(['payUrl' => $payUrl]);
+}
 
     // ====== ZaloPay: Tạo đơn và trả về order_url ======
 public function payWithZaloPay(Request $request)

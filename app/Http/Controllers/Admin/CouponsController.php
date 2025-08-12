@@ -354,4 +354,15 @@ public function update(Request $request, $id)
         }
         return true;
     }
+    public function destroy($id)
+{
+    $coupon = DiscountCode::findOrFail($id);
+
+    // Nếu muốn xóa mềm (soft delete), đảm bảo model DiscountCode có `use SoftDeletes`
+    $coupon->delete();
+
+    return redirect()->route('admin.coupon.index')
+        ->with('success', 'Xóa mã giảm giá thành công!');
+}
+
 }
