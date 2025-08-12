@@ -337,20 +337,26 @@
                                     <option value="">-- TT thanh toán --</option>
                                     <option value="unpaid" {{ request('payment_status') == 'unpaid' ? 'selected' : '' }}>
                                         Chưa thanh toán</option>
-                                    <option value="paid" {{ request('payment_status') == 'paid' ? 'selected' : '' }}>Đã
-                                        thanh toán</option>
+                                    <option value="paid" {{ request('payment_status') == 'paid' ? 'selected' : '' }}>
+                                        Đã thanh toán</option>
+                                    <option value="refunded"
+                                        {{ request('payment_status') == 'refunded' ? 'selected' : '' }}>Đã hoàn tiền
+                                    </option>
                                     <option value="failed" {{ request('payment_status') == 'failed' ? 'selected' : '' }}>
                                         Thanh toán thất bại</option>
                                 </select>
+
 
                                 <select name="payment_method" class="form-select form-select-sm" style="width: 140px;">
                                     <option value="">-- Phương thức TT --</option>
                                     <option value="cod" {{ request('payment_method') == 'cod' ? 'selected' : '' }}>COD
                                     </option>
-                                    {{-- <option value="bank" {{ request('payment_method') == 'bank' ? 'selected' : '' }}>Chuyển khoản</option> --}}
                                     <option value="momo" {{ request('payment_method') == 'momo' ? 'selected' : '' }}>Ví
-                                        điện tử momo</option>
+                                        MoMo</option>
+                                    <option value="zalopay" {{ request('payment_method') == 'zalopay' ? 'selected' : '' }}>
+                                        ZaloPay</option>
                                 </select>
+
 
                                 {{-- <select name="bank_transfer_confirmed" class="form-select form-select-sm" style="width: 150px;">
                                 <option value="">-- XN chuyển khoản --</option>
@@ -427,34 +433,55 @@
                                                 {{-- TTTT (trạng thái thanh toán) --}}
                                                 <td>
                                                     @php
-                                                        $paymentClass =
-                                                            'payment-status-label payment-' . $order->payment_status;
-                                                        if (
-                                                            $order->payment_method === 'cod' &&
-                                                            $order->status === 'delivered'
-                                                        ) {
-                                                            $paymentClass = 'payment-status-label payment-paid';
+                                                        // Mặc định
+                                                        $payText = 'Chưa thanh toán';
+                                                        $payClass = 'payment-status-label payment-unpaid';
+
+                                                        // Ưu tiên trạng thái "đã hoàn tiền"
+                                                        if ($order->payment_status === 'refunded') {
+                                                            $payText = 'Đã hoàn tiền';
+                                                            $payClass = 'payment-status-label payment-refunded';
                                                         }
-                                                        if (
-                                                            $order->payment_method === 'momo' &&
-                                                            $order->payment_status === 'paid'
+                                                        // Đã thanh toán
+                                                        elseif (
+                                                            $order->payment_status === 'paid' ||
+                                                            ($order->payment_method === 'cod' &&
+                                                                $order->status === 'delivered')
                                                         ) {
-                                                            $paymentClass = 'payment-status-label payment-paid-momo';
+                                                            // Nếu có theo dõi hoàn tiền
+                                                            if (($order->refund_status ?? null) === 'pending') {
+                                                                $payText = 'Đã hoàn tiền';
+                                                                $payClass =
+                                                                    'payment-status-label payment-refund-pending';
+                                                            } elseif (($order->refund_status ?? null) === 'success') {
+                                                                $payText = 'Đã hoàn tiền';
+                                                                $payClass = 'payment-status-label payment-refunded';
+                                                            } elseif (($order->refund_status ?? null) === 'failed') {
+                                                                $payText = 'Đã thanh toán (Hoàn tiền thất bại)';
+                                                                $payClass = 'payment-status-label payment-paid';
+                                                            } else {
+                                                                $payText = 'Đã thanh toán';
+                                                                $payClass = 'payment-status-label payment-paid';
+                                                            }
                                                         }
+                                                        // Thanh toán thất bại
+                                                        elseif ($order->payment_status === 'failed') {
+                                                            $payText = 'Thanh toán thất bại';
+                                                            $payClass = 'payment-status-label payment-failed';
+                                                        }
+
+                                                        // Riêng BANK: giữ dropdown như cũ
+                                                        $paymentSelectClass = 'payment-status-select';
                                                         if (
                                                             $order->payment_method === 'bank' &&
                                                             $order->payment_status === 'paid'
                                                         ) {
-                                                            $paymentSelectClass =
-                                                                'payment-status-select payment-paid-bank';
-                                                        } else {
-                                                            $paymentSelectClass = 'payment-status-select';
+                                                            $paymentSelectClass .= ' payment-paid-bank';
                                                         }
                                                     @endphp
 
                                                     @if ($order->payment_method === 'bank')
-                                                        <select
-                                                            class="form-select payment-status-select {{ $paymentSelectClass }}"
+                                                        <select class="form-select {{ $paymentSelectClass }}"
                                                             data-order-id="{{ $order->id }}">
                                                             <option value="unpaid" title="Chưa thanh toán"
                                                                 {{ $order->payment_status === 'unpaid' ? 'selected' : '' }}>
@@ -465,9 +492,9 @@
                                                         </select>
                                                     @else
                                                         <span id="payment-status-{{ $order->id }}"
-                                                            class="{{ $paymentClass }}"
+                                                            class="{{ $payClass }}"
                                                             data-payment-method="{{ $order->payment_method }}">
-                                                            {{ $order->payment_status === 'paid' || ($order->payment_method === 'cod' && $order->status === 'delivered') ? 'Đã thanh toán' : 'Chưa thanh toán' }}
+                                                            {{ $payText }}
                                                         </span>
                                                     @endif
                                                 </td>
@@ -504,6 +531,7 @@
                                                             <option value="cancelled"
                                                                 {{ $order->status == 'cancelled' ? 'selected' : '' }}>Đã
                                                                 hủy</option>
+
                                                             <option value="failed_delivery"
                                                                 {{ $order->status == 'failed_delivery' ? 'selected' : '' }}>
                                                                 Giao thất bại</option>
@@ -512,7 +540,7 @@
                                                 </td>
                                                 {{-- Tuỳ chọn --}}
                                                 <td>
-                                                    <ul>
+                                                    <ul class="d-flex align-items-center gap-2">
                                                         <li>
                                                             <a href="{{ route('admin.orders.show', $order->id) }}">
                                                                 <i class="ri-eye-line"></i>
@@ -523,8 +551,23 @@
                                                                 <i class="ri-map-pin-line"></i>
                                                             </a>
                                                         </li>
+
+                                                        @if (in_array($order->status, ['pending', 'confirmed', 'processing'], true))
+                                                            <li>
+                                                                <a href="javascript:void(0);" class="btn-admin-cancel"
+                                                                    data-order-id="{{ $order->id }}"
+                                                                    data-order-code="{{ $order->order_code }}"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#adminCancelModal" title="Hủy đơn">
+                                                                    <i class="ri-close-circle-line"></i>
+                                                                </a>
+                                                            </li>
+                                                        @endif
+
+
                                                     </ul>
                                                 </td>
+
 
                                             </tr>
                                         @endforeach

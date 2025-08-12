@@ -38,5 +38,14 @@ return [
     'openai' => [
         'api_key' => env('OPENAI_API_KEY'),
     ],
+    // ================== ZaloPay ==================
+'zlp' => [
+  'app_id'           => env('ZLP_APP_ID'),
+  'key1'             => env('ZLP_KEY1'),
+  'key2'             => env('ZLP_KEY2'),
+  'refund_url'       => env('ZLP_REFUND_URL', 'https://sb-openapi.zalopay.vn/v2/refund'),
+  'query_refund_url' => env('ZLP_QUERY_REFUND_URL', 'https://sb-openapi.zalopay.vn/v2/query_refund'),
+  'query_order_url'  => env('ZLP_QUERY_ORDER_URL',  'https://sb-openapi.zalopay.vn/v2/query'),
+],
 
 ];

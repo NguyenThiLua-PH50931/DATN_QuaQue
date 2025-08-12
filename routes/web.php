@@ -44,29 +44,38 @@ use App\Http\Controllers\Client\PaymentController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Client\ChatbotController;
-// use App\Http\Controllers\ProductController as GlobalProductController; // Nếu cần dùng controller gốc ngoài admin/client
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 
+// Nếu cần dùng controller gốc ngoài admin/client thì khai báo use ở đây
+// use App\Http\Controllers\ProductController as GlobalProductController; 
 
-// CLIENT
+// ================== CLIENT ==================
+
 // Route mặc định chuyển hướng đến /client/home
 Route::redirect('/', '/client/home');
 
 Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
+
+    // ================== PAYMENT CALLBACKS ==================
+    Route::post('/zalopay/ipn', [PaymentController::class, 'zalopayIpn'])
+        ->name('zalopay.ipn')
+        ->withoutMiddleware([VerifyCsrfToken::class]);
+
+    // ================== HOME ==================
     Route::get('home', [ClientHomeController::class, 'home'])->name('home');
-    // đánh giá
+
+    // ================== ĐÁNH GIÁ ==================
     Route::group(['prefix' => 'danh-gia', 'as' => 'review.'], function () {
         Route::post('store', [ClientReviewController::class, 'store'])->name('store');
     });
-    // AI CHAT BOT
+
+    // ================== AI CHAT BOT ==================
     Route::post('chatbot', [ChatbotController::class, 'chat'])->name('chatbot.send');
 
-    // Sản phẩm:
+    // ================== SẢN PHẨM ==================
     Route::group(['prefix' => 'san-pham', 'as' => 'product.'], function () {
-        // web.php
         Route::get('/', [ClientProductController::class, 'catalog'])->name('catalog');
-
         Route::get('/all', [ClientProductController::class, 'index'])->name('index');
-        // Route::get('/catalog', [ClientProductController::class, 'catalog'])->name('catalog');
         Route::get('/catalog/ajax', [ClientProductController::class, 'catalogAjax'])->name('catalog.ajax');
         Route::get('/search', [AdminProductController::class, 'searchPage'])->name('search');
         Route::get('/search-ajax', [ClientProductController::class, 'searchAjax'])->name('searchAjax');
@@ -75,22 +84,21 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
         Route::post('/get-variant', [ClientProductController::class, 'getVariant'])->name('.getVariant');
         Route::post('/reviews', [ClientProductController::class, 'storeReview'])->name('reviews.store');
         Route::get('/quickview/{slug}', [ClientProductController::class, 'quickView'])->name('quickview');
-        // binh luan sp
+        // Bình luận sản phẩm
         Route::post('/san-pham/{product}/comment', [ClientProductController::class, 'comment'])->name('comment.store');
         Route::post('comment/{comment}/reply', [ClientProductController::class, 'commentReply'])->name('comment.reply');
         Route::delete('/comment/{comment}', [ClientProductController::class, 'deleteComment'])->name('comment.destroy');
         Route::delete('/reply/{reply}', [ClientProductController::class, 'deleteReply'])->name('reply.destroy');
     });
 
-
-    // Sản phẩm yêu thích
+    // ================== WISHLIST ==================
     Route::middleware('auth')->group(function () {
         Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
         Route::post('/wishlist', [WishlistController::class, 'store'])->name('wishlist.store');
         Route::delete('/wishlist/{product_id}', [WishlistController::class, 'destroy'])->name('wishlist.destroy');
     });
 
-    // Support ticket
+    // ================== SUPPORT TICKET ==================
     Route::prefix('support-ticket')->middleware('auth')->name('support-ticket.')->group(function () {
         Route::get('/', [ClientSupportTicketController::class, 'index'])->name('index');
         Route::get('/create', [ClientSupportTicketController::class, 'create'])->name('create');
@@ -98,15 +106,13 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
         Route::get('/{id}', [ClientSupportTicketController::class, 'show'])->name('show');
     });
 
-    // giỏ hàng
+    // ================== CART ==================
     Route::prefix('cart')->middleware('auth')->name('cart.')->group(function () {
         Route::get('index', [CartController::class, 'index'])->name('index');
         Route::post('add', [CartController::class, 'add'])->name('add');
         Route::delete('delete/{id}', [CartController::class, 'delete'])->name('delete');
         Route::post('/store-quick', [CartController::class, 'storeQuick'])->name('storeQuick');
-        // checkbox
         Route::post('bulkDelete', [CartController::class, 'bulkDelete'])->name('bulkDelete');
-        // update số lượng giỏ
         Route::post('updateQuantity', [CartController::class, 'updateQuantity'])->name('updateQuantity');
         Route::delete('remove/{id}', [CartController::class, 'remove'])->name('remove');
         Route::post('update-variant', [CartController::class, 'updateVariant'])->name('updateVariant');
@@ -114,144 +120,83 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
         Route::post('check-stock', [CartController::class, 'checkStock'])->name('checkStock');
     });
 
-
-    // ✅ Đặt trong group 'client' lớn phía trên, không lồng thêm 'client' lần nữa
+    // ================== CHECKOUT + PAYMENT ==================
     Route::middleware('auth')->group(function () {
         Route::get('/checkout', [CheckoutController::class, 'checkout'])->name('checkout');
         Route::post('/checkout/process', [CheckoutController::class, 'processOrder'])->name('checkout.process');
         Route::post('/checkout/address/save', [CheckoutController::class, 'saveAddress'])->name('checkout.address.save');
         Route::post('/checkout/address/{id}/update', [CheckoutController::class, 'updateAddress'])->name('checkout.address.update');
-
-        // 👉 Route cập nhật phương thức vận chuyển
         Route::post('/checkout/shipping-method', [CheckoutController::class, 'updateShippingMethod'])->name('checkout.updateShippingMethod');
         Route::post('/checkout/apply-discount', [CheckoutController::class, 'applyDiscount'])->name('checkout.applyDiscount');
         Route::post('/checkout/remove-discount', [CheckoutController::class, 'removeDiscount'])->name('checkout.removeDiscount');
         Route::post('/checkout/bank-confirm', [CheckoutController::class, 'bankConfirm'])->name('client.checkout.bankConfirm');
         Route::post('/checkout/update-pending-payment-address', [CheckoutController::class, 'updatePendingPaymentAddress'])->name('checkout.updatePendingPaymentAddress');
-        Route::post('/checkout/check-discount-before-momo', [CheckoutController::class, 'checkDiscountBeforeMomo'])
-            ->name('checkout.checkDiscountBeforeMomo');
+        Route::post('/checkout/check-discount-before-momo', [CheckoutController::class, 'checkDiscountBeforeMomo'])->name('checkout.checkDiscountBeforeMomo');
+
+        // Payment create-order endpoints
+        Route::post('/pay/momo', [PaymentController::class, 'payWithMomo'])->name('pay.momo');
+        Route::post('/pay/zalopay', [PaymentController::class, 'payWithZaloPay'])->name('pay.zalopay');
+
+        // Orders
+        Route::get('/orders', [OrdersController::class, 'index'])->name('orders.index');
+        Route::get('/orders/{order}', [OrdersController::class, 'show'])->name('orders.show');
+        Route::post('/orders/{order}/cancel', [OrdersController::class, 'cancel'])->name('orders.cancel');
+        Route::get('/orders/{order}/status', [OrdersController::class, 'orderStatus'])->name('orders.status');
     });
+
+    // ================== CHECKOUT SUCCESS ==================
     Route::get('/checkout/success', function () {
         return view('frontend.checkout.checkoutsuccess');
     })->name('checkout.success');
 
+    // ================== SAVE ADDRESS SNAPSHOT ==================
     Route::post('/checkout/save-address-snapshot', function (Request $request) {
         session([
             'address_snapshot' => [
                 'recipient_name' => $request->input('recipient_name'),
-                'phone' => $request->input('phone'),
-                'address' => $request->input('address'),
-                'province' => $request->input('province'),
-                'district' => $request->input('district'),
-                'ward' => $request->input('ward'),
+                'phone'          => $request->input('phone'),
+                'address'        => $request->input('address'),
+                'province'       => $request->input('province'),
+                'district'       => $request->input('district'),
+                'ward'           => $request->input('ward'),
             ]
         ]);
         return response()->json(['ok' => true]);
     })->name('checkout.saveAddressSnapshot');
 
-    Route::middleware('auth')->group(function () {
-        Route::get('/orders', [OrdersController::class, 'index'])->name('orders.index');
-        Route::get('/orders/{order}', [OrdersController::class, 'show'])->name('orders.show');
-        Route::post('/orders/{order}/cancel', [OrdersController::class, 'cancel'])->name('orders.cancel');
-    });
-
-
-
-    // Thanh toán mua hàng:
-    Route::middleware('auth')->group(function () {
-        Route::group(['prefix' => 'checkout', 'as' => 'checkout.'], function () {});
-    });
-
-    // Đơn hàng:
-    Route::middleware('auth')->group(function () {
-        Route::group(['prefix' => 'order', 'as' => 'order.'], function () {});
-    });
-    // Support ticket (yêu cầu đăng nhập)
-    Route::middleware('auth')->group(function () {
-        Route::get('support-ticket/create', [SupportTicketController::class, 'create'])->name('support-ticket.create');
-        Route::post('support-ticket', [SupportTicketController::class, 'store'])->name('support-ticket.store');
-    });
-
-    //
-
-    // Liên hệ:
+    // ================== LIÊN HỆ ==================
     Route::get('lienhe', [ContactController::class, 'lienhe'])->name('lienhe');
     Route::post('lienhe', [ContactController::class, 'submit'])->name('submit');
 
-    // Blog
+    // ================== BLOG ==================
     Route::get('/blog', [ClientBlogController::class, 'index'])->name('blog');
     Route::get('/blog-detail/{id}', [ClientBlogController::class, 'show'])->name('blogs-detail');
+    Route::middleware('auth')->post('/blog/comments', [ClientBlogCommentController::class, 'store'])->name('blog.comments.store');
 
-    Route::middleware('auth')->group(function () {
-        Route::post('/blog/comments', [ClientBlogCommentController::class, 'store'])->name('blog.comments.store');
-    });
-    // Route::middleware('auth')->group(function () {
-    //     Route::group(['prefix' => 'order', 'as' => 'order.'], function () {
-    //         Route::post('/place-from-pending', [OrderController::class, 'placeFromPending'])->name('placeFromPending');
-    //     });
-    // });
-    Route::middleware('auth')->group(function () {
-        Route::group(['prefix' => 'order', 'as' => 'order.'], function () {
-            Route::post('/place-from-pending', [OrdersController::class, 'placeFromPending'])->name('placeFromPending');
-        });
-    });
-
-
-    //Giới thiêu
-
+    // ================== ABOUT ==================
     Route::get('/about', [AboutController::class, 'index'])->name('about');
-
-    // AI Chatbot
-
-    // --- Thêm API lấy trạng thái đơn hàng cho polling ---
-    Route::middleware('auth')->get('/orders/{order}/status', [OrdersController::class, 'orderStatus'])->name('orders.status');
 });
 
-//----------------------------------------------------------
-
-// Chỉnh sửa hồ sơ
+// ================== PROFILE CLIENT ==================
 Route::middleware('auth')->group(function () {
     Route::get('/index', [ProfileClientController::class, 'index'])->name('index');
     Route::put('/update', [ProfileClientController::class, 'update'])->name('update');
 });
 
-
-
-//Quên mật khẩu:
+// ================== AUTH & PASSWORD ==================
 Route::get('forgot', [ForgotController::class, 'forgot'])->name('forgot');
 Route::post('forgot', [ForgotController::class, 'sendResetLink'])->name('sendResetLink');
 Route::get('reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
 Route::post('reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
 
-
-// dang ky
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
 
-// Đăng nhập
 Route::get('/login', [LoginController::class, 'login'])->name('login');
 Route::post('/login', [LoginController::class, 'checklogin'])->name('checklogin');
 
-// Đăng xuất
 Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
-
-// Các trang client tĩnh
-// Route::view('/wishlist', 'frontend.wishlist.wishlist')->name('wishlist');
-// Route::view('/compare', 'frontend.pages.compare')->name('compare');
-// Route::view('/contact', 'frontend.pages.contact');
-// Route::view('/cart', 'frontend.cart.cart');
-// Route::view('/checkout', 'frontend.checkout.checkout');
-// Route::view('/products/category', 'frontend.products.category');
-// Route::view('/seller/become-seller', 'frontend.seller.become-seller');
-// Route::view('/seller/seller-dashboard', 'frontend.seller.seller-dashboard');
-
-
-//-----------------------------------------------------------------
-Route::group(['prefix' => 'client', 'as' => 'client.', 'middleware' => 'auth'], function () {
-    Route::post('/pay/momo', [PaymentController::class, 'payWithMomo'])->name('pay.momo');
-    Route::get('/checkout', [CheckoutController::class, 'checkout'])->name('checkout');
-});
 Route::post('/save-shipping-method', function (Request $request) {
     session(['shipping_method' => (int) $request->shipping_method]);
     return response()->json(['success' => true]);
@@ -284,27 +229,6 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         Route::get('/donut-stats', [ReportController::class, 'ajaxDonutStats'])->name('donutStatsAjax');
         Route::get('/ajax', [ReportController::class, 'ajaxDashboard'])->name('ajaxDashboard');
     });
-
-
-
-
-
-
-
-
-
-
-    // Route::group(['prefix' => 'reports', 'as' => 'reports.'], function () {
-    //     Route::get('/', [ReportController::class, 'dashboard'])->name('dashboard');
-    //     Route::get('/revenue', [ReportController::class, 'revenueByMonthYear'])->name('revenue');
-    //     Route::get('/completed-orders', [ReportController::class, 'completedOrders'])->name('completed_orders');
-    //     Route::get('/top-product', [ReportController::class, 'topProductRevenue'])->name('top_product');
-    //     Route::get('/top-region', [ReportController::class, 'topRegionRevenue'])->name('top_region');
-    //     Route::get('/new-users', [ReportController::class, 'newUsers'])->name('new_users');
-    //     Route::get('/support-requests', [ReportController::class, 'supportRequests'])->name('support_requests');
-    //     Route::get('/top-rated-product', [ReportController::class, 'topRatedProduct'])->name('top_rated_product');
-    //     Route::get('/order-status', [ReportController::class, 'orderStatus'])->name('order_status');
-    // });
     // Quản lý sản phẩm
     Route::post('/categories/store-quick', [AdminCategoryController::class, 'storeQuick'])->name('categories.storeQuick');
     Route::post('/regions/store-quick', [AdminRegionController::class, 'storeQuick'])->name('regions.storeQuick');
@@ -411,18 +335,24 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
     });
 
     // Order
-    Route::group(['prefix' => 'orders', 'as' => 'orders.'], function () {
-        // ĐẶC BIỆT ĐẶT TRƯỚC!!!
+Route::group(['prefix' => 'orders', 'as' => 'orders.'], function () {
+        // ĐẶT CÁC ROUTE CỤ THỂ LÊN TRƯỚC
         Route::put('/{order}/update-status', [OrderController::class, 'updateStatus'])->name('updateStatus');
         Route::put('/{order}/update-payment-status', [OrderController::class, 'updatePaymentStatus'])->name('updatePaymentStatus');
-        Route::patch('/{order}/hide', [OrderController::class, 'hide'])->name('hide');
+
+        // ✅ Route hủy đơn cho admin (method adminCancel trong controller)
+        Route::post('/{order}/cancel', [OrderController::class, 'adminCancel'])->name('cancel');
+
         Route::get('/{order}/tracking', [OrderController::class, 'tracking'])->name('tracking');
-        // Các route chung để sau cùng!
+
+        // (Tuỳ bạn) — nếu đã xoá hẳn function hide() thì bỏ route này đi cho sạch:
+        // Route::patch('/{order}/hide', [OrderController::class, 'hide'])->name('hide');
+
+        // CÁC ROUTE “BẮT TỔNG” ĐỂ SAU CÙNG
         Route::delete('/{order}', [OrderController::class, 'destroy'])->name('destroy');
         Route::get('/{order}', [OrderController::class, 'show'])->name('show');
         Route::get('/', [OrderController::class, 'index'])->name('index');
     });
-
 
 
     // User
