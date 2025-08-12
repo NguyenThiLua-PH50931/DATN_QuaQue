@@ -202,7 +202,7 @@
                     <li>TAG:
                         @if($product->categories->isNotEmpty())
                             @foreach($product->categories as $category)
-                                <a href="{{ route('client.product.index', ['category_id' => $category->id]) }}">
+                                <a href="{{ route('client.product.catalog', ['dm[]' => $category->id, 'page' => 1]) }}">
                                     {{ $category->name }}
                                 </a>@if(!$loop->last), @endif
                             @endforeach
@@ -410,7 +410,7 @@
                                                             value="{{ $product->id }}">
                                                         <button type="submit" class="notifi-wishlist btn p-0"
                                                             style="border:none; background:none; width: 18px; height: 18px; margin-top: 10px">
-                                                            <i data-feather="heart"
+                                                            <i data-feather="heart" style="color: #4a5568;"
                                                                 @if (auth()->check() && auth()->user()->wishlist()->where('product_id', $product->id)->exists()) class="text-red-500" @endif></i>
                                                         </button>
                                                     </form>
