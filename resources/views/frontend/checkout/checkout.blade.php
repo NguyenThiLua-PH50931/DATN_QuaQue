@@ -460,7 +460,7 @@
 
                                                                 @if (empty($momoResult) || (isset($momoResult['resultCode']) && $momoResult['resultCode'] != 0))
                                                                     <button type="button" class="btn btn-primary mt-2"
-                                                                        id="btn-momo-pay"></button>
+                                                                        id="btn-momo-pay">Thanh toán qua momo</button>
                                                                 @endif
                                                             </div>
                                                         </div>

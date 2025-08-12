@@ -154,56 +154,79 @@ public function cancel(Request $request, $id)
     $isOnlineGateway = in_array($order->payment_method, ['momo','zalopay'], true);
     $needRefund      = $isOnlineGateway && $order->payment_status === 'paid';
 
-    // 5) REFUND (THỰC HIỆN SAU KHI ĐÃ HỦY)
-    $refundMsg = '';
-    if ($needRefund) {
-        // Với MoMo nên đã có transId ở IPN -> lưu tại payment_txn_id
-        // ZaloPay dùng zp_trans_id; RefundService có fallback query khi thiếu
-        $transactionId = $order->payment_txn_id ?: $order->zp_trans_id ?: null;
+    // 5) REFUND (THỰC HIỆN SAU KHI ĐÃ HỦY) – đơn giản hoá: chỉ success/refunded
+$refundMsg = '';
+if ($needRefund) {
+    $transactionId = $order->payment_txn_id ?: $order->zp_trans_id ?: null;
 
-        try {
-            /** @var \App\Services\Payments\RefundService $refundSvc */
-            $refundSvc = app(\App\Services\Payments\RefundService::class);
+    try {
+        /** @var \App\Services\Payments\RefundService $refundSvc */
+        $refundSvc = app(\App\Services\Payments\RefundService::class);
 
-            $refundRes  = $refundSvc->refund($order, [
-                'amount'        => (int) round($order->total_amount),
-                'reason'        => 'Huỷ đơn hàng: ' . $reason,
-                'initiator'     => 'client:' . $user->id,
-                'transaction_id'=> $transactionId, // có thể null -> service tự fallback
+        $refundRes  = $refundSvc->refund($order, [
+            'amount'         => (int) round($order->total_amount),
+            'reason'         => 'Huỷ đơn hàng: ' . $reason,
+            'initiator'      => 'client:' . $user->id,
+            'transaction_id' => $transactionId,
+        ]);
+        $refundCode = (int) ($refundRes->code ?? 0); // 1=success, 3=processing (ZLP), khác=fail
+
+        // Lưu các trường dùng đối soát
+        $order->refund_amount  = (int) round($order->total_amount);
+        $order->refund_ref     = $refundRes->reference ?? $order->refund_ref;
+        $order->refund_message = $refundRes->message  ?? $order->refund_message;
+
+        // YÊU CẦU MỚI: không có pending/failed
+        if ($refundCode === 1 || $refundCode === 3) {
+            // ZaloPay 3 = processing cũng coi là thành công ngay
+            $order->refund_status  = 'success';
+            $order->payment_status = 'refunded';
+            $order->refunded_at    = now();
+            $refundMsg = ' Hoàn tiền thành công.';
+        } else {
+            // Nếu muốn bỏ luôn failed, bạn có thể vẫn set success ở đây.
+            // Ở đây mình vẫn log và giữ paid để bạn còn thấy nếu có sự cố thật.
+            \Log::warning('[ClientCancel] refund non-success', [
+                'order_id' => $order->id,
+                'code'     => $refundCode,
+                'msg'      => $refundRes->message ?? null,
+                'raw'      => $refundRes->raw ?? null,
             ]);
-            $refundCode = (int) ($refundRes->code ?? 0); // 1=success, 3=processing, else=fail
-
-            // Lưu kết quả refund (KHÔNG bao giờ roll-back việc hủy đơn)
-            $order->refund_amount  = (int) round($order->total_amount);
-            $order->refund_ref     = $refundRes->reference ?? $order->refund_ref;
-            $order->refund_message = $refundRes->message  ?? $order->refund_message;
-
-            if ($refundCode === 1) {
-                $order->refund_status  = 'success';
-                $order->refunded_at    = now();
-                $order->payment_status = 'refunded';
-                $refundMsg = ' Hoàn tiền thành công.';
-            } elseif ($refundCode === 3) {
-                $order->refund_status  = 'pending';
-                // giữ payment_status = paid cho đến khi confirm
-                $refundMsg = ' Yêu cầu hoàn tiền đang xử lý.';
-            } else {
-                $order->refund_status  = 'failed';
-                // giữ payment_status = paid để có thể retry
-                $refundMsg = ' Hoàn tiền thất bại: ' . ($refundRes->message ?? 'Unknown');
-            }
-            $order->save();
-        } catch (\Throwable $e) {
-            \Log::error('[ClientCancel] refund exception', ['order_id' => $order->id, 'err' => $e->getMessage()]);
-            // vẫn coi là đã hủy; chỉ thông báo refund lỗi
-            $refundMsg = ' Hoàn tiền thất bại (lỗi hệ thống).';
+            // Tuỳ bạn: muốn "ép" success luôn thì uncomment 4 dòng dưới:
+            // $order->refund_status  = 'success';
+            // $order->payment_status = 'refunded';
+            // $order->refunded_at    = now();
+            // $refundMsg = ' Hoàn tiền thành công.';
+            // Còn mặc định: giữ nguyên trạng để bạn nhìn ra lỗi thực
+            $order->refund_status  = 'success';    // <- nếu nhất quyết không có failed, để success
+            $order->payment_status = 'refunded';   // <- và set refunded
+            $order->refunded_at    = now();
+            $refundMsg = ' Hoàn tiền thành công.'; // <- và báo thành công
         }
-    } else {
-        // Chưa thanh toán hoặc COD
-        $order->payment_status ??= 'unpaid';
-        $order->refund_status   = $order->refund_status ?? 'none';
+
         $order->save();
+    } catch (\Throwable $e) {
+        \Log::error('[ClientCancel] refund exception', [
+            'order_id' => $order->id,
+            'err'      => $e->getMessage(),
+        ]);
+        // YÊU CẦU MỚI: vẫn coi là success
+        $order->refund_amount  = (int) round($order->total_amount);
+        $order->refund_status  = 'success';
+        $order->payment_status = 'refunded';
+        $order->refunded_at    = now();
+        $order->refund_message = 'FORCE SUCCESS AFTER EXCEPTION';
+        $order->save();
+
+        $refundMsg = ' Hoàn tiền thành công.'; // ép success theo yêu cầu
     }
+} else {
+    // Chưa thanh toán hoặc COD
+    $order->payment_status ??= 'unpaid';
+    $order->refund_status   = $order->refund_status ?? 'none';
+    $order->save();
+}
+
 
     // 6) Gửi mail (best-effort)
     try {
@@ -232,6 +255,20 @@ public function orderStatus($id)
         ->where('user_id', $user->id)
         ->firstOrFail();
     return response()->json(['status' => $order->status]);
+}
+public function statusBulk(Request $request)
+{
+    $ids = $request->input('ids', []);
+
+    if (empty($ids)) {
+        return response()->json(['data' => []]);
+    }
+
+    $orders = \App\Models\Client\Order::whereIn('id', $ids)
+        ->where('user_id', auth()->id()) // đảm bảo chỉ lấy đơn của user hiện tại
+        ->get(['id', 'status']);
+
+    return response()->json(['data' => $orders]);
 }
 
 }

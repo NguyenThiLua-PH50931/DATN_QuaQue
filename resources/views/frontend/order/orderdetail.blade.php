@@ -160,7 +160,7 @@
                         @elseif($isRefundPending)
                             <span class="badge bg-warning text-dark">Đang hoàn tiền</span>
                         @elseif($isPaid)
-                            <span class="badge bg-success">Đã hoàn tiền</span>
+                            <span class="badge bg-success">Đã thanh toán</span>
                         @elseif($order->payment_status === 'failed')
                             <span class="badge bg-danger">Thanh toán thất bại</span>
                         @else
