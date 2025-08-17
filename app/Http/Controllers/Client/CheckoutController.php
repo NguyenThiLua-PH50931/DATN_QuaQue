@@ -26,7 +26,7 @@ public function checkout(Request $request)
 
     $addresses = $user->addresses()->get();
 
-    // CALLBACK flags
+    // ==== Flags từ callback/redirect ====
     $isMomoCallback = $request->has('orderId') && $request->has('resultCode');
 
     $appTransId = $request->input('app_trans_id')
@@ -34,24 +34,28 @@ public function checkout(Request $request)
         ?? $request->input('appTransId');
     $isZLPRedirect = !empty($appTransId);
 
-    // ZLP success flags
+    // ZLP redirect success?
     $zlpStatus  = (string)($request->input('status') ?? $request->input('Status') ?? '');
     $zlpReturn  = (string)($request->input('return_code') ?? $request->input('returncode') ?? $request->input('returnCode') ?? '');
     $zlpSuccess = ($zlpStatus === '1') || ($zlpReturn === '1');
 
-    // ====== MoMo callback ======
+    /* ======================================================================
+     |  MOMO CALLBACK (resultCode = 0)
+     |======================================================================*/
     if ($isMomoCallback && (string)$request->input('resultCode') === '0') {
-        \Log::info('MoMo callback success, creating order...');
-       $momoOrderId = (string) $request->input('orderId');   // orderId bạn gửi khi tạo thanh toán
-$momoTransId = (string) $request->input('transId');   // transId MoMo trả về
+        \Log::info('MoMo callback success');
 
+        $momoOrderId = (string) $request->input('orderId'); // orderId khi tạo thanh toán
+        $momoTransId = (string) $request->input('transId'); // transId MoMo trả về
+
+        // Lấy danh sách cart items đã chọn
         $selectedIds = session('momo_selected_cart_item_ids', []);
         if (!is_array($selectedIds)) $selectedIds = explode(',', $selectedIds);
         $selectedIds = array_filter(array_map('intval', $selectedIds));
 
+        // Địa chỉ: lấy id hoặc snapshot
         $addressId = session('address_id');
         $address   = $addressId ? $user->addresses()->where('id', $addressId)->first() : null;
-
         if (!$address && session('address_snapshot')) {
             $s = session('address_snapshot');
             $address = $user->addresses()->create([
@@ -68,21 +72,23 @@ $momoTransId = (string) $request->input('transId');   // transId MoMo trả về
         }
         if (!$address) return redirect()->route('client.checkout')->with('error', 'Bạn cần nhập địa chỉ giao hàng!');
 
-        $cartItems = \App\Models\Client\CartItem::with(['product', 'variant'])
+        $cartItems = \App\Models\Client\CartItem::with(['product','variant'])
             ->where('user_id', $user->id)->whereIn('id', $selectedIds)->get();
-        if ($cartItems->isEmpty()) return redirect()->route('client.cart.index')->with('error', 'Giỏ hàng của bạn đang trống hoặc sản phẩm không hợp lệ!');
+        if ($cartItems->isEmpty()) {
+            return redirect()->route('client.cart.index')->with('error', 'Giỏ hàng của bạn đang trống hoặc sản phẩm không hợp lệ!');
+        }
 
+        // Phí ship
         $shippingMethodId = session('shipping_method', 1);
         $shippingMethod   = \App\Models\admin\ShippingMethod::find($shippingMethodId);
         $province         = $address->province ?? null;
         $shippingCostBase = $this->getShippingCostByProvince($province, $shippingMethodId);
 
-        // coupons
+        // Mã giảm giá (KHÓA record khi đọc)
         $orderDiscountCodeStr = session('order_discount_code');
         $freeShippingCodeStr  = session('free_shipping_code');
         $orderDiscountCode = null;
         $freeShippingCode  = null;
-
         if ($orderDiscountCodeStr) {
             $orderDiscountCode = \App\Models\admin\DiscountCode::where('code', $orderDiscountCodeStr)
                 ->where('type', '!=', 'free_shipping')->where('active', 1)->lockForUpdate()->first();
@@ -98,8 +104,8 @@ $momoTransId = (string) $request->input('transId');   // transId MoMo trả về
             return redirect()->route('client.checkout')->with('error', 'Mã miễn phí vận chuyển đã hết lượt sử dụng!');
         }
 
+        // Tính tiền
         $subtotal = $cartItems->sum(fn($i) => ($i->price ?? 0) * ($i->quantity ?? 1));
-
         $discountAmount = 0;
         if ($orderDiscountCode) {
             if ($orderDiscountCode->discount_type === 'percent') {
@@ -112,106 +118,127 @@ $momoTransId = (string) $request->input('transId');   // transId MoMo trả về
             }
             $discountAmount = min($discountAmount, $subtotal);
         }
-
         $shippingCost = $freeShippingCode ? 0 : $shippingCostBase;
         $total        = $subtotal + $shippingCost - $discountAmount;
 
-        $order = \App\Models\admin\Order::create([
-            'user_id'            => $user->id,
-            'recipient_name'     => $address->recipient_name,
-            'phone'              => $address->phone,
-            'full_address'       => $address->address . ', ' . ($address->ward ?? '') . ', ' . $address->district . ', ' . $address->province,
-            'shipping_method'    => $shippingMethod ? $shippingMethod->name : null,
-            'payment_method'     => 'momo',
-            'discount_code'      => $orderDiscountCode?->code,
-            'free_shipping_code' => $freeShippingCode?->code,
-            'discount_amount'    => $discountAmount,
-            'total_amount'       => $total,
-            'shipping_cost'      => $shippingCost,
-            'payment_ref'    => $momoOrderId, // orderId MoMo – để đối soát/refund
-    'payment_txn_id' => $momoTransId,
-            'status'             => 'pending',
-            'payment_status'     => 'paid',
-        ]);
-if (empty($order->payment_txn_id) && $order->payment_ref) {
-        if ($tid = cache()->pull('momo:ipn:' . $order->payment_ref)) {
-            $order->payment_txn_id = $tid;
-            $order->save();
-        }
-    }
-        // giữ lại nếu IPN có set zp_trans_id (không ảnh hưởng MoMo)
-        if (!$order->zp_trans_id) {
-            if ($zpt = cache()->pull('zlp:ipn:' . $order->order_code)) {
-                $order->zp_trans_id = $zpt;
-                $order->save();
+        // Kéo transId từ cache IPN nếu cần
+        if (!$momoTransId && $momoOrderId) {
+            if ($tid = cache()->pull('momo:ipn:' . $momoOrderId)) {
+                $momoTransId = $tid;
             }
         }
 
-        foreach ($cartItems as $item) {
-            $order->items()->create([
-                'product_id'                 => $item->product_id,
-                'product_name'               => $item->product->name ?? '',
-                'product_variant_value_id'   => $item->variant_id,
-                'product_variant_value_name' => $item->variant->name ?? null,
-                'product_sku'                => $item->product->sku ?? null,
-                'product_image'              => $item->product->image ?? null,
-                'quantity'                   => $item->quantity,
-                'price'                      => $item->price ?? 0,
-                'total'                      => ($item->price ?? 0) * ($item->quantity ?? 1),
-            ]);
-            if ($item->variant_id) {
-                $variant = \App\Models\admin\ProductVariant::find($item->variant_id);
-                if ($variant) { $variant->stock = max(0, $variant->stock - $item->quantity); $variant->save(); }
-            } else {
-                $product = \App\Models\admin\Product::find($item->product_id);
-                if ($product) { $product->stock = max(0, $product->stock - $item->quantity); $product->save(); }
+        // ===== Chặn oversell tại thời điểm xác nhận =====
+        try {
+            // 1) KHÓA + kiểm tra + TRỪ kho (FOR UPDATE) – nếu thiếu sẽ throw
+            $this->consumeStockOrFail($cartItems);
+
+            // 2) Tạo order + items trong 1 transaction (không trừ kho nữa)
+            DB::transaction(function () use ($user, $address, $shippingMethod, $orderDiscountCode, $freeShippingCode, $discountAmount, $shippingCost, $total, $cartItems, $momoOrderId, $momoTransId) {
+                $order = \App\Models\admin\Order::create([
+                    'user_id'            => $user->id,
+                    'recipient_name'     => $address->recipient_name,
+                    'phone'              => $address->phone,
+                    'full_address'       => $address->address . ', ' . ($address->ward ?? '') . ', ' . $address->district . ', ' . $address->province,
+                    'shipping_method'    => $shippingMethod ? $shippingMethod->name : null,
+                    'payment_method'     => 'momo',
+                    'discount_code'      => $orderDiscountCode?->code,
+                    'free_shipping_code' => $freeShippingCode?->code,
+                    'discount_amount'    => $discountAmount,
+                    'total_amount'       => $total,
+                    'shipping_cost'      => $shippingCost,
+                    'payment_ref'        => $momoOrderId,
+                    'payment_txn_id'     => $momoTransId,
+                    'status'             => 'pending',
+                    'payment_status'     => 'paid',
+                ]);
+
+                foreach ($cartItems as $item) {
+                    $order->items()->create([
+                        'product_id'                 => $item->product_id,
+                        'product_name'               => $item->product->name ?? '',
+                        'product_variant_value_id'   => $item->variant_id,
+                        'product_variant_value_name' => $item->variant->name ?? null,
+                        'product_sku'                => $item->product->sku ?? null,
+                        'product_image'              => $item->product->image ?? null,
+                        'quantity'                   => $item->quantity,
+                        'price'                      => $item->price ?? 0,
+                        'total'                      => ($item->price ?? 0) * ($item->quantity ?? 1),
+                    ]);
+                }
+
+                // Cập nhật usage của coupon
+                if ($orderDiscountCode && $orderDiscountCode->scope === 'global') $orderDiscountCode->increment('used_count');
+                if ($freeShippingCode && $freeShippingCode->scope === 'global')   $freeShippingCode->increment('used_count');
+
+                $singleUse = ['new_user_30d', 'first_order'];
+                if ($orderDiscountCode && $orderDiscountCode->scope === 'conditional' && in_array($orderDiscountCode->condition_type, $singleUse)) {
+                    \App\Models\admin\DiscountCodeUsage::firstOrCreate([
+                        'discount_code_id' => $orderDiscountCode->id,
+                        'user_id'          => $user->id,
+                        'order_id'         => $order->id,
+                        'used_at'          => now(),
+                    ]);
+                }
+                if ($freeShippingCode && $freeShippingCode->scope === 'conditional' && in_array($freeShippingCode->condition_type, $singleUse)) {
+                    \App\Models\admin\DiscountCodeUsage::firstOrCreate([
+                        'discount_code_id' => $freeShippingCode->id,
+                        'user_id'          => $user->id,
+                        'order_id'         => $order->id,
+                        'used_at'          => now(),
+                    ]);
+                }
+
+                // Gửi mail (best-effort)
+                $order->loadMissing('user');
+                if ($order->user && $order->user->email) {
+                    try { \Mail::to($order->user->email)->send(new \App\Mail\OrderStatusUpdated($order)); }
+                    catch (\Throwable $e) { \Log::warning('Mail order status failed', ['order_id' => $order->id, 'error' => $e->getMessage()]); }
+                }
+            });
+
+            // Dọn giỏ & session
+            \App\Models\Client\CartItem::where('user_id', $user->id)->whereIn('id', $selectedIds)->delete();
+            session()->forget(['momo_selected_cart_item_ids', 'order_discount_code', 'free_shipping_code', 'shipping_method', 'address_id']);
+
+            return redirect()->route('client.checkout.success');
+
+        } catch (\Throwable $e) {
+            // Hết hàng hoặc lỗi khác → REFUND ngay + trả thông báo
+            try {
+                app(\App\Services\Payments\RefundService::class)->refund((object)[
+                    'payment_method' => 'momo',
+                    'total_amount'   => $total,
+                    'payment_txn_id' => $momoTransId,
+                    'payment_ref'    => $momoOrderId,
+                    'order_code'     => $momoOrderId,
+                ], [
+                    'amount'         => (int) round($total),
+                    'reason'         => 'Out of stock on confirmation',
+                    'transaction_id' => $momoTransId,
+                ]);
+            } catch (\Throwable $ex) {
+                \Log::warning('Refund MoMo after OOS failed', ['err' => $ex->getMessage()]);
             }
+
+            return redirect()->route('client.checkout')->with('error', 'Xin lỗi, sản phẩm vừa hết hàng. Giao dịch đã được hoàn tiền.');
         }
-
-        if ($orderDiscountCode && $orderDiscountCode->scope === 'global') $orderDiscountCode->increment('used_count');
-        if ($freeShippingCode && $freeShippingCode->scope === 'global')   $freeShippingCode->increment('used_count');
-
-        $singleUse = ['new_user_30d', 'first_order'];
-        if ($orderDiscountCode && $orderDiscountCode->scope === 'conditional' && in_array($orderDiscountCode->condition_type, $singleUse)) {
-            \App\Models\admin\DiscountCodeUsage::firstOrCreate([
-                'discount_code_id' => $orderDiscountCode->id,
-                'user_id'          => $user->id,
-                'order_id'         => $order->id,
-                'used_at'          => now(),
-            ]);
-        }
-        if ($freeShippingCode && $freeShippingCode->scope === 'conditional' && in_array($freeShippingCode->condition_type, $singleUse)) {
-            \App\Models\admin\DiscountCodeUsage::firstOrCreate([
-                'discount_code_id' => $freeShippingCode->id,
-                'user_id'          => $user->id,
-                'order_id'         => $order->id,
-                'used_at'          => now(),
-            ]);
-        }
-
-        $order->loadMissing('user');
-        if ($order->user && $order->user->email) {
-            try { \Mail::to($order->user->email)->send(new \App\Mail\OrderStatusUpdated($order)); }
-            catch (\Throwable $e) { \Log::warning('Mail order status failed', ['order_id' => $order->id, 'error' => $e->getMessage()]); }
-        }
-
-        \App\Models\Client\CartItem::where('user_id', $user->id)->whereIn('id', $selectedIds)->delete();
-        session()->forget(['momo_selected_cart_item_ids', 'order_discount_code', 'free_shipping_code', 'shipping_method', 'address_id']);
-
-        return redirect()->route('client.checkout.success');
     }
 
-    // ====== ZaloPay redirect success ======
+    /* ======================================================================
+     |  ZALOPAY REDIRECT SUCCESS
+     |======================================================================*/
     if ($isZLPRedirect && $zlpSuccess) {
         \Log::info('ZaloPay redirect success', ['query' => $request->query()]);
 
+        // Cart items
         $selectedIds = session('momo_selected_cart_item_ids', []);
         if (!is_array($selectedIds)) $selectedIds = explode(',', $selectedIds);
         $selectedIds = array_filter(array_map('intval', $selectedIds));
 
+        // Address
         $addressId = session('address_id');
         $address   = $addressId ? $user->addresses()->where('id', $addressId)->first() : null;
-
         if (!$address && session('address_snapshot')) {
             $s = session('address_snapshot');
             $address = $user->addresses()->create([
@@ -228,10 +255,11 @@ if (empty($order->payment_txn_id) && $order->payment_ref) {
         }
         if (!$address) return redirect()->route('client.checkout')->with('error', 'Bạn cần nhập địa chỉ giao hàng!');
 
-        $cartItems = \App\Models\Client\CartItem::with(['product', 'variant'])
+        $cartItems = \App\Models\Client\CartItem::with(['product','variant'])
             ->where('user_id', $user->id)->whereIn('id', $selectedIds)->get();
         if ($cartItems->isEmpty()) return redirect()->route('client.cart.index')->with('error', 'Giỏ hàng của bạn đang trống hoặc sản phẩm không hợp lệ!');
 
+        // Shipping & coupon
         $shippingMethodId = session('shipping_method', 1);
         $shippingMethod   = \App\Models\admin\ShippingMethod::find($shippingMethodId);
         $province         = $address->province ?? null;
@@ -257,8 +285,8 @@ if (empty($order->payment_txn_id) && $order->payment_ref) {
             return redirect()->route('client.checkout')->with('error', 'Mã miễn phí vận chuyển đã hết lượt sử dụng!');
         }
 
+        // Tính tiền
         $subtotal = $cartItems->sum(fn($i) => ($i->price ?? 0) * ($i->quantity ?? 1));
-
         $discountAmount = 0;
         if ($orderDiscountCode) {
             if ($orderDiscountCode->discount_type === 'percent') {
@@ -271,114 +299,126 @@ if (empty($order->payment_txn_id) && $order->payment_ref) {
             }
             $discountAmount = min($discountAmount, $subtotal);
         }
-
         $shippingCost = $freeShippingCode ? 0 : $shippingCostBase;
         $total        = $subtotal + $shippingCost - $discountAmount;
 
-$order = \App\Models\admin\Order::create([
-    'user_id'            => $user->id,
-    'recipient_name'     => $address->recipient_name,
-    'phone'              => $address->phone,
-    'full_address'       => $address->address . ', ' . ($address->ward ?? '') . ', ' . $address->district . ', ' . $address->province,
-    'shipping_method'    => $shippingMethod?->name,
-    'order_code'         => session('pre_order_code') ?: ('QQ' . date('Ymd') . '-' . mt_rand(1000, 9999)),
-    'payment_method'     => 'zalopay',
-    'discount_code'      => $orderDiscountCode?->code,
-    'free_shipping_code' => $freeShippingCode?->code,
-    'discount_amount'    => $discountAmount,
-    'total_amount'       => $total,
-    'shipping_cost'      => $shippingCost,
-    'status'             => 'pending',
-    'payment_status'     => 'paid',
-    // 'zlp_app_trans_id' => session('zlp_app_trans_id'), // nếu bạn có cột này
-]);
-$appTransId = session('zlp_app_trans_id');
-if ($appTransId) {
-    $order->payment_ref = $appTransId;  // lưu app_trans_id vào payment_ref
-    $order->save();
-}
-session()->forget(['pre_order_code','zlp_app_trans_id']);
-
-$forKey = $appTransId ?: $order->payment_ref;
-
-if (!$order->zp_trans_id && $forKey) {
-    if ($zpt = cache()->pull('zlp:ipn:' . $forKey)) {
-        $order->zp_trans_id    = $zpt;
-        $order->payment_txn_id = $zpt;
-        $order->save();
-    }
-}
-
-if (!$order->zp_trans_id && $forKey) {
-    try {
-        $zpt = app(\App\Services\Payments\RefundService::class)
-            ->queryZlpTransIdByAppTransId($forKey);
-        if ($zpt) {
-            $order->zp_trans_id    = $zpt;
-            $order->payment_txn_id = $zpt;
-            $order->save();
-        }
-    } catch (\Throwable $e) {
-        \Log::warning('ZLP query order failed', ['app_trans_id' => $forKey, 'err' => $e->getMessage()]);
-    }
-}
-
-
-        foreach ($cartItems as $item) {
-            $order->items()->create([
-                'product_id'                 => $item->product_id,
-                'product_name'               => $item->product->name ?? '',
-                'product_variant_value_id'   => $item->variant_id,
-                'product_variant_value_name' => $item->variant->name ?? null,
-                'product_sku'                => $item->product->sku ?? null,
-                'product_image'              => $item->product->image ?? null,
-                'quantity'                   => $item->quantity,
-                'price'                      => $item->price ?? 0,
-                'total'                      => ($item->price ?? 0) * ($item->quantity ?? 1),
-            ]);
-            if ($item->variant_id) {
-                $variant = \App\Models\admin\ProductVariant::find($item->variant_id);
-                if ($variant) { $variant->stock = max(0, $variant->stock - $item->quantity); $variant->save(); }
-            } else {
-                $product = \App\Models\admin\Product::find($item->product_id);
-                if ($product) { $product->stock = max(0, $product->stock - $item->quantity); $product->save(); }
+        // Lấy appTransId từ session (đã set khi tạo ZLP)
+        $appTransId = session('zlp_app_trans_id') ?: $appTransId;
+        if (!$appTransId) {
+            // an toàn: sinh từ pre_order_code nếu có
+            $preCode = session('pre_order_code');
+            if ($preCode) {
+                $appTransId = substr(date('ymd') . '_' . preg_replace('/[^A-Za-z0-9_\-]/', '', $preCode), 0, 40);
             }
         }
 
-        if ($orderDiscountCode && $orderDiscountCode->scope === 'global') $orderDiscountCode->increment('used_count');
-        if ($freeShippingCode && $freeShippingCode->scope === 'global')   $freeShippingCode->increment('used_count');
+        // txn id từ IPN cache hoặc query API
+        $zlpTxnId = $this->pullZlpTxnId($appTransId);
 
-        $singleUse = ['new_user_30d', 'first_order'];
-        if ($orderDiscountCode && $orderDiscountCode->scope === 'conditional' && in_array($orderDiscountCode->condition_type, $singleUse)) {
-            \App\Models\admin\DiscountCodeUsage::firstOrCreate([
-                'discount_code_id' => $orderDiscountCode->id,
-                'user_id'          => $user->id,
-                'order_id'         => $order->id,
-                'used_at'          => now(),
-            ]);
+        try {
+            // 1) KHÓA + kiểm tra + TRỪ kho
+            $this->consumeStockOrFail($cartItems);
+
+            // 2) Tạo order + items
+            DB::transaction(function () use ($user, $address, $shippingMethod, $orderDiscountCode, $freeShippingCode, $discountAmount, $shippingCost, $total, $cartItems, $appTransId, $zlpTxnId) {
+
+                $order = \App\Models\admin\Order::create([
+                    'user_id'            => $user->id,
+                    'recipient_name'     => $address->recipient_name,
+                    'phone'              => $address->phone,
+                    'full_address'       => $address->address . ', ' . ($address->ward ?? '') . ', ' . $address->district . ', ' . $address->province,
+                    'shipping_method'    => $shippingMethod?->name,
+                    'order_code'         => session('pre_order_code') ?: ('QQ' . date('Ymd') . '-' . mt_rand(1000, 9999)),
+                    'payment_method'     => 'zalopay',
+                    'discount_code'      => $orderDiscountCode?->code,
+                    'free_shipping_code' => $freeShippingCode?->code,
+                    'discount_amount'    => $discountAmount,
+                    'total_amount'       => $total,
+                    'shipping_cost'      => $shippingCost,
+                    'status'             => 'pending',
+                    'payment_status'     => 'paid',
+                    'payment_ref'        => $appTransId,
+                    'zp_trans_id'        => $zlpTxnId,
+                    'payment_txn_id'     => $zlpTxnId,
+                ]);
+
+                foreach ($cartItems as $item) {
+                    $order->items()->create([
+                        'product_id'                 => $item->product_id,
+                        'product_name'               => $item->product->name ?? '',
+                        'product_variant_value_id'   => $item->variant_id,
+                        'product_variant_value_name' => $item->variant->name ?? null,
+                        'product_sku'                => $item->product->sku ?? null,
+                        'product_image'              => $item->product->image ?? null,
+                        'quantity'                   => $item->quantity,
+                        'price'                      => $item->price ?? 0,
+                        'total'                      => ($item->price ?? 0) * ($item->quantity ?? 1),
+                    ]);
+                }
+
+                // Cập nhật usage coupon
+                if ($orderDiscountCode && $orderDiscountCode->scope === 'global') $orderDiscountCode->increment('used_count');
+                if ($freeShippingCode && $freeShippingCode->scope === 'global')   $freeShippingCode->increment('used_count');
+
+                $singleUse = ['new_user_30d', 'first_order'];
+                if ($orderDiscountCode && $orderDiscountCode->scope === 'conditional' && in_array($orderDiscountCode->condition_type, $singleUse)) {
+                    \App\Models\admin\DiscountCodeUsage::firstOrCreate([
+                        'discount_code_id' => $orderDiscountCode->id,
+                        'user_id'          => $user->id,
+                        'order_id'         => $order->id,
+                        'used_at'          => now(),
+                    ]);
+                }
+                if ($freeShippingCode && $freeShippingCode->scope === 'conditional' && in_array($freeShippingCode->condition_type, $singleUse)) {
+                    \App\Models\admin\DiscountCodeUsage::firstOrCreate([
+                        'discount_code_id' => $freeShippingCode->id,
+                        'user_id'          => $user->id,
+                        'order_id'         => $order->id,
+                        'used_at'          => now(),
+                    ]);
+                }
+
+                // Gửi mail (best-effort)
+                $order->loadMissing('user');
+                if ($order->user && $order->user->email) {
+                    try { \Mail::to($order->user->email)->send(new \App\Mail\OrderStatusUpdated($order)); }
+                    catch (\Throwable $e) { \Log::warning('Mail order status failed', ['order_id' => $order->id, 'error' => $e->getMessage()]); }
+                }
+            });
+
+            // Dọn giỏ + session
+            \App\Models\Client\CartItem::where('user_id', $user->id)->whereIn('id', $selectedIds)->delete();
+            session()->forget(['momo_selected_cart_item_ids','order_discount_code','free_shipping_code','shipping_method','address_id','pre_order_code','zlp_app_trans_id']);
+
+            return redirect()->route('client.checkout.success');
+
+        } catch (\Throwable $e) {
+            // Hết hàng → Refund ZLP ngay, rồi trả về checkout
+            try {
+                $txn = $zlpTxnId ?: $this->pullZlpTxnId($appTransId);
+                app(\App\Services\Payments\RefundService::class)->refund((object)[
+                    'payment_method' => 'zalopay',
+                    'total_amount'   => $total,
+                    'payment_txn_id' => $txn,
+                    'payment_ref'    => $appTransId,
+                    'order_code'     => $appTransId,
+                    'zp_trans_id'    => $txn,
+                ], [
+                    'amount'         => (int) round($total),
+                    'reason'         => 'Out of stock on confirmation',
+                    'transaction_id' => $txn,
+                ]);
+            } catch (\Throwable $ex) {
+                \Log::warning('Refund ZLP after OOS failed', ['err' => $ex->getMessage()]);
+            }
+
+            return redirect()->route('client.checkout')->with('error', 'Xin lỗi, sản phẩm vừa hết hàng. Giao dịch đã được hoàn tiền.');
         }
-        if ($freeShippingCode && $freeShippingCode->scope === 'conditional' && in_array($freeShippingCode->condition_type, $singleUse)) {
-            \App\Models\admin\DiscountCodeUsage::firstOrCreate([
-                'discount_code_id' => $freeShippingCode->id,
-                'user_id'          => $user->id,
-                'order_id'         => $order->id,
-                'used_at'          => now(),
-            ]);
-        }
-
-        $order->loadMissing('user');
-        if ($order->user && $order->user->email) {
-            try { \Mail::to($order->user->email)->send(new \App\Mail\OrderStatusUpdated($order)); }
-            catch (\Throwable $e) { \Log::warning('Mail order status failed', ['order_id' => $order->id, 'error' => $e->getMessage()]); }
-        }
-
-        \App\Models\Client\CartItem::where('user_id', $user->id)->whereIn('id', $selectedIds)->delete();
-        session()->forget(['momo_selected_cart_item_ids', 'order_discount_code', 'free_shipping_code', 'shipping_method', 'address_id']);
-
-        return redirect()->route('client.checkout.success');
     }
 
-    // ====== Không phải callback: hiển thị trang ======
+    /* ======================================================================
+     |  KHÔNG PHẢI CALLBACK: hiển thị trang checkout
+     |======================================================================*/
     if (!$request->has('selected_cart_item_ids') && !$isMomoCallback && !$isZLPRedirect) {
         session()->forget(['order_discount_code', 'free_shipping_code']);
     }
@@ -396,11 +436,13 @@ if (!$order->zp_trans_id && $forKey) {
             ->where('type', 'free_shipping')->where('active', 1)->first();
     }
 
+    // Lấy address mặc định/đã chọn
     $addressId = session('address_id');
     $address = $addressId
         ? $user->addresses()->where('id', $addressId)->first()
         : $user->addresses()->where('is_default', 1)->first();
 
+    // Lấy selected cart ids từ request/session
     $selectedRaw = $request->input('selected_cart_item_ids', '');
     if (is_array($selectedRaw)) {
         $selectedIds = array_map('intval', $selectedRaw);
@@ -411,7 +453,7 @@ if (!$order->zp_trans_id && $forKey) {
         $selectedIds = array_filter(array_map('intval', session('momo_selected_cart_item_ids', [])));
     }
 
-    $cartItems = \App\Models\Client\CartItem::with(['product', 'variant'])
+    $cartItems = \App\Models\Client\CartItem::with(['product','variant'])
         ->where('user_id', $user->id)
         ->when(count($selectedIds) > 0, fn($q) => $q->whereIn('id', $selectedIds))
         ->get();
@@ -427,6 +469,7 @@ if (!$order->zp_trans_id && $forKey) {
 
     $subtotal = $cartItems->sum(fn($i) => ($i->price ?? 0) * ($i->quantity ?? 1));
 
+    // Gợi ý các code còn hiệu lực để hiển thị
     $now = now();
     $validDiscountCodes = \App\Models\admin\DiscountCode::where('active', 1)
         ->where(function ($q) use ($now) { $q->whereNull('start_date')->orWhere('start_date', '<=', $now); })
@@ -509,6 +552,77 @@ if (!$order->zp_trans_id && $forKey) {
         'selected_cart_item_ids' => $selectedIds,
         'momoResult'             => null,
     ]);
+}
+
+/* ============================================================
+ |  Helper: khóa & trừ kho nguyên tử (thất bại -> throw)
+ * ============================================================*/
+private function consumeStockOrFail($cartItems): void
+{
+    DB::transaction(function () use ($cartItems) {
+        $variantIds = $cartItems->pluck('variant_id')->filter()->unique()->values();
+        $productIds = $cartItems->whereNull('variant_id')->pluck('product_id')->unique()->values();
+
+        if ($variantIds->isNotEmpty()) {
+            DB::table('product_variants')->whereIn('id', $variantIds)->lockForUpdate()->get();
+        }
+        if ($productIds->isNotEmpty()) {
+            DB::table('products')->whereIn('id', $productIds)->lockForUpdate()->get();
+        }
+
+        // Kiểm tra đủ kho
+        foreach ($cartItems as $item) {
+            $qty = (int) $item->quantity;
+            if ($item->variant_id) {
+                $row = DB::table('product_variants')->where('id', $item->variant_id)->first();
+                $available = max(0, (int)$row->stock);
+                if ($available < $qty) {
+                    $pname = $item->product->name ?? ('SP#'.$item->product_id);
+                    $vname = $item->variant->name ?? ('Var#'.$item->variant_id);
+                    throw new \Exception("Sản phẩm \"{$pname} - {$vname}\" chỉ còn {$available}.");
+                }
+            } else {
+                $row = DB::table('products')->where('id', $item->product_id)->first();
+                $available = max(0, (int)$row->stock);
+                if ($available < $qty) {
+                    $pname = $item->product->name ?? ('SP#'.$item->product_id);
+                    throw new \Exception("Sản phẩm \"{$pname}\" chỉ còn {$available}.");
+                }
+            }
+        }
+
+        // Trừ kho
+        foreach ($cartItems as $item) {
+            $qty = (int) $item->quantity;
+            if ($item->variant_id) {
+                DB::table('product_variants')
+                    ->where('id', $item->variant_id)
+                    ->update(['stock' => DB::raw("GREATEST(stock - {$qty}, 0)")]);
+            } else {
+                DB::table('products')
+                    ->where('id', $item->product_id)
+                    ->update(['stock' => DB::raw("GREATEST(stock - {$qty}, 0)")]);
+            }
+        }
+    });
+}
+
+/* ============================================================
+ |  Helper: lấy ZLP transaction id từ cache hoặc query API
+ * ============================================================*/
+private function pullZlpTxnId(?string $appTransId): ?string
+{
+    if (!$appTransId) return null;
+
+    if ($zpt = cache()->pull('zlp:ipn:' . $appTransId)) return $zpt;
+
+    try {
+        return app(\App\Services\Payments\RefundService::class)
+            ->queryZlpTransIdByAppTransId($appTransId);
+    } catch (\Throwable $e) {
+        \Log::warning('queryZlpTransId failed', ['app_trans_id' => $appTransId, 'err' => $e->getMessage()]);
+        return null;
+    }
 }
 
 
