@@ -134,13 +134,40 @@
                             {{ $order->payment_method }}
                         @endif
                     </div>
-                    <div><strong>Trạng thái thanh toán:</strong>
-                        @if ($order->payment_status == 'paid')
+                    <div>
+                        <strong>Trạng thái thanh toán:</strong>
+                        @php
+                            // Ưu tiên hiển thị "Đã hoàn tiền"
+                            $isRefunded =
+                                $order->payment_status === 'refunded' ||
+                                // fallback: nếu là ZaloPay đã hủy và refund_status báo success/pending thì cũng coi là đã hoàn tiền
+                                ($order->payment_method === 'zalopay' &&
+                                    $order->status === 'cancelled' &&
+                                    in_array($order->refund_status ?? null, ['success', 'pending'], true));
+
+                            $isRefundPending =
+                                $order->payment_status === 'paid' && ($order->refund_status ?? null) === 'pending';
+
+                            // COD: chỉ xem là đã thanh toán khi đã giao
+                            $isPaidByCod = $order->payment_method === 'cod' && $order->status === 'delivered';
+
+                            // Paid bình thường (không refund)
+                            $isPaid = $order->payment_status === 'paid' || $isPaidByCod;
+                        @endphp
+
+                        @if ($isRefunded)
+                            <span class="badge bg-success">Đã hoàn tiền</span>
+                        @elseif($isRefundPending)
+                            <span class="badge bg-warning text-dark">Đang hoàn tiền</span>
+                        @elseif($isPaid)
                             <span class="badge bg-success">Đã thanh toán</span>
+                        @elseif($order->payment_status === 'failed')
+                            <span class="badge bg-danger">Thanh toán thất bại</span>
                         @else
                             <span class="badge bg-warning text-dark">Chưa thanh toán</span>
                         @endif
                     </div>
+
                     <div>
                         <strong>Mã giảm giá:</strong>
                         @if ($order->discount_code)
@@ -157,12 +184,12 @@
                             <span class="text-muted">Không có mã freeship</span>
                         @endif
                     </div>
-                    @if (in_array($order->status, ['pending']) &&
-                            !(in_array($order->payment_method, ['momo', 'bank']) && $order->payment_status === 'paid'))
+                    @if ($order->status === 'pending')
                         <button type="button" id="btn-cancel-order" class="btn btn-danger btn-sm mt-3">
                             <i class="fa fa-times"></i> Huỷ đơn hàng
                         </button>
                     @endif
+
                 </div>
                 <!-- Người nhận -->
                 <div class="border rounded-4 p-4 bg-white mb-4 shadow-sm">
@@ -379,6 +406,7 @@
                     <input type="hidden" name="order_item_id" value="">
                     <input type="hidden" name="product_id" value="">
                     <input type="hidden" name="product_variant_value_id" value="">
+                    <input type="hidden" name="product_variant_name" value="">
                     <input type="hidden" name="rating" id="ratingInput" value="">
 
                     <div class="modal-header">
@@ -480,13 +508,16 @@
             $('#productReviewForm input[name=order_item_id]').val($btn.data('order-item-id'));
             $('#productReviewForm input[name=product_id]').val($btn.data('product-id'));
             $('#productReviewForm input[name=product_variant_value_id]').val($btn.data('product-variant-value-id'));
+            $('#productReviewForm input[name=product_variant_name]').val($btn.data(
+                'product-variant-name')); // Gán tên biến thể
+
             $('#productReviewForm input[name=rating]').val('');
             $('#productReviewForm textarea[name=content]').val('');
 
             $('#productName').text($btn.data('product-name'));
             $('#productImage').attr('src', $btn.data('product-image'));
             $('#productPrice').text($btn.data('product-price'));
-            $('#productVariantName').text($btn.data('product-variant-value-name'));
+            $('#productVariantName').text($btn.data('product-variant-name'));
 
             setStars(0);
         });
@@ -520,7 +551,8 @@
             $.ajax({
                 url: '/client/danh-gia/store',
                 method: 'POST',
-                data: $form.serialize(),
+                data: $form
+                    .serialize(), // dữ liệu sẽ có product_variant_name vì bạn đã thêm input ẩn và gán bên trên
                 success: function(res) {
                     showToastSwal(res.message || 'Đã gửi đánh giá!', true);
                     $('#writeReviewModal').modal('hide');
@@ -545,7 +577,8 @@
         });
     </script>
 
-    <!-- Script popup hủy đơn -->
+
+    <!-- Script popup php đơn -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const btn = document.getElementById('btn-cancel-order');
@@ -559,6 +592,10 @@
                     modal.show();
                 });
             }
+            btn.addEventListener('click', function() {
+                btn.disabled = true;
+                setTimeout(() => btn.disabled = false, 1500);
+            });
 
             reasonRadios.forEach(radio => {
                 radio.addEventListener('change', function() {
@@ -628,5 +665,54 @@
                 });
         }, 1000);
     </script>
+    <style>
+        #btn-cancel-order {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s;
+            box-shadow: 0 2px 10px rgba(220, 53, 69, 0.3);
+            background: #dc3545;
+            color: white;
+            z-index: 1;
+        }
 
+        #btn-cancel-order::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 0%;
+            background: #c82333;
+            transition: all 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+            z-index: -1;
+            border-radius: 6px;
+        }
+
+        #btn-cancel-order:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.6);
+        }
+
+        #btn-cancel-order:hover::before {
+            height: 100%;
+        }
+
+        #btn-cancel-order:active {
+            transform: translateY(1px);
+        }
+
+        #btn-cancel-order i {
+            margin-right: 8px;
+            transition: all 0.3s;
+        }
+
+        #btn-cancel-order:hover i {
+            transform: rotate(90deg) scale(1.2);
+        }
+    </style>
 @endsection

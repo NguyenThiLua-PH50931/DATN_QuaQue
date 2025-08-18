@@ -23,16 +23,24 @@
                                 </div>
                             </div>
                             <style>
-                                table#attributeTable {
-                                    width: 100%;
-                                    table-layout: fixed;
-                                    /* bảng co lại đều các cột */
-                                    word-wrap: break-word;
-                                    /* xuống dòng nếu nội dung dài */
-                                }
+                 
+                                    .table td,
+                    .table th {
+                        max-width: 150px;
+                        /* Giới hạn chiều rộng từng cột, tùy chỉnh theo cột */
+                        white-space: nowrap;
+                        /* Không xuống dòng */
+                        overflow: hidden;
+                        /* Ẩn phần tràn */
+                        text-overflow: ellipsis;
+                        /* Hiển thị dấu ... */
+                        vertical-align: middle;
+                        /* Căn giữa dọc */
+                       
+                    }
                             </style>
-                            <div class="table-responsive category-table">
-                                <table class="table all-package theme-table" id="attributeTable" style="min-width: 700px;">
+                           <div class="table-responsive" style="overflow-x:unset;"> {{-- bỏ thuộc tính max-width nếu có --}}
+                            <table class="table w-100" id="attributeTable" style="min-width: 100%;">
                                     <thead>
                                         <tr>
                                             <th style="color: black; background-color: #f8f9fa; width: 30px;">
@@ -42,7 +50,7 @@
                                             <th style="color: black; background-color: #f8f9fa;">Tên Thuộc Tính</th>
                                             <th style="color: black; background-color: #f8f9fa;">Giá Trị Thuộc Tính</th>
                                             <th style="color: black; background-color: #f8f9fa;">Ngày Cập Nhật</th>
-                                            <th style="color: black; background-color: #f8f9fa;">Hành động</th>
+                                            <th style="color: black; background-color: #f8f9fa; width: 20px;">Hành động</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -68,7 +76,7 @@
                                                 <td>{{ $attribute->updated_at ? $attribute->updated_at->format('d/m/Y H:i') : '' }}
                                                 </td>
                                                 <td>
-                                                    <ul>
+                                                    <ul style=" display: flex; align-items: center; justify-content: center;">
                                                         <li>
                                                             <a
                                                                 href="{{ route('admin.attributes.edit', $attribute->slug) }}">

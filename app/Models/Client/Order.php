@@ -12,28 +12,33 @@ class Order extends Model
     protected $table = 'orders';
 
     // Danh sách fillable theo cấu trúc bảng
-    protected $fillable = [
-        'order_code',
-        'user_id',
-        'address_id',
-        'shipping_method',
-        'discount_code',
-        'free_shipping_code',
-        'total_amount',
-        'shipping_cost',
-        'status',
-        'cancel_reason',
-        'payment_method',
-        'payment_status',
-        'receiver_name',
-        'receiver_phone',
-        'created_at',
-        'updated_at',
-        // 'bank_transfer_confirmed',
-         'recipient_name',
+protected $fillable = [
+    'order_code',
+    'user_id',
+    'recipient_name',
     'phone',
-    'full_address',   // <-- thêm dòng này!
-    ];
+    'full_address',
+    'shipping_method',
+    'shipping_cost',
+    'free_shipping_code',
+    'discount_code',
+    'discount_amount',
+    'total_amount',
+    'payment_method',
+    'payment_ref',
+    'payment_txn_id',
+    'payment_status',
+    'refund_status',
+    'refund_amount',
+    'refund_ref',
+    'refund_message',
+    'refunded_at',
+    'status',
+    'cancel_reason',
+    'zp_trans_id',
+    'created_at',
+    'updated_at',
+];
 
 
     /** Relationships */
@@ -87,6 +92,12 @@ protected static function boot()
             $order->order_code = 'QQ' . date('Ymd') . '-' . mt_rand(1000, 9999);
         }
     });
+}
+public function zlpAppTransId(): string
+{
+    $yymmdd = ($this->created_at ?? now())->format('ymd'); // yymmdd
+    $base   = preg_replace('/[^A-Za-z0-9_\-]/', '', (string)$this->order_code);
+    return substr($yymmdd . '_' . $base, 0, 40);
 }
 
 }

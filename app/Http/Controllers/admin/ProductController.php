@@ -47,7 +47,7 @@ class ProductController extends Controller
 
         // Sử dụng model phía client
         $productsQuery = \App\Models\Client\Product::with([
-            'category',
+            'categories',
             'region',
             'images',
             'variants' => function ($q) {
@@ -61,14 +61,18 @@ class ProductController extends Controller
                     ->orWhereHas('region', function ($regionQuery) use ($queryText) {
                         $regionQuery->where('name', 'like', "%$queryText%");
                     })
-                    ->orWhereHas('category', function ($categoryQuery) use ($queryText) {
+                    ->orWhereHas('categories', function ($categoryQuery) use ($queryText) {
                         $categoryQuery->where('name', 'like', "%$queryText%");
                     });
             });
 
         if ($categoryId) {
-            $productsQuery->where('category_id', $categoryId);
+            $categoryIds = is_array($categoryId) ? $categoryId : [$categoryId]; 
+            $productsQuery->whereHas('categories', function ($q) use ($categoryIds) {
+                $q->whereIn('category_id', $categoryIds);
+            });
         }
+
         if ($regionId) {
             $productsQuery->where('region_id', $regionId);
         }
@@ -125,7 +129,7 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $query = AdminProduct::with([
-            'category',
+            'categories',   // đổi từ 'category' thành 'categories'
             'region',
             'product_images',
             'variants' => function ($q) {
@@ -137,19 +141,29 @@ class ProductController extends Controller
         if ($request->has('trashed') && $request->trashed == 'true') {
             $query->onlyTrashed();
         } else {
-            $query->withoutTrashed(); // Chỉ lấy các sản phẩm không bị xóa mềm
+            $query->withoutTrashed();
         }
 
-        // Áp dụng các bộ lọc khác (đã có từ trước nếu có)
+        // Lọc theo nhiều danh mục: sản phẩm có ít nhất 1 trong các danh mục được chọn
         if ($request->filled('category')) {
-            $query->where('category_id', $request->category);
+            // Nếu bạn gửi category dạng mảng (nhiều danh mục) thì:
+            $categoryIds = is_array($request->category) ? $request->category : [$request->category];
+            $query->whereHas('categories', function ($q) use ($categoryIds) {
+                $q->whereIn('categories.id', $categoryIds);
+            });
         }
+
+        // Lọc vùng miền
         if ($request->filled('region')) {
             $query->where('region_id', $request->region);
         }
+
+        // Lọc trạng thái
         if ($request->filled('status')) {
             $query->where('active', $request->status);
         }
+
+        // Tìm kiếm
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
                 $q->where('name', 'like', '%' . $request->search . '%')
@@ -169,7 +183,7 @@ class ProductController extends Controller
     public function show($slug)
     {
         $product = AdminProduct::where('slug', $slug)
-            ->with(['category', 'region', 'product_images', 'variants.attributeValues', 'reviews.user', 'comments'])
+            ->with(['categories', 'region', 'product_images', 'variants.attributeValues', 'reviews.user', 'comments'])
             ->firstOrFail();
 
         return view('backend.products.show', compact('product'));
@@ -393,7 +407,8 @@ class ProductController extends Controller
     {
         $rules = [
             'name' => 'required|string|max:255',
-            'category_id' => 'required|integer|exists:categories,id',
+            'category_ids' => 'required|array|min:1',
+            'category_ids.*' => 'integer|exists:categories,id',
             'region_id' => 'required|integer|exists:regions,id',
             'image' => 'required|image|max:2048',
             'origin' => 'required|string|max:255',
@@ -404,7 +419,9 @@ class ProductController extends Controller
         $messages = [
             'name.required' => 'Tên sản phẩm bắt buộc',
             'origin.required' => 'Xuất xứ sản phẩm bắt buộc',
-            'category_id.required' => 'Vui lòng chọn danh mục',
+            'category_ids.required' => 'Vui lòng chọn ít nhất một danh mục',
+            'category_ids.array' => 'Dữ liệu danh mục không hợp lệ',
+            'category_ids.*.integer' => 'Danh mục không hợp lệ',
             'region_id.required' => 'Vui lòng chọn vùng miền',
             'image.required' => 'Vui lòng chọn ảnh đại diện',
             'has_variants.required' => 'Vui lòng chọn loại sản phẩm',
@@ -452,7 +469,7 @@ class ProductController extends Controller
             $product = AdminProduct::create([
                 'name' => $request->name,
                 'slug' => Str::slug($request->name) . '-' . time(),
-                'category_id' => $request->category_id,
+                // 'category_id' => $request->category_id,
                 'region_id' => $request->region_id,
                 'description' => $request->description,
                 'image' => $imgPath,
@@ -460,6 +477,7 @@ class ProductController extends Controller
                 'active' => $request->active ? 1 : 0,
                 'has_variants' => $request->has_variants ? 1 : 0,
             ]);
+            $product->categories()->sync($request->category_ids);
 
             // Ảnh mô tả nhiều ảnh
             if ($request->hasFile('images')) {
@@ -568,7 +586,8 @@ class ProductController extends Controller
 
         $rules = [
             'name' => 'required|string|max:255',
-            'category_id' => 'required|integer|exists:categories,id',
+            'category_ids' => 'required|array|min:1',            // thay đổi
+            'category_ids.*' => 'integer|exists:categories,id',  // validate từng id
             'region_id' => 'required|integer|exists:regions,id',
             'image' => 'nullable|image|max:2048',
             'origin' => 'required|string|max:255',
@@ -579,7 +598,9 @@ class ProductController extends Controller
         $messages = [
             'name.required' => 'Tên sản phẩm bắt buộc',
             'origin.required' => 'Xuất xứ sản phẩm bắt buộc',
-            'category_id.required' => 'Vui lòng chọn danh mục',
+            'category_ids.required' => 'Vui lòng chọn ít nhất một danh mục',
+            'category_ids.array' => 'Dữ liệu danh mục không hợp lệ',
+            'category_ids.*.integer' => 'Danh mục không hợp lệ',
             'region_id.required' => 'Vui lòng chọn vùng miền',
             'has_variants.required' => 'Vui lòng chọn loại sản phẩm',
         ];
@@ -627,15 +648,18 @@ class ProductController extends Controller
                 $product->image = $imgPath;
             }
 
-            // 2. Cập nhật các trường sản phẩm khác
+            // 2. Cập nhật các trường sản phẩm khác (không có category_id vì nhiều danh mục)
             $product->name = $request->name;
-            $product->category_id = $request->category_id;
             $product->region_id = $request->region_id;
             $product->description = $request->description;
             $product->origin = $request->origin;
             $product->active = $request->active ? 1 : 0;
             $product->has_variants = $request->has_variants ? 1 : 0;
             $product->save();
+
+            // Đồng bộ danh mục nhiều giá trị
+            $product->categories()->sync($request->category_ids);
+
 
             // 3. Thêm ảnh mô tả mới nếu có
             if ($request->hasFile('images')) {
@@ -763,6 +787,7 @@ class ProductController extends Controller
             return response()->json(['success' => false, 'message' => 'Lỗi: ' . $e->getMessage()]);
         }
     }
+
 
     public function getDescription($id)
     {

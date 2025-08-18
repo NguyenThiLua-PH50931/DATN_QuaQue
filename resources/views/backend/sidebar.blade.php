@@ -5,7 +5,8 @@
     <!-- Fixed Logo Header -->
     <div class="logo-wrapper logo-wrapper-center">
         <a href="{{ route('client.home') }}" title="">
-            <img class="img-fluid for-white" src="{{ asset('storage/banners/logo/logo_1.png') }}" alt="logo" style="margin-top: -20px">
+            <img class="img-fluid for-white" src="{{ asset('storage/banners/logo/logo_1.png') }}" alt="logo"
+                style="margin-top: -20px">
         </a>
         <div class="back-btn" style="display:none;">
             <i class="fa fa-angle-left"></i>
@@ -147,12 +148,11 @@
     </nav>
 </div>
 <style>
-a.sidebar-link.sidebar-title.link-nav::before {
-  content: none !important;
-  display: none !important;
-  background: none !important;
-  width: 0 !important;
-  height: 0 !important;
-}
-
+    a.sidebar-link.sidebar-title.link-nav::before {
+        content: none !important;
+        display: none !important;
+        background: none !important;
+        width: 0 !important;
+        height: 0 !important;
+    }
 </style>

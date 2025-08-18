@@ -70,7 +70,7 @@
                     </a>
                     <button onclick="location.href='{{ route('client.blogs-detail', ['id' => $item->id]) }}'" class="blog-button">
                         Đọc thêm <i class="fa-solid fa-right-long"></i>
-                    </button>                                        
+                    </button>
                 </div>
             </div>
         </div>

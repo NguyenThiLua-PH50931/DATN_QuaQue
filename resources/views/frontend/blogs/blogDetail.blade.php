@@ -60,7 +60,7 @@
                                                                 <img src="{{ asset($item->thumbnail) }}" alt="{{ $item->title }}" class="img-fluid blur-up lazyload">
                                                             @endif
                                                         </a>
-    
+
                                                         <div class="recent-detail">
                                                             <a href="{{ route('client.blogs-detail', ['id' => $item->id]) }}">
                                                                 <h5 class="recent-name">{{ $item->title }}</h5>
@@ -141,7 +141,7 @@
                                                     <h5 class="text-content">{{ $comment->user->name ?? 'Ẩn danh' }}</h5>
                                                 </div>
                                             </div>
-                        
+
                                             <div class="user-contain">
                                                 <p>{!! nl2br(e($comment->content)) !!}</p>
                                             </div>
@@ -154,27 +154,27 @@
                                 @endforelse
                             </ul>
                         </div>
-                        
+
                     </div>
 
                     <div class="leave-box">
                         <div class="leave-title mt-0">
                             <h3>Bình luận</h3>
                         </div>
-                    
+
                         <div class="leave-comment">
                             @if (!Auth::check())
                                 <div class="alert alert-warning">
                                     Vui lòng <a href="{{ route('login') }}">đăng nhập</a> để bình luận.
                                 </div>
                             @endif
-                    
+
                             <form action="{{ route('client.blog.comments.store') }}" method="POST">
                                 @csrf
-                    
+
                                 {{-- Hidden input để gửi kèm ID bài viết --}}
                                 <input type="hidden" name="blog_id" value="{{ $blog->id }}">
-                    
+
                                 <div class="row g-3">
                                     <div class="col-12">
                                         <div class="blog-input">
@@ -189,7 +189,7 @@
                                         </div>
                                     </div>
                                 </div>
-                    
+
                                 <button
                                     type="submit"
                                     class="btn btn-animation ms-xxl-auto mt-xxl-0 mt-3 btn-md fw-bold"
@@ -200,7 +200,7 @@
                             </form>
                         </div>
                     </div>
-                    
+
                 </div>
             </div>
         </div>
