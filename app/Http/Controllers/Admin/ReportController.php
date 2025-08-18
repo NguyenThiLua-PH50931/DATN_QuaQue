@@ -60,6 +60,7 @@ public function dashboard(Request $request)
     $totalRequests    = $ticketQuery->count();
 
     // ==== Chart: Doanh thu, đơn từng tháng trong năm chọn ====
+    $now = now();
     $monthlyStats = Order::select(
         DB::raw('MONTH(created_at) as month'),
         DB::raw('SUM(total_amount) as revenue'),
@@ -67,6 +68,7 @@ public function dashboard(Request $request)
     )
     ->where('status', 'delivered')
     ->whereYear('created_at', $year)
+    ->where('created_at', '<=', $now)
     ->groupBy(DB::raw('MONTH(created_at)'))
     ->orderBy('month')->get();
 
@@ -332,19 +334,22 @@ public function dashboard(Request $request)
         ->count();
 
     // 3. Top danh mục bán chạy nhất (tổng sản phẩm đã bán qua đơn hoàn thành)
-    [$from, $to] = $getTimeRange($topCategoryType);
-    $topCategory = DB::table('order_items')
-        ->join('orders', 'order_items.order_id', '=', 'orders.id')
-        ->join('products', 'order_items.product_id', '=', 'products.id')
-        ->join('categories', 'products.category_id', '=', 'categories.id')
-        ->where('orders.status', 'delivered')
-        ->when($from, fn($q) => $q->where('orders.created_at', '>=', $from))
-        ->when($to,   fn($q) => $q->where('orders.created_at', '<=', $to))
-        ->select('categories.id', 'categories.name',
-                 DB::raw('SUM(order_items.quantity) as total_sold'))
-        ->groupBy('categories.id', 'categories.name')
-        ->orderByDesc('total_sold')
-        ->first();
+        $topCategory = DB::table('order_items')
+            ->join('orders', 'order_items.order_id', '=', 'orders.id')
+            ->join('products', 'order_items.product_id', '=', 'products.id')
+            ->join('product_category', 'products.id', '=', 'product_category.product_id')  // join bảng pivot
+            ->join('categories', 'product_category.category_id', '=', 'categories.id')     // join categories qua pivot
+            ->where('orders.status', 'delivered')
+            ->when($from, fn($q) => $q->where('orders.created_at', '>=', $from))
+            ->when($to, fn($q) => $q->where('orders.created_at', '<=', $to))
+            ->select(
+                'categories.id',
+                'categories.name',
+                DB::raw('SUM(order_items.quantity) as total_sold')
+            )
+            ->groupBy('categories.id', 'categories.name')
+            ->orderByDesc('total_sold')
+            ->first();
 
     // 4. Sản phẩm được tìm kiếm nhiều nhất
     [$from, $to] = $getTimeRange($topSearchedProductType);
@@ -458,11 +463,13 @@ public function ajaxBestSellers(Request $request)
         ->join('products', 'product_variants.product_id', '=', 'products.id')
         ->where('orders.status', 'delivered');
 
-    if ($type === 'week') {
-        $orderItemsQuery->whereBetween('order_items.created_at', [
-            \Carbon\Carbon::now()->startOfWeek(), \Carbon\Carbon::now()->endOfWeek()
-        ]);
-    } elseif ($type === 'month') {
+ if ($type === 'today') {
+    $orderItemsQuery->whereDate('order_items.created_at', \Carbon\Carbon::today());
+} elseif ($type === 'week') {
+    $orderItemsQuery->whereBetween('order_items.created_at', [
+        \Carbon\Carbon::now()->startOfWeek(), \Carbon\Carbon::now()->endOfWeek()
+    ]);
+}elseif ($type === 'month') {
         $orderItemsQuery->whereMonth('order_items.created_at', \Carbon\Carbon::now()->month)
                         ->whereYear('order_items.created_at', \Carbon\Carbon::now()->year);
     } elseif ($type === 'year') {
@@ -489,7 +496,7 @@ public function ajaxBestSellers(Request $request)
             'product_variants.stock'
         )
         ->orderByDesc('sold_quantity')
-        ->limit(50)
+        ->limit(10)
         ->get();
 
     return response()->json($bestSellingProducts);
@@ -508,11 +515,13 @@ public function ajaxTopRatedProducts(Request $request)
             DB::raw('COUNT(reviews.id) as review_count'),
             DB::raw('MAX(reviews.created_at) as created_at')
         );
-    if ($type === 'week') {
-        $reviewQuery->whereBetween('reviews.created_at', [
-            \Carbon\Carbon::now()->startOfWeek(), \Carbon\Carbon::now()->endOfWeek()
-        ]);
-    } elseif ($type === 'month') {
+ if ($type === 'today') {
+    $reviewQuery->whereDate('reviews.created_at', \Carbon\Carbon::today());
+} elseif ($type === 'week') {
+    $reviewQuery->whereBetween('reviews.created_at', [
+        \Carbon\Carbon::now()->startOfWeek(), \Carbon\Carbon::now()->endOfWeek()
+    ]);
+} elseif ($type === 'month') {
         $reviewQuery->whereMonth('reviews.created_at', \Carbon\Carbon::now()->month)
             ->whereYear('reviews.created_at', \Carbon\Carbon::now()->year);
     } elseif ($type === 'year') {
@@ -534,6 +543,16 @@ public function ajaxCancelledProducts(Request $request)
 {
     $type = $request->input('type', 'week');
     $from = null; $to = null;
+    if ($type === 'today') {
+    $from = \Carbon\Carbon::today(); $to = \Carbon\Carbon::today();
+} elseif ($type === 'week') {
+    $from = \Carbon\Carbon::now()->startOfWeek(); $to = \Carbon\Carbon::now()->endOfWeek();
+} elseif ($type === 'month') {
+    $from = \Carbon\Carbon::now()->startOfMonth(); $to = \Carbon\Carbon::now()->endOfMonth();
+} elseif ($type === 'year') {
+    $from = \Carbon\Carbon::now()->startOfYear(); $to = \Carbon\Carbon::now()->endOfYear();
+}
+
     if ($type === 'week') {
         $from = \Carbon\Carbon::now()->startOfWeek(); $to = \Carbon\Carbon::now()->endOfWeek();
     } elseif ($type === 'month') {
@@ -651,13 +670,20 @@ public function ajaxRegionSales(Request $request)
 {
     $type = $request->input('type', 'week');
     $from = null; $to = null;
-    if ($type === 'week') {
-        $from = \Carbon\Carbon::now()->startOfWeek(); $to = \Carbon\Carbon::now()->endOfWeek();
-    } elseif ($type === 'month') {
-        $from = \Carbon\Carbon::now()->startOfMonth(); $to = \Carbon\Carbon::now()->endOfMonth();
-    } elseif ($type === 'year') {
-        $from = \Carbon\Carbon::now()->startOfYear(); $to = \Carbon\Carbon::now()->endOfYear();
-    }
+if ($type === 'week') {
+    $from = \Carbon\Carbon::now()->startOfWeek();
+    $to = \Carbon\Carbon::now()->endOfWeek();
+} elseif ($type === 'month') {
+    $from = \Carbon\Carbon::now()->startOfMonth();
+    $to = \Carbon\Carbon::now()->endOfMonth();
+} elseif ($type === 'year') {
+    $from = \Carbon\Carbon::now()->startOfYear();
+    $to = \Carbon\Carbon::now()->endOfYear();
+} elseif ($type === 'today') {
+    $from = \Carbon\Carbon::today();           // <--- THÊM
+    $to = \Carbon\Carbon::today()->endOfDay(); // <--- THÊM
+}
+
 
     $regionSales = DB::table('order_items')
         ->join('orders', 'order_items.order_id', '=', 'orders.id')
@@ -691,23 +717,32 @@ public function ajaxRegionSales(Request $request)
 public function ajaxDonutStats(Request $request)
 {
     $type = $request->input('type', 'week');
+    $now = now();
+
     $from = null; $to = null;
-    if ($type === 'week') {
-        $from = \Carbon\Carbon::now()->startOfWeek(); $to = \Carbon\Carbon::now()->endOfWeek();
+
+    if ($type === 'day') {
+        $from = $now->copy()->startOfDay();
+        $to = $now;
+    } elseif ($type === 'week') {
+        $from = $now->copy()->startOfWeek();
+        $to = $now;
     } elseif ($type === 'month') {
-        $from = \Carbon\Carbon::now()->startOfMonth(); $to = \Carbon\Carbon::now()->endOfMonth();
+        $from = $now->copy()->startOfMonth();
+        $to = $now; // ✅ chỉ đến thời điểm hiện tại
     } elseif ($type === 'year') {
-        $from = \Carbon\Carbon::now()->startOfYear(); $to = \Carbon\Carbon::now()->endOfYear();
+        $from = $now->copy()->startOfYear();
+        $to = $now;
     }
 
-    $completed = \App\Models\Admin\Order::where('status', 'delivered')
-        ->when($from, fn($q) => $q->whereDate('created_at', '>=', $from))
-        ->when($to, fn($q) => $q->whereDate('created_at', '<=', $to))
+    $completed = Order::where('status', 'delivered')
+        ->when($from, fn($q) => $q->where('created_at', '>=', $from))
+        ->when($to, fn($q) => $q->where('created_at', '<=', $to))
         ->count();
 
-    $canceled = \App\Models\Admin\Order::where('status', 'cancelled')
-        ->when($from, fn($q) => $q->whereDate('created_at', '>=', $from))
-        ->when($to, fn($q) => $q->whereDate('created_at', '<=', $to))
+    $canceled = Order::where('status', 'cancelled')
+        ->when($from, fn($q) => $q->where('created_at', '>=', $from))
+        ->when($to, fn($q) => $q->where('created_at', '<=', $to))
         ->count();
 
     return response()->json([
@@ -715,6 +750,7 @@ public function ajaxDonutStats(Request $request)
         'canceled' => $canceled,
     ]);
 }
+
 public function topCustomer(Request $request)
 {
     $range = $this->getDateRange($request->type, true);

@@ -101,114 +101,129 @@
                         </div>
 
                         <div class="col-xl-6 wow fadeInUp" data-wow-delay="0.1s">
-                            <div class="right-box-contain">
-                                {{-- <h6 class="offer-top">30% Off</h6> --}}
-                                <h2 class="name">{{ $product->name }}</h2>
+    <div class="right-box-contain">
+        {{-- <h6 class="offer-top">30% Off</h6> --}}
+        <h2 class="name">{{ $product->name }}</h2>
 
-                                <div class="price-rating">
-                                    <h3 class="theme-color price" id="product-price">
-                                        {{ number_format($product->variants[0]->price ?? 0) }} đ
-                                    </h3>
+        <div class="price-rating">
+            <h3 class="theme-color price" id="product-price">
+                {{ number_format($product->variants[0]->price ?? 0) }} đ
+            </h3>
 
-                                    <div class="product-rating custom-rate">
-                                        <ul class="rating">
-                                            @php
-                                                $avgRating = round($product->reviews->avg('rating'));
-                                            @endphp
-                                            @for ($i = 1; $i <= 5; $i++)
-                                                <li>
-                                                    <i data-feather="star"
-                                                        class="{{ $i <= $avgRating ? 'fill' : '' }}"></i>
-                                                </li>
-                                            @endfor
-                                        </ul>
-                                        <span class="review">{{ $product->reviews->count() }} Đánh giá</span>
-                                    </div>
-                                </div>
+            <div class="product-rating custom-rate">
+                <ul class="rating">
+                    @php
+                        $avgRating = round($product->reviews->avg('rating'));
+                    @endphp
+                    @for ($i = 1; $i <= 5; $i++)
+                        <li>
+                            <i data-feather="star" class="{{ $i <= $avgRating ? 'fill' : '' }}"></i>
+                        </li>
+                    @endfor
+                </ul>
+                <span class="review">{{ $product->reviews->count() }} Đánh giá</span>
+            </div>
+        </div>
+@if ($isActive)
+        <div class="product-packege">
+            
+            @foreach ($attributes as $attrId => $attr)
+                <div class="product-title">
+                    <h4>{{ $attr['name'] }}</h4>
+                </div>
+                
+                {{-- Thêm class disabled vào ul.select-packege --}}
+                <ul class="select-packege {{ $isActive ? '' : 'disabled' }}">
+                    @foreach ($attr['values'] as $valueId => $value)
+                        <li>
+                            <a href="javascript:void(0)" data-attr="{{ $attrId }}" data-value="{{ $valueId }}"
+                                class="attribute-select {{ isset($defaultSelected[$attrId]) && $defaultSelected[$attrId] == $valueId ? 'active2' : '' }}">
+                                {{ $value }}
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+            @endforeach
+        </div>
+@endif
+        <form method="POST" action="{{ route('client.cart.add') }}" class="add-to-cart-form">
+            @csrf
+            <input type="hidden" name="product_id" value="{{ $product->id }}" />
 
-                                <div class="product-packege">
-                                    @foreach ($attributes as $attrId => $attr)
-                                        <div class="product-title">
-                                            <h4>{{ $attr['name'] }}</h4>
-                                        </div>
-                                        <ul class="select-packege">
-                                            @foreach ($attr['values'] as $valueId => $value)
-                                                <li>
-                                                    <a href="javascript:void(0)" data-attr="{{ $attrId }}"
-                                                        data-value="{{ $valueId }}"
-                                                        class="attribute-select {{ isset($defaultSelected[$attrId]) && $defaultSelected[$attrId] == $valueId ? 'active2' : '' }}">
-                                                        {{ $value }}
-                                                    </a>
-                                                </li>
-                                            @endforeach
-                                        </ul>
-                                    @endforeach
-                                </div>
+            <div class="note-box product-packege {{ $isActive ? '' : 'disabled' }}">
+                <div class="cart_qty qty-box product-qty">
+                    <div class="input-group">
+                        <button type="button" class="qty-left-minus" data-type="minus" data-field="">
+                            <i class="fa fa-minus" aria-hidden="true"></i>
+                        </button>
+                        <input class="form-control input-number qty-input" type="text" name="quantity" value="1"
+                            min="1" data-stock="{{ $variant->stock ?? 999999 }}"
+                            data-cart-item-id="{{ $cartItemId ?? '' }}" />
+                        <button type="button" class="qty-right-plus" data-type="plus" data-field="">
+                            <i class="fa fa-plus" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
 
-                                <form method="POST" action="{{ route('client.cart.add') }}" class="add-to-cart-form">
-                                    @csrf
-                                    <!-- Input ẩn gửi product_id -->
-                                    <input type="hidden" name="product_id" value="{{ $product->id }}" />
+                <input type="hidden" id="variant_attributes" name="variant_attributes" value="" />
 
-                                    <div class="note-box product-packege">
-                                        <div class="cart_qty qty-box product-qty">
-                                            <div class="input-group">
-                                                <button type="button" class="qty-left-minus" data-type="minus"
-                                                    data-field="">
-                                                    <i class="fa fa-minus" aria-hidden="true"></i>
-                                                </button>
-                                                <input class="form-control input-number qty-input" type="text"
-                                                    name="quantity" value="1" min="1"
-                                                    data-stock="{{ $variant->stock ?? 999999 }}"
-                                                    data-cart-item-id="{{ $cartItemId ?? '' }}" />
-                                                <button type="button" class="qty-right-plus" data-type="plus"
-                                                    data-field="">
-                                                    <i class="fa fa-plus" aria-hidden="true"></i>
-                                                </button>
-                                            </div>
-                                        </div>
+                <button type="submit" class="btn btn-md bg-dark cart-button text-white w-100" {{ $isActive ? '' : 'disabled' }}>
+                    Thêm giỏ hàng
+                </button>
+            </div>
+        </form>
 
-                                        <!-- Input ẩn lưu dữ liệu biến thể, JS sẽ cập nhật giá trị này khi người dùng chọn biến thể -->
-                                        <input type="hidden" id="variant_attributes" name="variant_attributes"
-                                            value="" />
+        <div class="pickup-box">
+            <div class="product-info">
+                <ul class="product-info-list product-info-list-2">
+                    @php
+                        $variantWithMaxStock = $product->variants->sortByDesc('stock')->first();
+                    @endphp
+                    <li>SKU : <a href="javascript:void(0)" id="product-sku">
+                            {{ $variantWithMaxStock ? $variantWithMaxStock->sku ?? 'N/A' : '—' }}
+                        </a></li>
+                    <li>
+                        Số lượng :
+                        {{-- Nếu inactive thì hiển thị luôn "Sản phẩm tạm hết hàng" màu đỏ --}}
+                        @if (!$isActive)
+                            <span id="product-stock" style="color: #ff4f4f; font-weight: bold;">Sản phẩm tạm hết hàng</span>
+                        @else
+                            @if ($variantWithMaxStock)
+                                @if ($variantWithMaxStock->stock > 0)
+                                    <a href="javascript:void(0)" id="product-stock">{{ $variantWithMaxStock->stock }}</a>
+                                @else
+                                    <span id="product-stock" style="color: #ff4f4f; font-weight: bold;">Sản phẩm tạm hết hàng</span>
+                                @endif
+                            @else
+                                <a href="javascript:void(0)" id="product-stock">—</a>
+                            @endif
+                        @endif
+                    </li>
+                    <li>TAG:
+                        @if($product->categories->isNotEmpty())
+                            @foreach($product->categories as $category)
+                                <a href="{{ route('client.product.catalog', ['dm[]' => $category->id, 'page' => 1]) }}">
+                                    {{ $category->name }}
+                                </a>@if(!$loop->last), @endif
+                            @endforeach
+                        @else
+                            <span>Không có TAG</span>
+                        @endif
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
 
-                                        <button type="submit" class="btn btn-md bg-dark cart-button text-white w-100">
-                                            Thêm giỏ hàng
-                                        </button>
-                                    </div>
-                                </form>
+<style>
+    .disabled {
+        pointer-events: none;
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+</style>
 
-                                <div class="pickup-box">
-
-                                    <div class="product-info">
-                                        <ul class="product-info-list product-info-list-2">
-                                            @php
-                                                $variantWithMaxStock = $product->variants->sortByDesc('stock')->first();
-                                            @endphp
-                                            <li>SKU : <a href="javascript:void(0)" id="product-sku">
-                                                    {{ $variantWithMaxStock ? $variantWithMaxStock->sku ?? 'N/A' : '—' }}
-                                                </a></li>
-                                            <li>
-                                                Số lượng :
-                                                @if ($variantWithMaxStock)
-                                                    @if ($variantWithMaxStock->stock > 0)
-                                                        <a href="javascript:void(0)"
-                                                            id="product-stock">{{ $variantWithMaxStock->stock }}</a>
-                                                    @else
-                                                        <span id="product-stock"
-                                                            style="color: #ff4f4f; font-weight: bold;">Sản Phẩm tạm hết
-                                                            hàng</span>
-                                                    @endif
-                                                @else
-                                                    <a href="javascript:void(0)" id="product-stock">—</a>
-                                                @endif
-                                            </li>
-                                        </ul>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
 
                         <div class="col-12">
                             <div class="product-section-box">
@@ -395,7 +410,7 @@
                                                             value="{{ $product->id }}">
                                                         <button type="submit" class="notifi-wishlist btn p-0"
                                                             style="border:none; background:none; width: 18px; height: 18px; margin-top: 10px">
-                                                            <i data-feather="heart"
+                                                            <i data-feather="heart" style="color: #4a5568;"
                                                                 @if (auth()->check() && auth()->user()->wishlist()->where('product_id', $product->id)->exists()) class="text-red-500" @endif></i>
                                                         </button>
                                                     </form>
