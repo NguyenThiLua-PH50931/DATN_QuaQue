@@ -68,7 +68,7 @@
                                     <label class="form-label fw-bold">Vị trí:</label>
                                 </div>
                                 <div class="col-md-9">
-                                    <p class="form-control-plaintext">{{ $banner->location ?? 'N/A' }}</p>
+                                    <p class="form-control-plaintext">{{ $banner->location_label }}</p>
                                 </div>
                             </div>
 
