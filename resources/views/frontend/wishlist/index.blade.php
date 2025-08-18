@@ -1,171 +1,176 @@
 @extends('layouts.frontend')
 @section('title', 'Sản phẩm yêu thích')
 @section('contents')
-    <style>
-        .wishlist-img {
-            width: 270px;
-            max-width: 100%;
-            height: 270px;
-            aspect-ratio: 1/1;
-            object-fit: cover;
-            border-radius: 20px !important;
-            background: #f8f8f8;
-            display: block;
-        }
 
-        .product-image {
-            width: 100%;
-            margin-bottom: 12px;
-            height: 320px !important; /* Tăng chiều cao khung ảnh */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .product-header {
-            position: relative;
-        }
-
-        /* Ghi đè CSS mặc định nếu có xung đột */
-        .product-box-3 .product-header .product-image img {
-            border-radius: 20px !important;
-            width: 270px !important;
-            height: 270px !important;
-        }
-
-        .product-box-3 {
-            min-width: 320px;
-            max-width: 100%;
-            min-height: 420px;
-            padding-bottom: 24px;
-            background: #ffffff;
-            border-radius: 18px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-        }
-        .product-header {
-            margin-bottom: 18px;
-        }
-        .product-image {
-            height: 220px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 18px;
-        }
-        .product-detail .span-name {
-            margin-top: 12px;
-            margin-bottom: 6px;
-            display: block;
-            color: #b0b0b0;
-            font-size: 0.95rem;
-        }
-        .product-detail .name {
-            margin-bottom: 10px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #333;
-        }
-        .product-detail .unit {
-            margin-bottom: 8px;
-            color: #b0b0b0;
-            font-size: 0.97rem;
-        }
-        .product-detail .price {
-            margin-bottom: 16px;
-            font-size: 1.1rem;
-        }
-        .add-to-cart-box {
-            margin-top: 16px;
-        }
-    </style>
-    <!-- BREADCRUMB SECTION START -->
-    <section class="breadscrumb-section pt-0">
-        <div class="container-fluid-lg">
-            <div class="row">
-                <div class="col-12">
-                    <div class="breadscrumb-contain">
-                        <h2>Sản phẩm yêu thích của bạn</h2>
-                        <nav>
-                            <ol class="breadcrumb mb-0">
-                                <li class="breadcrumb-item">
-                                    <a href="{{ route('client.home') }}">
-                                        <i class="fa-solid fa-house"></i>
-                                    </a>
-                                </li>
-                                <li class="breadcrumb-item active" aria-current="page">Trang sản phẩm yêu thích</li>
-                            </ol>
-                        </nav>
-                    </div>
+<!-- BREADCRUMB SECTION START -->
+<section class="breadscrumb-section pt-0">
+    <div class="container-fluid-lg">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadscrumb-contain">
+                    <h2>Sản phẩm yêu thích của bạn</h2>
+                    <nav>
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item">
+                                <a href="{{ route('client.home') }}">
+                                    <i class="fa-solid fa-house"></i>
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item active" aria-current="page">Trang sản phẩm yêu thích</li>
+                        </ol>
+                    </nav>
                 </div>
             </div>
         </div>
-    </section>
-    <!-- BREADCRUMB SECTION END -->
-
-    <!-- WISHLIST SECTION START -->
-    <section class="wishlist-section section-b-space">
-        <div class="container-fluid-lg">
-            @if (session('success'))
-                <div class="bg-green-100 text-green-700 p-4 mb-4">
-                    {{ session('success') }}
-                </div>
-            @endif
-            @if (session('error'))
-                <div class="bg-red-100 text-red-700 p-4 mb-4">
-                    {{ session('error') }}
-                </div>
-            @endif
-
-            @if ($wishlist->isEmpty())
-                <p class="text-center">Chưa có sản phẩm trong wishlist.</p>
-            @else
-                <div class="row g-4 row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-1">
-                    @foreach ($wishlist as $item)
-                        <div class="col">
-                            <div class="product-box-3 h-100" style="min-width: 320px; max-width: 100%;">
-                                <div class="product-header">
-                                    <div class="product-image d-flex justify-content-center align-items-center" style="height: 320px;">
-                                        <a href="{{ route('client.product.detail', $item->product->slug) }}">
-                                            <img src="{{ asset('storage/' . $item->product->image) }}" alt="{{ $item->product->name }}"
-                                            style="width: 200px; height: 200px; object-fit: cover; border-radius: 16px; background: #f8f8f8;">
-                                        </a>
-                                        <div class="product-header-top position-absolute top-0 end-0 m-2">
-                                            <form action="{{ route('client.wishlist.destroy', $item->product_id) }}" method="POST">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn wishlist-button close_button"><i data-feather="x"></i></button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="product-footer" style="min-height: 180px;">
-                                    <div class="product-detail">
-                                         <a href="{{ route('client.product.detail', $item->product->slug) }}">
-                                            <h5 class="name">{{ $item->product->name }}</h5>
-                                        </a>
-                                        <span class="span-name">{{ $item->product->category->name ?? 'Unknown' }}</span>
-                                        <h6 class="unit mt-1">{{ $item->product->origin }}</h6>
-                                        <h5 class="price">
-                                            <span class="theme-color">
-                                               {{ number_format($item->product->variants->first()->price ?? 0, 0, ',', '.') }}₫
-                                            </span>
-                                            @if ($item->product->variants->first()->original_price ?? false)
-                                                <del>{{ number_format($item->product->variants->first()->original_price, 2) }}</del>
-                                            @endif
-                                        </h5>
-                                        
-                                    </div>
-                                </div>
+    </div>
+</section>
+<!-- BREADCRUMB SECTION END -->
+<style>
+    .row {
+        justify-content: left !important;
+    }
+</style>
+<!-- WISHLIST SECTION START -->
+<section class="wishlist-section section-b-space">
+    <div class="container-fluid-lg">
+        @if($wishlist->isEmpty())
+        <p class="text-center">Chưa có sản phẩm trong wishlist.</p>
+        @else
+        <div class="row g-sm-3 g-2">
+            @foreach($wishlist as $item)
+            @php
+            $product = $item->product;
+            $variants = $product->variants ?? collect();
+            $variantCount = $variants->count();
+            $firstVariant = $variants->first();
+            @endphp
+            <div class="col-xxl-2 product-box-contain">
+                <div class="product-box-3" style="height: 310px;">
+                    <div class="product-header">
+                        <div class="product-image">
+                            <a href="{{ route('client.product.detail', $product->slug) }}">
+                                <img src="{{ asset('storage/' . $product->image) }}" class="img-fluid blur-up lazyloaded" alt="{{ $product->name }}">
+                            </a>
+                            <div class="product-header-top">
+                                <form class="wishlist-delete-form" data-product-id="{{ $item->product_id }}" action="{{ route('client.wishlist.destroy', $item->product_id) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn wishlist-button close_button" title="Xóa khỏi wishlist">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x">
+                                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                                        </svg>
+                                    </button>
+                                </form>
                             </div>
                         </div>
-                    @endforeach
+                    </div>
+                    <div class="product-footer">
+                        <div class="product-detail">
+                            @php
+                            $categories = $product->categories ?? collect();
+                            $categoryNames = $categories->pluck('name')->take(2)->toArray();
+                            $categoryString = implode(', ', $categoryNames);
+                            @endphp
+
+                            <span class="span-name">
+                                {{ $categoryString }}
+                                @if($categories->count() > 2)
+                                , ...
+                                @endif
+                                @if($categories->count() == 0)
+                                Chưa phân loại
+                                @endif
+                            </span>
+
+                            <a href="{{ route('client.product.detail', $product->slug) }}">
+                                <h5 class="name">{{ $product->name }}</h5>
+                            </a>
+                            <h6 class="unit mt-1">
+                                @if($variantCount > 0)
+                                {{ $firstVariant->name ?? '' }}
+                                @else
+                                Không có thông tin
+                                @endif
+                            </h6>
+                            <h5 class="price">
+                                <span class="theme-color">
+                                    @if($variantCount > 0)
+                                    {{ number_format($firstVariant->price ?? 0, 0, ',', '.') }}₫
+                                    @else
+                                    Đang cập nhật
+                                    @endif
+                                </span>
+                            </h5>
+                        </div>
+                    </div>
                 </div>
-                {{ $wishlist->links() }}
-            @endif
+            </div>
+            @endforeach
         </div>
-    </section>
-    <!-- WISHLIST SECTION END -->
+        <div class="mt-3">
+            {{ $wishlist->links() }}
+        </div>
+        @endif
+    </div>
+</section>
+<!-- WISHLIST SECTION END -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.wishlist-delete-form').forEach(function(form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                let productId = form.dataset.productId;
+                let url = form.action;
+                let productBox = form.closest('.product-box-3');
+
+                // Gửi AJAX DELETE
+                fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': form.querySelector('input[name=_token]').value,
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json'
+                        },
+                        body: new URLSearchParams({
+                            _method: 'DELETE',
+                            _token: form.querySelector('input[name=_token]').value
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Ẩn box wishlist
+                            productBox.classList.add('animate__animated', 'animate__fadeOut');
+                            setTimeout(() => {
+                                productBox.closest('.col-xxl-2').remove();
+                            }, 400);
+                            // Hiển thị toast thành công
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: data.message || 'Đã xóa khỏi wishlist!',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        } else {
+                            throw new Error(data.message || 'Lỗi khi xoá!');
+                        }
+                    })
+                    .catch(err => {
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'error',
+                            title: err.message || 'Có lỗi xảy ra!',
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
+                    });
+            });
+        });
+    });
+</script>
+
 @endsection

@@ -236,41 +236,59 @@ class CategoryController extends Controller
 
     public function storeQuick(Request $request)
     {
-        // Tạo validator
+        // Validator (thêm image)
         $validator = Validator::make($request->all(), [
-            'name' => 'required|max:100|unique:categories,name',
+            'name'  => 'required|string|max:100|unique:categories,name',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // <= 2MB
         ], [
             'name.required' => 'Tên danh mục bắt buộc',
-            'name.unique' => 'Tên danh mục đã tồn tại, vui lòng chọn tên khác',
-            'name.max' => 'Tên danh mục không được vượt quá 100 ký tự',
+            'name.unique'   => 'Tên danh mục đã tồn tại, vui lòng chọn tên khác',
+            'name.max'      => 'Tên danh mục không được vượt quá 100 ký tự',
+            'image.image'   => 'Tệp tải lên phải là ảnh hợp lệ.',
+            'image.mimes'   => 'Ảnh phải có định dạng: jpeg,png,jpg,gif,svg.',
+            'image.max'     => 'Kích thước ảnh không được vượt quá 2MB.',
         ]);
 
-        // Nếu lỗi validate, trả về JSON lỗi khi AJAX, hoặc redirect với lỗi khi không AJAX
+        // Nếu lỗi validate, trả về JSON lỗi (dạng object field => [messages])
         if ($validator->fails()) {
-            if ($request->ajax()) {
+            if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
                     'success' => false,
-                    'errors' => $validator->errors(),
+                    'message' => 'Validation failed',
+                    'errors'  => $validator->errors(), // Illuminate\Support\MessageBag -> JSON-friendly
                 ], 422);
             }
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        // Tạo danh mục mới
+        // Xử lý file (nếu có)
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('categories', 'public'); // lưu vào storage/app/public/categories/...
+        }
+
+        // Tạo danh mục
         $category = Category::create([
             'name' => $request->name,
             'slug' => Str::slug($request->name),
+            'image' => $imagePath, // lưu path tương đối (null nếu không có)
         ]);
 
-        // Trả về JSON thành công nếu AJAX
-        if ($request->ajax()) {
+        // Trả về JSON (có thêm url ảnh để client dễ dùng)
+        if ($request->ajax() || $request->wantsJson()) {
             return response()->json([
-                'success' => true,
-                'category' => $category,
-            ]);
+                'success'  => true,
+                'message'  => 'Đã thêm danh mục mới!',
+                'category' => [
+                    'id' => $category->id,
+                    'name' => $category->name,
+                    'slug' => $category->slug,
+                    'image' => $category->image, // path lưu trong storage
+                    'image_url' => $category->image ? asset('storage/' . $category->image) : null,
+                ],
+            ], 201);
         }
 
-        // Nếu không phải AJAX thì redirect lại với thông báo thành công
         return redirect()->back()->with('success', 'Đã thêm danh mục mới!');
     }
 }

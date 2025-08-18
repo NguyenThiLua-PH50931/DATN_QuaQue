@@ -15947,61 +15947,6 @@ table tbody tr td a .ri-delete-bin-line {
     margin-bottom: 0
 }
 
-.custom-dropzone.dz-clickable {
-    opacity: 1;
-    position: relative;
-    padding: 0;
-    background: transparent;
-    border: 1px dashed #dddddd;
-    border-radius: 5px;
-    min-height: 150px;
-    height: auto
-}
-
-.custom-dropzone .dz-preview {
-    margin-bottom: 33px
-}
-
-.custom-dropzone .dz-preview .dz-remove {
-    position: relative;
-    margin-top: 4px;
-    display: block
-}
-
-.custom-dropzone .dz-preview .dz-error-message,
-.custom-dropzone .dz-preview .dz-error-mark {
-    display: none !important
-}
-
-.custom-dropzone .dropzone-wrapper {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    -webkit-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
-    height: unset;
-    border: none
-}
-
-.custom-dropzone .dropzone-wrapper:hover {
-    background: transparent
-}
-
-.custom-dropzone .dropzone-wrapper .dz-message {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    width: 100%;
-    height: 100%;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-    -webkit-box-pack: center;
-    -ms-flex-pack: center;
-    justify-content: center;
-    margin: 0
-}
-
 .dropzone-wrapper {
     border: 2px dashed #dddddd;
     color: #4a5568;
@@ -19019,7 +18964,7 @@ p.data-attributes svg {
 }
 
 .comingsoon-bgimg {
-    background: url(../images/other-images/coming-soon-bg.html);
+    background: url(../images/other-images/coming-soon-bg.jpg);
     background-position: bottom;
     background-size: cover
 }
@@ -20366,7 +20311,7 @@ p.data-attributes svg {
 }
 
 .profile-greeting {
-    background-image: url(../images/dashboard/bg.html);
+    background-image: url(../images/dashboard/bg.jpg);
     background-size: cover !important;
     background-repeat: no-repeat;
     background-position: center center;
@@ -20930,7 +20875,7 @@ p.data-attributes svg {
 .third-news-update .alert-sec .card.bg-img,
 .news .alert-sec .card.bg-img,
 .appointment-sec .alert-sec .card.bg-img {
-    background-image: url(../images/dashboard/bg.html);
+    background-image: url(../images/dashboard/bg.jpg);
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center center
@@ -21928,7 +21873,7 @@ p.data-attributes svg {
     -webkit-box-pack: center;
     -ms-flex-pack: center;
     justify-content: center;
-    background: url(../images/other-images/mobile-clock-wallpaper.html);
+    background: url(../images/other-images/mobile-clock-wallpaper.jpg);
     background-repeat: no-repeat;
     background-size: cover;
     height: 365px;
@@ -21960,21 +21905,21 @@ p.data-attributes svg {
     width: 175px;
     height: 175px;
     display: block;
-    background: url(../images/other-images/clock-face.html) 5% center no-repeat
+    background: url(../images/other-images/clock-face.png) 5% center no-repeat
 }
 
 .mobile-clock-widget .sec {
-    background: url(../images/sec.html);
+    background: url(../images/sec.svg);
     z-index: 3
 }
 
 .mobile-clock-widget .min {
-    background: url(../images/min.html);
+    background: url(../images/min.svg);
     z-index: 2
 }
 
 .mobile-clock-widget .hour {
-    background: url(../images/hour.html);
+    background: url(../images/hour.svg);
     z-index: 1
 }
 
@@ -21987,7 +21932,7 @@ p.data-attributes svg {
 }
 
 .calender-widget .cal-img {
-    background: url(../images/other-images/calender-bg.html);
+    background: url(../images/other-images/calender-bg.png);
     background-size: cover;
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
@@ -24931,7 +24876,7 @@ footer.blockquote-footer {
 }
 
 .error-wrapper.maintenance-bg {
-    background-image: url(../images/other-images/maintenance-bg.html);
+    background-image: url(../images/other-images/maintenance-bg.jpg);
     background-color: rgba(255, 255, 255, 0.6);
     background-blend-mode: overlay
 }
@@ -26962,8 +26907,8 @@ footer {
     -webkit-text-fill-color: transparent;
     -webkit-background-clip: text;
     background-clip: text;
-    background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(158, 107, 248, 0.5)), to(rgba(119, 101, 250, 0.5))), url(../assets/images/landing/title.html);
-    background-image: linear-gradient(rgba(158, 107, 248, 0.5), rgba(119, 101, 250, 0.5)), url(../assets/images/landing/title.html);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(158, 107, 248, 0.5)), to(rgba(119, 101, 250, 0.5))), url(../assets/images/landing/title.gif);
+    background-image: linear-gradient(rgba(158, 107, 248, 0.5), rgba(119, 101, 250, 0.5)), url(../assets/images/landing/title.gif);
     background-position: left;
     line-height: 1;
     font-size: calc(25px + (57 - 25) * ((100vw - 300px) / (1920 - 300)))
@@ -27417,7 +27362,7 @@ footer {
 }
 
 .email_bg {
-    background-image: url(../assets/images/landing/email-bg.html) !important
+    background-image: url(../assets/images/landing/email-bg.jpg) !important
 }
 
 .app_bg {
@@ -27444,7 +27389,7 @@ footer {
 }
 
 .layout {
-    background-image: url(../assets/images/landing/email-bg.html)
+    background-image: url(../assets/images/landing/email-bg.jpg)
 }
 
 .layout {
@@ -27575,7 +27520,7 @@ footer {
     content: "";
     position: absolute;
     left: 0;
-    background-image: url(../images/landing/left-left.html);
+    background-image: url(../images/landing/left-left.png);
     width: 250px;
     height: 165px;
     top: 0
@@ -27585,7 +27530,7 @@ footer {
     content: "";
     position: absolute;
     right: 0;
-    background-image: url(../images/landing/leaf-right.html);
+    background-image: url(../images/landing/leaf-right.png);
     width: 250px;
     height: 208px;
     top: 0
@@ -30098,7 +30043,7 @@ footer {
 }
 
 .user-profile .hovercard .socialheader {
-    background: url(../images/social-app/social-image.html)
+    background: url(../images/social-app/social-image.png)
 }
 
 .user-profile .hovercard .user-image .share-icons {
@@ -31330,7 +31275,7 @@ footer {
 }
 
 .user-profile .hovercard .cardheader {
-    background: url(../images/other-images/bg-profile.html);
+    background: url(../images/other-images/bg-profile.png);
     background-size: cover;
     background-position: 10%;
     height: 470px
@@ -32666,7 +32611,7 @@ footer {
     border: 1px solid #ced4da;
     border-radius: 0.25rem;
     -webkit-appearance: none;
-    background: url(../images/icon/down-.html#222222.png) no-repeat 95%
+    background: url(../images/icon/down-#222222.png) no-repeat 95%
 }
 
 .single-section .single-sidebar .book-btn-section .rooms-section {
@@ -39235,7 +39180,7 @@ body[class*="dark-"] .main-white {
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+1) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+1) svg {
-    color: #13ebc1 !important
+    color: #c19cd8 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+1):hover a svg,
@@ -39250,77 +39195,77 @@ body[class*="dark-"] .main-white {
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+2) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+2) svg {
-    color: #c19cd8 !important
+    color: #aab0dc !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+2):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+2):hover a svg {
-    stroke: #9ba2d4 !important
+    stroke: #aab0dc !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+2):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+2):hover a:hover {
-    background-color: rgba(116, 125, 198, 0.15) !important
+    background-color: rgba(169, 39, 249, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+3) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+3) svg {
-    color: #c771fb !important
+    color: #13ebc1 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+3):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+3):hover a svg {
-    stroke: #fff !important
+    stroke: #13ebc1 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+3):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+3):hover a:hover {
-    background-color: rgba(102, 112, 189, 0.15) !important
+    background-color: rgba(116, 125, 198, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+4) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+4) svg {
-    color: #c19cd8 !important
+    color: #aab0dc !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+4):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+4):hover a svg {
-    stroke: #c771fb !important
+    stroke: #fff !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+4):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+4):hover a:hover {
-    background-color: rgba(169, 39, 249, 0.15) !important
+    background-color: rgba(13, 164, 135, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+5) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+5) svg {
-    color: #9ba2d4 !important
+    color: #f58585 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+5):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+5):hover a svg {
-    stroke: #9ba2d4 !important
+    stroke: #f58585 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+5):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+5):hover a:hover {
-    background-color: rgba(169, 39, 249, 0.15) !important
+    background-color: rgba(158, 101, 194, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+6) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+6) svg {
-    color: #13ebc1 !important
+    color: #9ba2d4 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+6):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+6):hover a svg {
-    stroke: #c19cd8 !important
+    stroke: #fff !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+6):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+6):hover a:hover {
-    background-color: rgba(116, 125, 198, 0.15) !important
+    background-color: rgba(13, 164, 135, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+7) svg,
@@ -39330,7 +39275,7 @@ body[class*="dark-"] .main-white {
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+7):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+7):hover a svg {
-    stroke: #13ebc1 !important
+    stroke: #fff !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+7):hover a:hover,
@@ -39340,7 +39285,7 @@ body[class*="dark-"] .main-white {
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+8) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+8) svg {
-    color: #fff !important
+    color: #aab0dc !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+8):hover a svg,
@@ -39355,17 +39300,17 @@ body[class*="dark-"] .main-white {
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+9) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+9) svg {
-    color: #f58585 !important
+    color: #c771fb !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+9):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+9):hover a svg {
-    stroke: #c771fb !important
+    stroke: #fff !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+9):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+9):hover a:hover {
-    background-color: rgba(158, 101, 194, 0.15) !important
+    background-color: rgba(239, 63, 62, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+10) svg,
@@ -39375,92 +39320,92 @@ body[class*="dark-"] .main-white {
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+10):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+10):hover a svg {
-    stroke: #f58585 !important
+    stroke: #c771fb !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+10):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+10):hover a:hover {
-    background-color: rgba(102, 112, 189, 0.15) !important
+    background-color: rgba(158, 101, 194, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+11) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+11) svg {
-    color: #aab0dc !important
+    color: #9ba2d4 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+11):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+11):hover a svg {
-    stroke: #9ba2d4 !important
+    stroke: #13ebc1 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+11):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+11):hover a:hover {
-    background-color: rgba(239, 63, 62, 0.15) !important
+    background-color: rgba(13, 164, 135, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+12) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+12) svg {
-    color: #f58585 !important
+    color: #9ba2d4 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+12):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+12):hover a svg {
-    stroke: #c771fb !important
+    stroke: #f58585 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+12):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+12):hover a:hover {
-    background-color: rgba(116, 125, 198, 0.15) !important
+    background-color: rgba(13, 164, 135, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+13) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+13) svg {
-    color: #fff !important
+    color: #9ba2d4 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+13):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+13):hover a svg {
-    stroke: #aab0dc !important
+    stroke: #c771fb !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+13):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+13):hover a:hover {
-    background-color: rgba(239, 63, 62, 0.15) !important
+    background-color: rgba(102, 112, 189, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+14) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+14) svg {
-    color: #aab0dc !important
+    color: #13ebc1 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+14):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+14):hover a svg {
-    stroke: #c771fb !important
+    stroke: #fff !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+14):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+14):hover a:hover {
-    background-color: rgba(102, 112, 189, 0.15) !important
+    background-color: rgba(13, 164, 135, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+15) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+15) svg {
-    color: #13ebc1 !important
+    color: #f58585 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+15):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+15):hover a svg {
-    stroke: #fff !important
+    stroke: #aab0dc !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+15):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+15):hover a:hover {
-    background-color: rgba(102, 112, 189, 0.15) !important
+    background-color: rgba(13, 164, 135, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+16) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+16) svg {
-    color: #9ba2d4 !important
+    color: #c771fb !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+16):hover a svg,
@@ -39475,32 +39420,32 @@ body[class*="dark-"] .main-white {
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+17) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+17) svg {
-    color: #fff !important
+    color: #f58585 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+17):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+17):hover a svg {
-    stroke: #13ebc1 !important
+    stroke: #c19cd8 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+17):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+17):hover a:hover {
-    background-color: rgba(158, 101, 194, 0.15) !important
+    background-color: rgba(116, 125, 198, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+18) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+18) svg {
-    color: #c19cd8 !important
+    color: #13ebc1 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+18):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+18):hover a svg {
-    stroke: #fff !important
+    stroke: #c19cd8 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+18):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+18):hover a:hover {
-    background-color: rgba(116, 125, 198, 0.15) !important
+    background-color: rgba(244, 244, 244, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+19) svg,
@@ -39510,107 +39455,107 @@ body[class*="dark-"] .main-white {
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+19):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+19):hover a svg {
-    stroke: #13ebc1 !important
+    stroke: #c771fb !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+19):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+19):hover a:hover {
-    background-color: rgba(158, 101, 194, 0.15) !important
+    background-color: rgba(116, 125, 198, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+20) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+20) svg {
-    color: #13ebc1 !important
+    color: #f58585 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+20):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+20):hover a svg {
-    stroke: #fff !important
+    stroke: #aab0dc !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+20):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+20):hover a:hover {
-    background-color: rgba(244, 244, 244, 0.15) !important
+    background-color: rgba(116, 125, 198, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+21) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+21) svg {
-    color: #9ba2d4 !important
+    color: #aab0dc !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+21):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+21):hover a svg {
-    stroke: #9ba2d4 !important
+    stroke: #13ebc1 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+21):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+21):hover a:hover {
-    background-color: rgba(116, 125, 198, 0.15) !important
+    background-color: rgba(13, 164, 135, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+22) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+22) svg {
-    color: #aab0dc !important
+    color: #f58585 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+22):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+22):hover a svg {
-    stroke: #9ba2d4 !important
+    stroke: #13ebc1 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+22):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+22):hover a:hover {
-    background-color: rgba(169, 39, 249, 0.15) !important
+    background-color: rgba(239, 63, 62, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+23) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+23) svg {
-    color: #c771fb !important
+    color: #13ebc1 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+23):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+23):hover a svg {
-    stroke: #13ebc1 !important
+    stroke: #fff !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+23):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+23):hover a:hover {
-    background-color: rgba(102, 112, 189, 0.15) !important
+    background-color: rgba(13, 164, 135, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+24) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+24) svg {
-    color: #c19cd8 !important
+    color: #13ebc1 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+24):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+24):hover a svg {
-    stroke: #f58585 !important
+    stroke: #aab0dc !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+24):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+24):hover a:hover {
-    background-color: rgba(239, 63, 62, 0.15) !important
+    background-color: rgba(158, 101, 194, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+25) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+25) svg {
-    color: #fff !important
+    color: #f58585 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+25):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+25):hover a svg {
-    stroke: #9ba2d4 !important
+    stroke: #f58585 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+25):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+25):hover a:hover {
-    background-color: rgba(13, 164, 135, 0.15) !important
+    background-color: rgba(239, 63, 62, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+26) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+26) svg {
-    color: #aab0dc !important
+    color: #13ebc1 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+26):hover a svg,
@@ -39620,37 +39565,37 @@ body[class*="dark-"] .main-white {
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+26):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+26):hover a:hover {
-    background-color: rgba(13, 164, 135, 0.15) !important
+    background-color: rgba(169, 39, 249, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+27) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+27) svg {
-    color: #fff !important
+    color: #9ba2d4 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+27):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+27):hover a svg {
-    stroke: #c19cd8 !important
+    stroke: #13ebc1 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+27):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+27):hover a:hover {
-    background-color: rgba(116, 125, 198, 0.15) !important
+    background-color: rgba(244, 244, 244, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+28) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+28) svg {
-    color: #c771fb !important
+    color: #c19cd8 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+28):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+28):hover a svg {
-    stroke: #aab0dc !important
+    stroke: #f58585 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+28):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+28):hover a:hover {
-    background-color: rgba(239, 63, 62, 0.15) !important
+    background-color: rgba(158, 101, 194, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+29) svg,
@@ -39660,62 +39605,62 @@ body[class*="dark-"] .main-white {
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+29):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+29):hover a svg {
-    stroke: #fff !important
+    stroke: #aab0dc !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+29):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+29):hover a:hover {
-    background-color: rgba(169, 39, 249, 0.15) !important
+    background-color: rgba(102, 112, 189, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+30) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+30) svg {
-    color: #fff !important
+    color: #aab0dc !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+30):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+30):hover a svg {
-    stroke: #fff !important
+    stroke: #c771fb !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+30):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+30):hover a:hover {
-    background-color: rgba(169, 39, 249, 0.15) !important
+    background-color: rgba(158, 101, 194, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+31) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+31) svg {
-    color: #c771fb !important
+    color: #aab0dc !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+31):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+31):hover a svg {
-    stroke: #c771fb !important
+    stroke: #9ba2d4 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+31):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+31):hover a:hover {
-    background-color: rgba(239, 63, 62, 0.15) !important
+    background-color: rgba(158, 101, 194, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+32) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+32) svg {
-    color: #aab0dc !important
+    color: #c771fb !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+32):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+32):hover a svg {
-    stroke: #c771fb !important
+    stroke: #13ebc1 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+32):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+32):hover a:hover {
-    background-color: rgba(13, 164, 135, 0.15) !important
+    background-color: rgba(169, 39, 249, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+33) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+33) svg {
-    color: #9ba2d4 !important
+    color: #c19cd8 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+33):hover a svg,
@@ -39725,32 +39670,32 @@ body[class*="dark-"] .main-white {
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+33):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+33):hover a:hover {
-    background-color: rgba(102, 112, 189, 0.15) !important
+    background-color: rgba(169, 39, 249, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+34) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+34) svg {
-    color: #c19cd8 !important
+    color: #13ebc1 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+34):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+34):hover a svg {
-    stroke: #f58585 !important
+    stroke: #9ba2d4 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+34):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+34):hover a:hover {
-    background-color: rgba(239, 63, 62, 0.15) !important
+    background-color: rgba(116, 125, 198, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+35) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+35) svg {
-    color: #c771fb !important
+    color: #f58585 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+35):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+35):hover a svg {
-    stroke: #f58585 !important
+    stroke: #aab0dc !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+35):hover a:hover,
@@ -39760,22 +39705,22 @@ body[class*="dark-"] .main-white {
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+36) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+36) svg {
-    color: #13ebc1 !important
+    color: #f58585 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+36):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+36):hover a svg {
-    stroke: #aab0dc !important
+    stroke: #9ba2d4 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+36):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+36):hover a:hover {
-    background-color: rgba(13, 164, 135, 0.15) !important
+    background-color: rgba(102, 112, 189, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+37) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+37) svg {
-    color: #c19cd8 !important
+    color: #f58585 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+37):hover a svg,
@@ -39785,12 +39730,12 @@ body[class*="dark-"] .main-white {
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+37):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+37):hover a:hover {
-    background-color: rgba(102, 112, 189, 0.15) !important
+    background-color: rgba(116, 125, 198, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+38) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+38) svg {
-    color: #c771fb !important
+    color: #9ba2d4 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+38):hover a svg,
@@ -39800,12 +39745,12 @@ body[class*="dark-"] .main-white {
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+38):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+38):hover a:hover {
-    background-color: rgba(102, 112, 189, 0.15) !important
+    background-color: rgba(244, 244, 244, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+39) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+39) svg {
-    color: #c771fb !important
+    color: #f58585 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+39):hover a svg,
@@ -39815,37 +39760,37 @@ body[class*="dark-"] .main-white {
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+39):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+39):hover a:hover {
-    background-color: rgba(158, 101, 194, 0.15) !important
+    background-color: rgba(239, 63, 62, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+40) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+40) svg {
-    color: #c19cd8 !important
+    color: #aab0dc !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+40):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+40):hover a svg {
-    stroke: #13ebc1 !important
+    stroke: #f58585 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+40):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+40):hover a:hover {
-    background-color: rgba(116, 125, 198, 0.15) !important
+    background-color: rgba(239, 63, 62, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+41) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+41) svg {
-    color: #c19cd8 !important
+    color: #aab0dc !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+41):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+41):hover a svg {
-    stroke: #f58585 !important
+    stroke: #aab0dc !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+41):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+41):hover a:hover {
-    background-color: rgba(169, 39, 249, 0.15) !important
+    background-color: rgba(239, 63, 62, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+42) svg,
@@ -39860,12 +39805,12 @@ body[class*="dark-"] .main-white {
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+42):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+42):hover a:hover {
-    background-color: rgba(13, 164, 135, 0.15) !important
+    background-color: rgba(244, 244, 244, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+43) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+43) svg {
-    color: #c19cd8 !important
+    color: #f58585 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+43):hover a svg,
@@ -39880,32 +39825,32 @@ body[class*="dark-"] .main-white {
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+44) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+44) svg {
-    color: #13ebc1 !important
+    color: #c771fb !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+44):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+44):hover a svg {
-    stroke: #c771fb !important
+    stroke: #c19cd8 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+44):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+44):hover a:hover {
-    background-color: rgba(239, 63, 62, 0.15) !important
+    background-color: rgba(116, 125, 198, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+45) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+45) svg {
-    color: #c771fb !important
+    color: #c19cd8 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+45):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+45):hover a svg {
-    stroke: #f58585 !important
+    stroke: #c771fb !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+45):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+45):hover a:hover {
-    background-color: rgba(169, 39, 249, 0.15) !important
+    background-color: rgba(239, 63, 62, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+46) svg,
@@ -39915,82 +39860,82 @@ body[class*="dark-"] .main-white {
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+46):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+46):hover a svg {
-    stroke: #13ebc1 !important
+    stroke: #c771fb !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+46):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+46):hover a:hover {
-    background-color: rgba(169, 39, 249, 0.15) !important
+    background-color: rgba(13, 164, 135, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+47) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+47) svg {
-    color: #9ba2d4 !important
+    color: #aab0dc !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+47):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+47):hover a svg {
-    stroke: #aab0dc !important
+    stroke: #fff !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+47):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+47):hover a:hover {
-    background-color: rgba(244, 244, 244, 0.15) !important
+    background-color: rgba(169, 39, 249, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+48) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+48) svg {
-    color: #fff !important
+    color: #aab0dc !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+48):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+48):hover a svg {
-    stroke: #c771fb !important
+    stroke: #9ba2d4 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+48):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+48):hover a:hover {
-    background-color: rgba(169, 39, 249, 0.15) !important
+    background-color: rgba(13, 164, 135, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+49) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+49) svg {
-    color: #c19cd8 !important
+    color: #aab0dc !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+49):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+49):hover a svg {
-    stroke: #13ebc1 !important
+    stroke: #fff !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+49):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+49):hover a:hover {
-    background-color: rgba(239, 63, 62, 0.15) !important
+    background-color: rgba(116, 125, 198, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+50) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+50) svg {
-    color: #9ba2d4 !important
+    color: #fff !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+50):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+50):hover a svg {
-    stroke: #c19cd8 !important
+    stroke: #fff !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+50):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+50):hover a:hover {
-    background-color: rgba(102, 112, 189, 0.15) !important
+    background-color: rgba(239, 63, 62, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+51) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+51) svg {
-    color: #9ba2d4 !important
+    color: #c771fb !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+51):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+51):hover a svg {
-    stroke: #13ebc1 !important
+    stroke: #f58585 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+51):hover a:hover,
@@ -40000,17 +39945,17 @@ body[class*="dark-"] .main-white {
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+52) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+52) svg {
-    color: #13ebc1 !important
+    color: #9ba2d4 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+52):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+52):hover a svg {
-    stroke: #fff !important
+    stroke: #aab0dc !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+52):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+52):hover a:hover {
-    background-color: rgba(13, 164, 135, 0.15) !important
+    background-color: rgba(116, 125, 198, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+53) svg,
@@ -40020,12 +39965,12 @@ body[class*="dark-"] .main-white {
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+53):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+53):hover a svg {
-    stroke: #13ebc1 !important
+    stroke: #9ba2d4 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+53):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+53):hover a:hover {
-    background-color: rgba(158, 101, 194, 0.15) !important
+    background-color: rgba(102, 112, 189, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+54) svg,
@@ -40040,17 +39985,17 @@ body[class*="dark-"] .main-white {
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+54):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+54):hover a:hover {
-    background-color: rgba(116, 125, 198, 0.15) !important
+    background-color: rgba(169, 39, 249, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+55) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+55) svg {
-    color: #aab0dc !important
+    color: #13ebc1 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+55):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+55):hover a svg {
-    stroke: #fff !important
+    stroke: #f58585 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+55):hover a:hover,
@@ -40060,77 +40005,77 @@ body[class*="dark-"] .main-white {
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+56) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+56) svg {
-    color: #fff !important
+    color: #13ebc1 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+56):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+56):hover a svg {
-    stroke: #c771fb !important
+    stroke: #f58585 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+56):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+56):hover a:hover {
-    background-color: rgba(13, 164, 135, 0.15) !important
+    background-color: rgba(239, 63, 62, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+57) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+57) svg {
-    color: #9ba2d4 !important
+    color: #c771fb !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+57):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+57):hover a svg {
-    stroke: #13ebc1 !important
+    stroke: #fff !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+57):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+57):hover a:hover {
-    background-color: rgba(13, 164, 135, 0.15) !important
+    background-color: rgba(102, 112, 189, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+58) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+58) svg {
-    color: #fff !important
+    color: #9ba2d4 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+58):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+58):hover a svg {
-    stroke: #f58585 !important
+    stroke: #9ba2d4 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+58):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+58):hover a:hover {
-    background-color: rgba(169, 39, 249, 0.15) !important
+    background-color: rgba(239, 63, 62, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+59) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+59) svg {
-    color: #13ebc1 !important
+    color: #f58585 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+59):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+59):hover a svg {
-    stroke: #c771fb !important
+    stroke: #c19cd8 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+59):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+59):hover a:hover {
-    background-color: rgba(239, 63, 62, 0.15) !important
+    background-color: rgba(13, 164, 135, 0.15) !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+60) svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+60) svg {
-    color: #13ebc1 !important
+    color: #fff !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+60):hover a svg,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+60):hover a svg {
-    stroke: #c19cd8 !important
+    stroke: #9ba2d4 !important
 }
 
 .page-wrapper.compact-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+60):hover a:hover,
 .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper[sidebar-layout="iconcolor-sidebar"] .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content>li:nth-child(7n+60):hover a:hover {
-    background-color: rgba(244, 244, 244, 0.15) !important
+    background-color: rgba(158, 101, 194, 0.15) !important
 }
 
 .customizer-links {
@@ -50190,7 +50135,7 @@ body[class*="dark-"] .main-white {
 }
 
 .page-wrapper.material-type .page-body-wrapper {
-    background-image: url(../images/other-images/boxbg.html);
+    background-image: url(../images/other-images/boxbg.jpg);
     background-blend-mode: overlay;
     background-color: rgba(255, 255, 255, 0.5)
 }
@@ -55202,7 +55147,7 @@ html[dir="rtl"] .grow svg {
 }
 
 .box-layout {
-    background-image: url(../images/other-images/boxbg.html);
+    background-image: url(../images/other-images/boxbg.jpg);
     background-blend-mode: overlay;
     background-color: rgba(255, 255, 255, 0.5)
 }
@@ -56091,124 +56036,3 @@ html[dir="rtl"] .grow svg {
     }
 }
 
-/* Style for CKEditor in dark mode */
-body.dark .ck-editor__editable {
-    background-color: #2b2b2b !important;
-    /* Màu nền tối */
-    color: #ffffff !important;
-    /* Màu chữ trắng */
-}
-
-body.dark .ck-editor__main .ck-content {
-    color: #ffffff !important;
-    /* Đảm bảo màu chữ trắng cho nội dung */
-}
-
-/* Optional: Style for placeholder text in dark mode */
-body.dark .ck-editor__editable::placeholder {
-    color: #cccccc !important;
-    /* Màu xám nhạt cho placeholder */
-}
-
-/* Ensure text and background are visible in Product Inventory table in dark mode */
-body.dark .variation-table th {
-    color: #ffffff !important;
-    /* Màu chữ trắng cho header */
-    background-color: #343a40 !important;
-    /* Màu nền tối cho header (hoặc màu phù hợp) */
-}
-
-body.dark .variation-table td {
-    color: #ffffff !important;
-    /* Màu chữ trắng cho ô dữ liệu */
-    background-color: #212529 !important;
-    /* Màu nền tối cho ô dữ liệu (hoặc màu phù hợp) */
-}
-
-
-body.dark .variation-table tbody tr td input.form-control[type="number"],
-body.dark .variation-table tbody tr td input.form-control[type="text"] {
-    color: #ffffff !important;
-    /* Đặt màu chữ trắng cho input */
-    background-color: #3a3a3a !important;
-    /* Đặt màu nền tối cho input */
-    border-color: #555 !important;
-    /* Đặt màu viền tối cho input */
-}
-
-/* Đảm bảo placeholder cũng hiển thị rõ */
-body.dark .variation-table tbody tr td input.form-control::placeholder {
-    color: #cccccc !important;
-}
-
-/* CSS cho input SKU và select Stock Status bên ngoài bảng */
-body.dark .card-body .theme-form .row input[type="text"],
-body.dark .card-body .theme-form .row select {
-    color: #ffffff !important;
-    background-color: #3a3a3a !important;
-    border-color: #555 !important;
-}
-
-body.dark .card-body .theme-form .row select option {
-    background-color: #3a3a3a !important;
-    /* Màu nền cho option trong select */
-    color: #ffffff !important;
-    /* Màu chữ cho option trong select */
-}
-
-/* Nếu dùng Select2 cho Stock Status dropdown */
-body.dark .select2-container--default .select2-selection--single {
-    background-color: #3a3a3a !important;
-    border-color: #555 !important;
-}
-
-body.dark .select2-container--default .select2-selection--single .select2-selection__rendered {
-    color: #ffffff !important;
-}
-
-body.dark .select2-container--default .select2-selection--single .select2-selection__arrow b {
-    border-color: #ffffff transparent transparent transparent !important;
-}
-
-body.dark .select2-dropdown {
-    background-color: #3a3a3a !important;
-    border-color: #555 !important;
-}
-
-body.dark .select2-results__option {
-    color: #ffffff !important;
-}
-
-body.dark .select2-results__option--highlighted[aria-selected] {
-    background-color: #007bff !important;
-    color: #ffffff !important;
-}
-
-body.dark .select2-search__field {
-    background-color: #212529 !important;
-    color: #ffffff !important;
-    border-color: #555 !important;
-}
-
-/* CUSTOM BUTTON STYLES FOR OVERRIDE */
-.btn.btn-warning {
-    background-color: #ffc107 !important;
-    /* Màu vàng */
-    border-color: #ffc107 !important;
-    color: #212529 !important;
-    /* Màu chữ đen */
-}
-
-.btn.btn-danger {
-    background-color: #191970 !important;
-    /* Màu đỏ */
-    border-color: #191970 !important;
-    color: #fff !important;
-    /* Màu chữ trắng */
-}
-
-   .sidebar-main {
-    height: calc(100vh - 200px) !important; /* Buộc nó chiếm không gian còn lại sau logo */
-    min-height: 0 !important; /* Đảm bảo nó không bị thu gọn */
-    overflow-y: auto !important; /* Đảm bảo thanh cuộn nếu nội dung dài hơn */
-}

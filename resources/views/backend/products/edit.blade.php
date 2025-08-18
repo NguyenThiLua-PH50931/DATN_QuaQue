@@ -435,112 +435,194 @@
 
     @includeIf('backend.footer')
     </div>
-    {{-- Modal thêm danh mục --}}
-    <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <form id="quickCategoryForm" method="POST" action="{{ route('admin.categories.storeQuick') }}">
-                @csrf
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="addCategoryLabel">Thêm danh mục mới</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <input type="text" name="name" class="form-control" placeholder="Tên danh mục mới"
-                            required>
-                        <div class="invalid-feedback" id="cat-error"></div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                        <button type="submit" class="btn btn-primary">Thêm</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
+    
+{{-- Modal thêm danh mục --}}
+<style>
+  /* custom invalid styles */
+  .input-with-icon {
+    position: relative;
+  }
 
-    {{-- Modal thêm vùng miền --}}
-    <div class="modal fade" id="addRegionModal" tabindex="-1" aria-labelledby="addRegionLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <form id="quickRegionForm" method="POST" action="{{ route('admin.regions.storeQuick') }}">
-                @csrf
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="addRegionLabel">Thêm vùng miền mới</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <input type="text" name="name" class="form-control" placeholder="Tên vùng miền mới"
-                            required>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                        <button type="submit" class="btn btn-primary">Thêm</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
+  .input-with-icon .form-control.is-invalid {
+    padding-right: 2.75rem;
+  }
 
-    {{-- Modal thêm thuộc tính --}}
-    <div class="modal fade" id="addAttributeModal" tabindex="-1" aria-labelledby="addAttributeLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <form id="quickAttributeForm" method="POST" action="{{ route('admin.attributes.storeQuick') }}">
-                @csrf
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="addAttributeLabel">Thêm thuộc tính mới</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <input type="text" name="name" class="form-control mb-2" placeholder="Tên thuộc tính"
-                            required>
-                        <input type="text" name="values" class="form-control"
-                            placeholder="Giá trị (cách nhau dấu phẩy)" required>
-                        <small class="text-muted">VD: 1kg, 2kg, 3kg</small>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                        <button type="submit" class="btn btn-primary">Thêm</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
+  /* chừa chỗ cho icon */
 
-    {{-- Modal thêm giá trị thuộc tính --}}
-    <div class="modal fade" id="addAttributeValueModal" tabindex="-1" aria-labelledby="addAttributeValueLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <form id="quickAttributeValueForm" method="POST" action="{{ route('admin.attribute_values.storeQuick') }}">
-                @csrf
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="addAttributeValueLabel">Thêm giá trị thuộc tính mới</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <label>Chọn thuộc tính</label>
-                        <select name="attribute_id" class="form-select mb-2" required>
-                            <option value="">-- Chọn thuộc tính --</option>
-                            @foreach ($attributes as $attr)
-                                <option value="{{ $attr->id }}">{{ $attr->name }}</option>
-                            @endforeach
-                        </select>
-                        <label>Giá trị mới</label>
-                        <input type="text" name="value" class="form-control" placeholder="Nhập giá trị mới"
-                            required>
-                        <div class="invalid-feedback" id="attr-value-error"></div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                        <button type="submit" class="btn btn-primary">Thêm giá trị</button>
-                    </div>
-                </div>
-            </form>
+  /* icon "!" hiển thị khi có lỗi */
+  .input-with-icon .invalid-icon {
+    display: none;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-weight: 700;
+    color: #dc3545;
+    /* bootstrap danger */
+    pointer-events: none;
+  }
+
+  .input-with-icon.invalid .invalid-icon {
+    display: block;
+  }
+
+  /* show red border on hover as user yêu cầu */
+  .form-control.is-invalid:hover,
+  .form-control.is-invalid:focus {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 .15rem rgba(220, 53, 69, .15);
+  }
+
+  .preview-img {
+    max-width: 100%;
+    max-height: 120px;
+    display: block;
+    margin-top: .5rem;
+  }
+
+  /* nhỏ gọn message style (Bootstrap .invalid-feedback dùng sẵn) */
+  .invalid-feedback {
+    display: block;
+  }
+
+  /* luôn block vì chúng ta show/hide bằng JS */
+</style>
+
+<div class="modal fade" id="addCategoryModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <form id="quickCategoryForm" method="POST" action="{{ route('admin.categories.storeQuick') }}" enctype="multipart/form-data">
+      @csrf
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Thêm danh mục mới</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-    </div>
+
+        <div class="modal-body">
+          <!-- Name field -->
+          <div class="mb-3 input-with-icon" id="wrap-name">
+            <label for="cat-name" class="form-label">Tên danh mục</label>
+            <input type="text" name="name" id="cat-name" class="form-control" placeholder="Tên danh mục mới" autocomplete="off">
+            <span class="invalid-icon">!</span>
+            <div class="invalid-feedback" id="error-name" style="display:none"></div>
+          </div>
+
+          <!-- Image field -->
+          <div class="mb-3 input-with-icon" id="wrap-image">
+            <label for="cat-image" class="form-label">Ảnh (tùy chọn)</label>
+            <input type="file" name="image" id="cat-image" accept="image/*" class="form-control">
+            <span class="invalid-icon">!</span>
+            <div class="invalid-feedback" id="error-image" style="display:none"></div>
+
+            <img id="imagePreview" class="preview-img" src="#" alt="preview" style="display:none" />
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+          <button type="submit" class="btn btn-primary">Thêm</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+{{-- Modal thêm vùng miền --}}
+<div class="modal fade" id="addRegionModal" tabindex="-1">
+  <div class="modal-dialog">
+    <form id="quickRegionForm" method="POST" action="{{ route('admin.regions.storeQuick') }}">
+      @csrf
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Thêm vùng miền mới</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3 input-with-icon" id="wrap-region-name">
+            <label for="region-name" class="form-label">Tên vùng miền</label>
+            <input type="text" name="name" id="region-name" class="form-control" placeholder="Tên vùng miền mới" autocomplete="off">
+            <div class="invalid-feedback" id="error-region-name" style="display:none"></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+          <button type="submit" class="btn btn-primary">Thêm</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+{{-- Modal thêm thuộc tính --}}
+<div class="modal fade" id="addAttributeModal" tabindex="-1">
+  <div class="modal-dialog">
+    <form id="quickAttributeForm" method="POST" action="{{ route('admin.attributes.storeQuick') }}">
+      @csrf
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Thêm thuộc tính mới</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3 input-with-icon" id="wrap-attr-name">
+            <label for="attr-name" class="form-label">Tên thuộc tính</label>
+            <input type="text" name="name" id="attr-name" class="form-control" placeholder="Tên thuộc tính">
+            <div class="invalid-feedback" id="error-attr-name" style="display:none"></div>
+          </div>
+          <div class="mb-3 input-with-icon" id="wrap-attr-values">
+            <label for="attr-values" class="form-label">Giá trị (phân tách dấu phẩy)</label>
+            <input type="text" name="values" id="attr-values" class="form-control" placeholder="Giá trị (vd: Đỏ, Xanh)">
+            <div class="invalid-feedback" id="error-attr-values" style="display:none"></div>
+            <small class="text-muted">VD: 1kg, 2kg, 3kg</small>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+          <button type="submit" class="btn btn-primary">Thêm</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+{{-- Modal thêm giá trị thuộc tính --}}
+<div class="modal fade" id="addAttributeValueModal" tabindex="-1">
+  <div class="modal-dialog">
+    <form id="quickAttributeValueForm" method="POST" action="{{ route('admin.attribute_values.storeQuick') }}">
+      @csrf
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Thêm giá trị thuộc tính mới</h5>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3 input-with-icon" id="wrap-attr-select">
+            <label for="attr-select" class="form-label">Chọn thuộc tính</label>
+            <select name="attribute_id" id="attr-select" class="form-select mb-2">
+              <option value="">-- Chọn thuộc tính --</option>
+              @foreach ($attributes as $attr)
+              <option value="{{ $attr->id }}">{{ $attr->name }}</option>
+              @endforeach
+            </select>
+            <span class="invalid-icon">!</span>
+            <div class="invalid-feedback" id="error-attr-select" style="display:none"></div>
+          </div>
+          <div class="mb-3 input-with-icon" id="wrap-attr-value">
+            <label for="attr-value" class="form-label">Giá trị mới</label>
+            <input type="text" name="value" id="attr-value" class="form-control" placeholder="Nhập giá trị mới">
+            <span class="invalid-icon">!</span>
+            <div class="invalid-feedback" id="error-attr-value" style="display:none"></div>
+            <small class="text-muted">VD: Đỏ, Xanh, 1kg,...</small>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+          <button type="submit" class="btn btn-primary">Thêm giá trị</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
     <style>
         /* CKEditor chữ đen */
         .ck-editor__editable {
@@ -622,6 +704,452 @@ document.addEventListener('DOMContentLoaded', () => {
     // Biến lưu editor chính và editor biến thể
     let mainEditor = null;
     let variantEditors = [];
+
+    // Đăng ký ajax form cho từng modal
+    // Ajax form thêm nhanh danh mục
+    document.getElementById('quickCategoryForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const form = this;
+      const url = form.action;
+      const formData = new FormData(form);
+
+      // DOM elements
+      const nameInput = document.getElementById('cat-name');
+      const imageInput = document.getElementById('cat-image');
+      const imagePreview = document.getElementById('imagePreview');
+
+      // helper: clear previous UI errors
+      function clearErrors() {
+        ['name', 'image'].forEach(field => {
+          const input = (field === 'name') ? document.getElementById('cat-name') : document.getElementById('cat-image');
+          const errDiv = document.getElementById('error-' + field);
+          if (input) input.classList.remove('is-invalid');
+          if (errDiv) {
+            errDiv.style.display = 'none';
+            errDiv.innerText = '';
+          }
+        });
+      }
+
+      // helper: show field error (messages can be array or string)
+      function showFieldError(field, messages) {
+        const input = (field === 'name') ? document.getElementById('cat-name') : document.getElementById('cat-image');
+        const errDiv = document.getElementById('error-' + field);
+        if (input) input.classList.add('is-invalid');
+        if (errDiv) {
+          errDiv.style.display = 'block';
+          errDiv.innerText = Array.isArray(messages) ? messages.join(' ') : messages;
+        }
+      }
+
+      clearErrors();
+
+      // Client-side quick validation (optional but improves UX)
+      const nameVal = nameInput ? nameInput.value.trim() : '';
+      if (!nameVal) {
+        showFieldError('name', 'Tên danh mục bắt buộc.');
+        nameInput.focus();
+        return;
+      }
+
+      // client-side image checks (optional)
+      if (imageInput && imageInput.files && imageInput.files[0]) {
+        const file = imageInput.files[0];
+        const maxSize = 2 * 1024 * 1024; // 2MB
+        if (file.size > maxSize) {
+          showFieldError('image', 'Kích thước ảnh không được vượt quá 2MB.');
+          return;
+        }
+        // (optionally) check mime types
+        const allowed = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/svg+xml'];
+        if (!allowed.includes(file.type)) {
+          showFieldError('image', 'Ảnh phải có định dạng: jpeg,png,jpg,gif,svg.');
+          return;
+        }
+      }
+
+      // show preview immediately (optional)
+      if (imageInput && imageInput.files && imageInput.files[0] && imagePreview) {
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+          imagePreview.src = ev.target.result;
+          imagePreview.style.display = 'block';
+        };
+        reader.readAsDataURL(imageInput.files[0]);
+      }
+
+      // send AJAX
+      fetch(url, {
+          method: 'POST',
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-TOKEN': formData.get('_token'),
+          },
+          body: formData, // FormData includes file automatically
+        })
+        .then(async res => {
+          if (!res.ok) {
+            if (res.status === 422) {
+              const data = await res.json();
+              // data.errors expected { field: [messages...] }
+              return Promise.reject(data);
+            }
+            // other server error
+            const text = await res.text();
+            return Promise.reject({
+              message: 'Lỗi server',
+              detail: text
+            });
+          }
+          return res.json();
+        })
+        .then(data => {
+          if (data.success && data.category) {
+            // hide modal (supports bootstrap 5)
+            const modalEl = document.getElementById('addCategoryModal');
+            const bsModal = bootstrap.Modal.getInstance(modalEl) || bootstrap.Modal.getOrCreateInstance(modalEl);
+            if (bsModal) bsModal.hide();
+
+            // append new category (checkbox) like bạn muốn
+            const container = document.querySelector('#category .row');
+            if (container) {
+              const newCat = data.category;
+              const div = document.createElement('div');
+              div.className = 'col-4';
+              div.innerHTML = `
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="category_ids[]" value="${newCat.id}" id="category-${newCat.id}" checked>
+            <label class="form-check-label" for="category-${newCat.id}">${newCat.name}</label>
+          </div>
+        `;
+              container.appendChild(div);
+            }
+
+            // reset form UI
+            form.reset();
+            if (imagePreview) {
+              imagePreview.style.display = 'none';
+              imagePreview.src = '#';
+            }
+          } else {
+            alert(data.message || 'Có lỗi xảy ra');
+          }
+        })
+        .catch(err => {
+          // err.errors từ server validation
+          if (err && err.errors) {
+            // map server fields to inputs
+            Object.keys(err.errors).forEach(field => {
+              // server field keys thường 'name' hoặc 'image'
+              showFieldError(field, err.errors[field]);
+            });
+          } else {
+            console.error(err);
+            alert(err.message || 'Lỗi server, thử lại sau.');
+          }
+        });
+    });
+
+    // Tương tự ajax form thêm nhanh vùng miền (radio)
+    document.getElementById('quickRegionForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const form = this;
+      const url = form.action;
+      const formData = new FormData(form);
+
+      // DOM
+      const nameInput = document.getElementById('region-name');
+      const errDiv = document.getElementById('error-region-name');
+      const wrap = document.getElementById('wrap-region-name');
+
+      // Clear lỗi cũ
+      function clearError() {
+        nameInput.classList.remove('is-invalid');
+        wrap.classList.remove('invalid');
+        errDiv.style.display = 'none';
+        errDiv.innerText = '';
+      }
+
+      function showError(msgs) {
+        const txt = Array.isArray(msgs) ? msgs.join(' ') : (msgs || 'Dữ liệu không hợp lệ.');
+        nameInput.classList.add('is-invalid');
+        wrap.classList.add('invalid');
+        errDiv.innerText = txt;
+        errDiv.style.display = 'block';
+      }
+
+      clearError();
+
+      // Kiểm tra client (có thể bỏ qua)
+      const val = (nameInput.value || '').trim();
+      if (!val) {
+        showError('Tên vùng miền bắt buộc.');
+        nameInput.focus();
+        return;
+      }
+
+      // Gửi AJAX
+      fetch(url, {
+          method: 'POST',
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-TOKEN': formData.get('_token'),
+          },
+          body: formData,
+        })
+        .then(async res => {
+          if (!res.ok) {
+            if (res.status === 422) {
+              const data = await res.json();
+              // Dạng { errors: { name: [...] } }
+              return Promise.reject(data);
+            }
+            // Lỗi khác
+            const text = await res.text();
+            return Promise.reject({
+              message: 'Lỗi server',
+              detail: text
+            });
+          }
+          return res.json();
+        })
+        .then(data => {
+          if (data.success && data.region) {
+            // Hide modal
+            const modalEl = document.getElementById('addRegionModal');
+            const bsModal = bootstrap.Modal.getInstance(modalEl) || bootstrap.Modal.getOrCreateInstance(modalEl);
+            if (bsModal) bsModal.hide();
+
+            // Thêm radio mới
+            const container = document.querySelector('.regionRadio');
+            if (container) {
+              const newRegion = data.region;
+              const div = document.createElement('div');
+              div.className = 'col-4';
+              div.innerHTML = `
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="region_id" value="${newRegion.id}" id="region-${newRegion.id}" checked>
+            <label class="form-check-label" for="region-${newRegion.id}">${newRegion.name}</label>
+          </div>
+        `;
+              container.appendChild(div);
+            }
+
+            // Reset form
+            form.reset();
+          } else {
+            alert(data.message || 'Có lỗi xảy ra');
+          }
+        })
+        .catch(err => {
+          // Lỗi validate server
+          if (err && err.errors && err.errors.name) {
+            showError(err.errors.name);
+          } else {
+            alert(err.message || 'Lỗi server, thử lại sau.');
+            console.error(err);
+          }
+        });
+    });
+
+    // Clear lỗi khi user gõ lại
+    document.getElementById('region-name').addEventListener('input', function() {
+      this.classList.remove('is-invalid');
+      document.getElementById('wrap-region-name').classList.remove('invalid');
+      document.getElementById('error-region-name').style.display = 'none';
+      document.getElementById('error-region-name').innerText = '';
+    });
+    // them nhanh tt và gttt
+    
+  function showToast(msg, icon = 'success') {
+    Swal.fire({
+      toast: true, position: 'top-end', showConfirmButton: false,
+      timer: 2200, timerProgressBar: true,
+      icon, title: msg,
+      customClass: { popup: 'swal2-toast' }
+    });
+  }
+
+  // --- Thêm thuộc tính mới
+  const attrForm = document.getElementById('quickAttributeForm');
+  const attrName = document.getElementById('attr-name');
+  const attrValues = document.getElementById('attr-values');
+  const wrapAttrName = document.getElementById('wrap-attr-name');
+  const wrapAttrValues = document.getElementById('wrap-attr-values');
+  const errAttrName = document.getElementById('error-attr-name');
+  const errAttrValues = document.getElementById('error-attr-values');
+
+  function clearAttrErrors() {
+    [attrName, attrValues].forEach(i => i.classList.remove('is-invalid'));
+    [wrapAttrName, wrapAttrValues].forEach(w => w.classList.remove('invalid'));
+    [errAttrName, errAttrValues].forEach(e => { e.textContent = ''; e.style.display = 'none'; });
+  }
+  [attrName, attrValues].forEach(i => i.addEventListener('input', clearAttrErrors));
+
+  attrForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    clearAttrErrors();
+    const data = {
+      name: attrName.value.trim(),
+      values: attrValues.value.trim(),
+      _token: this.querySelector('input[name="_token"]').value
+    };
+    fetch(this.action, {
+      method: 'POST',
+      headers: { 'Accept': 'application/json' },
+      body: new URLSearchParams(data)
+    })
+    .then(res => res.json().then(json => ({ status: res.status, json })))
+    .then(({status, json}) => {
+      if (status === 422) {
+        if (json.errors.name) {
+          attrName.classList.add('is-invalid'); wrapAttrName.classList.add('invalid');
+          errAttrName.textContent = json.errors.name.join(' '); errAttrName.style.display = '';
+        }
+        if (json.errors.values) {
+          attrValues.classList.add('is-invalid'); wrapAttrValues.classList.add('invalid');
+          errAttrValues.textContent = json.errors.values.join(' '); errAttrValues.style.display = '';
+        }
+      } else if (json.success) {
+        attrForm.reset(); clearAttrErrors();
+        // Đóng modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('addAttributeModal'));
+        modal.hide();
+        showToast(json.message || 'Đã thêm thuộc tính!');
+        // --- RENDER thuộc tính mới vào .attribute-filters nếu có
+        if (json.attribute && Array.isArray(json.attributeValues) && json.attributeValues.length > 0) {
+          renderAttributeGroup(json.attribute, json.attributeValues);
+        }
+      } else {
+        showToast('Có lỗi xảy ra!', 'error');
+      }
+    })
+    .catch(() => showToast('Không thể gửi dữ liệu.', 'error'));
+  });
+
+  // --- Thêm giá trị thuộc tính
+  const valueForm = document.getElementById('quickAttributeValueForm');
+  const attrSelect = document.getElementById('attr-select');
+  const attrValue = document.getElementById('attr-value');
+  const wrapAttrSelect = document.getElementById('wrap-attr-select');
+  const wrapAttrValue = document.getElementById('wrap-attr-value');
+  const errAttrSelect = document.getElementById('error-attr-select');
+  const errAttrValue = document.getElementById('error-attr-value');
+
+  function clearValueErrors() {
+    [attrSelect, attrValue].forEach(i => i.classList.remove('is-invalid'));
+    [wrapAttrSelect, wrapAttrValue].forEach(w => w.classList.remove('invalid'));
+    [errAttrSelect, errAttrValue].forEach(e => { e.textContent = ''; e.style.display = 'none'; });
+  }
+  [attrSelect, attrValue].forEach(i => i.addEventListener('input', clearValueErrors));
+
+  valueForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    clearValueErrors();
+    const data = {
+      attribute_id: attrSelect.value,
+      value: attrValue.value.trim(),
+      _token: this.querySelector('input[name="_token"]').value
+    };
+    fetch(this.action, {
+      method: 'POST',
+      headers: { 'Accept': 'application/json' },
+      body: new URLSearchParams(data)
+    })
+    .then(res => res.json().then(json => ({ status: res.status, json })))
+    .then(({status, json}) => {
+      if (status === 422) {
+        if (json.errors.attribute_id) {
+          attrSelect.classList.add('is-invalid'); wrapAttrSelect.classList.add('invalid');
+          errAttrSelect.textContent = json.errors.attribute_id.join(' '); errAttrSelect.style.display = '';
+        }
+        if (json.errors.value) {
+          attrValue.classList.add('is-invalid'); wrapAttrValue.classList.add('invalid');
+          errAttrValue.textContent = json.errors.value.join(' '); errAttrValue.style.display = '';
+        }
+      } else if (json.success) {
+        valueForm.reset(); clearValueErrors();
+        // Đóng modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('addAttributeValueModal'));
+        modal.hide();
+        showToast('Đã thêm giá trị thuộc tính!');
+        // --- RENDER giá trị mới vào .attribute-filters
+        if (json.attribute_id && Array.isArray(json.attributeValues) && json.attributeValues.length > 0) {
+          renderAttributeValues(json.attribute_id, json.attribute_name, json.attributeValues);
+        }
+      } else {
+        showToast('Có lỗi xảy ra!', 'error');
+      }
+    })
+    .catch(() => showToast('Không thể gửi dữ liệu.', 'error'));
+  });
+
+  // ---- RENDER THUỘC TÍNH và GIÁ TRỊ mới ra .attribute-filters ----
+
+  function renderAttributeGroup(attr, attrValues) {
+    // Nếu thuộc tính đã tồn tại thì không render nữa (tuỳ logic, có thể update)
+    if (document.querySelector('.attribute-group[data-attr-name="' + attr.name.toLowerCase() + '"]')) {
+      renderAttributeValues(attr.id, attr.name, attrValues);
+      return;
+    }
+    const group = document.createElement('div');
+    group.className = 'attribute-group mb-3';
+    group.setAttribute('data-attr-name', attr.name.toLowerCase());
+    group.innerHTML = `
+      <button class="btn btn-link p-0 mb-1" type="button" data-bs-toggle="collapse" data-bs-target="#attr-${attr.id}" aria-expanded="true" aria-controls="attr-${attr.id}">
+        ${attr.name} (${attrValues.length})
+      </button>
+      <div class="collapse show" id="attr-${attr.id}">
+        <div class="values-list" style="max-height: 150px; overflow-y:auto; border:1px solid #ddd; padding:8px; border-radius:4px;">
+          ${attrValues.map(val => `
+            <label class="form-check form-check-inline d-block">
+              <input class="form-check-input attribute-value-checkbox" type="checkbox" data-attrid="${attr.id}" value="${val.id}" name="attribute_values_checkbox[${attr.id}][]">
+              <span class="form-check-label">${val.value}</span>
+            </label>
+          `).join('')}
+        </div>
+      </div>
+    `;
+    document.querySelector('.attribute-filters').appendChild(group);
+
+    // Thêm vào select của modal thêm giá trị thuộc tính (nếu chưa có)
+    if (!Array.from(attrSelect.options).some(o => o.value == attr.id)) {
+      const opt = document.createElement('option');
+      opt.value = attr.id; opt.textContent = attr.name;
+      attrSelect.appendChild(opt);
+    }
+  }
+
+  function renderAttributeValues(attribute_id, attribute_name, attributeValues) {
+    // Tìm đúng .attribute-group để append value mới
+    const group = document.querySelector(`.attribute-group [data-bs-target="#attr-${attribute_id}"]`);
+    const list = document.querySelector(`#attr-${attribute_id} .values-list`);
+    if (!group || !list) {
+      // Nếu chưa có thuộc tính này => tạo mới
+      renderAttributeGroup({ id: attribute_id, name: attribute_name }, attributeValues);
+      return;
+    }
+    // Thêm từng value (nếu chưa có)
+    attributeValues.forEach(val => {
+      if (!list.querySelector('input[value="' + val.id + '"]')) {
+        const label = document.createElement('label');
+        label.className = 'form-check form-check-inline d-block';
+        label.innerHTML = `
+          <input class="form-check-input attribute-value-checkbox" type="checkbox" data-attrid="${attribute_id}" value="${val.id}" name="attribute_values_checkbox[${attribute_id}][]" checked>
+          <span class="form-check-label">${val.value}</span>
+        `;
+        list.appendChild(label);
+      }
+    });
+    // Update text số lượng giá trị trên button
+    const btn = document.querySelector(`.attribute-group [data-bs-target="#attr-${attribute_id}"]`);
+    if (btn) {
+      const cnt = list.querySelectorAll('input').length;
+      btn.innerHTML = `${attribute_name} (${cnt})`;
+    }
+  }
 
     // Lấy dữ liệu CKEditor biến thể hiện tại trước khi destroy
     function collectCurrentVariantsData() {
