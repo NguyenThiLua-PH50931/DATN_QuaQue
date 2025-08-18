@@ -169,18 +169,17 @@
                              </script>
                          </div> --}}
                          <div class="middle-box">
-    <div class="search-box">
-        <div class="input-group">
-            <input type="search" class="form-control" id="searchInput"
-                placeholder="Tìm kiếm..." aria-label="Tìm kiếm"
-                aria-describedby="button-addon2"
-                value="{{ request('q') ?? '' }}"/>
-            <button class="btn" type="button" id="button-addon2">
-                <i data-feather="search"></i>
-            </button>
-        </div>
-        <div id="searchResults" class="search-results list-group"
-            style="
+                             <div class="search-box">
+                                 <div class="input-group">
+                                     <input type="search" class="form-control" id="searchInput"
+                                         placeholder="Tìm kiếm..." aria-label="Tìm kiếm"
+                                         aria-describedby="button-addon2" value="{{ request('q') ?? '' }}" />
+                                     <button class="btn" type="button" id="button-addon2">
+                                         <i data-feather="search"></i>
+                                     </button>
+                                 </div>
+                                 <div id="searchResults" class="search-results list-group"
+                                     style="
                 width: inherit;
                 max-width: 100%;
                 z-index: 1000;
@@ -189,87 +188,92 @@
                 background: #fff;
                 max-height: 200px;
                 overflow-y: auto;">
-        </div>
-    </div>
+                                 </div>
+                             </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            // Click nút search
-            $('#button-addon2').on('click', function() {
-                const query = $('#searchInput').val().trim();
-                if (query.length > 0) {
-                    // Redirect về trang catalog với param q
-                    window.location.href = '/client/san-pham?q=' + encodeURIComponent(query);
-                }
-            });
+                             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                             <script>
+                                 $(document).ready(function() {
+                                     // Click nút search
+                                     $('#button-addon2').on('click', function() {
+                                         const query = $('#searchInput').val().trim();
+                                         if (query.length > 0) {
+                                             // Redirect về trang catalog với param q
+                                             window.location.href = '/client/san-pham?q=' + encodeURIComponent(query);
+                                         }
+                                     });
 
-            // Nhấn enter trong ô input
-            $('#searchInput').on('keypress', function(e) {
-                if (e.which == 13) { // Enter key
-                    const query = $(this).val().trim();
-                    if (query.length > 0) {
-                        window.location.href = '/client/san-pham?q=' + encodeURIComponent(query);
-                    }
-                }
-            });
+                                     // Nhấn enter trong ô input
+                                     $('#searchInput').on('keypress', function(e) {
+                                         if (e.which == 13) { // Enter key
+                                             const query = $(this).val().trim();
+                                             if (query.length > 0) {
+                                                 window.location.href = '/client/san-pham?q=' + encodeURIComponent(query);
+                                             }
+                                         }
+                                     });
 
-            // Tự động search khi nhập trên 2 ký tự
-            $('#searchInput').on('input', function() {
-                const query = $(this).val().trim();
-                if (query.length > 2) {
-                    performSearch(query);
-                } else {
-                    $('#searchResults').hide().empty();
-                }
-            });
+                                     // Tự động search khi nhập trên 2 ký tự
+                                     $('#searchInput').on('input', function() {
+                                         const query = $(this).val().trim();
+                                         if (query.length > 2) {
+                                             performSearch(query);
+                                         } else {
+                                             $('#searchResults').hide().empty();
+                                         }
+                                     });
 
-            // Hàm ajax search gợi ý
-            function performSearch(query) {
-                $.ajax({
-                    url: '/client/san-pham/search-ajax',
-                    type: 'GET',
-                    data: { q: query },  // gửi param q giống catalog
-                    success: function(response) {
-                        $('#searchResults').empty();
+                                     // Hàm ajax search gợi ý
+                                     function performSearch(query) {
+                                         $.ajax({
+                                             url: '/client/san-pham/search-ajax',
+                                             type: 'GET',
+                                             data: {
+                                                 q: query
+                                             }, // gửi param q giống catalog
+                                             success: function(response) {
+                                                 $('#searchResults').empty();
 
-                        if (response.length > 0) {
-                            response.forEach(product => {
-                                $('#searchResults').append(`
+                                                 if (response.length > 0) {
+                                                     response.forEach(product => {
+                                                         $('#searchResults').append(`
                                     <a href="/client/san-pham/${product.slug}" class="list-group-item list-group-item-action d-flex align-items-center">
                                         <img src="${product.image ? '/storage/' + product.image : '/images/default.jpg'}"
                                             alt="${product.name}"
                                             style="width: 50px; height: 50px; margin-right: 10px; object-fit: cover;" />
                                         ${product.name}
                                     </a>`);
-                            });
-                            if (response.length > 3) {
-                                $('#searchResults').append(
-                                    `<a href="/client/san-pham?q=${encodeURIComponent(query)}"
+                                                     });
+                                                     if (response.length > 3) {
+                                                         $('#searchResults').append(
+                                                             `<a href="/client/san-pham?q=${encodeURIComponent(query)}"
                                     class="list-group-item list-group-item-action text-center text-primary">
                                     Xem tất cả kết quả cho "${query}"</a>`
-                                );
-                            }
-                            $('#searchResults').show();
-                        } else {
-                            $('#searchResults').append('<div class="list-group-item">Không tìm thấy sản phẩm.</div>').show();
-                        }
-                    },
-                    error: function(xhr) {
-                        $('#searchResults').append('<div class="list-group-item">Có lỗi xảy ra: ' + xhr.status + '</div>').show();
-                    }
-                });
-            }
+                                                         );
+                                                     }
+                                                     $('#searchResults').show();
+                                                 } else {
+                                                     $('#searchResults').append(
+                                                             '<div class="list-group-item">Không tìm thấy sản phẩm.</div>')
+                                                         .show();
+                                                 }
+                                             },
+                                             error: function(xhr) {
+                                                 $('#searchResults').append('<div class="list-group-item">Có lỗi xảy ra: ' + xhr
+                                                     .status + '</div>').show();
+                                             }
+                                         });
+                                     }
 
-            // Ẩn kết quả khi click ngoài search box
-            $(document).on('click', function(e) {
-                if (!$(e.target).closest('.search-box').length) {
-                    $('#searchResults').hide();
-                }
-            });
-        });
-    </script>
-</div>
+                                     // Ẩn kết quả khi click ngoài search box
+                                     $(document).on('click', function(e) {
+                                         if (!$(e.target).closest('.search-box').length) {
+                                             $('#searchResults').hide();
+                                         }
+                                     });
+                                 });
+                             </script>
+                         </div>
 
                          {{-- END TÌM KIẾM SẢN PHẨM --}}
 
@@ -315,7 +319,10 @@
 
                                  <li class="right-side">
                                      <div class="header-badge">
-                                         <i data-feather="shopping-cart"></i>
+                                         <a href="{{ route('client.cart.index') }}" class="cart-link text-reset">
+                                             <i data-feather="shopping-cart"></i>
+                                         </a>
+
                                          <div class="cart-popup">
                                              <ul class="cart-items-list">
                                                  @php $totalPrice = 0; @endphp
@@ -469,89 +476,89 @@
                                          }
                                      </style>
 
-                                        <script>
-                                             cartBadge.addEventListener('mouseenter', () => {
-                                                 popup.style.display = 'block';
-                                             });
-                                             cartBadge.addEventListener('mouseleave', () => {
-                                                 popup.style.display = 'none';
-                                             });
+                                     <script>
+                                         cartBadge.addEventListener('mouseenter', () => {
+                                             popup.style.display = 'block';
+                                         });
+                                         cartBadge.addEventListener('mouseleave', () => {
+                                             popup.style.display = 'none';
+                                         });
 
-                                             // Xử lý xóa sản phẩm
-                                             popup.querySelectorAll('.cart-item-remove').forEach(button => {
-                                                 button.addEventListener('click', function() {
-                                                     const itemId = this.getAttribute('data-id');
-                                                     if (!itemId) return;
+                                         // Xử lý xóa sản phẩm
+                                         popup.querySelectorAll('.cart-item-remove').forEach(button => {
+                                             button.addEventListener('click', function() {
+                                                 const itemId = this.getAttribute('data-id');
+                                                 if (!itemId) return;
 
-                                                     const modalEl = document.getElementById('notificationModal');
-                                                     const modalBody = document.getElementById('notificationModalBody');
-                                                     const modalFooter = modalEl.querySelector('.modal-footer');
+                                                 const modalEl = document.getElementById('notificationModal');
+                                                 const modalBody = document.getElementById('notificationModalBody');
+                                                 const modalFooter = modalEl.querySelector('.modal-footer');
 
-                                                     modalBody.textContent = 'Bạn chắc chắn muốn xóa sản phẩm này?';
+                                                 modalBody.textContent = 'Bạn chắc chắn muốn xóa sản phẩm này?';
 
-                                                     // Reset footer nút
-                                                     modalFooter.innerHTML =
-                                                         `<button type="button" class="btn btn-sm btn-success" data-bs-dismiss="modal">Hủy</button>
+                                                 // Reset footer nút
+                                                 modalFooter.innerHTML =
+                                                     `<button type="button" class="btn btn-sm btn-success" data-bs-dismiss="modal">Hủy</button>
                                                         <button type="button" class="btn btn-sm btn-danger" id="confirmDeleteBtn">Xóa</button>`;
-                                                     const modal = new bootstrap.Modal(modalEl);
-                                                     modal.show();
+                                                 const modal = new bootstrap.Modal(modalEl);
+                                                 modal.show();
 
-                                                     const confirmBtn = document.getElementById('confirmDeleteBtn');
+                                                 const confirmBtn = document.getElementById('confirmDeleteBtn');
 
-                                                     confirmBtn.onclick = () => {
-                                                         fetch('/client/cart/remove/' + itemId, {
-                                                                 method: 'DELETE',
-                                                                 headers: {
-                                                                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                                                     'Accept': 'application/json'
-                                                                 }
-                                                             })
-                                                             .then(res => {
-                                                                 if (!res.ok) throw new Error('Lỗi server');
-                                                                 return res.json();
-                                                             })
-                                                             .then(data => {
-                                                                 if (data.success) {
-                                                                     // Xóa phần tử cart-item khỏi DOM
-                                                                     const cartItemElem = button.closest('.cart-item');
-                                                                     if (cartItemElem) cartItemElem.remove();
+                                                 confirmBtn.onclick = () => {
+                                                     fetch('/client/cart/remove/' + itemId, {
+                                                             method: 'DELETE',
+                                                             headers: {
+                                                                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                                                 'Accept': 'application/json'
+                                                             }
+                                                         })
+                                                         .then(res => {
+                                                             if (!res.ok) throw new Error('Lỗi server');
+                                                             return res.json();
+                                                         })
+                                                         .then(data => {
+                                                             if (data.success) {
+                                                                 // Xóa phần tử cart-item khỏi DOM
+                                                                 const cartItemElem = button.closest('.cart-item');
+                                                                 if (cartItemElem) cartItemElem.remove();
 
-                                                                     // Cập nhật tổng tiền nếu có hàm updateTotal
-                                                                     if (typeof updateTotal === 'function') updateTotal();
+                                                                 // Cập nhật tổng tiền nếu có hàm updateTotal
+                                                                 if (typeof updateTotal === 'function') updateTotal();
 
-                                                                     modal.hide();
-                                                                 } else {
-                                                                     alert(data.message || 'Xóa thất bại');
-                                                                 }
-                                                             })
-                                                             .catch(err => {
-                                                                 console.error(err);
-                                                                 alert('Lỗi xảy ra, vui lòng thử lại');
-                                                             });
-                                                     };
-                                                 });
+                                                                 modal.hide();
+                                                             } else {
+                                                                 alert(data.message || 'Xóa thất bại');
+                                                             }
+                                                         })
+                                                         .catch(err => {
+                                                             console.error(err);
+                                                             alert('Lỗi xảy ra, vui lòng thử lại');
+                                                         });
+                                                 };
                                              });
+                                         });
 
 
 
-                                             function updateTotal() {
-                                                 let total = 0;
-                                                 popup.querySelectorAll('.cart-items-list li').forEach(li => {
-                                                     const qtyPriceText = li.querySelector('.cart-item-qty-price')?.textContent || '';
-                                                     const match = qtyPriceText.match(/(\d+)\s*x\s*([\d\.]+)/);
-                                                     if (match) {
-                                                         const qty = parseInt(match[1]);
-                                                         const priceStr = match[2].replace(/\./g, ''); // bỏ dấu chấm ngăn cách hàng nghìn
-                                                         const price = parseInt(priceStr);
-                                                         total += qty * price;
-                                                     }
+                                         function updateTotal() {
+                                             let total = 0;
+                                             popup.querySelectorAll('.cart-items-list li').forEach(li => {
+                                                 const qtyPriceText = li.querySelector('.cart-item-qty-price')?.textContent || '';
+                                                 const match = qtyPriceText.match(/(\d+)\s*x\s*([\d\.]+)/);
+                                                 if (match) {
+                                                     const qty = parseInt(match[1]);
+                                                     const priceStr = match[2].replace(/\./g, ''); // bỏ dấu chấm ngăn cách hàng nghìn
+                                                     const price = parseInt(priceStr);
+                                                     total += qty * price;
+                                                 }
 
-                                                     if (match) {
-                                                         total += parseInt(match[1]) * parseFloat(match[2]);
-                                                     }
-                                                 });
-                                                 popup.querySelector('.total-price').textContent = 'đ' + total.toFixed(2);
-                                             }
+                                                 if (match) {
+                                                     total += parseInt(match[1]) * parseFloat(match[2]);
+                                                 }
+                                             });
+                                             popup.querySelector('.total-price').textContent = 'đ' + total.toFixed(2);
+                                         }
                                          });
                                      </script>
                                  </li>
@@ -567,7 +574,7 @@
                                      <div class="delivery-login-box">
                                          @if (Auth::check())
                                              <div class="delivery-icon d-flex align-items-center gap-2">
-                                                 <img src="{{asset('storage/' . Auth::user()->avatar) ?? 'path/to/default-avatar.png' }}"
+                                                 <img src="{{ asset('storage/' . Auth::user()->avatar) ?? 'path/to/default-avatar.png' }}"
                                                      alt="Avatar"
                                                      style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
                                                  <strong>{{ Auth::user()->name }}</strong>
@@ -577,7 +584,6 @@
                                                  <i data-feather="user"></i>
                                                  <span style="font-size: 18px;" class="fw-b">Tài khoản</span>
                                              </div>
-                                          
                                          @endif
                                      </div>
 
