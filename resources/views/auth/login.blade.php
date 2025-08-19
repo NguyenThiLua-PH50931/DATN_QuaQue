@@ -23,7 +23,7 @@
                             </div>
                         @endif
                         <div class="input-box">
-                            <form method="POST" class="row g-4" action="{{ route('checklogin') }}">
+                            <form method="POST" class="row g-4" action="{{ route('checklogin') }}" id="loginForm">
                                 @csrf
                                 <div class="col-12">
                                     <div class="form-floating theme-form-floating log-in-form">
@@ -59,7 +59,8 @@
                                 </div>
 
                                 <div class="col-12">
-                                    <button class="btn btn-animation w-100 justify-content-center" type="submit">Đăng nhập
+                                    <button class="btn btn-animation w-100 justify-content-center" type="submit">
+                                        Đăng nhập
                                     </button>
                                 </div>
                             </form>
@@ -67,6 +68,25 @@
                             <h4>Bạn chưa có tài khoản?</h4>
                             <a href="{{ route('register') }}">Đăng ký</a>
                         </div>
+                            <script>
+                                document.getElementById('loginForm').addEventListener('submit', function() {
+                                    if (document.getElementById('flexCheckDefault').checked) {
+                                        localStorage.setItem('savedEmail', document.getElementById('email').value);
+                                        localStorage.setItem('savedPass', document.getElementById('password').value);
+                                    } else {
+                                        localStorage.removeItem('savedEmail');
+                                        localStorage.removeItem('savedPass');
+                                    }
+                                });
+
+                                window.addEventListener('load', function() {
+                                    if (localStorage.getItem('savedEmail')) {
+                                        document.getElementById('email').value = localStorage.getItem('savedEmail');
+                                        document.getElementById('password').value = localStorage.getItem('savedPass');
+                                        document.getElementById('flexCheckDefault').checked = true;
+                                    }
+                                });
+                            </script>
                         </div>
 
                         {{-- <div class="other-log-in">

@@ -420,6 +420,7 @@
         @includeIf('backend.footer')
     </div>
 @endsection
+<<<<<<< HEAD
  {{ url('/admin//create') }} @push('scripts') <script>
     $(document).ready(function() {
         $('#table_id').DataTable({
@@ -435,9 +436,27 @@
                 },
                 zeroRecords: "Không tìm thấy trang nào.",
             }
+=======
+{{ url('/admin//create') }} @push('scripts')
+    <script>
+        $(document).ready(function() {
+            $('#table_id').DataTable({
+                language: {
+                    search: "Tìm kiếm:",
+                    lengthMenu: "Hiển thị _MENU_ trang",
+                    info: "Hiển thị _START_ đến _END_ trong tổng _TOTAL_ trang",
+                    paginate: {
+                        first: "Đầu",
+                        last: "Cuối",
+                        next: "Sau",
+                        previous: "Trước"
+                    },
+                    zeroRecords: "Không tìm thấy trang nào.",
+                }
+            });
+>>>>>>> 02916975dcd589cb4288266d9c651485c6aebdeb
         });
-    });
-</script>
+    </script>
 @endpush
 
 {{ url('/admin//create') }}

@@ -37,6 +37,7 @@ class DiscountCodeUsage extends Model
     // Đơn hàng gắn với mã
     public function order()
     {
-        return $this->belongsTo(\App\Models\Admin\Order::class, 'order_id');
+        return $this->belongsTo(\App\Models\admin\Order::class, 'order_id');
+
     }
 }

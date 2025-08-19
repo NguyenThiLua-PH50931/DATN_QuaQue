@@ -106,7 +106,8 @@
                                      ngày</a>
                              </li>
                              <li>
-                                 <a href="{{ route('client.product.index') }}" class="text-content">Ưu đãi hot nhất</a>
+                                 <a href="{{ route('client.product.index') }}#banchay" class="text-content">Lựa chọn
+                                     hàng đầu</a>
                              </li>
                              <li>
                                  <a href="{{ route('client.product.index') }}" class="text-content">Hàng mới về</a>

@@ -101,128 +101,143 @@
                         </div>
 
                         <div class="col-xl-6 wow fadeInUp" data-wow-delay="0.1s">
-    <div class="right-box-contain">
-        {{-- <h6 class="offer-top">30% Off</h6> --}}
-        <h2 class="name">{{ $product->name }}</h2>
+                            <div class="right-box-contain">
+                                {{-- <h6 class="offer-top">30% Off</h6> --}}
+                                <h2 class="name">{{ $product->name }}</h2>
 
-        <div class="price-rating">
-            <h3 class="theme-color price" id="product-price">
-                {{ number_format($product->variants[0]->price ?? 0) }} đ
-            </h3>
+                                <div class="price-rating">
+                                    <h3 class="theme-color price" id="product-price">
+                                        {{ number_format($product->variants[0]->price ?? 0) }} đ
+                                    </h3>
 
-            <div class="product-rating custom-rate">
-                <ul class="rating">
-                    @php
-                        $avgRating = round($product->reviews->avg('rating'));
-                    @endphp
-                    @for ($i = 1; $i <= 5; $i++)
-                        <li>
-                            <i data-feather="star" class="{{ $i <= $avgRating ? 'fill' : '' }}"></i>
-                        </li>
-                    @endfor
-                </ul>
-                <span class="review">{{ $product->reviews->count() }} Đánh giá</span>
-            </div>
-        </div>
-@if ($isActive)
-        <div class="product-packege">
-            
-            @foreach ($attributes as $attrId => $attr)
-                <div class="product-title">
-                    <h4>{{ $attr['name'] }}</h4>
-                </div>
-                
-                {{-- Thêm class disabled vào ul.select-packege --}}
-                <ul class="select-packege {{ $isActive ? '' : 'disabled' }}">
-                    @foreach ($attr['values'] as $valueId => $value)
-                        <li>
-                            <a href="javascript:void(0)" data-attr="{{ $attrId }}" data-value="{{ $valueId }}"
-                                class="attribute-select {{ isset($defaultSelected[$attrId]) && $defaultSelected[$attrId] == $valueId ? 'active2' : '' }}">
-                                {{ $value }}
-                            </a>
-                        </li>
-                    @endforeach
-                </ul>
-            @endforeach
-        </div>
-@endif
-        <form method="POST" action="{{ route('client.cart.add') }}" class="add-to-cart-form">
-            @csrf
-            <input type="hidden" name="product_id" value="{{ $product->id }}" />
+                                    <div class="product-rating custom-rate">
+                                        <ul class="rating">
+                                            @php
+                                                $avgRating = round($product->reviews->avg('rating'));
+                                            @endphp
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                <li>
+                                                    <i data-feather="star"
+                                                        class="{{ $i <= $avgRating ? 'fill' : '' }}"></i>
+                                                </li>
+                                            @endfor
+                                        </ul>
+                                        <span class="review">{{ $product->reviews->count() }} Đánh giá</span>
+                                    </div>
+                                </div>
+                                @if ($isActive)
+                                    <div class="product-packege">
 
-            <div class="note-box product-packege {{ $isActive ? '' : 'disabled' }}">
-                <div class="cart_qty qty-box product-qty">
-                    <div class="input-group">
-                        <button type="button" class="qty-left-minus" data-type="minus" data-field="">
-                            <i class="fa fa-minus" aria-hidden="true"></i>
-                        </button>
-                        <input class="form-control input-number qty-input" type="text" name="quantity" value="1"
-                            min="1" data-stock="{{ $variant->stock ?? 999999 }}"
-                            data-cart-item-id="{{ $cartItemId ?? '' }}" />
-                        <button type="button" class="qty-right-plus" data-type="plus" data-field="">
-                            <i class="fa fa-plus" aria-hidden="true"></i>
-                        </button>
-                    </div>
-                </div>
+                                        @foreach ($attributes as $attrId => $attr)
+                                            <div class="product-title">
+                                                <h4>{{ $attr['name'] }}</h4>
+                                            </div>
 
-                <input type="hidden" id="variant_attributes" name="variant_attributes" value="" />
-
-                <button type="submit" class="btn btn-md bg-dark cart-button text-white w-100" {{ $isActive ? '' : 'disabled' }}>
-                    Thêm giỏ hàng
-                </button>
-            </div>
-        </form>
-
-        <div class="pickup-box">
-            <div class="product-info">
-                <ul class="product-info-list product-info-list-2">
-                    @php
-                        $variantWithMaxStock = $product->variants->sortByDesc('stock')->first();
-                    @endphp
-                    <li>SKU : <a href="javascript:void(0)" id="product-sku">
-                            {{ $variantWithMaxStock ? $variantWithMaxStock->sku ?? 'N/A' : '—' }}
-                        </a></li>
-                    <li>
-                        Số lượng :
-                        {{-- Nếu inactive thì hiển thị luôn "Sản phẩm tạm hết hàng" màu đỏ --}}
-                        @if (!$isActive)
-                            <span id="product-stock" style="color: #ff4f4f; font-weight: bold;">Sản phẩm tạm hết hàng</span>
-                        @else
-                            @if ($variantWithMaxStock)
-                                @if ($variantWithMaxStock->stock > 0)
-                                    <a href="javascript:void(0)" id="product-stock">{{ $variantWithMaxStock->stock }}</a>
-                                @else
-                                    <span id="product-stock" style="color: #ff4f4f; font-weight: bold;">Sản phẩm tạm hết hàng</span>
+                                            {{-- Thêm class disabled vào ul.select-packege --}}
+                                            <ul class="select-packege {{ $isActive ? '' : 'disabled' }}">
+                                                @foreach ($attr['values'] as $valueId => $value)
+                                                    <li>
+                                                        <a href="javascript:void(0)" data-attr="{{ $attrId }}"
+                                                            data-value="{{ $valueId }}"
+                                                            class="attribute-select {{ isset($defaultSelected[$attrId]) && $defaultSelected[$attrId] == $valueId ? 'active2' : '' }}">
+                                                            {{ $value }}
+                                                        </a>
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        @endforeach
+                                    </div>
                                 @endif
-                            @else
-                                <a href="javascript:void(0)" id="product-stock">—</a>
-                            @endif
-                        @endif
-                    </li>
-                    <li>TAG:
-                        @if($product->categories->isNotEmpty())
-                            @foreach($product->categories as $category)
-                                <a href="{{ route('client.product.catalog', ['dm[]' => $category->id, 'page' => 1]) }}">
-                                    {{ $category->name }}
-                                </a>@if(!$loop->last), @endif
-                            @endforeach
-                        @else
-                            <span>Không có TAG</span>
-                        @endif
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
+                                <form method="POST" action="{{ route('client.cart.add') }}" class="add-to-cart-form">
+                                    @csrf
+                                    <input type="hidden" name="product_id" value="{{ $product->id }}" />
 
-<style>
-    .disabled {
-        pointer-events: none;
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-</style>
+                                    <div class="note-box product-packege {{ $isActive ? '' : 'disabled' }}">
+                                        <div class="cart_qty qty-box product-qty">
+                                            <div class="input-group">
+                                                <button type="button" class="qty-left-minus" data-type="minus"
+                                                    data-field="">
+                                                    <i class="fa fa-minus" aria-hidden="true"></i>
+                                                </button>
+                                                <input class="form-control input-number qty-input" type="text"
+                                                    name="quantity" value="1" min="1"
+                                                    data-stock="{{ $variant->stock ?? 999999 }}"
+                                                    data-cart-item-id="{{ $cartItemId ?? '' }}" />
+                                                <button type="button" class="qty-right-plus" data-type="plus"
+                                                    data-field="">
+                                                    <i class="fa fa-plus" aria-hidden="true"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <input type="hidden" id="variant_attributes" name="variant_attributes"
+                                            value="" />
+
+                                        <button type="submit" class="btn btn-md bg-dark cart-button text-white w-100"
+                                            {{ $isActive ? '' : 'disabled' }}>
+                                            Thêm giỏ hàng
+                                        </button>
+                                    </div>
+                                </form>
+
+                                <div class="pickup-box">
+                                    <div class="product-info">
+                                        <ul class="product-info-list product-info-list-2">
+                                            @php
+                                                $variantWithMaxStock = $product->variants->sortByDesc('stock')->first();
+                                            @endphp
+                                            <li>SKU : <a href="javascript:void(0)" id="product-sku">
+                                                    {{ $variantWithMaxStock ? $variantWithMaxStock->sku ?? 'N/A' : '—' }}
+                                                </a></li>
+                                            <li>
+                                                Số lượng :
+                                                {{-- Nếu inactive thì hiển thị luôn "Sản phẩm tạm hết hàng" màu đỏ --}}
+                                                @if (!$isActive)
+                                                    <span id="product-stock" style="color: #ff4f4f; font-weight: bold;">Sản
+                                                        phẩm tạm hết hàng</span>
+                                                @else
+                                                    @if ($variantWithMaxStock)
+                                                        @if ($variantWithMaxStock->stock > 0)
+                                                            <a href="javascript:void(0)"
+                                                                id="product-stock">{{ $variantWithMaxStock->stock }}</a>
+                                                        @else
+                                                            <span id="product-stock"
+                                                                style="color: #ff4f4f; font-weight: bold;">Sản phẩm tạm hết
+                                                                hàng</span>
+                                                        @endif
+                                                    @else
+                                                        <a href="javascript:void(0)" id="product-stock">—</a>
+                                                    @endif
+                                                @endif
+                                            </li>
+                                            <li>TAG:
+                                                @if ($product->categories->isNotEmpty())
+                                                    @foreach ($product->categories as $category)
+                                                        <a
+                                                            href="{{ route('client.product.catalog', ['dm[]' => $category->id, 'page' => 1]) }}">
+                                                            {{ $category->name }}
+                                                        </a>
+                                                        @if (!$loop->last)
+                                                            ,
+                                                        @endif
+                                                    @endforeach
+                                                @else
+                                                    <span>Không có TAG</span>
+                                                @endif
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <style>
+                            .disabled {
+                                pointer-events: none;
+                                opacity: 0.5;
+                                cursor: not-allowed;
+                            }
+                        </style>
 
 
                         <div class="col-12">
@@ -393,6 +408,90 @@
                                             <style>
                                                 .product-option li {
                                                     width: 50% !important;
+                                                }
+
+                                                /* ==== CARD: bố cục cột, cao bằng nhau ==== */
+                                                .product-box-3 {
+                                                    display: flex;
+                                                    flex-direction: column;
+                                                    height: 100%;
+                                                }
+
+                                                /* Footer co giãn để giữ card bằng nhau */
+                                                .product-box-3 .product-footer {
+                                                    flex: 1;
+                                                    display: flex;
+                                                }
+
+                                                .product-box-3 .product-detail {
+                                                    flex: 1;
+                                                    display: flex;
+                                                    flex-direction: column;
+                                                    gap: .4rem;
+                                                }
+
+                                                /* Tiêu đề: kẹp số dòng để chiều cao đồng đều */
+                                                .product-box-3 .product-detail .name {
+                                                    display: -webkit-box;
+                                                    -webkit-line-clamp: 2;
+                                                    /* 2 dòng, đổi 3 nếu muốn */
+                                                    -webkit-box-orient: vertical;
+                                                    overflow: hidden;
+                                                    line-height: 1.35;
+                                                    min-height: calc(1em * 2 * 1.35);
+                                                }
+
+                                                /* Giá đẩy xuống đáy */
+                                                .product-box-3 .product-detail .price {
+                                                    margin-top: auto;
+                                                }
+
+                                                /* ==== ẢNH: vuông, thu nhỏ bên trong ==== */
+                                                .product-box-3 .product-image {
+                                                    position: relative;
+                                                    overflow: hidden;
+                                                    border-radius: 16px;
+                                                    background: #fff;
+                                                    /* viền trắng */
+                                                }
+
+                                                /* Khung ảnh vuông */
+                                                .product-box-3 .product-image::before {
+                                                    content: "";
+                                                    display: block;
+                                                    padding-top: 100%;
+                                                    /* 1:1; đổi 75% cho 4:3 */
+                                                }
+
+                                                /* Vị trí ảnh bên trong, có khoảng trống viền */
+                                                .product-box-3 .product-image>a {
+                                                    position: absolute;
+                                                    inset: 8px;
+                                                    /* ảnh nhỏ hơn, tạo viền trắng */
+                                                    border-radius: 12px;
+                                                    overflow: hidden;
+                                                }
+
+                                                /* Ảnh lấp đầy phần bên trong */
+                                                .product-box-3 .product-image>a>img {
+                                                    width: 100% !important;
+                                                    height: 100% !important;
+                                                    object-fit: cover !important;
+                                                    display: block;
+                                                    border-radius: inherit;
+                                                }
+
+                                                /* ==== Badge TOP (tuỳ chọn) ==== */
+                                                .product-box-3 .product-image::after {
+                                                    position: absolute;
+                                                    top: 8px;
+                                                    left: 8px;
+                                                    background: #12d6a7;
+                                                    color: #fff;
+                                                    font-weight: bold;
+                                                    font-size: 0.8rem;
+                                                    padding: 2px 8px;
+                                                    border-radius: 6px;
                                                 }
                                             </style>
                                             <ul class="product-option">
@@ -961,7 +1060,7 @@
                     icon: 'error', // hoặc 'success'
                     title: 'Lỗi vượt quá số lượng tồn kho',
                     text: '{{ session('
-                                                                                                                                                        error ') }}',
+                                                                                                                                                                                                                                        error ') }}',
                     confirmButtonColor: '#0da487',
                     width: 350, // giảm chiều ngang
                     padding: '1rem 1.5rem', // giảm padding
@@ -978,7 +1077,7 @@
                     icon: 'success',
                     title: 'Thành công',
                     text: '{{ session('
-                                                                                                                                                        success ') }}',
+                                                                                                                                                                                                                                        success ') }}',
                     confirmButtonColor: '#0da487',
                     width: 350,
                     padding: '1rem 1.5rem',

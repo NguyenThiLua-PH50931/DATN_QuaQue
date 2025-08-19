@@ -134,13 +134,40 @@
                             {{ $order->payment_method }}
                         @endif
                     </div>
-                    <div><strong>Trạng thái thanh toán:</strong>
-                        @if ($order->payment_status == 'paid')
+                    <div>
+                        <strong>Trạng thái thanh toán:</strong>
+                        @php
+                            // Ưu tiên hiển thị "Đã hoàn tiền"
+                            $isRefunded =
+                                $order->payment_status === 'refunded' ||
+                                // fallback: nếu là ZaloPay đã hủy và refund_status báo success/pending thì cũng coi là đã hoàn tiền
+                                ($order->payment_method === 'zalopay' &&
+                                    $order->status === 'cancelled' &&
+                                    in_array($order->refund_status ?? null, ['success', 'pending'], true));
+
+                            $isRefundPending =
+                                $order->payment_status === 'paid' && ($order->refund_status ?? null) === 'pending';
+
+                            // COD: chỉ xem là đã thanh toán khi đã giao
+                            $isPaidByCod = $order->payment_method === 'cod' && $order->status === 'delivered';
+
+                            // Paid bình thường (không refund)
+                            $isPaid = $order->payment_status === 'paid' || $isPaidByCod;
+                        @endphp
+
+                        @if ($isRefunded)
+                            <span class="badge bg-success">Đã hoàn tiền</span>
+                        @elseif($isRefundPending)
+                            <span class="badge bg-warning text-dark">Đang hoàn tiền</span>
+                        @elseif($isPaid)
                             <span class="badge bg-success">Đã thanh toán</span>
+                        @elseif($order->payment_status === 'failed')
+                            <span class="badge bg-danger">Thanh toán thất bại</span>
                         @else
                             <span class="badge bg-warning text-dark">Chưa thanh toán</span>
                         @endif
                     </div>
+
                     <div>
                         <strong>Mã giảm giá:</strong>
                         @if ($order->discount_code)
@@ -157,12 +184,12 @@
                             <span class="text-muted">Không có mã freeship</span>
                         @endif
                     </div>
-                    @if (in_array($order->status, ['pending']) &&
-                            !(in_array($order->payment_method, ['momo', 'bank']) && $order->payment_status === 'paid'))
+                    @if ($order->status === 'pending')
                         <button type="button" id="btn-cancel-order" class="btn btn-danger btn-sm mt-3">
                             <i class="fa fa-times"></i> Huỷ đơn hàng
                         </button>
                     @endif
+
                 </div>
                 <!-- Người nhận -->
                 <div class="border rounded-4 p-4 bg-white mb-4 shadow-sm">
@@ -442,113 +469,116 @@
     </div>
 
     <!-- js danh gia -->
-<script>
-    // Hiệu ứng sao vàng
-    function setStars(num) {
-        $('#ratingStars li').each(function(i, el) {
-            let svg = $(el).find('svg');
-            if (i < num) {
-                svg.addClass('fill');
-            } else {
-                svg.removeClass('fill');
-            }
-        });
-    }
-
-    // Toast bằng SweetAlert2
-    function showToastSwal(msg, success = true) {
-        Swal.fire({
-            toast: true,
-            position: 'top-end',
-            icon: success ? 'success' : 'error',
-            title: msg,
-            showConfirmButton: false,
-            timer: 7000,
-            timerProgressBar: true,
-            customClass: {
-                popup: 'swal2-smaller-toast'
-            }
-        });
-    }
-
-    // Mở modal và reset form, lưu lại nút đánh giá đang thao tác
-    $(document).on('click', '.btn-danhgia', function(e) {
-        e.preventDefault();
-        let $btn = $(this);
-        $('#productReviewForm').data('review-btn', $btn);
-
-        $('#productReviewForm input[name=order_id]').val($btn.data('order-id'));
-        $('#productReviewForm input[name=order_item_id]').val($btn.data('order-item-id'));
-        $('#productReviewForm input[name=product_id]').val($btn.data('product-id'));
-        $('#productReviewForm input[name=product_variant_value_id]').val($btn.data('product-variant-value-id'));
-        $('#productReviewForm input[name=product_variant_name]').val($btn.data('product-variant-name')); // Gán tên biến thể
-
-        $('#productReviewForm input[name=rating]').val('');
-        $('#productReviewForm textarea[name=content]').val('');
-
-        $('#productName').text($btn.data('product-name'));
-        $('#productImage').attr('src', $btn.data('product-image'));
-        $('#productPrice').text($btn.data('product-price'));
-        $('#productVariantName').text($btn.data('product-variant-name'));
-
-        setStars(0);
-    });
-
-    // Hover sao vàng tạm thời
-    $('#ratingStars li').on('mouseenter', function() {
-        let value = $(this).data('value');
-        setStars(value);
-    });
-    $('#ratingStars li').on('mouseleave', function() {
-        let selected = $('#ratingInput').val() || 0;
-        setStars(selected);
-    });
-
-    // Click chọn sao
-    $('#ratingStars li').on('click', function() {
-        let value = $(this).data('value');
-        $('#ratingInput').val(value);
-        setStars(value);
-    });
-
-    // Submit form đánh giá
-    $('#productReviewForm').on('submit', function(e) {
-        e.preventDefault();
-        let $form = $(this);
-        let $btnSubmit = $form.find('button[type=submit]');
-        let $reviewBtn = $form.data('review-btn');
-
-        $btnSubmit.prop('disabled', true).text('Đang gửi...');
-
-        $.ajax({
-            url: '/client/danh-gia/store',
-            method: 'POST',
-            data: $form.serialize(),  // dữ liệu sẽ có product_variant_name vì bạn đã thêm input ẩn và gán bên trên
-            success: function(res) {
-                showToastSwal(res.message || 'Đã gửi đánh giá!', true);
-                $('#writeReviewModal').modal('hide');
-                // Thay nút Đánh Giá thành badge "Đã đánh giá"
-                if ($reviewBtn) {
-                    $reviewBtn.replaceWith(
-                        '<span class="btn fw-bold" style="background-color: #0da487; color: white; pointer-events: none;">Đã đánh giá</span>'
-                    );
+    <script>
+        // Hiệu ứng sao vàng
+        function setStars(num) {
+            $('#ratingStars li').each(function(i, el) {
+                let svg = $(el).find('svg');
+                if (i < num) {
+                    svg.addClass('fill');
+                } else {
+                    svg.removeClass('fill');
                 }
-            },
-            error: function(xhr) {
-                let msg = 'Đã có lỗi xảy ra!';
-                if (xhr.status == 401) msg = 'Bạn cần đăng nhập để đánh giá!';
-                else if (xhr.responseJSON && xhr.responseJSON.message) msg = xhr.responseJSON.message;
-                showToastSwal(msg, false);
-            },
-            complete: function() {
-                $btnSubmit.prop('disabled', false).text('Gửi đánh giá');
-            }
+            });
+        }
+
+        // Toast bằng SweetAlert2
+        function showToastSwal(msg, success = true) {
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: success ? 'success' : 'error',
+                title: msg,
+                showConfirmButton: false,
+                timer: 7000,
+                timerProgressBar: true,
+                customClass: {
+                    popup: 'swal2-smaller-toast'
+                }
+            });
+        }
+
+        // Mở modal và reset form, lưu lại nút đánh giá đang thao tác
+        $(document).on('click', '.btn-danhgia', function(e) {
+            e.preventDefault();
+            let $btn = $(this);
+            $('#productReviewForm').data('review-btn', $btn);
+
+            $('#productReviewForm input[name=order_id]').val($btn.data('order-id'));
+            $('#productReviewForm input[name=order_item_id]').val($btn.data('order-item-id'));
+            $('#productReviewForm input[name=product_id]').val($btn.data('product-id'));
+            $('#productReviewForm input[name=product_variant_value_id]').val($btn.data('product-variant-value-id'));
+            $('#productReviewForm input[name=product_variant_name]').val($btn.data(
+                'product-variant-name')); // Gán tên biến thể
+
+            $('#productReviewForm input[name=rating]').val('');
+            $('#productReviewForm textarea[name=content]').val('');
+
+            $('#productName').text($btn.data('product-name'));
+            $('#productImage').attr('src', $btn.data('product-image'));
+            $('#productPrice').text($btn.data('product-price'));
+            $('#productVariantName').text($btn.data('product-variant-name'));
+
+            setStars(0);
         });
-    });
-</script>
+
+        // Hover sao vàng tạm thời
+        $('#ratingStars li').on('mouseenter', function() {
+            let value = $(this).data('value');
+            setStars(value);
+        });
+        $('#ratingStars li').on('mouseleave', function() {
+            let selected = $('#ratingInput').val() || 0;
+            setStars(selected);
+        });
+
+        // Click chọn sao
+        $('#ratingStars li').on('click', function() {
+            let value = $(this).data('value');
+            $('#ratingInput').val(value);
+            setStars(value);
+        });
+
+        // Submit form đánh giá
+        $('#productReviewForm').on('submit', function(e) {
+            e.preventDefault();
+            let $form = $(this);
+            let $btnSubmit = $form.find('button[type=submit]');
+            let $reviewBtn = $form.data('review-btn');
+
+            $btnSubmit.prop('disabled', true).text('Đang gửi...');
+
+            $.ajax({
+                url: '/client/danh-gia/store',
+                method: 'POST',
+                data: $form
+                    .serialize(), // dữ liệu sẽ có product_variant_name vì bạn đã thêm input ẩn và gán bên trên
+                success: function(res) {
+                    showToastSwal(res.message || 'Đã gửi đánh giá!', true);
+                    $('#writeReviewModal').modal('hide');
+                    // Thay nút Đánh Giá thành badge "Đã đánh giá"
+                    if ($reviewBtn) {
+                        $reviewBtn.replaceWith(
+                            '<span class="btn fw-bold" style="background-color: #0da487; color: white; pointer-events: none;">Đã đánh giá</span>'
+                        );
+                    }
+                },
+                error: function(xhr) {
+                    let msg = 'Đã có lỗi xảy ra!';
+                    if (xhr.status == 401) msg = 'Bạn cần đăng nhập để đánh giá!';
+                    else if (xhr.responseJSON && xhr.responseJSON.message) msg = xhr.responseJSON
+                        .message;
+                    showToastSwal(msg, false);
+                },
+                complete: function() {
+                    $btnSubmit.prop('disabled', false).text('Gửi đánh giá');
+                }
+            });
+        });
+    </script>
 
 
-    <!-- Script popup hủy đơn -->
+    <!-- Script popup php đơn -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const btn = document.getElementById('btn-cancel-order');
@@ -562,6 +592,10 @@
                     modal.show();
                 });
             }
+            btn.addEventListener('click', function() {
+                btn.disabled = true;
+                setTimeout(() => btn.disabled = false, 1500);
+            });
 
             reasonRadios.forEach(radio => {
                 radio.addEventListener('change', function() {
@@ -631,5 +665,54 @@
                 });
         }, 1000);
     </script>
+    <style>
+        #btn-cancel-order {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s;
+            box-shadow: 0 2px 10px rgba(220, 53, 69, 0.3);
+            background: #dc3545;
+            color: white;
+            z-index: 1;
+        }
 
+        #btn-cancel-order::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 0%;
+            background: #c82333;
+            transition: all 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+            z-index: -1;
+            border-radius: 6px;
+        }
+
+        #btn-cancel-order:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.6);
+        }
+
+        #btn-cancel-order:hover::before {
+            height: 100%;
+        }
+
+        #btn-cancel-order:active {
+            transform: translateY(1px);
+        }
+
+        #btn-cancel-order i {
+            margin-right: 8px;
+            transition: all 0.3s;
+        }
+
+        #btn-cancel-order:hover i {
+            transform: rotate(90deg) scale(1.2);
+        }
+    </style>
 @endsection

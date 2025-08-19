@@ -1,24 +1,27 @@
 @extends('layouts.frontend')
 @section('title', 'Blog')
 @section('contents')
-<style>
-    .blog-image {
-    width: 100%;
-    aspect-ratio: 4 / 3; /* Tỷ lệ khung hình */
-    overflow: hidden;
-    border-radius: 10px; /* Tuỳ chọn bo góc */
-}
+    <style>
+        .blog-image {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            /* Tỷ lệ khung hình */
+            overflow: hidden;
+            border-radius: 10px;
+            /* Tuỳ chọn bo góc */
+        }
 
-.blog-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Cắt ảnh vừa khung */
-    display: block;
-}
+        .blog-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* Cắt ảnh vừa khung */
+            display: block;
+        }
+    </style>
 
-</style>
 
- <section class="breadscrumb-section pt-0">
+    <section class="breadscrumb-section pt-0">
         <div class="container-fluid-lg">
             <div class="row">
                 <div class="col-12">
@@ -47,35 +50,39 @@
             <div class="row g-4">
                 <div class="col-xxl-9 col-xl-8 col-lg-7 order-lg-2">
                     <div class="row g-4 ratio_65">
-    @foreach($blog as $item)
-        <div class="col-xxl-4 col-sm-6">
-            <div class="blog-box wow fadeInUp">
-                <div class="blog-image">
-                    <a href="{{ route('client.blogs-detail', ['id' => $item->id]) }}">
-                        @if($item->thumbnail)
-                            <img src="{{ asset($item->thumbnail) }}" alt="{{ $item->title }}">
-                        @endif
-                    </a>
-                </div>
 
-                <div class="blog-contain">
-                    <div class="blog-label">
-                        <span class="time">
-                            <i data-feather="clock"></i>
-                            <span>{{ $item->created_at ? $item->created_at->format('F d, Y') : 'Chưa có ngày tạo' }}</span>
-                        </span>
+                        @foreach ($blog as $item)
+                            <div class="col-xxl-4 col-sm-6">
+                                <div class="blog-box wow fadeInUp">
+                                    <div class="blog-image">
+                                        <a href="{{ route('client.blogs-detail', ['id' => $item->id]) }}">
+                                            @if ($item->thumbnail)
+                                                <img src="{{ asset($item->thumbnail) }}" alt="{{ $item->title }}">
+                                            @endif
+                                        </a>
+                                    </div>
+
+                                    <div class="blog-contain">
+                                        <div class="blog-label">
+                                            <span class="time">
+                                                <i data-feather="clock"></i>
+                                                <span>{{ $item->created_at ? $item->created_at->format('F d, Y') : 'Chưa có ngày tạo' }}</span>
+                                            </span>
+                                        </div>
+                                        <a href="{{ route('client.blogs-detail', ['id' => $item->id]) }}">
+                                            <h3>{{ $item->title }}</h3>
+                                        </a>
+                                        <button
+                                            onclick="location.href='{{ route('client.blogs-detail', ['id' => $item->id]) }}'"
+                                            class="blog-button">
+                                            Đọc thêm <i class="fa-solid fa-right-long"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
-                    <a href="{{ route('client.blogs-detail', ['id' => $item->id]) }}">
-                        <h3>{{ $item->title }}</h3>
-                    </a>
-                    <button onclick="location.href='{{ route('client.blogs-detail', ['id' => $item->id]) }}'" class="blog-button">
-                        Đọc thêm <i class="fa-solid fa-right-long"></i>
-                    </button>                                        
-                </div>
-            </div>
-        </div>
-    @endforeach
-</div>
+
 
 
                     <nav class="custome-pagination">
@@ -108,7 +115,7 @@
                         <div class="left-search-box">
                             <div class="search-box">
                                 <input type="search" class="form-control" id="exampleFormControlInput1"
-                                    placeholder="Search....">
+                                    placeholder="Tìm kiếm....">
                             </div>
                         </div>
 
@@ -125,11 +132,15 @@
                                     aria-labelledby="panelsStayOpen-headingOne">
                                     <div class="accordion-body pt-0">
                                         <div class="recent-post-box">
-                                            @foreach($recentBlogs as $item)
+
+                                            @foreach ($recentBlogs as $item)
                                                 <div class="recent-box">
-                                                    <a href="{{ route('client.blogs-detail', ['id' => $item->id]) }}" class="recent-image">
-                                                        @if($item->thumbnail)
-                                                            <img src="{{ asset($item->thumbnail) }}" alt="{{ $item->title }}" class="img-fluid blur-up lazyload">
+                                                    <a href="{{ route('client.blogs-detail', ['id' => $item->id]) }}"
+                                                        class="recent-image">
+                                                        @if ($item->thumbnail)
+                                                            <img src="{{ asset($item->thumbnail) }}"
+                                                                alt="{{ $item->title }}"
+                                                                class="img-fluid blur-up lazyload">
                                                         @endif
                                                     </a>
 
@@ -138,7 +149,10 @@
                                                             <h5 class="recent-name">{{ $item->title }}</h5>
                                                         </a>
                                                         <h6><span>{{ $item->created_at ? $item->created_at->format('F d, Y') : 'Chưa có ngày tạo' }}</span>
-                                                            <i data-feather="thumbs-up"></i></h6>
+
+                                                            <i data-feather="thumbs-up"></i>
+                                                        </h6>
+
                                                     </div>
                                                 </div>
                                             @endforeach

@@ -199,7 +199,10 @@
                     <input type="hidden" name="selected_cart_item_ids[]" value="{{ $id }}">
                 @endforeach
 
-
+                <script>
+                    // Fallback cho JS nếu không tìm thấy input ẩn trên DOM
+                    window.__selectedCartItemIds = @json($selected_cart_item_ids ?? []);
+                </script>
                 <div class="row g-sm-4 g-3">
                     <div class="col-lg-8">
                         <div class="left-sidebar-checkout">
@@ -454,17 +457,17 @@
                                                         <div id="flush-collapseMomo" class="accordion-collapse collapse"
                                                             data-bs-parent="#accordionFlushExample">
                                                             <div class="accordion-body text-center">
-                                                                {{-- Ẩn nút khi đã thanh toán thành công --}}
+
                                                                 @if (empty($momoResult) || (isset($momoResult['resultCode']) && $momoResult['resultCode'] != 0))
                                                                     <button type="button" class="btn btn-primary mt-2"
-                                                                        id="btn-momo-pay"></button>
+                                                                        id="btn-momo-pay">Thanh toán qua momo</button>
                                                                 @endif
                                                             </div>
                                                         </div>
 
                                                     </div>
 
-                                                    {{-- THÔNG BÁO KẾT QUẢ THANH TOÁN MOMO --}}
+
                                                     @if (!empty($momoResult))
                                                         <div
                                                             class="alert {{ $momoResult['resultCode'] == 0 ? 'alert-success' : 'alert-danger' }}">
@@ -478,6 +481,34 @@
                                                             @endif
                                                         </div>
                                                     @endif
+                                                    <div class="accordion-item">
+                                                        <div class="accordion-header" id="flush-headingZLP">
+                                                            <div class="accordion-button collapsed"
+                                                                data-bs-toggle="collapse"
+                                                                data-bs-target="#flush-collapseZLP">
+                                                                <div class="custom-form-check form-check mb-0">
+                                                                    <label class="form-check-label" for="zalopay">
+                                                                        <input class="form-check-input mt-0"
+                                                                            type="radio" name="payment_method"
+                                                                            id="zalopay" value="zalopay">
+                                                                        Thanh toán qua <strong>ZaloPay</strong>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div id="flush-collapseZLP" class="accordion-collapse collapse"
+                                                            data-bs-parent="#accordionFlushExample">
+                                                            <div class="accordion-body text-center">
+                                                                {{-- Ẩn nút khi đã thanh toán thành công (giữ chung logic với $momoResult) --}}
+                                                                @if (empty($momoResult) || (isset($momoResult['resultCode']) && $momoResult['resultCode'] != 0))
+                                                                    <button type="button" class="btn btn-primary mt-2"
+                                                                        id="btn-zlp-pay">
+                                                                        Thanh toán ZaloPay
+                                                                    </button>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -743,15 +774,22 @@
                             const timestamp = Date.now();
                             const orderId = `QQ${dateStr}-${random4}-${timestamp}`;
 
-                            const selectedCartItemIds = Array.from(document.querySelectorAll(
-                                    'input[name="selected_cart_item_ids[]"]'))
-                                .map(input => parseInt(input.value))
-                                .filter(val => !isNaN(val));
+                            let selectedCartItemIds = Array.from(
+                                document.querySelectorAll('input[name="selected_cart_item_ids[]"]')
+                            ).map(i => parseInt(i.value)).filter(v => !isNaN(v));
+
+                            // Fallback nếu DOM không còn input ẩn (quay lại từ QR)
+                            if ((!selectedCartItemIds || selectedCartItemIds.length === 0) &&
+                                Array.isArray(window.__selectedCartItemIds)) {
+                                selectedCartItemIds = window.__selectedCartItemIds
+                                    .map(Number).filter(v => !isNaN(v));
+                            }
 
                             if (selectedCartItemIds.length === 0) {
                                 alert('Bạn chưa chọn sản phẩm nào để thanh toán!');
                                 return Promise.reject('No cart item selected');
                             }
+
 
                             // DEBUG:
                             console.log('selectedCartItemIds:', selectedCartItemIds);
@@ -791,7 +829,167 @@
             }
         });
     </script>
+    <div id="custom-zlp-modal" class="custom-modal-overlay" style="display:none;">
+        <div class="custom-modal">
+            <div class="custom-modal-title" style="margin-bottom:4px;">Thông báo</div>
+            <div class="custom-modal-message" style="margin-bottom:20px;">
+                Bạn có chắc chắn muốn thanh toán đơn hàng qua ZaloPay không?
+            </div>
+            <button class="custom-modal-btn zlp-ok">OK</button>
+            <button class="custom-modal-btn zlp-cancel" style="background:#eee;color:#555;margin-left:10px;">Huỷ</button>
+        </div>
+    </div>
+    <script>
+        // ===== ZALOPAY =====
+        const zlpRadio = document.getElementById('zalopay');
+        const zlpBtn = document.getElementById('btn-zlp-pay');
+        const zlpModal = document.getElementById('custom-zlp-modal');
+        const zlpOK = zlpModal?.querySelector('.zlp-ok');
+        const zlpCancel = zlpModal?.querySelector('.zlp-cancel');
 
+        function showZLP() {
+            if (zlpModal) zlpModal.style.display = 'flex';
+        }
+
+        function hideZLP() {
+            if (zlpModal) zlpModal.style.display = 'none';
+        }
+
+        zlpRadio?.addEventListener('change', function() {
+            if (this.checked) showZLP();
+        });
+        zlpBtn?.addEventListener('click', showZLP);
+
+        zlpCancel && (zlpCancel.onclick = function() {
+            hideZLP();
+            document.getElementById('cash')?.click(); // quay về COD nếu hủy
+        });
+
+        zlpOK && (zlpOK.onclick = function() {
+            hideZLP();
+
+            // 1) Validate địa chỉ
+            const recipient = document.querySelector('input[name="recipient_name"]')?.value.trim();
+            const phone = document.querySelector('input[name="phone"]')?.value.trim();
+            const address = document.querySelector('input[name="address"]')?.value.trim();
+            const province = document.querySelector('select[name="province"]')?.value.trim();
+            const district = document.querySelector('select[name="district"]')?.value.trim();
+            const ward = document.querySelector('select[name="ward"]')?.value.trim();
+
+            if (!recipient || !phone || !address || !province || !district || !ward) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Thiếu thông tin!',
+                    text: 'Bạn cần nhập đầy đủ địa chỉ giao hàng trước khi thanh toán ZaloPay.',
+                    confirmButtonText: 'OK'
+                }).then(() => document.getElementById('cash')?.click());
+                return;
+            }
+
+            // 2) Lưu snapshot địa chỉ
+            fetch('/client/checkout/save-address-snapshot', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        recipient_name: recipient,
+                        phone,
+                        address,
+                        province,
+                        district,
+                        ward
+                    })
+                })
+                // 3) Check coupon (tái dùng route cũ cho đỡ sửa)
+                .then(() => {
+                    const orderDiscountCode = document.getElementById('order_discount_code')?.value || '';
+                    const freeShippingCode = document.getElementById('free_shipping_code')?.value || '';
+                    return fetch('{{ route('client.checkout.checkDiscountBeforeMomo') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            order_discount_code: orderDiscountCode,
+                            free_shipping_code: freeShippingCode
+                        })
+                    });
+                })
+                .then(res => res ? res.json() : {
+                    valid: false
+                })
+                .then(data => {
+                    if (!data.valid) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Thông báo',
+                            text: data.message || 'Mã giảm giá hoặc mã freeship đã hết lượt!'
+                        }).then(() => document.getElementById('cash')?.click());
+                        return Promise.reject('Coupon not available');
+                    }
+
+                    // 4) Tính amount + tạo orderId
+                    const amountText = document.getElementById('total-amount')?.innerText || '0';
+                    const amount = parseInt(amountText.replace(/[^\d]/g, '')) || 0;
+                    if (amount < 1000) {
+                        alert('Số tiền phải lớn hơn 1000đ để thanh toán qua ZaloPay!');
+                        return Promise.reject('Amount not enough');
+                    }
+
+                    const now = new Date();
+                    const yyyy = now.getFullYear(),
+                        mm = String(now.getMonth() + 1).padStart(2, '0'),
+                        dd = String(now.getDate()).padStart(2, '0');
+                    const dateStr = `${yyyy}${mm}${dd}`;
+                    const random4 = Math.floor(1000 + Math.random() * 9000);
+                    const timestamp = Date.now();
+                    const orderId = `QQ${dateStr}-${random4}-${timestamp}`;
+
+                    let selectedCartItemIds = Array.from(
+                        document.querySelectorAll('input[name="selected_cart_item_ids[]"]')
+                    ).map(i => parseInt(i.value)).filter(v => !isNaN(v));
+
+                    // Fallback nếu DOM không còn input ẩn (quay lại từ QR)
+                    if ((!selectedCartItemIds || selectedCartItemIds.length === 0) &&
+                        Array.isArray(window.__selectedCartItemIds)) {
+                        selectedCartItemIds = window.__selectedCartItemIds
+                            .map(Number).filter(v => !isNaN(v));
+                    }
+
+                    if (selectedCartItemIds.length === 0) {
+                        alert('Bạn chưa chọn sản phẩm nào để thanh toán!');
+                        return Promise.reject('No cart item selected');
+                    }
+
+
+                    // 5) Gọi endpoint ZaloPay
+                    return fetch('/client/pay/zalopay', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            amount,
+                            orderId,
+                            selected_cart_item_ids: selectedCartItemIds
+                        })
+                    });
+                })
+                .then(res => res ? res.json() : null)
+                .then(data => {
+                    if (!data) return;
+                    if (data.payUrl) window.location.href = data.payUrl;
+                    else if (data.error) alert(data.error || 'Không lấy được link thanh toán ZaloPay!');
+                })
+                .catch(err => {
+                    if (typeof err === 'string') console.log('ZaloPay flow canceled:', err);
+                });
+        });
+    </script>
 
     <script>
         function updateOrderSummary() {

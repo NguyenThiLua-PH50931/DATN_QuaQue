@@ -16,47 +16,48 @@ class AttributeController extends Controller
 {
     public function storeQuick(Request $request)
     {
-        // Tạo validator với rule unique cho cột name, trả về lỗi nếu trùng
+
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:100|unique:attributes,name',
+            'name'   => 'required|string|max:100|unique:attributes,name',
             'values' => 'required|string',
         ], [
-            'name.required' => 'Tên thuộc tính bắt buộc',
-            'name.unique' => 'Tên thuộc tính đã tồn tại, vui lòng chọn tên khác',
+            'name.required'   => 'Tên thuộc tính bắt buộc',
+            'name.unique'     => 'Tên thuộc tính đã tồn tại, vui lòng chọn tên khác',
             'values.required' => 'Nhập giá trị thuộc tính (phân tách bởi dấu phẩy)',
         ]);
 
-        // Nếu validate lỗi, trả về JSON lỗi với status 422
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors(),
+                'errors'  => $validator->errors(),
             ], 422);
         }
 
-        // Tạo thuộc tính mới
         $attr = Attribute::create([
             'name' => $request->name,
             'slug' => Str::slug($request->name),
         ]);
 
-        // Tạo các giá trị thuộc tính
+
+        // Tách giá trị và lưu (tránh giá trị rỗng)
+
         $values = array_filter(array_map('trim', explode(',', $request->values)), fn($v) => $v !== '');
         $attributeValues = [];
         foreach ($values as $val) {
             $attributeValues[] = AttributeValue::create([
                 'attribute_id' => $attr->id,
-                'value' => $val,
-                'slug' => Str::slug($val),
+
+                'value'        => $val,
+                'slug'         => Str::slug($val),
             ]);
         }
 
-        // Trả về JSON thành công kèm dữ liệu thuộc tính và các giá trị
         return response()->json([
-            'success' => true,
-            'attribute' => $attr,
+            'success'         => true,
+            'attribute'       => $attr,
             'attributeValues' => $attributeValues,
-            'message' => 'Thêm thuộc tính nhanh thành công!'
+            'message'         => 'Thêm thuộc tính nhanh thành công!',
+
         ]);
     }
 
