@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
-use App\Models\Admin\Banner;
+use App\Models\admin\Banner;
 use App\Models\admin\Blog;
-use App\Models\Admin\Category;
-use App\Models\Admin\Product;
+use App\Models\admin\Category;
+use App\Models\admin\Product;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

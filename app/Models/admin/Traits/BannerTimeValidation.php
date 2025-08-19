@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Admin\Traits;
+namespace App\Models\admin\Traits;
 
 use Carbon\Carbon;
 

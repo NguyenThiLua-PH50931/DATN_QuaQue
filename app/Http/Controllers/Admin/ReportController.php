@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Admin\Order;
-use App\Models\Admin\OrderItem;
-use App\Models\Admin\Review;
+use App\Models\admin\Order;
+use App\Models\admin\OrderItem;
+use App\Models\admin\Review;
 use App\Models\SupportRequest;
-use App\Models\Admin\SupportTicket;
+use App\Models\admin\SupportTicket;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -363,7 +363,7 @@ public function dashboard(Request $request)
 
     $topSearchedProduct = null;
     if ($searchLog) {
-        $topSearchedProduct = \App\Models\Admin\Product::find($searchLog->product_id);
+        $topSearchedProduct = \App\Models\admin\Product::find($searchLog->product_id);
         if ($topSearchedProduct) $topSearchedProduct->search_count = $searchLog->search_count;
     }
 
@@ -458,7 +458,7 @@ public function yearlyData(Request $request)
 public function ajaxBestSellers(Request $request)
 {
     $type = $request->input('type', 'week');
-    $orderItemsQuery = \App\Models\Admin\OrderItem::join('orders', 'order_items.order_id', '=', 'orders.id')
+    $orderItemsQuery = \App\Models\admin\OrderItem::join('orders', 'order_items.order_id', '=', 'orders.id')
         ->join('product_variants', 'order_items.product_variant_value_id', '=', 'product_variants.id')
         ->join('products', 'product_variants.product_id', '=', 'products.id')
         ->where('orders.status', 'delivered');
@@ -506,7 +506,7 @@ public function ajaxBestSellers(Request $request)
 public function ajaxTopRatedProducts(Request $request)
 {
     $type = $request->input('type', 'week');
-    $reviewQuery = \App\Models\Admin\Review::join('products', 'reviews.product_id', '=', 'products.id')
+    $reviewQuery = \App\Models\admin\Review::join('products', 'reviews.product_id', '=', 'products.id')
         ->select(
             'products.id',
             'products.name as product_name',
@@ -562,7 +562,7 @@ public function ajaxCancelledProducts(Request $request)
     }
 
     // Lấy order_items bị huỷ (có biến thể)
-    $cancelledItems = \App\Models\Admin\OrderItem::join('orders', 'order_items.order_id', '=', 'orders.id')
+    $cancelledItems = \App\Models\admin\OrderItem::join('orders', 'order_items.order_id', '=', 'orders.id')
         ->join('products', 'order_items.product_id', '=', 'products.id')
         ->leftJoin('product_variants', 'order_items.product_variant_value_id', '=', 'product_variants.id')
         ->where('orders.status', 'cancelled')
@@ -589,7 +589,7 @@ public function ajaxCancelledProducts(Request $request)
         ->get();
 
     // Lấy order_items giao thành công
-    $deliveredItems = \App\Models\Admin\OrderItem::join('orders', 'order_items.order_id', '=', 'orders.id')
+    $deliveredItems = \App\Models\admin\OrderItem::join('orders', 'order_items.order_id', '=', 'orders.id')
         ->where('orders.status', 'delivered')
         ->when($from, fn($q) => $q->whereDate('orders.created_at', '>=', $from))
         ->when($to, fn($q) => $q->whereDate('orders.created_at', '<=', $to))
