@@ -17,18 +17,21 @@ class AttributeValueController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'attribute_id' => 'required|exists:attributes,id',
-            'value' => 'required|string',
+
+            'value'        => 'required|string',
         ], [
             'attribute_id.required' => 'Bạn chưa chọn thuộc tính.',
-            'attribute_id.exists' => 'Thuộc tính không hợp lệ.',
-            'value.required' => 'Bạn chưa nhập giá trị thuộc tính.',
-            'value.string' => 'Giá trị thuộc tính không hợp lệ.',
+            'attribute_id.exists'   => 'Thuộc tính không hợp lệ.',
+            'value.required'        => 'Bạn chưa nhập giá trị thuộc tính.',
+            'value.string'          => 'Giá trị thuộc tính không hợp lệ.',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors(),
+
+                'errors'  => $validator->errors(),
+
             ], 422);
         }
 
@@ -40,23 +43,23 @@ class AttributeValueController extends Controller
                 ->where('value', $val)
                 ->exists();
 
-            if ($exists) {
-                // Nếu trùng thì kệ, không thêm, không báo lỗi
-                continue;
-            }
+            if ($exists) continue;
 
             $attributeValue = AttributeValue::create([
                 'attribute_id' => $request->attribute_id,
-                'value' => $val,
-                'slug' => Str::slug($val),
+                'value'        => $val,
+                'slug'         => Str::slug($val),
             ]);
             $addedValues[] = $attributeValue;
         }
 
+
+        $attribute = Attribute::find($request->attribute_id);
+
         return response()->json([
-            'success' => true,
-            'attribute_id' => $request->attribute_id,
-            'attribute_name' => Attribute::find($request->attribute_id)->name ?? 'Unknown',
+            'success'         => true,
+            'attribute_id'    => $request->attribute_id,
+            'attribute_name'  => $attribute->name ?? 'Unknown',
             'attributeValues' => $addedValues,
         ]);
     }

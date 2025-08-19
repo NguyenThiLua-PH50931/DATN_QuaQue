@@ -448,7 +448,7 @@ protected function refundMomo($order, array $options = []): RefundResult
     /**
      * Query MoMo lấy transId theo orderId (payment_ref)
      * POST /v2/gateway/api/query
-     * rawSignature = accessKey=&orderId=&partnerCode=&requestId=
+     * rawSignature = accessKey=&orderId=&partnerCode=&requestId=d
      */
     protected function queryMomoTransIdByOrderId(string $orderId): ?string
     {

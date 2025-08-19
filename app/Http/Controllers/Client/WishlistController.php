@@ -19,9 +19,11 @@ class WishlistController extends Controller
     {
         $wishlist = Wishlist::where('user_id', Auth::id())
             ->with(['product' => function ($query) {
-                $query->where('active', true)->with('category', 'variants');
+
+                $query->where('active', true)
+                    ->with(['categories', 'variants']); // Lấy nhiều danh mục!
             }])
-            ->paginate(12); // Phân trang 12 sản phẩm mỗi trang
+            ->paginate(12);
 
         return view('frontend.wishlist.index', compact('wishlist'));
     }
@@ -56,10 +58,18 @@ class WishlistController extends Controller
      */
     public function destroy($product_id)
     {
-        Wishlist::where('user_id', Auth::id())
+
+        $deleted = Wishlist::where('user_id', Auth::id())
             ->where('product_id', $product_id)
             ->delete();
 
+        if (request()->ajax()) {
+            if ($deleted) {
+                return response()->json(['success' => true, 'message' => 'Đã xóa khỏi wishlist!']);
+            } else {
+                return response()->json(['success' => false, 'message' => 'Không tìm thấy sản phẩm trong wishlist!'], 404);
+            }
+        }
         return redirect()->back()->with('success', 'Đã xóa khỏi wishlist!');
     }
 }

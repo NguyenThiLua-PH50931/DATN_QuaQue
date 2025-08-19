@@ -20,6 +20,7 @@
         }
     </style>
 
+
     <section class="breadscrumb-section pt-0">
         <div class="container-fluid-lg">
             <div class="row">
@@ -49,6 +50,7 @@
             <div class="row g-4">
                 <div class="col-xxl-9 col-xl-8 col-lg-7 order-lg-2">
                     <div class="row g-4 ratio_65">
+
                         @foreach ($blog as $item)
                             <div class="col-xxl-4 col-sm-6">
                                 <div class="blog-box wow fadeInUp">
@@ -80,6 +82,7 @@
                             </div>
                         @endforeach
                     </div>
+
 
 
                     <nav class="custome-pagination">
@@ -129,6 +132,7 @@
                                     aria-labelledby="panelsStayOpen-headingOne">
                                     <div class="accordion-body pt-0">
                                         <div class="recent-post-box">
+
                                             @foreach ($recentBlogs as $item)
                                                 <div class="recent-box">
                                                     <a href="{{ route('client.blogs-detail', ['id' => $item->id]) }}"
@@ -145,8 +149,10 @@
                                                             <h5 class="recent-name">{{ $item->title }}</h5>
                                                         </a>
                                                         <h6><span>{{ $item->created_at ? $item->created_at->format('F d, Y') : 'Chưa có ngày tạo' }}</span>
+
                                                             <i data-feather="thumbs-up"></i>
                                                         </h6>
+
                                                     </div>
                                                 </div>
                                             @endforeach

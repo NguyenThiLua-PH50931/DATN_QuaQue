@@ -459,6 +459,10 @@ Route::group(['prefix' => 'orders', 'as' => 'orders.'], function () {
         Route::delete('destroy/{id}', [CouponsController::class, 'destroy'])->name('destroy');
         Route::get('edit/{id}', [CouponsController::class, 'edit'])->name('edit');
         Route::put('update/{id}', [CouponsController::class, 'update'])->name('update');
+
+         Route::get('trashed',           [CouponsController::class, 'trashed'])->name('trashed');
+    Route::put('restore/{id}',      [CouponsController::class, 'restore'])->name('restore');
+    Route::delete('force-delete/{id}', [CouponsController::class, 'forceDelete'])->name('force-delete');
     });
     Route::get('/api/provinces', [LocationController::class, 'provinces']);
     Route::get('/api/districts', [LocationController::class, 'districts']);

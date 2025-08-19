@@ -1,8 +1,7 @@
 @extends('layouts.frontend')
 @section('title', 'Blog-detail')
 @section('contents')
-
- <section class="breadscrumb-section pt-0">
+    <section class="breadscrumb-section pt-0">
         <div class="container-fluid-lg">
             <div class="row">
                 <div class="col-12">
@@ -53,20 +52,24 @@
                                     <div class="accordion-body pt-0">
                                         <div class="recent-post-box">
                                             <div class="recent-post-box">
-                                                @foreach($recentBlogs as $item)
+                                                @foreach ($recentBlogs as $item)
                                                     <div class="recent-box">
-                                                        <a href="{{ route('client.blogs-detail', ['id' => $item->id]) }}" class="recent-image">
-                                                            @if($item->thumbnail)
-                                                                <img src="{{ asset($item->thumbnail) }}" alt="{{ $item->title }}" class="img-fluid blur-up lazyload">
+                                                        <a href="{{ route('client.blogs-detail', ['id' => $item->id]) }}"
+                                                            class="recent-image">
+                                                            @if ($item->thumbnail)
+                                                                <img src="{{ asset($item->thumbnail) }}"
+                                                                    alt="{{ $item->title }}"
+                                                                    class="img-fluid blur-up lazyload">
                                                             @endif
                                                         </a>
-    
                                                         <div class="recent-detail">
-                                                            <a href="{{ route('client.blogs-detail', ['id' => $item->id]) }}">
+                                                            <a
+                                                                href="{{ route('client.blogs-detail', ['id' => $item->id]) }}">
                                                                 <h5 class="recent-name">{{ $item->title }}</h5>
                                                             </a>
                                                             <h6><span>{{ $blog->created_at ? $blog->created_at->format('F d, Y') : 'Chưa có ngày tạo' }}</span>
-                                                                <i data-feather="thumbs-up"></i></h6>
+                                                                <i data-feather="thumbs-up"></i>
+                                                            </h6>
                                                         </div>
                                                     </div>
                                                 @endforeach
@@ -81,8 +84,9 @@
 
                 <div class="col-xxl-9 col-xl-8 col-lg-7 ratio_50">
                     <div class="blog-detail-image rounded-3 mb-4">
-                        @if($blog->thumbnail)
-                            <img src="{{ asset($blog->thumbnail) }}" alt="{{ $blog->title }}" class="bg-img blur-up lazyload">
+                        @if ($blog->thumbnail)
+                            <img src="{{ asset($blog->thumbnail) }}" alt="{{ $blog->title }}"
+                                class="bg-img blur-up lazyload">
                         @endif
                         <div class="blog-image-contain">
                             <h2>{{ $blog->title }}</h2>
@@ -104,7 +108,7 @@
                                 <li>
                                     <div class="user-list">
                                         <i data-feather="message-square"></i>
-                                        <span>{{ $blog->comments->count()}} Bình luận</span>
+                                        <span>{{ $blog->comments->count() }} Bình luận</span>
                                     </div>
                                 </li>
                             </ul>
@@ -130,10 +134,12 @@
                                             <div class="user-iamge">
                                                 @if ($comment->user->avatar)
                                                     <img src="{{ asset('storage/' . $comment->user->avatar) }}"
-                                                        class="img-fluid blur-up lazyload" width="60" alt="{{ $comment->user->name }}">
+                                                        class="img-fluid blur-up lazyload" width="60"
+                                                        alt="{{ $comment->user->name }}">
                                                 @else
                                                     <img src="{{ asset('assets/images/users/default.jpg') }}"
-                                                        class="img-fluid blur-up lazyload" width="60" alt="Default Avatar">
+                                                        class="img-fluid blur-up lazyload" width="60"
+                                                        alt="Default Avatar">
                                                 @endif
 
                                                 <div class="user-name">
@@ -141,7 +147,7 @@
                                                     <h5 class="text-content">{{ $comment->user->name ?? 'Ẩn danh' }}</h5>
                                                 </div>
                                             </div>
-                        
+
                                             <div class="user-contain">
                                                 <p>{!! nl2br(e($comment->content)) !!}</p>
                                             </div>
@@ -154,53 +160,46 @@
                                 @endforelse
                             </ul>
                         </div>
-                        
+
                     </div>
 
                     <div class="leave-box">
                         <div class="leave-title mt-0">
                             <h3>Bình luận</h3>
                         </div>
-                    
+
                         <div class="leave-comment">
                             @if (!Auth::check())
                                 <div class="alert alert-warning">
                                     Vui lòng <a href="{{ route('login') }}">đăng nhập</a> để bình luận.
                                 </div>
                             @endif
-                    
+
+
                             <form action="{{ route('client.blog.comments.store') }}" method="POST">
                                 @csrf
-                    
+
                                 {{-- Hidden input để gửi kèm ID bài viết --}}
                                 <input type="hidden" name="blog_id" value="{{ $blog->id }}">
-                    
+
+
                                 <div class="row g-3">
                                     <div class="col-12">
                                         <div class="blog-input">
-                                            <textarea
-                                                class="form-control"
-                                                name="content"
-                                                id="commentTextarea"
-                                                rows="4"
-                                                placeholder="Viết bình luận của bạn tại đây..."
-                                                {{ Auth::check() ? '' : 'disabled' }}
-                                            ></textarea>
+                                            <textarea class="form-control" name="content" id="commentTextarea" rows="4"
+                                                placeholder="Viết bình luận của bạn tại đây..." {{ Auth::check() ? '' : 'disabled' }}></textarea>
                                         </div>
                                     </div>
                                 </div>
-                    
-                                <button
-                                    type="submit"
-                                    class="btn btn-animation ms-xxl-auto mt-xxl-0 mt-3 btn-md fw-bold"
-                                    {{ Auth::check() ? '' : 'disabled' }}
-                                >
+
+                                <button type="submit" class="btn btn-animation ms-xxl-auto mt-xxl-0 mt-3 btn-md fw-bold"
+                                    {{ Auth::check() ? '' : 'disabled' }}>
                                     Gửi bình luận
                                 </button>
                             </form>
                         </div>
                     </div>
-                    
+
                 </div>
             </div>
         </div>
