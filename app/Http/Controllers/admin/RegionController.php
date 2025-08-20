@@ -157,41 +157,53 @@ class RegionController extends Controller
 
     public function storeQuick(Request $request)
     {
-        // Validator với thông báo lỗi tiếng Việt
+
+        // Validator với thông báo tiếng Việt, bảng regions, field name
         $validator = Validator::make($request->all(), [
-            'name' => 'required|max:100|unique:regions,name',
+            'name' => 'required|string|max:100|unique:regions,name',
         ], [
             'name.required' => 'Tên vùng miền bắt buộc',
-            'name.unique' => 'Tên vùng miền đã tồn tại, vui lòng chọn tên khác',
-            'name.max' => 'Tên vùng miền không được vượt quá 100 ký tự',
+            'name.unique'   => 'Tên vùng miền đã tồn tại, vui lòng chọn tên khác',
+            'name.max'      => 'Tên vùng miền không được vượt quá 100 ký tự',
+
         ]);
 
         // Nếu validate lỗi
         if ($validator->fails()) {
-            if ($request->ajax()) {
+
+            if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
                     'success' => false,
-                    'errors' => $validator->errors(),
+                    'message' => 'Validation failed',
+                    'errors'  => $validator->errors(), // { name: [...] }
                 ], 422);
             }
+            // Nếu không phải ajax thì redirect lại (backup)
+
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
         // Tạo vùng miền mới
         $region = Region::create([
             'name' => $request->name,
-            'slug' => Str::slug($request->name),
+
+            'slug' => \Str::slug($request->name),
         ]);
 
-        // Trả về JSON nếu AJAX
-        if ($request->ajax()) {
+        // Trả về JSON nếu là ajax
+        if ($request->ajax() || $request->wantsJson()) {
             return response()->json([
                 'success' => true,
-                'region' => $region,
+                'message' => 'Đã thêm vùng miền mới!',
+                'region'  => [
+                    'id'   => $region->id,
+                    'name' => $region->name,
+                    'slug' => $region->slug,
+                ],
             ]);
         }
 
-        // Redirect nếu không phải AJAX
+        // Nếu không phải ajax thì redirect lại (hiếm gặp)
         return redirect()->back()->with('success', 'Đã thêm vùng miền mới!');
     }
 

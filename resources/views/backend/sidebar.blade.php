@@ -125,8 +125,10 @@
                     </a>
                     <ul class="sidebar-submenu">
                         <li><a href="{{ route('admin.coupon.index') }}">Danh sách</a></li>
+                        <li><a href="{{ route('admin.coupon.trashed') }}">Thùng rác</a></li> {{-- 💡 mới thêm --}}
                     </ul>
                 </li>
+
                 <li class="sidebar-list">
                     <a class="sidebar-link sidebar-title link-nav" href="{{ route('admin.support-ticket.index') }}">
                         <i class="ri-phone-line"></i>

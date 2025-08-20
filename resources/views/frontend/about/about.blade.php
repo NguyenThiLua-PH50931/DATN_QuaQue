@@ -1,43 +1,42 @@
 @extends('layouts.frontend')
 @section('title', 'Giới thiệu')
 @section('contents')
-<style>
- .reviewer-box {
-    min-height: 350px;
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-    border-radius: 10px;
-    background: #fff;
-}
+    <style>
+        .reviewer-box {
+            min-height: 350px;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            border-radius: 10px;
+            background: #fff;
+        }
 
-/* Tiêu đề */
-.reviewer-box h5 {
-    margin-bottom: 8px;
-}
+        /* Tiêu đề */
+        .reviewer-box h5 {
+            margin-bottom: 8px;
+        }
 
-/* Nội dung bình luận */
-.reviewer-box p {
-    margin: 0 0 16px;
-    max-height: 80px;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    -webkit-box-orient: vertical;
-    text-overflow: ellipsis;
-    color: #555;
-    font-style: italic;
-}
+        /* Nội dung bình luận */
+        .reviewer-box p {
+            margin: 0 0 16px;
+            max-height: 80px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            text-overflow: ellipsis;
+            color: #555;
+            font-style: italic;
+        }
 
-/* Footer: đẩy xuống cuối box */
-.reviewer-footer {
-    margin-top: auto;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-</style>
+        /* Footer: đẩy xuống cuối box */
+        .reviewer-footer {
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
     {{-- {{-- <!-- Breadcrumb Section Start --> --}}
     <section class="breadscrumb-section pt-0">
         <div class="container-fluid-lg">
@@ -53,7 +52,7 @@
                                     </a>
                                 </li>
                                 <li class="breadcrumb-item active" aria-current="page">
-                                   Giới thiệu
+                                    Giới thiệu
                                 </li>
                             </ol>
                         </nav>
@@ -99,9 +98,11 @@
 
                             <div class="delivery-list">
                                 <p class="text-content">
-                                   Quà Quê tự hào mang đến những sản phẩm đặc sản tươi ngon, thuần khiết từ các vùng miền quê hương Việt Nam.
-                                Chúng tôi cam kết chọn lọc kỹ càng, bảo tồn hương vị truyền thống và chất lượng tự nhiên của từng món quà quê,
-                                để mỗi sản phẩm là một câu chuyện, một phần ký ức thân thương gửi đến khách hàng.
+                                    Quà Quê tự hào mang đến những sản phẩm đặc sản tươi ngon, thuần khiết từ các vùng miền
+                                    quê hương Việt Nam.
+                                    Chúng tôi cam kết chọn lọc kỹ càng, bảo tồn hương vị truyền thống và chất lượng tự nhiên
+                                    của từng món quà quê,
+                                    để mỗi sản phẩm là một câu chuyện, một phần ký ức thân thương gửi đến khách hàng.
                                 </p>
 
                                 {{-- <ul class="delivery-box">
@@ -171,7 +172,192 @@
         </div>
     </section>
     <!-- Fresh Vegetable Section End -->
+    <!-- Team Section Start -->
+    <section class="team-section section-lg-space">
+        <div class="container-fluid-lg">
+            <div class="about-us-title text-center">
+                <h4 class="text-content">Đội ngũ sáng tạo của chúng tôi</h4>
+                <h2 class="center">Thành viên nhóm Quà Quê</h2>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="slider-user product-wrapper">
+                        <div>
+                            <div class="team-box">
+                                <div class="team-iamge">
+                                    <img src="../assets/images/inner-page/user/1.jpg" class="img-fluid blur-up lazyload"
+                                        alt="" />
+                                </div>
+                                <div class="team-name">
+                                    <h3>Nguyễn Thị Lụa</h3>
+                                    <h5>Trưởng nhóm</h5>
+                                    <p>Điều phối dự án, làm việc với đối tác và bảo đảm tiến độ & chất lượng sản phẩm.</p>
+                                    <ul class="team-media">
+                                        <li><a href="https://www.facebook.com/" class="fb-bg"><i
+                                                    class="fa-brands fa-facebook-f"></i></a></li>
+                                        <li><a href="https://in.pinterest.com/" class="pint-bg"><i
+                                                    class="fa-brands fa-pinterest-p"></i></a></li>
+                                        <li><a href="https://twitter.com/" class="twitter-bg"><i
+                                                    class="fa-brands fa-twitter"></i></a></li>
+                                        <li><a href="https://www.instagram.com/" class="insta-bg"><i
+                                                    class="fa-brands fa-instagram"></i></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
 
+                        <div>
+                            <div class="team-box">
+                                <div class="team-iamge">
+                                    <img src="../assets/images/inner-page/user/2.jpg" class="img-fluid blur-up lazyload"
+                                        alt="" />
+                                </div>
+                                <div class="team-name">
+                                    <h3>Đặng Bảo Biên</h3>
+                                    <h5>Thành viên</h5>
+                                    <p>Phát triển Frontend với Blade/Laravel, tối ưu giao diện và hiệu năng trên mọi thiết
+                                        bị.</p>
+                                    <ul class="team-media">
+                                        <li><a href="https://www.facebook.com/" class="fb-bg"><i
+                                                    class="fa-brands fa-facebook-f"></i></a></li>
+                                        <li><a href="https://in.pinterest.com/" class="pint-bg"><i
+                                                    class="fa-brands fa-pinterest-p"></i></a></li>
+                                        <li><a href="https://twitter.com/" class="twitter-bg"><i
+                                                    class="fa-brands fa-twitter"></i></a></li>
+                                        <li><a href="https://www.instagram.com/" class="insta-bg"><i
+                                                    class="fa-brands fa-instagram"></i></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="team-box">
+                                <div class="team-iamge">
+                                    <img src="../assets/images/inner-page/user/3.jpg" class="img-fluid blur-up lazyload"
+                                        alt="" />
+                                </div>
+                                <div class="team-name">
+                                    <h3>Vũ Văn Quân</h3>
+                                    <h5>Thành viên</h5>
+                                    <p>Phát triển Backend Laravel, thiết kế API và xử lý nghiệp vụ giỏ hàng, đơn đặt.</p>
+                                    <ul class="team-media">
+                                        <li><a href="https://www.facebook.com/" class="fb-bg"><i
+                                                    class="fa-brands fa-facebook-f"></i></a></li>
+                                        <li><a href="https://in.pinterest.com/" class="pint-bg"><i
+                                                    class="fa-brands fa-pinterest-p"></i></a></li>
+                                        <li><a href="https://twitter.com/" class="twitter-bg"><i
+                                                    class="fa-brands fa-twitter"></i></a></li>
+                                        <li><a href="https://www.instagram.com/" class="insta-bg"><i
+                                                    class="fa-brands fa-instagram"></i></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="team-box">
+                                <div class="team-iamge">
+                                    <img src="../assets/images/inner-page/user/4.jpg" class="img-fluid blur-up lazyload"
+                                        alt="" />
+                                </div>
+                                <div class="team-name">
+                                    <h3>Vũ Ngọc Ánh</h3>
+                                    <h5>Thành viên</h5>
+                                    <p>Thiết kế UI/UX; thống nhất màu sắc, kiểu chữ và trải nghiệm người dùng đồng nhất.</p>
+                                    <ul class="team-media">
+                                        <li><a href="https://www.facebook.com/" class="fb-bg"><i
+                                                    class="fa-brands fa-facebook-f"></i></a></li>
+                                        <li><a href="https://in.pinterest.com/" class="pint-bg"><i
+                                                    class="fa-brands fa-pinterest-p"></i></a></li>
+                                        <li><a href="https://twitter.com/" class="twitter-bg"><i
+                                                    class="fa-brands fa-twitter"></i></a></li>
+                                        <li><a href="https://www.instagram.com/" class="insta-bg"><i
+                                                    class="fa-brands fa-instagram"></i></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="team-box">
+                                <div class="team-iamge">
+                                    <img src="../assets/images/inner-page/user/1.jpg" class="img-fluid blur-up lazyload"
+                                        alt="" />
+                                </div>
+                                <div class="team-name">
+                                    <h3>Trịnh Thị Duyên</h3>
+                                    <h5>Thành viên</h5>
+                                    <p>Quản lý nội dung: chụp ảnh sản phẩm, biên tập mô tả và tối ưu SEO cơ bản.</p>
+                                    <ul class="team-media">
+                                        <li><a href="https://www.facebook.com/" class="fb-bg"><i
+                                                    class="fa-brands fa-facebook-f"></i></a></li>
+                                        <li><a href="https://in.pinterest.com/" class="pint-bg"><i
+                                                    class="fa-brands fa-pinterest-p"></i></a></li>
+                                        <li><a href="https://twitter.com/" class="twitter-bg"><i
+                                                    class="fa-brands fa-twitter"></i></a></li>
+                                        <li><a href="https://www.instagram.com/" class="insta-bg"><i
+                                                    class="fa-brands fa-instagram"></i></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="team-box">
+                                <div class="team-iamge">
+                                    <img src="../assets/images/inner-page/user/3.jpg" class="img-fluid blur-up lazyload"
+                                        alt="" />
+                                </div>
+                                <div class="team-name">
+                                    <h3>Nguyễn Tuấn Anh</h3>
+                                    <h5>Thành viên</h5>
+                                    <p>Kiểm thử chức năng, viết test case và đảm bảo ổn định trước khi phát hành.</p>
+                                    <ul class="team-media">
+                                        <li><a href="https://www.facebook.com/" class="fb-bg"><i
+                                                    class="fa-brands fa-facebook-f"></i></a></li>
+                                        <li><a href="https://in.pinterest.com/" class="pint-bg"><i
+                                                    class="fa-brands fa-pinterest-p"></i></a></li>
+                                        <li><a href="https://twitter.com/" class="twitter-bg"><i
+                                                    class="fa-brands fa-twitter"></i></a></li>
+                                        <li><a href="https://www.instagram.com/" class="insta-bg"><i
+                                                    class="fa-brands fa-instagram"></i></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="team-box">
+                                <div class="team-iamge">
+                                    <img src="../assets/images/inner-page/user/3.jpg" class="img-fluid blur-up lazyload"
+                                        alt="" />
+                                </div>
+                                <div class="team-name">
+                                    <h3>Hoàng Ngọc Hà</h3>
+                                    <h5>Thành viên</h5>
+                                    <p>Phụ trách hạ tầng: triển khai server, cấu hình bảo mật và tự động hóa CI/CD.</p>
+                                    <ul class="team-media">
+                                        <li><a href="https://www.facebook.com/" class="fb-bg"><i
+                                                    class="fa-brands fa-facebook-f"></i></a></li>
+                                        <li><a href="https://in.pinterest.com/" class="pint-bg"><i
+                                                    class="fa-brands fa-pinterest-p"></i></a></li>
+                                        <li><a href="https://twitter.com/" class="twitter-bg"><i
+                                                    class="fa-brands fa-twitter"></i></a></li>
+                                        <li><a href="https://www.instagram.com/" class="insta-bg"><i
+                                                    class="fa-brands fa-instagram"></i></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div><!-- /.slider-user -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section End -->
     {{-- <!-- Client Section Start -->
     <section class="client-section section-lg-space">
         <div class="container-fluid-lg">
@@ -237,47 +423,49 @@
     </section>
     <!-- Client Section End --> --}}
 
+
     <!-- Review Section Start -->
-   <section class="review-section section-lg-space">
-    <div class="container-fluid">
-        <div class="about-us-title text-center">
-            <h2 class="center">Bình luận mới nhất</h2>
-        </div>
+    <section class="review-section section-lg-space">
+        <div class="container-fluid">
+            <div class="about-us-title text-center">
+                <h2 class="center">Bình luận mới nhất</h2>
+            </div>
 
-        <div class="row">
-            <div class="col-12">
-                <div class="slider-4-half product-wrapper">
-                    @forelse ($recentComments as $comment)
-                        <div>
-                            <div class="reviewer-box">
-                                <i class="fa-solid fa-quote-right"></i>
+            <div class="row">
+                <div class="col-12">
+                    <div class="slider-4-half product-wrapper">
+                        @forelse ($recentComments as $comment)
+                            <div>
+                                <div class="reviewer-box">
+                                    <i class="fa-solid fa-quote-right"></i>
 
-                                <h3>{{ $comment->blog->title ?? 'Không rõ bài viết' }}</h3>
+                                    <h3>{{ $comment->blog->title ?? 'Không rõ bài viết' }}</h3>
 
-                                <p>"{!! nl2br(e(Str::limit($comment->content, 200))) !!}"</p>
+                                    <p>"{!! nl2br(e(Str::limit($comment->content, 200))) !!}"</p>
 
-                                <div class="reviewer-profile">
-                                    <div class="reviewer-image">
-                                        <img src="{{ $comment->user?->avatar
-                                                    ? asset('storage/' . $comment->user->avatar)
-                                                    : asset('assets/images/users/default.jpg') }}"
-                                            class="blur-up lazyload" width="60" alt="{{ $comment->user->name ?? 'Ẩn danh' }}" />
-                                    </div>
-                                    <div class="reviewer-name">
-                                        <h4>{{ $comment->user->name ?? 'Ẩn danh' }}</h4>
-                                        <h6>{{ $comment->created_at->format('d/m/Y') }}</h6>
+                                    <div class="reviewer-profile">
+                                        <div class="reviewer-image">
+                                            <img src="{{ $comment->user?->avatar
+                                                ? asset('storage/' . $comment->user->avatar)
+                                                : asset('assets/images/users/default.jpg') }}"
+                                                class="blur-up lazyload" width="60"
+                                                alt="{{ $comment->user->name ?? 'Ẩn danh' }}" />
+                                        </div>
+                                        <div class="reviewer-name">
+                                            <h4>{{ $comment->user->name ?? 'Ẩn danh' }}</h4>
+                                            <h6>{{ $comment->created_at->format('d/m/Y') }}</h6>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    @empty
-                        <p class="text-muted text-center">Chưa có bình luận nào.</p>
-                    @endforelse
+                        @empty
+                            <p class="text-muted text-center">Chưa có bình luận nào.</p>
+                        @endforelse
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
     <!-- Review Section End -->
 
@@ -290,15 +478,16 @@
             <div class="row">
                 <div class="col-12">
                     <div class="slider-5 ratio_87">
-                        @foreach($blog as $item)
+                        @foreach ($blog as $item)
                             <div>
                                 <div class="blog-box">
                                     <div class="blog-box-image">
                                         <div class="blog-image">
-                                            <a href="{{ route('client.blogs-detail', ['id' => $item->id]) }}" class="rounded-3">
-                                                @if($item->thumbnail)
-                                                    <img src="{{ asset($item->thumbnail) }}" class="bg-img blur-up lazyload"
-                                                        alt="{{ $item->title }}">
+                                            <a href="{{ route('client.blogs-detail', ['id' => $item->id]) }}"
+                                                class="rounded-3">
+                                                @if ($item->thumbnail)
+                                                    <img src="{{ asset($item->thumbnail) }}"
+                                                        class="bg-img blur-up lazyload" alt="{{ $item->title }}">
                                                 @endif
                                             </a>
                                         </div>
@@ -321,8 +510,8 @@
     <!-- Blog Section End -->
 
     <!-- Location Modal Start -->
-    <div class="modal location-modal fade theme-modal" id="locationModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
+    <div class="modal location-modal fade theme-modal" id="locationModal" tabindex="-1"
+        aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
             <div class="modal-content">
                 <div class="modal-header">
@@ -573,5 +762,4 @@
 
     <!-- script js -->
     <script src="../assets/js/script.js"></script>
-
 @endsection

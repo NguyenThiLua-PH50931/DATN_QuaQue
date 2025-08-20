@@ -1,6 +1,7 @@
 <?php
 namespace App\Models;
-use App\Models\Admin\Product;
+
+use App\Models\admin\Product;
 use Illuminate\Database\Eloquent\Model;
 
 class ProductSearch extends Model

@@ -2,7 +2,8 @@
 
 namespace App\Models\Admin;
 
-use App\Models\Admin\Traits\BannerTimeValidation;
+
+use App\Models\admin\Traits\BannerTimeValidation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,6 +12,10 @@ class Banner extends Model
 {
     use HasFactory, SoftDeletes, BannerTimeValidation;
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 02916975dcd589cb4288266d9c651485c6aebdeb
     /**
      * Mapping of banner location keys to their Vietnamese labels.
      */
@@ -52,6 +57,10 @@ class Banner extends Model
         'active' => 'boolean',
     ];
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 02916975dcd589cb4288266d9c651485c6aebdeb
     /**
      * Accessor to get the Vietnamese label for the banner location.
      */

@@ -193,3 +193,41 @@
         {{ $products->withQueryString()->links() }}
     </nav>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        @if (session('error'))
+            Swal.fire({
+                icon: 'error', // hoặc 'success'
+                title: 'Lỗi vượt quá số lượng tồn kho',
+                text: '{{ session('
+                                                                                                                                                                                                                                                                                                                                        error ') }}',
+                confirmButtonColor: '#0da487',
+                width: 350, // giảm chiều ngang
+                padding: '1rem 1.5rem', // giảm padding
+                customClass: {
+                    popup: 'swal2-popup-small',
+                    title: 'swal2-title-small',
+                    content: 'swal2-content-small'
+                }
+            });
+        @endif
+
+        @if (session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Thành công',
+                text: '{{ session('
+                                                                                                                                                                                                                                                                                                                                        success ') }}',
+                confirmButtonColor: '#0da487',
+                width: 350,
+                padding: '1rem 1.5rem',
+                customClass: {
+                    popup: 'swal2-popup-small',
+                    title: 'swal2-title-small',
+                    content: 'swal2-content-small'
+                }
+            });
+        @endif
+    });
+</script>

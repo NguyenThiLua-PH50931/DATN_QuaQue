@@ -364,5 +364,70 @@ public function update(Request $request, $id)
     return redirect()->route('admin.coupon.index')
         ->with('success', 'Xóa mã giảm giá thành công!');
 }
+// Danh sách trong thùng rác
+public function trashed(Request $request)
+{
+    $query = DiscountCode::onlyTrashed();
+
+    // Giữ lại các filter hay dùng (tùy bạn, có thể rút gọn)
+    if ($request->filled('q')) {
+        $query->where(function ($q) use ($request) {
+            $q->where('code', 'like', '%' . $request->q . '%')
+              ->orWhere('description', 'like', '%' . $request->q . '%');
+        });
+    }
+    if ($request->filled('type')) {
+        $query->where('type', $request->input('type'));
+    }
+    if ($request->filled('scope')) {
+        $query->where('scope', $request->input('scope'));
+    }
+    if ($request->filled('discount_type')) {
+        $query->where('discount_type', $request->input('discount_type'));
+    }
+    // Lọc theo khoảng thời gian xóa (tuỳ chọn)
+    if ($request->filled('date_from')) {
+        $query->whereDate('deleted_at', '>=', $request->input('date_from'));
+    }
+    if ($request->filled('date_to')) {
+        $query->whereDate('deleted_at', '<=', $request->input('date_to'));
+    }
+
+    $coupons = $query->orderBy('deleted_at', 'desc')
+        ->paginate(15)
+        ->appends($request->except('page'));
+
+    return view('backend.coupons.trashed', [
+        'coupons' => $coupons,
+        'filterType' => $request->input('type', ''),
+        'filterScope' => $request->input('scope', ''),
+        'filterDiscountType' => $request->input('discount_type', ''),
+        'filterDateFrom' => $request->input('date_from', ''),
+        'filterDateTo' => $request->input('date_to', ''),
+        'q' => $request->input('q', ''),
+    ]);
+}
+
+// Khôi phục 1 mã từ thùng rác
+public function restore($id)
+{
+    $coupon = DiscountCode::onlyTrashed()->findOrFail($id);
+    $coupon->restore();
+
+    return redirect()
+        ->route('admin.coupon.trashed')
+        ->with('success', 'Khôi phục mã giảm giá thành công!');
+}
+
+// Xóa vĩnh viễn 1 mã trong thùng rác
+public function forceDelete($id)
+{
+    $coupon = DiscountCode::onlyTrashed()->findOrFail($id);
+    $coupon->forceDelete();
+
+    return redirect()
+        ->route('admin.coupon.trashed')
+        ->with('success', 'Đã xóa vĩnh viễn mã giảm giá!');
+}
 
 }
