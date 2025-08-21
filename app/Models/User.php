@@ -12,6 +12,7 @@ use App\Models\Client\Wishlist;
 
 class User extends Authenticatable
 {
+        use SoftDeletes;
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable,SoftDeletes;
 
@@ -23,6 +24,8 @@ class User extends Authenticatable
 
   protected $fillable = [
     'name',
+    'gender',
+    'birthday',
     'email',
     'password',
     'phone',
