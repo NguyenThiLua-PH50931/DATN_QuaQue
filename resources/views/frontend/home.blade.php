@@ -560,7 +560,7 @@
                                 <div class="banner-contain hover-effect">
                                     <img src="../frontend/assets/images/vegetable/banner/9.jpg"
                                         class="bg-img blur-up lazyload" alt="">
-                                    <div class="banner-details p-center-left p-4">
+                                    {{-- <div class="banner-details p-center-left p-4">
                                         <div>
                                             <h3 class="text-exo">Ưu đãi 50%</h3>
                                             <h4 class="text-russo fw-normal theme-color mb-2">Thơm ngon – Tươi mới</h4>
@@ -569,10 +569,10 @@
                                                     class="fa-solid fa-arrow-right icon"></i></button>
                                         </div>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
                             <div class="col-md-6">
-                                <div class="banner-contain hover-effect">
+                                {{-- <div class="banner-contain hover-effect">
                                     <img src="../frontend/assets/images/vegetable/banner/10.jpg"
                                         class="bg-img blur-up lazyload" alt="">
                                     <div class="banner-details p-center-left p-4">
@@ -584,7 +584,7 @@
                                                     class="fa-solid fa-arrow-right icon"></i></button>
                                         </div>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                     </div>
