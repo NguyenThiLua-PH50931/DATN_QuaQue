@@ -55,7 +55,7 @@
                                         </a>
                                         <div class="product-header-top">
                                             <form class="wishlist-delete-form" data-product-id="{{ $item->product_id }}"
-                                                action="{{ route('client.wishlist.destroy', $item->product_id) }}"
+                                                action="{{ route('client.wishlist.destroy.main', $item->product_id) }}"
                                                 method="POST">
                                                 @csrf
                                                 @method('DELETE')
@@ -258,6 +258,10 @@
         .row {
             justify-content: flex-start !important;
         }
+                                                .wishlist-btn.fill-heart svg {
+                                            fill: #4a5568 !important;
+                                            stroke: #4a5568 !important;
+                                        }
     </style>
 
 @endsection
