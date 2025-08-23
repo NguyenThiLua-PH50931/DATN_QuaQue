@@ -3,6 +3,24 @@
 @section('title', 'Quản lý Banner')
 
 @section('content')
+<style>
+    /* Đảm bảo scroll hoạt động bình thường */
+    body, html {
+        overflow: auto !important;
+        height: auto !important;
+    }
+
+    /* Style cho alert */
+    .alert {
+        position: relative;
+        z-index: 1000;
+    }
+
+    /* Đảm bảo table có thể scroll */
+    .table-responsive {
+        overflow: visible;
+    }
+</style>
     <div class="page-body">
         <div class="container-fluid">
             <div class="row">
@@ -14,8 +32,16 @@
                             </div>
 
                             @if (session('success'))
-                                <div class="alert alert-success">
+                                <div class="alert alert-success alert-dismissible fade show" id="success-alert">
                                     {{ session('success') }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            @endif
+
+                            @if (session('error'))
+                                <div class="alert alert-danger alert-dismissible fade show" id="error-alert">
+                                    {{ session('error') }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>
                             @endif
 
@@ -359,6 +385,30 @@
                     $('#errorMessageContent').text(errorMessage);
                     $('#errorMessageModal').modal('show');
                 @endif
+
+                // Xử lý vấn đề scroll và focus sau khi redirect
+                $(document).ready(function() {
+                    // Nếu có thông báo lỗi hoặc thành công, scroll đến đó và focus
+                    if ($('#error-alert').length > 0) {
+                        $('#error-alert')[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        // Tự động ẩn thông báo sau 5 giây
+                        setTimeout(function() {
+                            $('#error-alert').fadeOut();
+                        }, 5000);
+                    }
+
+                    if ($('#success-alert').length > 0) {
+                        $('#success-alert')[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        // Tự động ẩn thông báo sau 3 giây
+                        setTimeout(function() {
+                            $('#success-alert').fadeOut();
+                        }, 3000);
+                    }
+
+                    // Đảm bảo body có thể scroll
+                    $('body').css('overflow', 'auto');
+                    $('html').css('overflow', 'auto');
+                });
             });
         </script>
     @endsection

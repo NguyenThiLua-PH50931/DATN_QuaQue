@@ -40,7 +40,50 @@ class RegionController extends Controller
     public function trashed()
     {
         $regions = Region::onlyTrashed()->get();
+
+        // Tính toán thời gian tự động xóa cho mỗi region
+        foreach ($regions as $region) {
+            $deletedAt = \Carbon\Carbon::parse($region->deleted_at);
+            $autoDeleteAt = $deletedAt->copy()->addDays(30);
+            $now = \Carbon\Carbon::now();
+            $region->days_until_auto_delete = $now->diffInDays($autoDeleteAt, false);
+            $region->auto_delete_at = $autoDeleteAt;
+        }
+
         return view('backend.regions.trashed', compact('regions'));
+    }
+
+    /**
+     * Kiểm tra trạng thái tự động xóa của region
+     */
+    public function checkAutoDeleteStatus()
+    {
+        $trashedRegions = Region::onlyTrashed()->get();
+        $autoDeleteStats = [
+            'total' => $trashedRegions->count(),
+            'will_be_deleted_soon' => 0,
+            'days_until_auto_delete' => []
+        ];
+
+        foreach ($trashedRegions as $region) {
+            $deletedAt = \Carbon\Carbon::parse($region->deleted_at);
+            $autoDeleteAt = $deletedAt->copy()->addDays(30);
+            $now = \Carbon\Carbon::now();
+            $daysLeft = $now->diffInDays($autoDeleteAt, false);
+
+            if ($daysLeft <= 7) {
+                $autoDeleteStats['will_be_deleted_soon']++;
+            }
+
+            $autoDeleteStats['days_until_auto_delete'][] = [
+                'region_id' => $region->id,
+                'name' => $region->name,
+                'days_left' => $daysLeft,
+                'auto_delete_at' => $autoDeleteAt->format('Y-m-d H:i:s')
+            ];
+        }
+
+        return response()->json($autoDeleteStats);
     }
 
     public function create()

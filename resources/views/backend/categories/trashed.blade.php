@@ -16,8 +16,16 @@
                                         class="align-items-center btn btn-theme d-flex">
                                         <i data-feather="list"></i> Quay lại danh sách
                                     </a>
+                                    <button type="button" id="check-auto-delete-btn" class="btn btn-info ms-2">
+                                        <i class="ri-information-line"></i> Kiểm tra tự động xóa
+                                    </button>
                                 </form>
                             </div>
+
+                            <small class="text-muted">
+                                <i class="ri-information-line"></i>
+                                <strong>Lưu ý:</strong> Các danh mục đã xóa mềm sẽ được tự động xóa vĩnh viễn sau 30 ngày.
+                            </small>
 
                             @if (session('success'))
                                 <div class="alert alert-success">
@@ -35,6 +43,7 @@
                                             <th style="color: black; background-color: #f8f9fa;">Tên danh mục</th>
                                             <th style="color: black; background-color: #f8f9fa;">Icon</th>
                                             <th style="color: black; background-color: #f8f9fa;">Ngày xóa</th>
+
                                             <th style="color: black; background-color: #f8f9fa;">Tùy chọn</th>
                                         </tr>
                                     </thead>
@@ -52,6 +61,7 @@
                                                         width="50">
                                                 </td>
                                                 <td>{{ $category->deleted_at->format('d-m-Y') }}</td>
+
                                                 <td>
                                                     <ul>
                                                         <li>
@@ -205,6 +215,24 @@
             </div>
         </div>
 
+        {{-- Auto Delete Status Modal --}}
+        <div class="modal fade" id="autoDeleteStatusModal" tabindex="-1" aria-labelledby="autoDeleteStatusModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="autoDeleteStatusModalLabel">Trạng thái tự động xóa</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="autoDeleteStatusContent">
+                        <!-- Content will be loaded here -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
     @includeIf('backend.footer')
 
@@ -215,20 +243,25 @@
     <script>
         $(document).ready(function() {
             // Initialize DataTable and store the instance
-            const table = $('#trashed_categories_table').DataTable({
-                language: {
-                    search: "Tìm kiếm:",
-                    lengthMenu: "Hiển thị _MENU_ danh mục đã xóa",
-                    info: "Hiển thị _START_ đến _END_ trong tổng _TOTAL_ danh mục đã xóa",
-                    paginate: {
-                        first: "Đầu",
-                        last: "Cuối",
-                        next: "Sau",
-                        previous: "Trước"
-                    },
-                    zeroRecords: "Không tìm thấy danh mục đã xóa nào.",
-                }
-            });
+            let table;
+            try {
+                table = $('#trashed_categories_table').DataTable({
+                    language: {
+                        search: "Tìm kiếm:",
+                        lengthMenu: "Hiển thị _MENU_ danh mục đã xóa",
+                        info: "Hiển thị _START_ đến _END_ trong tổng _TOTAL_ danh mục đã xóa",
+                        paginate: {
+                            first: "Đầu",
+                            last: "Cuối",
+                            next: "Sau",
+                            previous: "Trước"
+                        },
+                        zeroRecords: "Không tìm thấy danh mục đã xóa nào.",
+                    }
+                });
+            } catch (error) {
+                console.warn('DataTable initialization failed:', error);
+            }
 
             // Handle force delete using AJAX
             $(document).on('submit', '.force-delete-form', function(e) {
@@ -452,6 +485,49 @@
                     $('#cannotDeleteModal').modal('show');
                 }
             @endif
+
+            // Xử lý nút kiểm tra tự động xóa
+            $('#check-auto-delete-btn').click(function() {
+                console.log('Checking auto delete status...');
+                $.ajax({
+                    url: '{{ route('admin.categories.checkAutoDeleteStatus') }}',
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function(response) {
+                        console.log('Auto delete status response:', response);
+                        let content = '<div class="row">';
+                        content += '<div class="col-md-6"><strong>Tổng số danh mục đã xóa:</strong> ' + response.total + '</div>';
+                        content += '<div class="col-md-6"><strong>Sắp được xóa (≤7 ngày):</strong> ' + response.will_be_deleted_soon + '</div>';
+                        content += '</div><hr>';
+
+                        if (response.days_until_auto_delete.length > 0) {
+                            content += '<h6>Chi tiết:</h6><div class="table-responsive"><table class="table table-sm">';
+                            content += '<thead><tr><th>Danh mục</th><th>Còn lại</th><th>Ngày xóa</th></tr></thead><tbody>';
+
+                            response.days_until_auto_delete.forEach(function(item) {
+                                const badgeClass = item.days_left <= 7 ? 'bg-danger' : 'bg-warning';
+                                content += '<tr>';
+                                content += '<td>' + item.name + '</td>';
+                                content += '<td><span class="badge ' + badgeClass + '">' + item.days_left + ' ngày</span></td>';
+                                content += '<td>' + item.auto_delete_at + '</td>';
+                                content += '</tr>';
+                            });
+
+                            content += '</tbody></table></div>';
+                        } else {
+                            content += '<p class="text-muted">Không có danh mục nào trong thùng rác.</p>';
+                        }
+
+                        $('#autoDeleteStatusContent').html(content);
+                        $('#autoDeleteStatusModal').modal('show');
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error checking auto delete status:', error);
+                        $('#autoDeleteStatusContent').html('<div class="alert alert-danger">Lỗi khi kiểm tra trạng thái tự động xóa.</div>');
+                        $('#autoDeleteStatusModal').modal('show');
+                    }
+                });
+            });
         });
     </script>
 @endsection

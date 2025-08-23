@@ -26,6 +26,12 @@
                         </div>
                         @endif
 
+                        @if (session('success_modal'))
+                        <div class="alert alert-success">
+                            {{ session('success_modal') }}
+                        </div>
+                        @endif
+
                         @if (session('error'))
                         <div class="alert alert-danger">
                             {{ session('error') }}

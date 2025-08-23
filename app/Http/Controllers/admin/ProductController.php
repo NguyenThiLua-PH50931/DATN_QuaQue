@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\admin\Attribute as AdminAttribute;
-use App\Models\admin\Category as AdminCategory;
-use App\Models\admin\Product as AdminProduct;
-use App\Models\admin\Region as AdminRegion;
-use App\Models\admin\ProductVariant as AdminProductVariant;
-use App\Models\admin\ProductImage;
-use App\Models\admin\AttributeValue;
+use App\Models\Admin\Attribute as AdminAttribute;
+use App\Models\Admin\Category as AdminCategory;
+use App\Models\Admin\Product as AdminProduct;
+use App\Models\Admin\Region as AdminRegion;
+use App\Models\Admin\ProductVariant as AdminProductVariant;
+use App\Models\Admin\ProductImage;
+use App\Models\Admin\AttributeValue;
 use App\Models\Client\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -67,7 +67,7 @@ class ProductController extends Controller
             });
 
         if ($categoryId) {
-            $categoryIds = is_array($categoryId) ? $categoryId : [$categoryId]; 
+            $categoryIds = is_array($categoryId) ? $categoryId : [$categoryId];
             $productsQuery->whereHas('categories', function ($q) use ($categoryIds) {
                 $q->whereIn('category_id', $categoryIds);
             });
@@ -391,7 +391,59 @@ class ProductController extends Controller
     public function trashed()
     {
         $products = AdminProduct::onlyTrashed()->orderByDesc('deleted_at')->paginate(10);
+
+        // Tính toán thời gian tự động xóa cho mỗi product
+        foreach ($products as $product) {
+            $deletedAt = \Carbon\Carbon::parse($product->deleted_at);
+            $autoDeleteAt = $deletedAt->copy()->addDays(30);
+            $now = \Carbon\Carbon::now();
+            $product->days_until_auto_delete = $now->diffInDays($autoDeleteAt, false);
+            $product->auto_delete_at = $autoDeleteAt;
+        }
+
         return view('backend.products.trashed', compact('products'));
+    }
+
+    /**
+     * Kiểm tra trạng thái tự động xóa của product
+     */
+    public function checkAutoDeleteStatus()
+    {
+        $trashedProducts = AdminProduct::onlyTrashed()->get();
+        $autoDeleteStats = [
+            'total' => $trashedProducts->count(),
+            'will_be_deleted_soon' => 0,
+            'days_until_auto_delete' => []
+        ];
+
+        if ($trashedProducts->count() == 0) {
+            return response()->json([
+                'total' => 0,
+                'will_be_deleted_soon' => 0,
+                'days_until_auto_delete' => [],
+                'message' => 'Không có sản phẩm nào đã xóa mềm.'
+            ]);
+        }
+
+        foreach ($trashedProducts as $product) {
+            $deletedAt = \Carbon\Carbon::parse($product->deleted_at);
+            $autoDeleteAt = $deletedAt->copy()->addDays(30);
+            $now = \Carbon\Carbon::now();
+            $daysLeft = $now->diffInDays($autoDeleteAt, false);
+
+            if ($daysLeft <= 7) {
+                $autoDeleteStats['will_be_deleted_soon']++;
+            }
+
+            $autoDeleteStats['days_until_auto_delete'][] = [
+                'product_id' => $product->id,
+                'name' => $product->name,
+                'days_left' => $daysLeft,
+                'auto_delete_at' => $autoDeleteAt->format('Y-m-d H:i:s')
+            ];
+        }
+
+        return response()->json($autoDeleteStats);
     }
 
     public function create()
