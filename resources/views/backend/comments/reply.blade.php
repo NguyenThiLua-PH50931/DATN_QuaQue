@@ -151,11 +151,27 @@
                                         <div class="card mb-2">
                                             <div class="card-body">
                                                 <p>{{ $reply->reply }}</p>
-                                                <small class="text-muted">Bởi: {{ $reply->admin->name }} -
-                                                    {{ $reply->created_at->format('d/m/Y H:i') }}</small>
+
+                                                @php
+                                                    $authorName =
+                                                        optional($reply->admin)->name ??
+                                                        (optional($reply->user)->name ?? 'Hệ thống');
+                                                    $authorLabel = $reply->admin
+                                                        ? 'Admin'
+                                                        : ($reply->user
+                                                            ? 'Khách hàng'
+                                                            : '');
+                                                @endphp
+
+                                                <small class="text-muted">
+                                                    Bởi: {{ $authorName }}{{ $authorLabel ? " ({$authorLabel})" : '' }}
+                                                    - {{ $reply->created_at->format('d/m/Y H:i') }}
+                                                </small>
+
                                                 <div class="action-buttons mt-2">
                                                     <a href="{{ route('admin.comments.editReply', [$comment->id, $reply->id]) }}"
                                                         class="btn btn-primary btn-sm">Sửa</a>
+
                                                     <form method="POST"
                                                         action="{{ route('admin.comments.destroyReply', [$comment->id, $reply->id]) }}"
                                                         style="display:inline;">
@@ -168,6 +184,7 @@
                                             </div>
                                         </div>
                                     @endforeach
+
                                 @endif
                             @else
                                 <div class="alert alert-danger">
