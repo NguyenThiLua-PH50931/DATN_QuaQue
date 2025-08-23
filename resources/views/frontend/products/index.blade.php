@@ -289,16 +289,15 @@
                                             </li>
 
                                             <li data-bs-toggle="tooltip" data-bs-placement="top" title="Yêu thích">
-                                                <form action="{{ route('client.wishlist.store') }}" method="POST"
-                                                    style="display:inline-block;">
-                                                    @csrf
-                                                    <input type="hidden" name="product_id" value="{{ $product->id }}">
-                                                    <button type="submit" class="notifi-wishlist btn p-0"
-                                                        style="border:none; background:none; width: 18px; height: 18px; margin-top: 10px; color: #4a5568;">
-                                                        <i data-feather="heart"
-                                                            @if (auth()->check() && auth()->user()->wishlist()->where('product_id', $product->id)->exists()) class="text-red-500" @endif></i>
-                                                    </button>
-                                                </form>
+                                                <a href="javascript:void(0)"
+                                                    class="notifi-wishlist wishlist-btn
+                                                    @if(auth()->check() && auth()->user()->wishlist()->where('product_id', $product->id)->exists()) fill-heart @endif"
+                                                    data-product-id="{{ $product->id }}"
+                                                    data-liked="@if(auth()->check() && auth()->user()->wishlist()->where('product_id', $product->id)->exists())1 @else 0 @endif"
+                                                    title="Yêu thích"
+                                                    style="width:18px; height:18px; display:inline-flex; align-items:center; justify-content:center; color:#4a5568; margin-top:10px;">
+                                                    <i data-feather="heart"></i>
+                                                </a>
                                             </li>
                                         </ul>
                                     </div>

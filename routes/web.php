@@ -94,8 +94,9 @@ Route::group(['prefix' => 'client', 'as' => 'client.'], function () {
     // ================== WISHLIST ==================
     Route::middleware('auth')->group(function () {
         Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
-        Route::post('/wishlist', [WishlistController::class, 'store'])->name('wishlist.store');
-        Route::delete('/wishlist/{product_id}', [WishlistController::class, 'destroy'])->name('wishlist.destroy');
+        Route::post('/wishlist/store', [WishlistController::class, 'store'])->name('wishlist.store');
+        Route::delete('/wishlist/{product_id}', [WishlistController::class, 'destroy'])->name('wishlist.destroy.main');
+        Route::post('/wishlist/destroy', [WishlistController::class, 'destroy'])->name('wishlist.destroy');
     });
 
     // ================== SUPPORT TICKET ==================
@@ -183,6 +184,19 @@ Route::middleware('auth')->group(function () {
     Route::get('/index', [ProfileClientController::class, 'index'])->name('index');
     Route::put('/update', [ProfileClientController::class, 'update'])->name('update');
 });
+// xoa tk
+// routes/web.php
+Route::post('/user/delete-account', action: [ProfileClientController::class, 'deleteAccount'])->middleware('auth');
+// sua anh
+Route::post('/profile/update-avatar', [ProfileClientController::class, 'updateAvatar'])
+    ->name('client.profile.update_avatar')
+    ->middleware('auth');
+// doi mk
+Route::post('/user/change-password', [ProfileClientController::class, 'changePassword'])->name('user.change-password')->middleware('auth');
+// thay thong tin
+Route::post('/user/update-profile', [ProfileClientController::class, 'updateProfile'])->name('user.update-profile')->middleware('auth');
+// sua dia chi
+Route::post('/user/address/update', [ProfileClientController::class, 'updateAddress'])->name('user.address.update')->middleware('auth');
 
 // ================== AUTH & PASSWORD ==================
 Route::get('forgot', [ForgotController::class, 'forgot'])->name('forgot');
@@ -336,7 +350,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
     });
 
     // Order
-Route::group(['prefix' => 'orders', 'as' => 'orders.'], function () {
+    Route::group(['prefix' => 'orders', 'as' => 'orders.'], function () {
         // ĐẶT CÁC ROUTE CỤ THỂ LÊN TRƯỚC
         Route::put('/{order}/update-status', [OrderController::class, 'updateStatus'])->name('updateStatus');
         Route::put('/{order}/update-payment-status', [OrderController::class, 'updatePaymentStatus'])->name('updatePaymentStatus');
@@ -460,9 +474,9 @@ Route::group(['prefix' => 'orders', 'as' => 'orders.'], function () {
         Route::get('edit/{id}', [CouponsController::class, 'edit'])->name('edit');
         Route::put('update/{id}', [CouponsController::class, 'update'])->name('update');
 
-         Route::get('trashed',           [CouponsController::class, 'trashed'])->name('trashed');
-    Route::put('restore/{id}',      [CouponsController::class, 'restore'])->name('restore');
-    Route::delete('force-delete/{id}', [CouponsController::class, 'forceDelete'])->name('force-delete');
+        Route::get('trashed',           [CouponsController::class, 'trashed'])->name('trashed');
+        Route::put('restore/{id}',      [CouponsController::class, 'restore'])->name('restore');
+        Route::delete('force-delete/{id}', [CouponsController::class, 'forceDelete'])->name('force-delete');
     });
     Route::get('/api/provinces', [LocationController::class, 'provinces']);
     Route::get('/api/districts', [LocationController::class, 'districts']);
