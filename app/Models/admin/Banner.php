@@ -12,10 +12,6 @@ class Banner extends Model
 {
     use HasFactory, SoftDeletes, BannerTimeValidation;
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 02916975dcd589cb4288266d9c651485c6aebdeb
     /**
      * Mapping of banner location keys to their Vietnamese labels.
      */
@@ -57,10 +53,6 @@ class Banner extends Model
         'active' => 'boolean',
     ];
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 02916975dcd589cb4288266d9c651485c6aebdeb
     /**
      * Accessor to get the Vietnamese label for the banner location.
      */

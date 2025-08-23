@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 
-use App\Models\admin\Banner;
+use App\Models\Admin\Banner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
@@ -144,10 +144,18 @@ class BannerController extends Controller
         $banner = Banner::findOrFail($id);
         $now = Carbon::now();
 
-        // Kiểm tra nếu banner đang hoạt động và thời gian hiển thị chưa kết thúc
-        // Hoặc nếu banner có display_end_at nhưng thời gian hiện tại vẫn <= display_end_at (cuối ngày đó)
-        if ($banner->active && $banner->display_end_at && $now->lessThanOrEqualTo(Carbon::parse($banner->display_end_at)->endOfDay())) {
-            return redirect()->route('admin.banners.index')->with('error', 'Không thể xóa banner này vì nó đang trong quá trình hiển thị.');
+        // Kiểm tra nếu banner đang hoạt động
+        if ($banner->active) {
+            // Nếu banner có thời gian kết thúc hiển thị
+            if ($banner->display_end_at) {
+                $endDate = Carbon::parse($banner->display_end_at)->endOfDay();
+                if ($now->lessThanOrEqualTo($endDate)) {
+                    return redirect()->route('admin.banners.index')->with('error', 'Không thể xóa banner này vì nó đang trong quá trình hiển thị (kết thúc: ' . $banner->display_end_at->format('d/m/Y H:i') . ').');
+                }
+            } else {
+                // Nếu banner active nhưng không có thời gian kết thúc (hiển thị vô thời hạn)
+                return redirect()->route('admin.banners.index')->with('error', 'Không thể xóa banner này vì nó đang hoạt động và không có thời gian kết thúc.');
+            }
         }
 
         $banner->delete();
@@ -183,6 +191,16 @@ class BannerController extends Controller
     public function trashed()
     {
         $banners = Banner::onlyTrashed()->get();
+
+        // Tính toán thời gian tự động xóa cho mỗi banner
+        foreach ($banners as $banner) {
+            $deletedAt = Carbon::parse($banner->deleted_at);
+            $autoDeleteAt = $deletedAt->copy()->addDays(30);
+            $now = Carbon::now();
+            $banner->days_until_auto_delete = $now->diffInDays($autoDeleteAt, false);
+            $banner->auto_delete_at = $autoDeleteAt;
+        }
+
         return view('backend.banners.trashed', compact('banners'));
     }
 
@@ -200,12 +218,22 @@ class BannerController extends Controller
         foreach ($ids as $id) {
             $banner = Banner::find($id);
             if ($banner) {
-                // Kiểm tra nếu banner đang hoạt động và thời gian hiển thị chưa kết thúc
-                if ($banner->active && $banner->display_end_at && $now->lessThanOrEqualTo(Carbon::parse($banner->display_end_at)->endOfDay())) {
+                // Kiểm tra nếu banner đang hoạt động
+                if ($banner->active) {
+                    // Nếu banner có thời gian kết thúc hiển thị
+                    if ($banner->display_end_at) {
+                        $endDate = Carbon::parse($banner->display_end_at)->endOfDay();
+                        if ($now->lessThanOrEqualTo($endDate)) {
                     $notDeletedBannerTitles[] = $banner->title;
+                            continue;
+                        }
                 } else {
-                    $bannersToDelete[] = $id;
+                        // Nếu banner active nhưng không có thời gian kết thúc (hiển thị vô thời hạn)
+                        $notDeletedBannerTitles[] = $banner->title;
+                        continue;
+                    }
                 }
+                $bannersToDelete[] = $id;
             }
         }
 
@@ -222,9 +250,9 @@ class BannerController extends Controller
         }
         if ($notDeletedCount > 0) {
             if ($deletedCount > 0) {
-                $message .= ' Tuy nhiên, không thể xóa ' . $notDeletedCount . ' banner đang hiển thị: ' . implode(', ', $notDeletedBannerTitles) . '.';
+                $message .= ' Tuy nhiên, không thể xóa ' . $notDeletedCount . ' banner đang hoạt động: ' . implode(', ', $notDeletedBannerTitles) . '.';
             } else {
-                $message .= 'Không thể xóa ' . $notDeletedCount . ' banner đang hiển thị: ' . implode(', ', $notDeletedBannerTitles) . '.';
+                $message .= 'Không thể xóa ' . $notDeletedCount . ' banner đang hoạt động: ' . implode(', ', $notDeletedBannerTitles) . '.';
             }
         }
 
@@ -273,5 +301,38 @@ class BannerController extends Controller
         }
 
         return response()->json(['message' => 'Đã xóa vĩnh viễn ' . $deletedCount . ' banner đã chọn thành công.', 'status' => 'success', 'deletedCount' => $deletedCount], 200);
+    }
+
+    /**
+     * Kiểm tra trạng thái tự động xóa của banner
+     */
+    public function checkAutoDeleteStatus()
+    {
+        $trashedBanners = Banner::onlyTrashed()->get();
+        $autoDeleteStats = [
+            'total' => $trashedBanners->count(),
+            'will_be_deleted_soon' => 0,
+            'days_until_auto_delete' => []
+        ];
+
+        foreach ($trashedBanners as $banner) {
+            $deletedAt = Carbon::parse($banner->deleted_at);
+            $autoDeleteAt = $deletedAt->copy()->addDays(30);
+            $now = Carbon::now();
+            $daysLeft = $now->diffInDays($autoDeleteAt, false);
+
+            if ($daysLeft <= 7) {
+                $autoDeleteStats['will_be_deleted_soon']++;
+            }
+
+            $autoDeleteStats['days_until_auto_delete'][] = [
+                'banner_id' => $banner->id,
+                'title' => $banner->title,
+                'days_left' => $daysLeft,
+                'auto_delete_at' => $autoDeleteAt->format('Y-m-d H:i:s')
+            ];
+        }
+
+        return response()->json($autoDeleteStats);
     }
 }

@@ -54,6 +54,58 @@ class CommentController extends Controller
         return redirect()->route('admin.comments.index')->with('success', 'Bình luận đã được xóa thành công!');
     }
 
+    /**
+     * Hiển thị danh sách các comment đã xóa mềm
+     */
+    public function trashed()
+    {
+        $comments = Comment::onlyTrashed()->with(['user', 'product'])->get();
+
+        // Tính toán thời gian tự động xóa cho mỗi comment
+        foreach ($comments as $comment) {
+            $deletedAt = \Carbon\Carbon::parse($comment->deleted_at);
+            $autoDeleteAt = $deletedAt->copy()->addDays(30);
+            $now = \Carbon\Carbon::now();
+            $comment->days_until_auto_delete = $now->diffInDays($autoDeleteAt, false);
+            $comment->auto_delete_at = $autoDeleteAt;
+        }
+
+        return view('backend.comments.trashed', compact('comments'));
+    }
+
+    /**
+     * Kiểm tra trạng thái tự động xóa của comment
+     */
+    public function checkAutoDeleteStatus()
+    {
+        $trashedComments = Comment::onlyTrashed()->get();
+        $autoDeleteStats = [
+            'total' => $trashedComments->count(),
+            'will_be_deleted_soon' => 0,
+            'days_until_auto_delete' => []
+        ];
+
+        foreach ($trashedComments as $comment) {
+            $deletedAt = \Carbon\Carbon::parse($comment->deleted_at);
+            $autoDeleteAt = $deletedAt->copy()->addDays(30);
+            $now = \Carbon\Carbon::now();
+            $daysLeft = $now->diffInDays($autoDeleteAt, false);
+
+            if ($daysLeft <= 7) {
+                $autoDeleteStats['will_be_deleted_soon']++;
+            }
+
+            $autoDeleteStats['days_until_auto_delete'][] = [
+                'comment_id' => $comment->id,
+                'content' => substr($comment->content, 0, 50) . '...',
+                'days_left' => $daysLeft,
+                'auto_delete_at' => $autoDeleteAt->format('Y-m-d H:i:s')
+            ];
+        }
+
+        return response()->json($autoDeleteStats);
+    }
+
     public function edit($id)
     {
         $comment = Comment::with('replies')->findOrFail($id);
