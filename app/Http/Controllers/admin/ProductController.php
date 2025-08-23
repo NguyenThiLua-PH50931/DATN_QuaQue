@@ -222,50 +222,73 @@ class ProductController extends Controller
         return back()->with('success_modal', 'Cập nhật số lượng thành công!');
     }
     // Xóa mềm một sản phẩm
-    public function destroy($id)
-    {
-        $product = AdminProduct::findOrFail($id);
+public function destroy($id)
+{
+    $product = AdminProduct::findOrFail($id);
 
-        // Xóa mềm bình luận và phản hồi liên quan
-        foreach ($product->comments as $comment) {
-            $comment->replies()->delete(); // Xóa mềm các phản hồi
-            $comment->delete(); // Xóa mềm bình luận
-        }
-
-        $product->delete(); // Xóa mềm sản phẩm
-        return back()->with('success_modal', 'Đã xóa mềm sản phẩm "' . $product->name . '" và các bình luận liên quan!');
+    if (!$product->canBeDeleted()) {
+        return back()->with('error', 'Không thể xóa sản phẩm. Vì sản phẩm này đang có trong đơn hàng chưa hoàn tất.');
     }
+
+    // Xóa mềm bình luận và phản hồi liên quan
+    foreach ($product->comments as $comment) {
+        $comment->replies()->delete();
+        $comment->delete();
+    }
+
+    $product->delete();
+    return back()->with('success_modal', 'Đã xóa mềm sản phẩm "' . $product->name . '" và các bình luận liên quan!');
+}
+
 
     // Xóa mềm nhiều sản phẩm
     public function bulkDelete(Request $request)
-    {
-        $ids = explode(',', $request->ids);
-        $ids = array_filter($ids, 'is_numeric');
+{
+    $ids = explode(',', $request->ids);
+    $ids = array_filter($ids, 'is_numeric');
 
-        if (empty($ids)) {
-            return back()->with('error', 'Không có sản phẩm nào được chọn hoặc ID không hợp lệ.');
-        }
+    if (empty($ids)) {
+        return back()->with('error', 'Không có sản phẩm nào được chọn hoặc ID không hợp lệ.');
+    }
 
-        DB::beginTransaction();
-        try {
-            $products = AdminProduct::whereIn('id', $ids)->get();
+    DB::beginTransaction();
+    try {
+        $products = AdminProduct::whereIn('id', $ids)->get();
 
-            foreach ($products as $product) {
-                // Xóa mềm bình luận và phản hồi liên quan
-                foreach ($product->comments as $comment) {
-                    $comment->replies()->delete(); // Xóa mềm các phản hồi
-                    $comment->delete(); // Xóa mềm bình luận
-                }
-                $product->delete(); // Xóa mềm sản phẩm
+        $blocked = [];
+        $deletedCount = 0;
+
+        foreach ($products as $product) {
+            if (!$product->canBeDeleted()) {
+                $blocked[] = $product->name . ' (ID:' . $product->id . ')';
+                continue; // bỏ qua sản phẩm này
             }
 
-            DB::commit();
-            return back()->with('success_modal', 'Đã xóa mềm ' . count($ids) . ' sản phẩm và các bình luận liên quan!');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->with('error', 'Lỗi xóa mềm hàng loạt: ' . $e->getMessage());
+            // Xóa mềm bình luận và phản hồi liên quan
+            foreach ($product->comments as $comment) {
+                $comment->replies()->delete();
+                $comment->delete();
+            }
+
+            $product->delete();
+            $deletedCount++;
         }
+
+        DB::commit();
+
+        $message = 'Đã xóa mềm ' . $deletedCount . ' sản phẩm.';
+        if (!empty($blocked)) {
+            $message .= ' Bỏ qua ' . count($blocked) . ' sản phẩm không thể xóa (có đơn hàng chưa hoàn tất): ' . implode(', ', $blocked);
+            return back()->with('warning', $message);
+        }
+
+        return back()->with('success_modal', $message);
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return back()->with('error', 'Lỗi xóa mềm hàng loạt: ' . $e->getMessage());
     }
+}
+
 
     // Khôi phục một sản phẩm đã xóa mềm
     public function restore($id)
@@ -289,7 +312,9 @@ class ProductController extends Controller
         DB::beginTransaction();
         try {
             $product = AdminProduct::withTrashed()->findOrFail($id);
-
+  if (!$product->canBeDeleted()) {
+            return response()->json(['success' => false, 'message' => 'Không thể xóa vĩnh viễn sản phẩm vì nó đang có trong đơn hàng chưa hoàn tất.'], 400);
+        }
             // Xóa tất cả bình luận và phản hồi liên quan
             $comments = $product->comments()->get();
             foreach ($comments as $comment) {
@@ -331,61 +356,116 @@ class ProductController extends Controller
 
     // Xóa cứng nhiều sản phẩm
     public function bulkForceDelete(Request $request)
-    {
-        DB::beginTransaction();
-        try {
-            $ids = explode(',', $request->ids);
-            $ids = array_filter($ids, 'is_numeric');
+{
+    DB::beginTransaction();
+    try {
+        $ids = explode(',', $request->ids);
+        $ids = array_values(array_filter(array_map('trim', $ids), 'is_numeric'));
 
-            if (empty($ids)) {
-                return response()->json(['success' => false, 'message' => 'Không có sản phẩm nào được chọn hoặc ID không hợp lệ.'], 400);
+        if (empty($ids)) {
+            return response()->json(['success' => false, 'message' => 'Không có sản phẩm nào được chọn hoặc ID không hợp lệ.'], 400);
+        }
+
+        // preload relations to avoid N+1
+        $products = AdminProduct::withTrashed()
+            ->with(['comments.replies', 'product_images', 'variants' => function ($q) {
+                $q->withTrashed();
+            }])
+            ->whereIn('id', $ids)
+            ->get();
+
+        if ($products->isEmpty()) {
+            return response()->json(['success' => false, 'message' => 'Không tìm thấy sản phẩm nào trong thùng rác với các ID đã chọn.'], 400);
+        }
+
+        $blocked = [];     // products that cannot be deleted because active orders
+        $deleted = [];     // products successfully deleted (ids)
+        $errors = [];      // record per-product errors if any
+
+        foreach ($products as $product) {
+            // Kiểm tra quyền xóa dựa trên đơn hàng liên quan
+            if (method_exists($product, 'canBeDeleted') && !$product->canBeDeleted()) {
+                $blocked[] = ['id' => $product->id, 'name' => $product->name];
+                continue;
             }
 
-            $products = AdminProduct::withTrashed()->whereIn('id', $ids)->get();
-
-            if ($products->isEmpty()) {
-                return response()->json(['success' => false, 'message' => 'Không tìm thấy sản phẩm nào trong thùng rác với các ID đã chọn.'], 400);
-            }
-
-            foreach ($products as $product) {
+            try {
                 // Xóa cứng bình luận và phản hồi liên quan
                 $comments = $product->comments()->get();
                 foreach ($comments as $comment) {
-                    $comment->replies()->delete(); // Xóa các phản hồi
-                    $comment->delete(); // Xóa bình luận
+                    // xóa replies (soft) nếu có
+                    if (method_exists($comment, 'replies')) {
+                        $comment->replies()->delete();
+                    }
+                    $comment->delete();
                 }
 
                 // Xóa tất cả ảnh mô tả liên quan
                 foreach ($product->product_images as $image) {
-                    if (Storage::disk('public')->exists($image->image_url)) {
+                    if (!empty($image->image_url) && Storage::disk('public')->exists($image->image_url)) {
                         Storage::disk('public')->delete($image->image_url);
                     }
                     $image->delete();
                 }
 
                 // Xóa tất cả biến thể và ảnh biến thể liên quan (bao gồm cả đã xóa mềm)
-                foreach (AdminProductVariant::where('product_id', $product->id)->withTrashed()->get() as $variant) {
-                    if ($variant->image && Storage::disk('public')->exists($variant->image)) {
+                $variants = AdminProductVariant::where('product_id', $product->id)->withTrashed()->get();
+                foreach ($variants as $variant) {
+                    if (!empty($variant->image) && Storage::disk('public')->exists($variant->image)) {
                         Storage::disk('public')->delete($variant->image);
                     }
-                    $variant->attributeValues()->detach(); // Ngắt liên kết với attribute_values
-                    $variant->forceDelete(); // Xóa cứng biến thể
+                    // Ngắt pivot attribute_values nếu tồn tại
+                    if (method_exists($variant, 'attributeValues')) {
+                        $variant->attributeValues()->detach();
+                    }
+                    $variant->forceDelete();
                 }
 
                 // Xóa ảnh đại diện sản phẩm
-                if ($product->image && Storage::disk('public')->exists($product->image)) {
+                if (!empty($product->image) && Storage::disk('public')->exists($product->image)) {
                     Storage::disk('public')->delete($product->image);
                 }
-                $product->forceDelete(); // Xóa cứng sản phẩm chính
-            }
 
-            DB::commit();
-            return response()->json(['success' => true, 'message' => 'Đã xóa vĩnh viễn ' . count($ids) . ' sản phẩm và các bình luận liên quan!']);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['success' => false, 'message' => 'Lỗi xóa vĩnh viễn hàng loạt: ' . $e->getMessage()], 500);
+                // Cuối cùng xóa cứng product chính
+                $product->forceDelete();
+
+                $deleted[] = ['id' => $product->id, 'name' => $product->name];
+            } catch (\Exception $eProd) {
+                // Nếu 1 product lỗi khi xử lý, ghi lại và tiếp tục
+                \Log::error("Error force-deleting product ID {$product->id}: " . $eProd->getMessage());
+                $errors[] = ['id' => $product->id, 'name' => $product->name, 'error' => $eProd->getMessage()];
+                // không throw để cho loop tiếp tục với product khác
+            }
         }
+
+        DB::commit();
+
+        // Build response message
+        $messageParts = [];
+        if (!empty($deleted)) {
+            $messageParts[] = 'Đã xóa vĩnh viễn ' . count($deleted) . ' sản phẩm.';
+        }
+        if (!empty($blocked)) {
+            $messageParts[] = 'Bỏ qua ' . count($blocked) . ' sản phẩm không thể xóa (có đơn hàng chưa hoàn tất).';
+        }
+        if (!empty($errors)) {
+            $messageParts[] = 'Có ' . count($errors) . ' sản phẩm lỗi khi xóa (xem chi tiết trong trả về).';
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => implode(' ', $messageParts),
+            'deleted' => $deleted,
+            'blocked' => $blocked,
+            'errors' => $errors,
+        ]);
+    } catch (\Exception $e) {
+        DB::rollBack();
+        \Log::error('bulkForceDelete error: ' . $e->getMessage());
+        return response()->json(['success' => false, 'message' => 'Lỗi xóa vĩnh viễn hàng loạt: ' . $e->getMessage()], 500);
     }
+}
+
 
     // Trang thùng rác sản phẩm
     public function trashed()
