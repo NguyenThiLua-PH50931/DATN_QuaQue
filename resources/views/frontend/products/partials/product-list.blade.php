@@ -12,7 +12,7 @@
                             </a>
 
                             <style>
-                                                                        .wishlist-btn.fill-heart svg {
+                                    .wishlist-btn.fill-heart svg {
                                             fill: #4a5568 !important;
                                             stroke: #4a5568 !important;
                                         }
@@ -196,7 +196,7 @@
         {{ $products->withQueryString()->links() }}
     </nav>
 </div>
-
+    
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.wishlist-btn').forEach(function(btn) {

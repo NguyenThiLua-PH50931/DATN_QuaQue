@@ -627,32 +627,33 @@
             });
         }
 
-        $('.btn-cartstorequick').on('click', function(e) {
-            e.preventDefault();
+       $('.btn-cartstorequick').on('click', function(e) {
+    e.preventDefault();
 
-            const $btn = $(this);
-            const productId = $btn.data('product-id');
-            const variantId = $btn.data('variant-id');
-            const quantity = $btn.data('quantity') || 1;
+    const $btn = $(this);
+    const productId = $btn.data('product-id');
+    const variantId = $btn.data('variant-id');
+    const quantity = $btn.data('quantity') || 1;
 
-            $.ajax({
-                url: '{{ route('client.cart.storeQuick') }}',
-                method: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}',
-                    product_id: productId,
-                    variant_id: variantId,
-                    quantity: quantity
-                },
-                success: function(res) {
-                    showToastSwal(res.message, true);
-                },
-                error: function(xhr) {
-                    let msg = xhr.responseJSON?.message || 'Có lỗi xảy ra.';
-                    showToastSwal(msg, false);
-                }
-            });
-        });
+    $.ajax({
+        url: '{{ route('client.cart.storeQuick') }}',
+        method: 'POST',
+        data: {
+            _token: '{{ csrf_token() }}',
+            product_id: productId,
+            variant_id: variantId,
+            quantity: quantity
+        },
+        success: function(res) {
+            showToastSwal(res.message, true);
+        },
+        error: function(xhr) {
+            let msg = xhr.responseJSON?.message || 'Có lỗi xảy ra.';
+            showToastSwal(msg, false);
+        }
+    });
+});
+
     </script>
     <script>
         setInterval(function() {

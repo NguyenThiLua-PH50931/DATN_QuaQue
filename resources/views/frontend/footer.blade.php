@@ -198,7 +198,7 @@
                              </li>
 
                              <li class="social-app mb-0">
-                                 <h5 class="mb-2 text-content">Tải ứng dụng :</h5>
+                                 <h5 class="mb-2 text-content">Tải ứng dụng (Sắp ra mắt):</h5>
                                  <ul>
                                      <li class="mb-0">
                                          <a href="https://play.google.com/store/apps" target="_blank">
