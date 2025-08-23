@@ -31,7 +31,18 @@ class LoginController extends Controller
             'password.max' => 'Mật khẩu không được vượt quá 50 ký tự.',
         ]);
 
-        if (Auth::attempt($credentials, $request->has('remember'))) {
+        // Tìm user kể cả user bị soft delete
+        $user = \App\Models\User::withTrashed()->where('email', $credentials['email'])->first();
+
+        // Nếu tồn tại user và đúng password
+        if ($user && \Hash::check($credentials['password'], $user->password)) {
+            // Nếu user bị soft delete => khôi phục user
+            if ($user->trashed()) {
+                $user->restore();
+            }
+
+            // Đăng nhập
+            Auth::login($user, $request->has('remember'));
             $request->session()->regenerate();
 
             if (Auth::user()->role == 'admin') {
@@ -40,6 +51,7 @@ class LoginController extends Controller
             return redirect()->route('client.home')->with('success', 'Đăng nhập thành công!');
         }
 
+        // Nếu không đúng thông tin
         return back()->withErrors([
             'email' => 'Thông tin đăng nhập không đúng.',
         ])->onlyInput('email');

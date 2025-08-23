@@ -3,7 +3,7 @@
     <div class="row g-sm-4 g-3 row-cols-xxl-4 row-cols-xl-3 row-cols-lg-2 row-cols-md-3 row-cols-2 product-list-section">
         @forelse ($products as $product)
             <div>
-                <div class="product-box-3 h-100 wow fadeInUp" data-wow-delay="0.05s">
+                <div class="product-box-3 h-100 wow fadeInUp @if(!$product->variants->firstWhere(fn($v) => $v->stock > 0) || $product->active != 1) out-of-stock @endif" data-wow-delay="0.05s">
                     <div class="product-header">
                         <div class="product-image">
                             <a href="{{ route('client.product.detail', $product->slug) }}">
@@ -12,6 +12,10 @@
                             </a>
 
                             <style>
+                                                                        .wishlist-btn.fill-heart svg {
+                                            fill: #4a5568 !important;
+                                            stroke: #4a5568 !important;
+                                        }
                                 .product-option li {
                                     width: 50% !important;
                                 }
@@ -99,6 +103,43 @@
                                     padding: 2px 8px;
                                     border-radius: 6px;
                                 }
+
+                                /* ==== Badge HẾT HÀNG ==== */
+                                .out-of-stock-badge {
+                                    position: absolute;
+                                    top: 8px;
+                                    right: 8px;
+                                    background: #dc3545;
+                                    color: #fff;
+                                    font-weight: bold;
+                                    font-size: 0.75rem;
+                                    padding: 4px 8px;
+                                    border-radius: 6px;
+                                    z-index: 10;
+                                    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                                }
+
+                                .out-of-stock-badge span {
+                                    display: block;
+                                    text-align: center;
+                                }
+
+                                /* Overlay mờ cho sản phẩm hết hàng */
+                                .product-box-3.out-of-stock .product-image::after {
+                                    content: "";
+                                    position: absolute;
+                                    top: 0;
+                                    left: 0;
+                                    right: 0;
+                                    bottom: 0;
+                                    background: rgba(0, 0, 0, 0.3);
+                                    border-radius: 16px;
+                                    z-index: 5;
+                                }
+
+                                .product-box-3.out-of-stock .product-image > a > img {
+                                    filter: grayscale(30%);
+                                }
                             </style>
 
                             <ul class="product-option">
@@ -108,18 +149,28 @@
                                     </a>
                                 </li>
                                 <li data-bs-toggle="tooltip" data-bs-placement="top" title="Yêu thích">
-                                    <form action="{{ route('client.wishlist.store') }}" method="POST"
-                                        style="display:inline-block;">
-                                        @csrf
-                                        <input type="hidden" name="product_id" value="{{ $product->id }}">
-                                        <button type="submit" class="notifi-wishlist btn p-0"
-                                            style="border:none; background:none; width:18px; height:18px; margin-top:10px;">
-                                            <i data-feather="heart" style="color:#4a5568;"
-                                                @if (auth()->check() && auth()->user()->wishlist()->where('product_id', $product->id)->exists()) class="text-red-500" @endif></i>
-                                        </button>
-                                    </form>
+                                    <a href="javascript:void(0)"
+                                        class="notifi-wishlist wishlist-btn
+                                        @if(auth()->check() && auth()->user()->wishlist()->where('product_id', $product->id)->exists()) fill-heart @endif"
+                                        data-product-id="{{ $product->id }}"
+                                        data-liked="@if(auth()->check() && auth()->user()->wishlist()->where('product_id', $product->id)->exists())1 @else 0 @endif"
+                                        title="Yêu thích"
+                                        style="width:18px; height:18px; display:inline-flex; align-items:center; justify-content:center; color:#4a5568; margin-top:10px;">
+                                        <i data-feather="heart"></i>
+                                    </a>
                                 </li>
                             </ul>
+
+                            @php
+                                $variantInStock = $product->variants->firstWhere(fn($v) => $v->stock > 0);
+                                $isOutOfStock = !$variantInStock || $product->active != 1;
+                            @endphp
+
+                            @if ($isOutOfStock)
+                                <div class="out-of-stock-badge">
+                                    <span>Hết hàng</span>
+                                </div>
+                            @endif
                         </div>
                     </div>
 
@@ -167,8 +218,8 @@
                             </div>
 
                             @php
-                                // Trigger của bạn đã đồng bộ stock -> active, nên chỉ cần check active
-                                $variantInStock = $product->variants->firstWhere(fn($v) => $v->active == 1);
+                                // Kiểm tra stock > 0 thay vì active
+                                $variantInStock = $product->variants->firstWhere(fn($v) => $v->stock > 0);
                             @endphp
 
                             @if ($variantInStock && $product->active == 1)
@@ -195,39 +246,55 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        @if (session('error'))
-            Swal.fire({
-                icon: 'error', // hoặc 'success'
-                title: 'Lỗi vượt quá số lượng tồn kho',
-                text: '{{ session('
-                                                                                                                                                                                                                                                                                                                                        error ') }}',
-                confirmButtonColor: '#0da487',
-                width: 350, // giảm chiều ngang
-                padding: '1rem 1.5rem', // giảm padding
-                customClass: {
-                    popup: 'swal2-popup-small',
-                    title: 'swal2-title-small',
-                    content: 'swal2-content-small'
-                }
-            });
-        @endif
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.wishlist-btn').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const productId = btn.getAttribute('data-product-id');
+                const url = "{{ route('client.wishlist.store') }}";
+                fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            product_id: productId
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            if (data.toggled === 'removed') {
+                                btn.setAttribute('data-liked', '0');
+                                btn.classList.remove('fill-heart');
+                            } else {
+                                btn.setAttribute('data-liked', '1');
+                                btn.classList.add('fill-heart');
+                            }
+                            if (window.feather) feather.replace();
 
-        @if (session('success'))
-            Swal.fire({
-                icon: 'success',
-                title: 'Thành công',
-                text: '{{ session('
-                                                                                                                                                                                                                                                                                                                                        success ') }}',
-                confirmButtonColor: '#0da487',
-                width: 350,
-                padding: '1rem 1.5rem',
-                customClass: {
-                    popup: 'swal2-popup-small',
-                    title: 'swal2-title-small',
-                    content: 'swal2-content-small'
-                }
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: data.message,
+                                showConfirmButton: false,
+                                timer: 1400
+                            });
+                        } else {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: data.message || 'Lỗi thao tác',
+                                showConfirmButton: false,
+                                timer: 1400
+                            });
+                        }
+                    });
             });
-        @endif
+        });
     });
 </script>

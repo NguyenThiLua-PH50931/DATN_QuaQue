@@ -27,8 +27,61 @@
     </section>
     <!-- BREADCRUMB SECTION END -->
     <style>
-        .row {
-            justify-content: left !important;
+        /* Reset và cải thiện layout cơ bản */
+        .wishlist-section {
+            padding: 20px 0;
+        }
+
+        .wishlist-section .container-fluid-lg {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Cải thiện grid system */
+        .wishlist-section .row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start !important;
+            margin: 0 -10px;
+        }
+
+        .wishlist-section .col-xxl-2 {
+            flex: 0 0 auto;
+            width: calc(16.666667% - 20px);
+            margin: 0 10px 20px 10px;
+            min-width: 200px;
+        }
+
+        /* Responsive breakpoints */
+        @media (max-width: 1400px) {
+            .wishlist-section .col-xxl-2 {
+                width: calc(20% - 20px);
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .wishlist-section .col-xxl-2 {
+                width: calc(25% - 20px);
+            }
+        }
+
+        @media (max-width: 992px) {
+            .wishlist-section .col-xxl-2 {
+                width: calc(33.333333% - 20px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .wishlist-section .col-xxl-2 {
+                width: calc(50% - 20px);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .wishlist-section .col-xxl-2 {
+                width: calc(100% - 20px);
+            }
         }
     </style>
     <!-- WISHLIST SECTION START -->
@@ -55,7 +108,7 @@
                                         </a>
                                         <div class="product-header-top">
                                             <form class="wishlist-delete-form" data-product-id="{{ $item->product_id }}"
-                                                action="{{ route('client.wishlist.destroy', $item->product_id) }}"
+                                                action="{{ route('client.wishlist.destroy.main', $item->product_id) }}"
                                                 method="POST">
                                                 @csrf
                                                 @method('DELETE')
@@ -254,9 +307,148 @@
             overflow: hidden;
         }
 
-        /* Bạn đang dùng justify-content: left; nên đổi về flex-start chuẩn */
-        .row {
-            justify-content: flex-start !important;
+        /* Cải thiện product box để ổn định ở mọi zoom */
+        .wishlist-section .product-box-3 {
+            display: flex;
+            flex-direction: column;
+            height: auto !important;
+            min-height: 350px;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .wishlist-section .product-box-3:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+
+        /* Cải thiện product header */
+        .wishlist-section .product-header {
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        /* Cải thiện product footer */
+        .wishlist-section .product-footer {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            background: #fff;
+        }
+
+        .wishlist-section .product-detail {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Cải thiện text alignment */
+        .wishlist-section .span-name {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .wishlist-section .name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 8px;
+            text-align: center;
+            line-height: 1.3;
+            min-height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .wishlist-section .unit {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .wishlist-section .price {
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .wishlist-section .price .theme-color {
+            font-size: 16px;
+            font-weight: 700;
+            color: #059669;
+        }
+
+        /* Cải thiện close button */
+        .wishlist-section .close_button {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: all 0.2s ease;
+        }
+
+        .wishlist-section .close_button:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .wishlist-section .close_button svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Fix cho mọi mức zoom */
+        @media screen and (min-resolution: 120dpi) {
+            .wishlist-section .col-xxl-2 {
+                width: calc(16.666667% - 20px);
+            }
+        }
+
+        @media screen and (min-resolution: 96dpi) {
+            .wishlist-section .col-xxl-2 {
+                width: calc(16.666667% - 20px);
+            }
+        }
+
+        /* Đảm bảo layout ổn định ở mọi zoom level */
+        @media (min-width: 1400px) {
+            .wishlist-section .container-fluid-lg {
+                max-width: 1600px;
+            }
+        }
+
+        @media (min-width: 1600px) {
+            .wishlist-section .container-fluid-lg {
+                max-width: 1800px;
+            }
+        }
+
+        /* Fix cho zoom 100% trở lên */
+        @media screen and (min-resolution: 1.1) {
+            .wishlist-section .row {
+                justify-content: flex-start !important;
+            }
+
+            .wishlist-section .col-xxl-2 {
+                flex: 0 0 auto;
+                width: calc(16.666667% - 20px);
+            }
         }
     </style>
 
