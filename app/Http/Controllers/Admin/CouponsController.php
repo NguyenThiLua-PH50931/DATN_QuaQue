@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\admin\DiscountCode;
+use App\Models\Admin\DiscountCode;
 use Illuminate\Http\Request;
-use App\Models\admin\Product;
+use App\Models\Admin\Product;
 use Illuminate\Validation\Rule;
 use App\Models\DiscountCodeUsage;
 use App\Models\Order;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Support\Arr; 
+use Illuminate\Support\Arr;
 
 class CouponsController extends Controller
 {
@@ -430,4 +430,41 @@ public function forceDelete($id)
         ->with('success', 'Đã xóa vĩnh viễn mã giảm giá!');
 }
 
+// Kiểm tra trạng thái tự động xóa
+public function checkAutoDeleteStatus()
+{
+    $trashedCoupons = DiscountCode::onlyTrashed()->get();
+
+    $total = $trashedCoupons->count();
+    $willBeDeletedSoon = $trashedCoupons->where('will_be_deleted_soon', true)->count();
+
+    $daysUntilAutoDelete = [];
+    foreach ($trashedCoupons as $coupon) {
+        $daysLeft = $coupon->days_until_auto_delete;
+        // Thêm vào danh sách nếu daysLeft >= 0 (bao gồm cả 0 - sắp được xóa)
+        if ($daysLeft !== null && $daysLeft >= 0) {
+            $daysUntilAutoDelete[] = [
+                'coupon_id' => $coupon->id,
+                'code' => $coupon->code,
+                'days_left' => $daysLeft,
+                'auto_delete_at' => $coupon->auto_delete_at
+            ];
+        }
+    }
+
+    if ($trashedCoupons->count() == 0) {
+        return response()->json([
+            'total' => 0,
+            'will_be_deleted_soon' => 0,
+            'days_until_auto_delete' => [],
+            'message' => 'Không có mã giảm giá nào đã xóa mềm.'
+        ]);
+    }
+
+    return response()->json([
+        'total' => $total,
+        'will_be_deleted_soon' => $willBeDeletedSoon,
+        'days_until_auto_delete' => $daysUntilAutoDelete
+    ]);
+}
 }

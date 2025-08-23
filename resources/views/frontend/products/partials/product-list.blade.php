@@ -3,7 +3,7 @@
     <div class="row g-sm-4 g-3 row-cols-xxl-4 row-cols-xl-3 row-cols-lg-2 row-cols-md-3 row-cols-2 product-list-section">
         @forelse ($products as $product)
             <div>
-                <div class="product-box-3 h-100 wow fadeInUp" data-wow-delay="0.05s">
+                <div class="product-box-3 h-100 wow fadeInUp @if(!$product->variants->firstWhere(fn($v) => $v->stock > 0) || $product->active != 1) out-of-stock @endif" data-wow-delay="0.05s">
                     <div class="product-header">
                         <div class="product-image">
                             <a href="{{ route('client.product.detail', $product->slug) }}">
@@ -12,7 +12,7 @@
                             </a>
 
                             <style>
-                                                                        .wishlist-btn.fill-heart svg {
+                                    .wishlist-btn.fill-heart svg {
                                             fill: #4a5568 !important;
                                             stroke: #4a5568 !important;
                                         }
@@ -103,6 +103,43 @@
                                     padding: 2px 8px;
                                     border-radius: 6px;
                                 }
+
+                                /* ==== Badge HẾT HÀNG ==== */
+                                .out-of-stock-badge {
+                                    position: absolute;
+                                    top: 8px;
+                                    right: 8px;
+                                    background: #dc3545;
+                                    color: #fff;
+                                    font-weight: bold;
+                                    font-size: 0.75rem;
+                                    padding: 4px 8px;
+                                    border-radius: 6px;
+                                    z-index: 10;
+                                    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                                }
+
+                                .out-of-stock-badge span {
+                                    display: block;
+                                    text-align: center;
+                                }
+
+                                /* Overlay mờ cho sản phẩm hết hàng */
+                                .product-box-3.out-of-stock .product-image::after {
+                                    content: "";
+                                    position: absolute;
+                                    top: 0;
+                                    left: 0;
+                                    right: 0;
+                                    bottom: 0;
+                                    background: rgba(0, 0, 0, 0.3);
+                                    border-radius: 16px;
+                                    z-index: 5;
+                                }
+
+                                .product-box-3.out-of-stock .product-image > a > img {
+                                    filter: grayscale(30%);
+                                }
                             </style>
 
                             <ul class="product-option">
@@ -123,6 +160,17 @@
                                     </a>
                                 </li>
                             </ul>
+
+                            @php
+                                $variantInStock = $product->variants->firstWhere(fn($v) => $v->stock > 0);
+                                $isOutOfStock = !$variantInStock || $product->active != 1;
+                            @endphp
+
+                            @if ($isOutOfStock)
+                                <div class="out-of-stock-badge">
+                                    <span>Hết hàng</span>
+                                </div>
+                            @endif
                         </div>
                     </div>
 
@@ -170,8 +218,8 @@
                             </div>
 
                             @php
-                                // Trigger của bạn đã đồng bộ stock -> active, nên chỉ cần check active
-                                $variantInStock = $product->variants->firstWhere(fn($v) => $v->active == 1);
+                                // Kiểm tra stock > 0 thay vì active
+                                $variantInStock = $product->variants->firstWhere(fn($v) => $v->stock > 0);
                             @endphp
 
                             @if ($variantInStock && $product->active == 1)
@@ -196,7 +244,7 @@
         {{ $products->withQueryString()->links() }}
     </nav>
 </div>
-
+    
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.wishlist-btn').forEach(function(btn) {

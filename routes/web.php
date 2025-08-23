@@ -47,7 +47,7 @@ use App\Http\Controllers\Client\ChatbotController;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 
 // Nếu cần dùng controller gốc ngoài admin/client thì khai báo use ở đây
-// use App\Http\Controllers\ProductController as GlobalProductController; 
+// use App\Http\Controllers\ProductController as GlobalProductController;
 
 // ================== CLIENT ==================
 
@@ -261,6 +261,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         Route::get('/{slug}/edit', [AdminProductController::class, 'edit'])->name('edit');
         Route::post('/{slug}/update', [AdminProductController::class, 'update'])->name('update');
         Route::delete('/image/{id}', [AdminProductController::class, 'deleteImage'])->name('image.delete');
+        Route::get('/check-auto-delete-status', [AdminProductController::class, 'checkAutoDeleteStatus'])->name('checkAutoDeleteStatus');
         Route::get('/{id}/description', [AdminProductController::class, 'getDescription'])->name('description');
         Route::get('/variant/{id}/description', [AdminProductController::class, 'getVariantDescription'])->name('variant.description');
         Route::post('/variant/{id}/toggle-status', [AdminProductController::class, 'toggleVariantStatus'])->name('variant.toggleStatus');
@@ -289,6 +290,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         Route::get('/', [AttributeController::class, 'index'])->name('index');                  // danh sách thuộc tính
         Route::post('/', [AttributeController::class, 'store'])->name('store');                 // thêm mới
         Route::get('create', [AttributeController::class, 'create'])->name('create');           // form tạo
+        Route::get('/check-auto-delete-status', [AttributeController::class, 'checkAutoDeleteStatus'])->name('checkAutoDeleteStatus');
         Route::get('/{slug}/edit', [AttributeController::class, 'edit'])->name('edit'); // Form chỉnh sửa
         Route::put('/{slug}', [AttributeController::class, 'update'])->name('update');   // Cập nhật     // Cập nhật (dùng PUT để nhất quán với REST)
         Route::delete('/{id}', [AttributeController::class, 'destroy'])->name('destroy');       // Xóa mềm một thuộc tính (sử dụng destroy)
@@ -306,6 +308,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         Route::post('/', [AdminCategoryController::class, 'store'])->name('store');                 // thêm mới
         Route::put('{id}', [AdminCategoryController::class, 'update'])->name('update');             // cập nhật
         Route::get('create', [AdminCategoryController::class, 'create'])->name('create');           // form tạo
+        Route::get('check-auto-delete-status', [AdminCategoryController::class, 'checkAutoDeleteStatus'])->name('checkAutoDeleteStatus');
         Route::get('{id}/edit', [AdminCategoryController::class, 'edit'])->name('edit');            // form sửa
         Route::delete('{id}/trashed', [AdminCategoryController::class, 'softDelete'])->name('softDelete');  // xóa mềm
         Route::delete('{id}/force', [AdminCategoryController::class, 'forceDelete'])->name('forceDelete');  // xóa cứng
@@ -322,6 +325,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         Route::post('/', [AdminRegionController::class, 'store'])->name('store');
         Route::put('{id}', [AdminRegionController::class, 'update'])->name('update');
         Route::get('create', [AdminRegionController::class, 'create'])->name('create');
+        Route::get('check-auto-delete-status', [AdminRegionController::class, 'checkAutoDeleteStatus'])->name('checkAutoDeleteStatus');
         Route::get('{id}/edit', [AdminRegionController::class, 'edit'])->name('edit');
         Route::delete('{id}/soft', [AdminRegionController::class, 'softDelete'])->name('softDelete');
         Route::delete('{id}/force', [AdminRegionController::class, 'forceDelete'])->name('forceDelete');
@@ -338,15 +342,16 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         Route::post('/', [BannerController::class, 'store'])->name('store');
         Route::put('{id}', [BannerController::class, 'update'])->name('update');
         Route::get('create', [BannerController::class, 'create'])->name('create');
+        Route::get('check-auto-delete-status', [BannerController::class, 'checkAutoDeleteStatus'])->name('checkAutoDeleteStatus');
         Route::get('{id}/edit', [BannerController::class, 'edit'])->name('edit');
         Route::delete('{id}/soft', [BannerController::class, 'softDelete'])->name('softDelete');
         Route::delete('{id}/force', [BannerController::class, 'forceDelete'])->name('forceDelete');
         Route::post('{id}/restore', [BannerController::class, 'restore'])->name('restore');
         Route::get('trashed', [BannerController::class, 'trashed'])->name('trashed');
-        Route::get('{id}', [BannerController::class, 'show'])->name('show');
         Route::delete('bulk-delete', [BannerController::class, 'bulkDelete'])->name('bulkDelete');
         Route::delete('bulk-force-delete', [BannerController::class, 'bulkForceDelete'])->name('bulkForceDelete');
         Route::post('bulk-restore', [BannerController::class, 'bulkRestore'])->name('bulkRestore');
+        Route::get('{id}', [BannerController::class, 'show'])->name('show');
     });
 
     // Order
@@ -397,6 +402,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         Route::delete('/{commentId}/reply/{replyId}', [CommentController::class, 'destroyReply'])->name('destroyReply');
         Route::post('/{id}/approve', [CommentController::class, 'approve'])->name('approve');
         Route::post('/{id}/reject', [CommentController::class, 'reject'])->name('reject');
+        Route::get('/trashed', [CommentController::class, 'trashed'])->name('trashed');
+        Route::get('/check-auto-delete-status', [CommentController::class, 'checkAutoDeleteStatus'])->name('checkAutoDeleteStatus');
     });
 
     // SupportTicket
@@ -413,6 +420,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         Route::get('index', [BlogController::class, 'index'])->name('index');
         Route::get('create', [BlogController::class, 'create'])->name('create');
         Route::post('store', [BlogController::class, 'store'])->name('store');
+        Route::get('check-auto-delete-status', [BlogController::class, 'checkAutoDeleteStatus'])->name('checkAutoDeleteStatus');
         Route::get('show/{blog}', [BlogController::class, 'show'])->name('show');
         Route::get('edit/{blog}', [BlogController::class, 'edit'])->name('edit');
         Route::put('update/{blog}', [BlogController::class, 'update'])->name('update');
@@ -473,6 +481,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'checkAdmin
         Route::delete('destroy/{id}', [CouponsController::class, 'destroy'])->name('destroy');
         Route::get('edit/{id}', [CouponsController::class, 'edit'])->name('edit');
         Route::put('update/{id}', [CouponsController::class, 'update'])->name('update');
+        Route::get('check-auto-delete-status', [CouponsController::class, 'checkAutoDeleteStatus'])->name('checkAutoDeleteStatus');
 
         Route::get('trashed',           [CouponsController::class, 'trashed'])->name('trashed');
         Route::put('restore/{id}',      [CouponsController::class, 'restore'])->name('restore');

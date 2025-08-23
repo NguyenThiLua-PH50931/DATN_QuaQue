@@ -4,13 +4,14 @@ namespace App\Models\admin;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\User;             // User ở thư mục App\Models (nếu vậy)
 use App\Models\admin\Product;    // Product trong thư mục admin
 use App\Models\admin\CommentReply;
 
 class Comment extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = ['user_id', 'product_id', 'content', 'status'];
 

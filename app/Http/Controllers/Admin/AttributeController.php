@@ -287,7 +287,50 @@ class AttributeController extends Controller
     public function trashed()
     {
         $attributes = Attribute::onlyTrashed()->with('values')->get();
+
+        // Tính toán thời gian tự động xóa cho mỗi attribute
+        foreach ($attributes as $attribute) {
+            $deletedAt = \Carbon\Carbon::parse($attribute->deleted_at);
+            $autoDeleteAt = $deletedAt->copy()->addDays(30);
+            $now = \Carbon\Carbon::now();
+            $attribute->days_until_auto_delete = $now->diffInDays($autoDeleteAt, false);
+            $attribute->auto_delete_at = $autoDeleteAt;
+        }
+
         return view('backend.attributes.trashed', compact('attributes'));
+    }
+
+    /**
+     * Kiểm tra trạng thái tự động xóa của attribute
+     */
+    public function checkAutoDeleteStatus()
+    {
+        $trashedAttributes = Attribute::onlyTrashed()->get();
+        $autoDeleteStats = [
+            'total' => $trashedAttributes->count(),
+            'will_be_deleted_soon' => 0,
+            'days_until_auto_delete' => []
+        ];
+
+        foreach ($trashedAttributes as $attribute) {
+            $deletedAt = \Carbon\Carbon::parse($attribute->deleted_at);
+            $autoDeleteAt = $deletedAt->copy()->addDays(30);
+            $now = \Carbon\Carbon::now();
+            $daysLeft = $now->diffInDays($autoDeleteAt, false);
+
+            if ($daysLeft <= 7) {
+                $autoDeleteStats['will_be_deleted_soon']++;
+            }
+
+            $autoDeleteStats['days_until_auto_delete'][] = [
+                'attribute_id' => $attribute->id,
+                'name' => $attribute->name,
+                'days_left' => $daysLeft,
+                'auto_delete_at' => $autoDeleteAt->format('Y-m-d H:i:s')
+            ];
+        }
+
+        return response()->json($autoDeleteStats);
     }
 
     // Khôi phục một thuộc tính
