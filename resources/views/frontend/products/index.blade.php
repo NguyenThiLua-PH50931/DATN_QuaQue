@@ -518,6 +518,9 @@
             var from = Number(inputFrom.value.replace(/\D/g, '')) || 0;
             var to = Number(inputTo.value.replace(/\D/g, '')) || 1000000;
 
+            // Flag để tránh vòng lặp vô hạn
+            var isUpdatingFromSlider = false;
+
             noUiSlider.create(priceSlider, {
                 start: [from, to],
                 connect: true,
@@ -553,45 +556,69 @@
                     'Đang chọn: ' + v1.toLocaleString('vi-VN') + '₫ - ' + v2.toLocaleString('vi-VN') + '₫';
             }
 
+            // Sự kiện khi kéo slider
             priceSlider.noUiSlider.on('update', function(values, handle) {
-                var v1 = parseInt(values[0]);
-                var v2 = parseInt(values[1]);
-                inputFrom.value = v1;
-                inputTo.value = v2;
-                updateSelectedRange(v1, v2);
+                if (!isUpdatingFromSlider) {
+                    isUpdatingFromSlider = true;
+                    var v1 = parseInt(values[0]);
+                    var v2 = parseInt(values[1]);
+                    inputFrom.value = v1;
+                    inputTo.value = v2;
+                    updateSelectedRange(v1, v2);
+                    // Reset flag sau một khoảng thời gian ngắn
+                    setTimeout(function() {
+                        isUpdatingFromSlider = false;
+                    }, 100);
+                }
+            });
+
+            // Sự kiện khi kết thúc kéo slider
+            priceSlider.noUiSlider.on('change', function(values, handle) {
+                isUpdatingFromSlider = false;
             });
 
             function syncSliderFromInput() {
-                var v1 = parseInt(inputFrom.value.replace(/\D/g, ''));
-                var v2 = parseInt(inputTo.value.replace(/\D/g, ''));
-                if (isNaN(v1)) v1 = min;
-                if (isNaN(v2)) v2 = max;
-                // Ép về min/max nếu nhập ngoài khoảng
-                v1 = Math.max(min, Math.min(v1, max));
-                v2 = Math.max(min, Math.min(v2, max));
-                // Nếu min > max, hoán đổi
-                if (v1 > v2) {
-                    var tmp = v1;
-                    v1 = v2;
-                    v2 = tmp;
+                if (!isUpdatingFromSlider) {
+                    isUpdatingFromSlider = true;
+                    var v1 = parseInt(inputFrom.value.replace(/\D/g, ''));
+                    var v2 = parseInt(inputTo.value.replace(/\D/g, ''));
+                    if (isNaN(v1)) v1 = min;
+                    if (isNaN(v2)) v2 = max;
+                    // Ép về min/max nếu nhập ngoài khoảng
+                    v1 = Math.max(min, Math.min(v1, max));
+                    v2 = Math.max(min, Math.min(v2, max));
+                    // Nếu min > max, hoán đổi
+                    if (v1 > v2) {
+                        var tmp = v1;
+                        v1 = v2;
+                        v2 = tmp;
+                    }
+                    priceSlider.noUiSlider.set([v1, v2]);
+                    updateSelectedRange(v1, v2);
+                    // Reset flag sau một khoảng thời gian ngắn
+                    setTimeout(function() {
+                        isUpdatingFromSlider = false;
+                    }, 100);
                 }
-                priceSlider.noUiSlider.set([v1, v2]);
-                updateSelectedRange(v1, v2);
             }
 
             function updateSelectedRangeFromInput() {
-                var v1 = parseInt(inputFrom.value.replace(/\D/g, ''));
-                var v2 = parseInt(inputTo.value.replace(/\D/g, ''));
-                if (isNaN(v1)) v1 = min;
-                if (isNaN(v2)) v2 = max;
-                updateSelectedRange(v1, v2);
+                if (!isUpdatingFromSlider) {
+                    var v1 = parseInt(inputFrom.value.replace(/\D/g, ''));
+                    var v2 = parseInt(inputTo.value.replace(/\D/g, ''));
+                    if (isNaN(v1)) v1 = min;
+                    if (isNaN(v2)) v2 = max;
+                    updateSelectedRange(v1, v2);
+                }
             }
+
             inputFrom.addEventListener('input', updateSelectedRangeFromInput);
             inputTo.addEventListener('input', updateSelectedRangeFromInput);
             inputFrom.addEventListener('change', syncSliderFromInput);
             inputTo.addEventListener('change', syncSliderFromInput);
             inputFrom.addEventListener('blur', syncSliderFromInput);
             inputTo.addEventListener('blur', syncSliderFromInput);
+
             // Khi submit form, nếu inputTo rỗng thì không giới hạn max
             var form = document.getElementById('product-filter-form');
             if (form) {
