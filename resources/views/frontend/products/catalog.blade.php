@@ -706,7 +706,7 @@
             });
         });
     </script>
-    
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.wishlist-btn').forEach(function(btn) {

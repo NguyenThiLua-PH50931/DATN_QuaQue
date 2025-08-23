@@ -72,7 +72,7 @@
                         <div class="col-6">
                             <div class="fresh-image-2">
                                 <div>
-                                    <img src="{{ asset('storage/banners/anh2.png') }}" class="bg-img blur-up lazyload"
+                                    <img src="{{ asset('storage/banners/anh2.jpg') }}" class="bg-img blur-up lazyload"
                                         alt="" />
                                 </div>
                             </div>
@@ -81,7 +81,7 @@
                         <div class="col-6">
                             <div class="fresh-image">
                                 <div>
-                                    <img src="{{ asset('storage/banners/anh1.png') }}" class="bg-img blur-up lazyload"
+                                    <img src="{{ asset('storage/banners/nZaprD8peoFEiNeRyWod5pwY9DkicQXj7aaARGfg.jpg') }}" class="bg-img blur-up lazyload"
                                         alt="" />
                                 </div>
                             </div>

@@ -62,6 +62,10 @@
                                                                     class="img-fluid blur-up lazyload">
                                                             @endif
                                                         </a>
+<<<<<<< HEAD
+
+=======
+>>>>>>> 02916975dcd589cb4288266d9c651485c6aebdeb
                                                         <div class="recent-detail">
                                                             <a
                                                                 href="{{ route('client.blogs-detail', ['id' => $item->id]) }}">
@@ -175,14 +179,15 @@
                                 </div>
                             @endif
 
+<<<<<<< HEAD
+=======
 
+>>>>>>> 02916975dcd589cb4288266d9c651485c6aebdeb
                             <form action="{{ route('client.blog.comments.store') }}" method="POST">
                                 @csrf
 
                                 {{-- Hidden input để gửi kèm ID bài viết --}}
                                 <input type="hidden" name="blog_id" value="{{ $blog->id }}">
-
-
                                 <div class="row g-3">
                                     <div class="col-12">
                                         <div class="blog-input">
@@ -191,8 +196,9 @@
                                         </div>
                                     </div>
                                 </div>
-
-                                <button type="submit" class="btn btn-animation ms-xxl-auto mt-xxl-0 mt-3 btn-md fw-bold"
+                                <button
+                                    type="submit"
+                                    class="btn btn-animation ms-xxl-auto mt-xxl-0 mt-3 btn-md fw-bold"
                                     {{ Auth::check() ? '' : 'disabled' }}>
                                     Gửi bình luận
                                 </button>

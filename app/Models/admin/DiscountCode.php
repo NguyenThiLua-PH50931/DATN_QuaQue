@@ -4,6 +4,7 @@ namespace App\Models\admin;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Carbon\Carbon;
 
 class DiscountCode extends Model
 {
@@ -79,7 +80,7 @@ protected $casts = [
     {
         return $this->hasMany(Order::class, 'discount_code');
     }
-   public function products()
+       public function products()
 {
     return $this->belongsToMany(
         Product::class,
@@ -89,5 +90,33 @@ protected $casts = [
     );
 }
 
+    // Tính số ngày còn lại trước khi tự động xóa
+    public function getDaysUntilAutoDeleteAttribute()
+    {
+        if (!$this->deleted_at) {
+            return null;
+        }
 
+        $autoDeleteDate = $this->deleted_at->addDays(30);
+        $daysLeft = now()->diffInDays($autoDeleteDate, false);
+
+        return max(0, $daysLeft);
+    }
+
+    // Kiểm tra xem có sắp được tự động xóa không (≤7 ngày)
+    public function getWillBeDeletedSoonAttribute()
+    {
+        $daysLeft = $this->days_until_auto_delete;
+        return $daysLeft !== null && $daysLeft <= 7;
+    }
+
+    // Lấy ngày sẽ tự động xóa
+    public function getAutoDeleteAtAttribute()
+    {
+        if (!$this->deleted_at) {
+            return null;
+        }
+
+        return $this->deleted_at->addDays(30)->format('d-m-Y H:i:s');
+    }
 }
