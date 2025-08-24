@@ -404,17 +404,26 @@ public function show($slug, Request $request)
     }
 
     // Map variant cho JS/AJAX
-    $variantMap = $variants->map(function ($v) {
-        return [
-            'id'        => $v->id,
-            'sku'       => $v->sku,
-            'stock'     => $v->stock,
-            'price'     => $v->price,
-            'image'     => $v->image ? asset('storage/' . $v->image) : null,
-            'value_ids' => $v->attributeValues->pluck('id')->map(fn ($id) => (int) $id)->sort()->values()->all(),
-            'active'    => (int) $v->active,
-        ];
-    });
+// Map variant cho JS/AJAX (show)
+$variantMap = $variants->map(function ($v) {
+    return [
+        'id'          => (int) ($v->id),
+        'active'      => (int) ($v->active),
+        'sku'         => (string) ($v->sku ?? ''),
+        'stock'       => (int) ($v->stock ?? 0),
+        'price'       => isset($v->price) ? (float) $v->price : null,
+        'image'       => $v->image ? asset('storage/'.$v->image) : null, // URL tuyệt đối
+        'value_ids'   => $v->attributeValues
+                            ->pluck('id')
+                            ->map(fn ($id) => (int) $id)
+                            ->sort()
+                            ->values()
+                            ->all(),
+        'description' => $v->description,   // để tab "Mô tả biến thể" cập nhật được
+        'name'        => $v->name ?? null,  // nếu bạn có trường name cho biến thể
+    ];
+})->values()->all(); // luôn trả array 0-based cho @json
+
 
     // 5) Lấy ID các danh mục của sản phẩm hiện tại (n-n qua product_category)
     $productCategoryIds = $product->categories->pluck('id')->map(fn ($id) => (int) $id)->toArray();
@@ -579,17 +588,26 @@ public function show($slug, Request $request)
         }
 
         // Mapping variant (dùng cho JS, AJAX tìm variant theo tổ hợp value id)
-        $variantMap = $variants->map(function ($v) {
-            return [
-                'id' => $v->id,
-                'sku' => $v->sku,
-                'stock' => $v->stock,
-                'price' => $v->price,
-                'image' => $v->image ? asset('storage/' . $v->image) : null,
-                'value_ids' => $v->attributeValues->pluck('id')->map(fn($id) => (int)$id)->sort()->values()->all(),
-                'active' => (int) $v->active,
-            ];
-        })->values();
+// Map variant cho JS/AJAX (quickView)
+$variantMap = $variants->map(function ($v) {
+    return [
+        'id'          => (int) ($v->id),
+        'active'      => (int) ($v->active),
+        'sku'         => (string) ($v->sku ?? ''),
+        'stock'       => (int) ($v->stock ?? 0),
+        'price'       => isset($v->price) ? (float) $v->price : null,
+        'image'       => $v->image ? asset('storage/'.$v->image) : null,
+        'value_ids'   => $v->attributeValues
+                            ->pluck('id')
+                            ->map(fn ($id) => (int) $id)
+                            ->sort()
+                            ->values()
+                            ->all(),
+        'description' => $v->description,
+        'name'        => $v->name ?? null,
+    ];
+})->values()->all();
+
 
         $avgRating = round($product->reviews->avg('rating') ?? 0);
 

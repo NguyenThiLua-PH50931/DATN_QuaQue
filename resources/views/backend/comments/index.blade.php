@@ -200,10 +200,11 @@
                                                 <td>{{ Str::limit($comment->content, 50) }}</td>
                                                 <td>{{ $comment->created_at->format('d/m/Y H:i') }}</td>
                                                 <td>
-                                                    <span class="badge status-badge {{ $comment->status == 'visible' ? 'badge-success' : 'badge-warning' }}"
-                                                          onclick="showStatusModal({{ $comment->id }}, '{{ $comment->status }}', '{{ $comment->user->name }}')"
-                                                          data-comment-id="{{ $comment->id }}"
-                                                          data-current-status="{{ $comment->status }}">
+                                                    <span
+                                                        class="badge status-badge {{ $comment->status == 'visible' ? 'badge-success' : 'badge-warning' }}"
+                                                        onclick="showStatusModal({{ $comment->id }}, '{{ $comment->status }}', '{{ $comment->user->name }}')"
+                                                        data-comment-id="{{ $comment->id }}"
+                                                        data-current-status="{{ $comment->status }}">
                                                         {{ $comment->status == 'visible' ? 'Hiện' : 'Ẩn' }}
                                                     </span>
                                                 </td>
@@ -271,7 +272,9 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Bạn có chắc chắn muốn thay đổi trạng thái bình luận của <strong id="modalUserName"></strong> thành <strong id="newStatusText"></strong>?</p>
+                    <p>Bạn có chắc chắn muốn thay đổi trạng thái bình luận của <strong id="modalUserName"></strong> thành
+                        <strong id="newStatusText"></strong>?
+                    </p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
@@ -292,13 +295,15 @@
             <div class="modal-content">
                 <div class="modal-header bg-success text-white">
                     <h5 class="modal-title" id="successModalLabel">Thành công!</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <p id="successMessage">Thao tác đã được thực hiện thành công!</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" data-bs-dismiss="modal" onclick="location.reload()">Đóng</button>
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal"
+                        onclick="location.reload()">Đóng</button>
                 </div>
             </div>
         </div>
@@ -308,114 +313,114 @@
 @endsection
 
 @push('scripts')
-<script>
-    // Hiển thị modal xóa
-    function showDeleteModal(commentId, userName) {
-        document.getElementById('userName').textContent = userName;
-        document.getElementById('deleteForm').action = `/admin/comments/${commentId}`;
-        new bootstrap.Modal(document.getElementById('deleteModal')).show();
-    }
+    <script>
+        // Hiển thị modal xóa
+        function showDeleteModal(commentId, userName) {
+            document.getElementById('userName').textContent = userName;
+            document.getElementById('deleteForm').action = `/admin/comments/${commentId}`;
+            new bootstrap.Modal(document.getElementById('deleteModal')).show();
+        }
 
-    // Hiển thị modal thay đổi trạng thái
-    function showStatusModal(commentId, currentStatus, userName) {
-        document.getElementById('modalUserName').textContent = userName;
-        document.getElementById('newStatusText').textContent = currentStatus === 'visible' ? 'Ẩn' : 'Hiện';
-        document.getElementById('statusInput').value = currentStatus === 'visible' ? 'hidden' : 'visible';
-        document.getElementById('statusForm').action = `/admin/comments/${commentId}`;
-        new bootstrap.Modal(document.getElementById('statusModal')).show();
-    }
+        // Hiển thị modal thay đổi trạng thái
+        function showStatusModal(commentId, currentStatus, userName) {
+            document.getElementById('modalUserName').textContent = userName;
+            document.getElementById('newStatusText').textContent = currentStatus === 'visible' ? 'Ẩn' : 'Hiện';
+            document.getElementById('statusInput').value = currentStatus === 'visible' ? 'hidden' : 'visible';
+            document.getElementById('statusForm').action = `/admin/comments/${commentId}`;
+            new bootstrap.Modal(document.getElementById('statusModal')).show();
+        }
 
-    // Hiển thị modal thành công
-    function showSuccessModal(message) {
-        document.getElementById('successMessage').textContent = message;
-        new bootstrap.Modal(document.getElementById('successModal')).show();
-    }
+        // Hiển thị modal thành công
+        function showSuccessModal(message) {
+            document.getElementById('successMessage').textContent = message;
+            new bootstrap.Modal(document.getElementById('successModal')).show();
+        }
 
-    // Xử lý form thay đổi trạng thái
-    document.getElementById('statusForm').addEventListener('submit', function(e) {
-        e.preventDefault();
+        // Xử lý form thay đổi trạng thái
+        document.getElementById('statusForm').addEventListener('submit', function(e) {
+            e.preventDefault();
 
-        const formData = new FormData(this);
-        formData.append('_method', 'PUT');
-        const commentId = this.action.split('/').pop();
+            const formData = new FormData(this);
+            formData.append('_method', 'PUT');
+            const commentId = this.action.split('/').pop();
 
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', this.action, true);
-        xhr.setRequestHeader('Accept', 'application/json');
-        xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', this.action, true);
+            xhr.setRequestHeader('Accept', 'application/json');
+            xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').getAttribute(
+                'content'));
 
-        xhr.onload = function() {
-            console.log('XHR Status:', xhr.status);
-            console.log('XHR Response:', xhr.responseText);
-            console.log('XHR Content-Type:', xhr.getResponseHeader('content-type'));
+            xhr.onload = function() {
+                console.log('XHR Status:', xhr.status);
+                console.log('XHR Response:', xhr.responseText);
+                console.log('XHR Content-Type:', xhr.getResponseHeader('content-type'));
 
-            try {
-                const data = JSON.parse(xhr.responseText);
-                if (data.success) {
-                    // Đóng modal
+                try {
+                    const data = JSON.parse(xhr.responseText);
+                    if (data.success) {
+                        // Đóng modal
+                        bootstrap.Modal.getInstance(document.getElementById('statusModal')).hide();
+                        // Hiển thị modal thành công
+                        showSuccessModal('Đã cập nhật trạng thái thành công!');
+                    } else {
+                        alert('Có lỗi xảy ra khi cập nhật trạng thái!');
+                    }
+                } catch (e) {
+                    console.log('Not JSON response, treating as success');
+                    // Nếu không parse được JSON, có thể là redirect thành công
                     bootstrap.Modal.getInstance(document.getElementById('statusModal')).hide();
-                    // Hiển thị modal thành công
                     showSuccessModal('Đã cập nhật trạng thái thành công!');
-                } else {
-                    alert('Có lỗi xảy ra khi cập nhật trạng thái!');
                 }
-            } catch (e) {
-                console.log('Not JSON response, treating as success');
-                // Nếu không parse được JSON, có thể là redirect thành công
-                bootstrap.Modal.getInstance(document.getElementById('statusModal')).hide();
-                showSuccessModal('Đã cập nhật trạng thái thành công!');
-            }
-        };
+            };
 
-        xhr.onerror = function() {
-            console.error('XHR Error');
-            alert('Có lỗi xảy ra khi cập nhật trạng thái!');
-        };
+            xhr.onerror = function() {
+                console.error('XHR Error');
+                alert('Có lỗi xảy ra khi cập nhật trạng thái!');
+            };
 
-        xhr.send(formData);
-    });
+            xhr.send(formData);
+        });
 
-    // Xử lý form xóa
-    document.getElementById('deleteForm').addEventListener('submit', function(e) {
-        e.preventDefault();
+        // Xử lý form xóa
+        document.getElementById('deleteForm').addEventListener('submit', function(e) {
+            e.preventDefault();
 
-        const formData = new FormData(this);
-        formData.append('_method', 'DELETE');
+            const formData = new FormData(this);
+            formData.append('_method', 'DELETE');
 
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', this.action, true);
-        xhr.setRequestHeader('Accept', 'application/json');
-        xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', this.action, true);
+            xhr.setRequestHeader('Accept', 'application/json');
+            xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').getAttribute(
+                'content'));
 
-        xhr.onload = function() {
-            console.log('XHR Status:', xhr.status);
-            console.log('XHR Response:', xhr.responseText);
-            console.log('XHR Content-Type:', xhr.getResponseHeader('content-type'));
+            xhr.onload = function() {
+                console.log('XHR Status:', xhr.status);
+                console.log('XHR Response:', xhr.responseText);
+                console.log('XHR Content-Type:', xhr.getResponseHeader('content-type'));
 
-            try {
-                const data = JSON.parse(xhr.responseText);
-                if (data.success) {
-                    // Đóng modal xóa
+                try {
+                    const data = JSON.parse(xhr.responseText);
+                    if (data.success) {
+                        // Đóng modal xóa
+                        bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
+                        // Hiển thị modal thành công
+                        showSuccessModal('Đã xóa bình luận thành công!');
+                    }
+                } catch (e) {
+                    console.log('Not JSON response, treating as success');
+                    // Nếu không parse được JSON, có thể là redirect thành công
                     bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
-                    // Hiển thị modal thành công
                     showSuccessModal('Đã xóa bình luận thành công!');
-                } else {
-                    alert('Có lỗi xảy ra khi xóa bình luận!');
                 }
-            } catch (e) {
-                console.log('Not JSON response, treating as success');
-                // Nếu không parse được JSON, có thể là redirect thành công
-                bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
-                showSuccessModal('Đã xóa bình luận thành công!');
-            }
-        };
+            };
 
-        xhr.onerror = function() {
-            console.error('XHR Error');
-            alert('Có lỗi xảy ra khi xóa bình luận!');
-        };
+            xhr.onerror = function() {
+                console.error('XHR Error');
+                alert('Có lỗi xảy ra khi xóa bình luận!');
+            };
 
-        xhr.send(formData);
-    });
-</script>
+            xhr.send(formData);
+        });
+    </script>
 @endpush
