@@ -10,6 +10,10 @@ use App\Models\admin\ProductVariant;
 use App\Models\admin\Review;
 use App\Models\admin\Comment;
 use App\Models\admin\ProductImage;
+// ở phần use:
+use App\Models\admin\Order;
+use App\Models\admin\OrderItem;
+
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
@@ -39,6 +43,68 @@ class Product extends Model
 
     // Relationships
     // trong model AdminProduct.php
+    /**
+ * Quan hệ tới order_items (bảng chứa product_id trong mỗi order)
+ * Nếu bạn dùng tên model/namespace khác, thay OrderItem::class tương ứng.
+ */
+public function orderItems()
+{
+    return $this->hasMany(OrderItem::class, 'product_id', 'id');
+}
+
+/**
+ * Lấy tất cả orders liên quan thông qua order_items
+ */
+public function orders()
+{
+    return $this->hasManyThrough(
+        Order::class,        // model đích
+        OrderItem::class,    // model trung gian
+        'product_id',        // FK trên order_items tới products
+        'id',                // PK trên orders
+        'id',                // local key trên products
+        'order_id'           // FK trên order_items tới orders
+    );
+}
+
+/**
+ * Trạng thái đơn hàng được xem là "đã kết thúc" -> cho phép xóa product nếu
+ * tất cả các đơn hàng chứa product đều ở trạng thái kết thúc.
+ */
+public static function finalOrderStatuses(): array
+{
+    return ['cancelled', 'delivered', 'failed_delivery'];
+}
+
+/**
+ * Các trạng thái xem là "chưa hoàn tất" và sẽ NGĂN không cho xóa sản phẩm
+ */
+public static function activeOrderStatuses(): array
+{
+    return ['pending', 'confirmed', 'processing', 'shipped', 'in_transit'];
+}
+
+/**
+ * Kiểm tra product có nằm trong bất kỳ đơn hàng "chưa hoàn tất" nào hay không
+ * trả về true nếu có ít nhất 1 đơn hàng chưa hoàn tất chứa product này
+ */
+public function hasActiveOrder(): bool
+{
+    return $this->orders()
+        ->whereIn('status', self::activeOrderStatuses())
+        ->exists();
+}
+
+/**
+ * Kiểm tra product có thể xóa (soft/force) hay không
+ * - true nếu KHÔNG có đơn hàng "chưa hoàn tất"
+ * - false nếu còn ít nhất 1 đơn hàng "chưa hoàn tất"
+ */
+public function canBeDeleted(): bool
+{
+    return !$this->hasActiveOrder();
+}
+
     public function categories()
     {
         return $this->belongsToMany(Category::class, 'product_category', 'product_id', 'category_id');

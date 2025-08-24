@@ -1058,7 +1058,7 @@ return $query->exists();
 
 **2. Banner slider (1 vị trí = tối đa 4 banner):**
 ```php
-if ($this->location === 'slider_banner') {
+if ($this->location === 'sliaddder_banner') {
     $activeSliderCount = $query->count();
     return $activeSliderCount >= 4; // Chỉ trả về true khi đã có 4 banner
 }

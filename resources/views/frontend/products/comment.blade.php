@@ -70,8 +70,7 @@
                                                 $rFirstChar = strtoupper(substr($rUser->name, 0, 1));
                                             @endphp
                                             @if ($rUser->avatar)
-                                                <img src="{{ asset('storage/'.$rUser->avatar) }}" alt="{{ $rUser->name }}"
-                                                    class="avatar-img" />
+                                                <img src="{{ asset('storage/'.   $user->avatar) }}" alt="{{ $user->name }}" class="avatar-img" />
                                             @else
                                                 <div class="avatar-initial">{{ $rFirstChar }}</div>
                                             @endif
@@ -419,10 +418,10 @@
                         form.style.display = 'none';
                         lastOpenedReplyForm = null;
                         appendReply(commentId, data.reply);
-                        Swal.fire({
-                            icon: 'success',
-                            text: 'Đã trả lời!'
-                        });
+                        // Swal.fire({
+                        //     icon: 'success',
+                        //     text: 'Đã trả lời!'
+                        // });
                     } else {
                         Swal.fire({
                             icon: 'error',
@@ -521,7 +520,7 @@
             const user = comment.user;
             const firstChar = user.name.charAt(0).toUpperCase();
             let avatar = user.avatar ?
-                `<img src="${user.avatar}" alt="${user.name}" class="avatar-img" />` :
+                `<img src="storage/${user.avatar}" alt="${user.name}" class="avatar-img" />` :
                 `<div class="avatar-initial">${firstChar}</div>`;
             const created = new Date(comment.created_at);
             const dateStr = created.toLocaleDateString('vi-VN', {
@@ -565,7 +564,7 @@
             const user = reply.user;
             const firstChar = user.name.charAt(0).toUpperCase();
             let avatar = user.avatar ?
-                `<img src="${user.avatar}" alt="${user.name}" class="avatar-img" />` :
+                `<img src="storage/${user.avatar}" alt="${user.name}" class="avatar-img" />` :
                 `<div class="avatar-initial">${firstChar}</div>`;
             const created = new Date(reply.created_at);
             const dateStr = created.toLocaleDateString('vi-VN', {
