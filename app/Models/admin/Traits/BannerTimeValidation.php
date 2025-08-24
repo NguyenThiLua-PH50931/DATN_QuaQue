@@ -12,7 +12,9 @@ trait BannerTimeValidation
         // Đảm bảo thời gian bắt đầu là 00:00:00 và kết thúc là 23:59:59
         $startTime = Carbon::parse($this->display_at)->startOfDay();
         $endTime = Carbon::parse($this->display_end_at)->endOfDay();
+         // Kiểm tra 3 trường hợp trùng lặp
 
+       // Query tìm banner trùng lặp
         $query = static::where('active', true)
             ->where('location', $this->location)
             ->where(function ($query) use ($startTime, $endTime) {
@@ -39,7 +41,7 @@ trait BannerTimeValidation
         // Nếu là banner slider, kiểm tra số lượng banner đang hoạt động
         if ($this->location === 'slider_banner') {
             $activeSliderCount = $query->count();
-            return $activeSliderCount >= 4;
+            return $activeSliderCount >= 4; // Chỉ trả về true khi đã có 4 bannner
         }
 
         // Đối với các loại banner khác, không cho phép trùng lặp
@@ -49,9 +51,9 @@ trait BannerTimeValidation
     public function canBeActivated()
     {
         if (!$this->active) {
-            return true;
+            return true;// Banner chưa active thì có thể kích hoạt
         }
 
-        return !$this->hasOverlappingActiveBanner();
+        return !$this->hasOverlappingActiveBanner(); // Kiểm tra không trùng lặp
     }
-} 
+}

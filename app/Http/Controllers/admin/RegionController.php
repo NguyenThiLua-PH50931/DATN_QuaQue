@@ -86,16 +86,7 @@ class RegionController extends Controller
         return response()->json($autoDeleteStats);
     }
 
-    public function create()
-    {
-        return view('backend.regions.create');
-    }
 
-    public function edit($id)
-    {
-        $region = Region::findOrFail($id);
-        return view('backend.regions.edit', compact('region'));
-    }
 
     /**
      * Store a newly created region in storage.
