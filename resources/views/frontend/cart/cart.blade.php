@@ -66,7 +66,6 @@
                                                             <div>
                                                                 <a
                                                                     href="{{ route('client.product.detail', ['slug' => $item->product->slug]) }}">
-                                                    
                                                                    @php
                                                                         $words = explode(' ', $item->product->name);
                                                                         $shortName =
