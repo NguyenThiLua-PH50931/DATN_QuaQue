@@ -33,11 +33,12 @@ class BannerController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display the specified resource.
      */
-    public function create()
+    public function show(string $id)
     {
-        return view('backend.banners.create');
+        $banner = Banner::findOrFail($id);
+        return view('backend.banners.show', compact('banner'));
     }
 
     /**
@@ -65,7 +66,7 @@ class BannerController extends Controller
             'display_end_at' => $request->display_end_at ? Carbon::parse($request->display_end_at)->endOfDay() : null,
             'location' => $request->location,
         ]);
-
+            // Kiểm tra kích hoạt banner có trùng thời gian với banner khác không
         if ($banner->active && $banner->hasOverlappingActiveBanner()) {
             return back()->withErrors(['active' => 'Không thể kích hoạt banner này vì đã có banner khác đang hoạt động trong khoảng thời gian này tại vị trí này.'])->withInput();
         }
@@ -75,23 +76,7 @@ class BannerController extends Controller
         return redirect()->route('admin.banners.index')->with('success', 'Banner đã được tạo mới thành công.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        $banner = Banner::findOrFail($id);
-        return view('backend.banners.show', compact('banner'));
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        $banner = Banner::findOrFail($id);
-        return view('backend.banners.edit', compact('banner'));
-    }
 
     /**
      * Update the specified resource in storage.

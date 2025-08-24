@@ -26,25 +26,7 @@ class CategoryController extends Controller
         return view('backend.categories.index', compact('categories'));
     }
 
-    // Trang frontend: hiển thị tất cả categories (không phân trang)
-    public function showCategories()
-    {
-        $categories = Category::all();
-        return view('frontend.categories.index', compact('categories'));
-    }
 
-    // Trang quản trị: form tạo mới category
-    public function create()
-    {
-        return view('backend.categories.create');
-    }
-
-    // Trang quản trị: form chỉnh sửa category
-    public function edit($id)
-    {
-        $category = Category::findOrFail($id);
-        return view('backend.categories.edit', compact('category'));
-    }
 
     // Lưu category mới (store)
     public function store(Request $request)
