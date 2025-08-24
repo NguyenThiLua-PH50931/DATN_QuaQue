@@ -108,16 +108,17 @@ public function updateStatus(Request $request, Order $order)
     $newStatus = (string) $request->string('status');
 
     // 2) Ràng buộc chuyển trạng thái (khớp UI)
-    $allowedTransitions = [
-        'pending'         => ['confirmed', 'cancelled'],
-        'confirmed'       => ['processing', 'cancelled'],
-        'processing'      => ['shipped', 'cancelled'],
-        'shipped'         => ['in_transit'],
-        'in_transit'      => ['delivered', 'failed_delivery'],
-        'delivered'       => [],                 // terminal
-        'cancelled'       => [],                 // terminal
-        'failed_delivery' => [],                 // terminal
-    ];
+$allowedTransitions = [
+    'pending'         => ['confirmed', 'cancelled'],
+    'confirmed'       => ['processing', 'cancelled'],
+    'processing'      => ['shipped', 'cancelled'],
+    'shipped'         => ['in_transit', 'cancelled'],   // thêm cancelled
+    'in_transit'      => ['delivered', 'failed_delivery', 'cancelled'], // thêm cancelled
+    'delivered'       => [],
+    'cancelled'       => [],
+    'failed_delivery' => [],
+];
+
 
     if ($oldStatus !== $newStatus) {
         $allowed = $allowedTransitions[$oldStatus] ?? [];

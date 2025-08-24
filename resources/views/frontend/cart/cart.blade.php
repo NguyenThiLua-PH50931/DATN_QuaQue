@@ -66,9 +66,21 @@
                                                             <div>
                                                                 <a
                                                                     href="{{ route('client.product.detail', ['slug' => $item->product->slug]) }}">
+                                                                    @php
+                                                                        $words = explode(' ', $item->product->name);
+                                                                        $shortName =
+                                                                            count($words) > 4
+                                                                                ? implode(
+                                                                                        ' ',
+                                                                                        array_slice($words, 0, 4),
+                                                                                    ) . '...'
+                                                                                : $item->product->name;
+                                                                    @endphp
+
                                                                     <h6 class="mb-1 fw-semibold text-truncate"
-                                                                        style="max-width: 300px;">
-                                                                        {{ $item->product->name }}
+                                                                        style="max-width: 300px;"
+                                                                        title="{{ $item->product->name }}">
+                                                                        {{ $shortName }}
                                                                     </h6>
                                                                 </a>
                                                             </div>
@@ -406,8 +418,14 @@
             <script>
                 // Hàm định dạng tiền Việt Nam
                 function formatVND(amount) {
-                    return amount.toLocaleString('vi-VN') + ' ₫';
+                    // ép string "60000.00" -> 60000 và bỏ ký tự không phải số
+                    const n = Number(typeof amount === 'string' ? amount.replace(/[^\d.-]/g, '') : amount) || 0;
+                    const v = Math.round(n); // VND không dùng lẻ
+                    return v.toLocaleString('vi-VN', {
+                        maximumFractionDigits: 0
+                    }) + ' ₫';
                 }
+
 
                 // Định nghĩa hàm updateTotals ở phạm vi toàn cục để gọi ở mọi nơi
                 function updateTotals() {
@@ -571,15 +589,18 @@
                                 // Cập nhật giá và tổng tiền
                                 const priceCell = row.querySelector('td:nth-child(4)');
                                 const totalCell = row.querySelector('td:nth-child(6)');
+                                const unit = Number(String(data.newPrice).replace(/[^\d.-]/g, '')) || 0;
+                                const qty = Number(data.quantity) || 0;
 
-                                if (priceCell) priceCell.textContent = formatVND(data.newPrice);
-                                if (totalCell) totalCell.textContent = formatVND(data.newPrice * data.quantity);
+                                if (priceCell) priceCell.textContent = formatVND(unit);
+                                if (totalCell) totalCell.textContent = formatVND(unit * qty);
 
                                 // Cập nhật thuộc tính data-price của checkbox
                                 const checkbox = row.querySelector('input[name="selected_items[]"]');
                                 if (checkbox) {
-                                    checkbox.setAttribute('data-price', data.newPrice * data.quantity);
+                                    checkbox.setAttribute('data-price', String(unit * qty));
                                 }
+
 
                                 updateTotals();
 
@@ -718,8 +739,8 @@
                 }
 
                 /* .modal-footer .btn-secondary:hover {
-                                                                                                                                                                                                                                                                                                        color: #fdfefe;
-                                                                                                                                                                                                                                                                                                    } */
+                                                                                                                                                                                                                                                                                                                                                                        color: #fdfefe;
+                                                                                                                                                                                                                                                                                                                                                                    } */
 
                 /* Nút Xác nhận */
                 .modal-footer .btn-primary {
