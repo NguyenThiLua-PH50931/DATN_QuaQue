@@ -60,9 +60,22 @@
                                                                 style="accent-color: #07a37f;">
                                                         </td>
                                                         <td class="d-flex align-items-center gap-3">
-                                                            <img src="{{ asset('storage/' . $item->product->image) }}"
-                                                                alt="{{ $item->product->name }}"
+                                                            @php
+                                                                $productImg = $item->product->image
+                                                                    ? asset('storage/' . $item->product->image)
+                                                                    : null;
+                                                                $variantImg =
+                                                                    $item->variant && $item->variant->image
+                                                                        ? asset('storage/' . $item->variant->image)
+                                                                        : null;
+                                                                $rowImg = $variantImg ?: $productImg;
+                                                            @endphp
+
+                                                            <img src="{{ $rowImg }}" alt="{{ $item->product->name }}"
+                                                                class="cart-item-image" data-cart-id="{{ $item->id }}"
+                                                                data-default-image="{{ $productImg }}"
                                                                 style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
+
                                                             <div>
                                                                 <a
                                                                     href="{{ route('client.product.detail', ['slug' => $item->product->slug]) }}">
@@ -90,9 +103,11 @@
                                                                 class="btn btn-outline-danger btn-sm open-variant-modal"
                                                                 data-bs-toggle="modal"
                                                                 data-bs-target="#variantModal{{ $item->id }}"
-                                                                data-cart-id="{{ $item->id }}">
+                                                                data-cart-id="{{ $item->id }}"
+                                                                data-current-variant-id="{{ $item->variant->id ?? '' }}">
                                                                 {{ $item->variant->name ?? 'Chọn biến thể' }}
                                                             </button>
+
                                                         </td>
                                                         <td class="text-end fw-semibold">
                                                             {{ number_format($pricePerItem, 0, ',', '.') }} ₫
@@ -536,23 +551,23 @@
                 });
             </script>
             <script>
-                document.addEventListener('click', function(event) {
+                document.addEventListener('click', async function(event) {
                     const btn = event.target.closest('.btn-confirm-variant');
                     if (!btn) return;
 
                     const modal = btn.closest('.modal');
                     const cartId = btn.dataset.cartId;
 
-                    // Lấy variant id đang active
+                    // Lấy variant đang chọn trong modal
                     const activeBtn = modal.querySelector('.variant-btn.active');
-
                     if (!activeBtn) {
                         showNotificationModal('Vui lòng chọn biến thể');
                         return;
                     }
                     const newVariantId = activeBtn.dataset.variantId;
 
-                    fetch('{{ route('client.cart.updateVariant') }}', {
+                    try {
+                        const res = await fetch('{{ route('client.cart.updateVariant') }}', {
                             method: 'POST',
                             headers: {
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -563,70 +578,81 @@
                                 cart_item_id: cartId,
                                 variant_id: newVariantId
                             }),
-                        })
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.success) {
-                                const variantButton = document.querySelector(
-                                    `button.open-variant-modal[data-cart-id="${cartId}"]`);
-
-                                if (!variantButton) {
-                                    console.warn('Không tìm thấy button với cartId:', cartId);
-                                    return;
-                                }
-                                const row = variantButton.closest('tr');
-                                if (!row) {
-                                    console.warn('Không tìm thấy hàng tương ứng');
-                                    return;
-                                }
-
-                                // Cập nhật tên biến thể trên nút mở modal
-                                const variantBtn = row.querySelector('.open-variant-modal');
-                                if (variantBtn) {
-                                    variantBtn.textContent = data.newVariantName || 'Biến thể đã chọn';
-                                }
-
-                                // Cập nhật giá và tổng tiền
-                                const priceCell = row.querySelector('td:nth-child(4)');
-                                const totalCell = row.querySelector('td:nth-child(6)');
-                                const unit = Number(String(data.newPrice).replace(/[^\d.-]/g, '')) || 0;
-                                const qty = Number(data.quantity) || 0;
-
-                                if (priceCell) priceCell.textContent = formatVND(unit);
-                                if (totalCell) totalCell.textContent = formatVND(unit * qty);
-
-                                // Cập nhật thuộc tính data-price của checkbox
-                                const checkbox = row.querySelector('input[name="selected_items[]"]');
-                                if (checkbox) {
-                                    checkbox.setAttribute('data-price', String(unit * qty));
-                                }
-
-
-                                updateTotals();
-
-                                // Đóng modal - sửa lại đoạn này:
-                                const modalInstance = bootstrap.Modal.getInstance(modal) || new bootstrap.Modal(modal);
-                                if (modal) {
-                                    let modalInstance = bootstrap.Modal.getInstance(modal);
-                                    if (!modalInstance) {
-                                        modalInstance = new bootstrap.Modal(modal);
-                                    }
-                                    modalInstance.hide();
-                                } else {
-                                    console.warn('Modal không tồn tại để đóng');
-                                }
-
-
-                            } else {
-                                showNotificationModal(data.message || 'Cập nhật biến thể thất bại');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Lỗi khi cập nhật biến thể:', error);
-                            showNotificationModal('Đã có lỗi xảy ra khi cập nhật biến thể.');
                         });
+
+                        const data = await res.json();
+
+                        if (!res.ok) {
+                            showNotificationModal(data.message || 'Có lỗi từ máy chủ.');
+                            return;
+                        }
+
+                        if (!data.success) {
+                            showNotificationModal(data.message || 'Cập nhật biến thể thất bại');
+                            return;
+                        }
+
+                        // Tìm hàng tương ứng
+                        const variantButton = document.querySelector(
+                            `button.open-variant-modal[data-cart-id="${cartId}"]`);
+                        if (!variantButton) {
+                            console.warn('Không tìm thấy button với cartId:', cartId);
+                            return;
+                        }
+                        const row = variantButton.closest('tr');
+                        if (!row) {
+                            console.warn('Không tìm thấy hàng tương ứng');
+                            return;
+                        }
+
+                        // 1) Cập nhật tên biến thể trên nút mở modal
+                        const openBtn = row.querySelector('.open-variant-modal');
+                        if (openBtn) {
+                            openBtn.textContent = data.newVariantName || 'Biến thể đã chọn';
+                            openBtn.setAttribute('data-current-variant-id', String(data.variant_id || newVariantId));
+                        }
+
+                        // 2) Cập nhật giá & tổng tiền
+                        const priceCell = row.querySelector('td:nth-child(4)');
+                        const totalCell = row.querySelector('td:nth-child(6)');
+                        const unit = Number(data.newPrice) || 0;
+                        const qty = Number(data.quantity) || 0;
+
+                        if (priceCell) priceCell.textContent = formatVND(unit);
+                        if (totalCell) totalCell.textContent = formatVND(unit * qty);
+
+                        // 3) Cập nhật data-price của checkbox (phục vụ tổng tiền đã chọn)
+                        const checkbox = row.querySelector('input[name="selected_items[]"]');
+                        if (checkbox) {
+                            checkbox.setAttribute('data-price', String(unit * qty));
+                        }
+
+                        // 4) ĐỔI ẢNH: ưu tiên ảnh biến thể mới, fallback ảnh sản phẩm / default-image
+                        const imgEl = row.querySelector(`img.cart-item-image[data-cart-id="${cartId}"]`) ||
+                            document.querySelector(`img.cart-item-image[data-cart-id="${cartId}"]`);
+                        if (imgEl) {
+                            const nextSrc =
+                                data.newVariantImage ||
+                                data.productImage ||
+                                imgEl.getAttribute('data-default-image') ||
+                                imgEl.src;
+                            if (nextSrc) imgEl.src = nextSrc;
+                        }
+
+                        // 5) Cập nhật tổng tiền khu vực bên phải
+                        updateTotals();
+
+                        // 6) Đóng modal (gọn, không lặp)
+                        const modalInstance = bootstrap.Modal.getInstance(modal) || new bootstrap.Modal(modal);
+                        modalInstance.hide();
+
+                    } catch (error) {
+                        console.error('Lỗi khi cập nhật biến thể:', error);
+                        showNotificationModal('Đã có lỗi xảy ra khi cập nhật biến thể.');
+                    }
                 });
             </script>
+
             <script>
                 document.addEventListener('DOMContentLoaded', () => {
                     document.querySelectorAll('.variant-btn').forEach(button => {
@@ -739,8 +765,8 @@
                 }
 
                 /* .modal-footer .btn-secondary:hover {
-                                                                                                                                                                                                                                                                                                                                                                        color: #fdfefe;
-                                                                                                                                                                                                                                                                                                                                                                    } */
+                                                                                                                                                                                                                                                                                                                                                                                            color: #fdfefe;
+                                                                                                                                                                                                                                                                                                                                                                                        } */
 
                 /* Nút Xác nhận */
                 .modal-footer .btn-primary {

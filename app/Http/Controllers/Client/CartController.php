@@ -299,13 +299,23 @@ class CartController extends Controller
         // Nếu muốn: $cartItem->variant_attributes = ...
         $cartItem->save();
 
-        return response()->json([
-            'success' => true,
-            'newVariantName' => $newVariant->name,
-            'newPrice' => $newVariant->price,
-            'quantity' => $cartItem->quantity,
-            'stock' => $newVariant->stock,
-        ]);
+return response()->json([
+    'success'          => true,
+    'variant_id'       => (int) $newVariant->id, // để JS nhớ biến thể hiện tại
+    'newVariantName'   => (string) ($newVariant->name ?? ''),
+    'newPrice'         => isset($newVariant->price) ? (float) $newVariant->price : 0,
+    'quantity'         => (int) $cartItem->quantity,
+    'stock'            => (int) ($newVariant->stock ?? 0),
+
+    // ✅ 2 field mới để đổi ảnh ở giỏ
+    'newVariantImage'  => $newVariant->image
+                          ? asset('storage/'.$newVariant->image)
+                          : null,
+    'productImage'     => ($cartItem->product && $cartItem->product->image)
+                          ? asset('storage/'.$cartItem->product->image)
+                          : null,
+]);
+
     }
 
     /**
