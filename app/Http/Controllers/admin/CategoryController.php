@@ -26,25 +26,7 @@ class CategoryController extends Controller
         return view('backend.categories.index', compact('categories'));
     }
 
-    // Trang frontend: hiển thị tất cả categories (không phân trang)
-    public function showCategories()
-    {
-        $categories = Category::all();
-        return view('frontend.categories.index', compact('categories'));
-    }
 
-    // Trang quản trị: form tạo mới category
-    public function create()
-    {
-        return view('backend.categories.create');
-    }
-
-    // Trang quản trị: form chỉnh sửa category
-    public function edit($id)
-    {
-        $category = Category::findOrFail($id);
-        return view('backend.categories.edit', compact('category'));
-    }
 
     // Lưu category mới (store)
     public function store(Request $request)
@@ -164,7 +146,50 @@ class CategoryController extends Controller
     public function trashed()
     {
         $categories = Category::onlyTrashed()->get();
+
+        // Tính toán thời gian tự động xóa cho mỗi category
+        foreach ($categories as $category) {
+            $deletedAt = \Carbon\Carbon::parse($category->deleted_at);
+            $autoDeleteAt = $deletedAt->copy()->addDays(30);
+            $now = \Carbon\Carbon::now();
+            $category->days_until_auto_delete = $now->diffInDays($autoDeleteAt, false);
+            $category->auto_delete_at = $autoDeleteAt;
+        }
+
         return view('backend.categories.trashed', compact('categories'));
+    }
+
+    /**
+     * Kiểm tra trạng thái tự động xóa của category
+     */
+    public function checkAutoDeleteStatus()
+    {
+        $trashedCategories = Category::onlyTrashed()->get();
+        $autoDeleteStats = [
+            'total' => $trashedCategories->count(),
+            'will_be_deleted_soon' => 0,
+            'days_until_auto_delete' => []
+        ];
+
+        foreach ($trashedCategories as $category) {
+            $deletedAt = \Carbon\Carbon::parse($category->deleted_at);
+            $autoDeleteAt = $deletedAt->copy()->addDays(30);
+            $now = \Carbon\Carbon::now();
+            $daysLeft = $now->diffInDays($autoDeleteAt, false);
+
+            if ($daysLeft <= 7) {
+                $autoDeleteStats['will_be_deleted_soon']++;
+            }
+
+            $autoDeleteStats['days_until_auto_delete'][] = [
+                'category_id' => $category->id,
+                'name' => $category->name,
+                'days_left' => $daysLeft,
+                'auto_delete_at' => $autoDeleteAt->format('Y-m-d H:i:s')
+            ];
+        }
+
+        return response()->json($autoDeleteStats);
     }
 
     public function bulkDelete(Request $request)

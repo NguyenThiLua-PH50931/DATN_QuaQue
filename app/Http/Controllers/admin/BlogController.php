@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\admin\Blog;
+use App\Models\Admin\Blog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
@@ -216,7 +216,50 @@ class BlogController extends Controller
     public function trashed()
     {
         $blogs = Blog::onlyTrashed()->get();
+
+        // Tính toán thời gian tự động xóa cho mỗi blog
+        foreach ($blogs as $blog) {
+            $deletedAt = \Carbon\Carbon::parse($blog->deleted_at);
+            $autoDeleteAt = $deletedAt->copy()->addDays(30);
+            $now = \Carbon\Carbon::now();
+            $blog->days_until_auto_delete = $now->diffInDays($autoDeleteAt, false);
+            $blog->auto_delete_at = $autoDeleteAt;
+        }
+
         return view('backend.blogs.trashed', compact('blogs'));
+    }
+
+    /**
+     * Kiểm tra trạng thái tự động xóa của blog
+     */
+    public function checkAutoDeleteStatus()
+    {
+        $trashedBlogs = Blog::onlyTrashed()->get();
+        $autoDeleteStats = [
+            'total' => $trashedBlogs->count(),
+            'will_be_deleted_soon' => 0,
+            'days_until_auto_delete' => []
+        ];
+
+        foreach ($trashedBlogs as $blog) {
+            $deletedAt = \Carbon\Carbon::parse($blog->deleted_at);
+            $autoDeleteAt = $deletedAt->copy()->addDays(30);
+            $now = \Carbon\Carbon::now();
+            $daysLeft = $now->diffInDays($autoDeleteAt, false);
+
+            if ($daysLeft <= 7) {
+                $autoDeleteStats['will_be_deleted_soon']++;
+            }
+
+            $autoDeleteStats['days_until_auto_delete'][] = [
+                'blog_id' => $blog->id,
+                'title' => $blog->title,
+                'days_left' => $daysLeft,
+                'auto_delete_at' => $autoDeleteAt->format('Y-m-d H:i:s')
+            ];
+        }
+
+        return response()->json($autoDeleteStats);
     }
 
     /**

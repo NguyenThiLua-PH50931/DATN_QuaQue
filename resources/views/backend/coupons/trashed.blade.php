@@ -9,10 +9,22 @@
                         <div class="card-body">
                             <div class="title-header option-title d-flex justify-content-between align-items-center">
                                 <h5>Thùng rác mã giảm giá</h5>
-                                <a class="btn btn-outline-primary" href="{{ route('admin.coupon.index') }}">
-                                    <i class="ri-arrow-go-back-line"></i> Quay lại danh sách
-                                </a>
+                               <form class="d-inline-flex">
+                                    <a href="{{ route('admin.coupon.index') }}"
+                                        class="align-items-center btn btn-theme d-flex">
+                                        <i data-feather="list"></i> Quay lại danh sách
+                                    </a>
+                                    <button type="button" id="check-auto-delete-btn" class="btn btn-info ms-2">
+                                        <i class="ri-time-line"></i> Kiểm tra tự động xóa
+                                    </button>
+                                </form>
                             </div>
+
+                            <small class="text-muted">
+                                <i class="ri-information-line"></i>
+                                <strong>Lưu ý:</strong> Các mã giảm giá đã xóa mềm sẽ được tự động xóa vĩnh viễn sau 30
+                                ngày.
+                            </small>
 
                             {{-- Filter cơ bản (tuỳ chọn) --}}
                             <form method="GET" action="{{ route('admin.coupon.trashed') }}" class="mb-4">
@@ -180,4 +192,83 @@
             </div>
         </div>
     </div>
+
+    {{-- Auto Delete Status Modal --}}
+    <div class="modal fade" id="autoDeleteStatusModal" tabindex="-1" aria-labelledby="autoDeleteStatusModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="autoDeleteStatusModalLabel">Trạng thái tự động xóa</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="autoDeleteStatusContent">
+                    <!-- Content will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
+
+@push('scripts')
+    <script>
+        $(document).ready(function() {
+            // Xử lý nút kiểm tra tự động xóa
+            $('#check-auto-delete-btn').click(function() {
+                console.log('Checking auto delete status...');
+                $.ajax({
+                    url: '{{ route('admin.coupon.checkAutoDeleteStatus') }}',
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function(response) {
+                        console.log('Auto delete status response:', response);
+                        let content = '<div class="row">';
+                        content +=
+                            '<div class="col-md-6"><strong>Tổng số mã giảm giá đã xóa:</strong> ' +
+                            response.total + '</div>';
+                        content +=
+                            '<div class="col-md-6"><strong>Sắp được xóa (≤7 ngày):</strong> ' +
+                            response.will_be_deleted_soon + '</div>';
+                        content += '</div><hr>';
+
+                        if (response.days_until_auto_delete.length > 0) {
+                            content +=
+                                '<h6>Chi tiết:</h6><div class="table-responsive"><table class="table table-sm">';
+                            content +=
+                                '<thead><tr><th>Mã giảm giá</th><th>Còn lại</th><th>Ngày xóa</th></tr></thead><tbody>';
+
+                            response.days_until_auto_delete.forEach(function(item) {
+                                const badgeClass = item.days_left <= 7 ? 'bg-danger' :
+                                    'bg-warning';
+                                content += '<tr>';
+                                content += '<td>' + item.code + '</td>';
+                                content += '<td><span class="badge ' + badgeClass +
+                                    '">' + item.days_left + ' ngày</span></td>';
+                                content += '<td>' + item.auto_delete_at + '</td>';
+                                content += '</tr>';
+                            });
+
+                            content += '</tbody></table></div>';
+                        } else {
+                            content +=
+                                '<p class="text-muted">Không có mã giảm giá nào trong thùng rác.</p>';
+                        }
+
+                        $('#autoDeleteStatusContent').html(content);
+                        $('#autoDeleteStatusModal').modal('show');
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error checking auto delete status:', error);
+                        $('#autoDeleteStatusContent').html(
+                            '<div class="alert alert-danger">Lỗi khi kiểm tra trạng thái tự động xóa.</div>'
+                            );
+                        $('#autoDeleteStatusModal').modal('show');
+                    }
+                });
+            });
+        });
+    </script>
+@endpush

@@ -1122,10 +1122,10 @@
             font-size: 14px !important;
             white-space: normal;
         }
-                                                .wishlist-btn.fill-heart svg {
-                                            fill: #4a5568 !important;
-                                            stroke: #4a5568 !important;
-                                        }
+        .wishlist-btn.fill-heart svg {
+            fill: #4a5568 !important;
+            stroke: #4a5568 !important;
+    }
     </style>
 
 @endsection

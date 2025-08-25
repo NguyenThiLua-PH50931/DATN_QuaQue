@@ -356,6 +356,36 @@
         </div> --}}
     </div>
     <!-- Tap to top and theme setting button end -->
+<!-- Modal xác nhận đăng xuất -->
+<div class="modal fade theme-modal remove-profile" id="logoutConfirmModal" tabindex="-1" aria-labelledby="logoutConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header d-block text-center">
+                <h5 class="modal-title w-100" id="logoutConfirmModalLabel">
+                    Bạn có chắc chắn muốn đăng xuất?
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="remove-box">
+                    <p>
+                        Nếu đăng xuất, bạn sẽ cần nhập lại tài khoản và mật khẩu để đăng nhập lần sau.
+                    </p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">
+                    Không
+                </button>
+                <button id="confirm-logout-btn" type="button" class="btn theme-bg-color btn-md fw-bold text-light">
+                    Đăng xuất
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
     <!-- Bg overlay Start -->
     <div class="bg-overlay"></div>
@@ -412,7 +442,6 @@
     <!-- noUiSlider JS -->
     <script src="https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/wnumb@1.2.0/wNumb.min.js"></script>
-    @stack('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             let locationsData = null;
@@ -518,25 +547,6 @@
             }
         });
     </script>
-    {{-- <script>
-document.querySelectorAll('input[name="shipping_method_id"]').forEach(function(radio) {
-    radio.addEventListener('change', function() {
-        document.getElementById('shipping-method-form').submit();
-    });
-});
-</script> --}}
-    {{-- popup mã giảm giá --}}
-    {{-- @if (session('error'))
-        <script>
-            Swal.fire({
-                icon: 'error',
-                title: 'Thông báo',
-                text: {!! json_encode(session('error')) !!},
-                confirmButtonText: 'OK'
-            });
-        </script>
-    @endif --}}
-    {{-- popup mã giảm giá --}}
     <script>
         document.querySelectorAll('input[name="flexRadioDefault"]').forEach(function(radio) {
             radio.addEventListener('change', function() {
@@ -640,10 +650,6 @@ document.querySelectorAll('input[name="shipping_method_id"]').forEach(function(r
             });
         });
     </script>
-    @stack('scripts')
-</body>
-</body>
-            </script>
         <style >
             .onhover-div-login {
     min-width: 140 px;
@@ -776,8 +782,29 @@ document.querySelectorAll('input[name="shipping_method_id"]').forEach(function(r
 }
 
 </style>
+<!-- js dang xuat -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const logoutLink = document.getElementById('logout-link');
+    const confirmBtn = document.getElementById('confirm-logout-btn');
+
+    logoutLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        // Hiện modal Bootstrap
+        const modal = new bootstrap.Modal(document.getElementById('logoutConfirmModal'));
+        modal.show();
+
+        // Đảm bảo mỗi lần mở chỉ bind 1 lần
+        confirmBtn.onclick = function() {
+            document.getElementById('logout-form').submit();
+        };
+    });
+});
+</script>
+
 
     @stack('scripts')
+    @stack('style')
 </body>
 
         </html>

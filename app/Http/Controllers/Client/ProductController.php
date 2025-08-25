@@ -94,7 +94,7 @@ class ProductController extends Controller
                     WHEN products.has_variants = 1 THEN
                         (SELECT COUNT(*) FROM product_variants WHERE product_id = products.id AND stock > 0 AND active = 1)
                     ELSE
-                        0
+                        (SELECT stock FROM product_variants WHERE product_id = products.id AND active = 1 LIMIT 1)
                 END DESC
             ')->orderBy('id', 'desc');
         }
@@ -104,25 +104,33 @@ class ProductController extends Controller
         // Phân loại sản phẩm còn hàng và hết hàng
         $inStockProducts = collect();
         $outOfStockProducts = collect();
+
         foreach ($allProducts as $product) {
+            $hasStock = false;
+
             if ($product->has_variants) {
-                // Có biến thể
-                $hasInStockVariant = $product->variants->where('stock', '>', 0)->where('active', 1)->count() > 0;
-                if ($hasInStockVariant) {
-                    $inStockProducts->push($product);
-                } else {
-                    $outOfStockProducts->push($product);
+                // Có biến thể - kiểm tra xem có variant nào còn hàng không
+                foreach ($product->variants as $variant) {
+                    if ($variant->active == 1 && $variant->stock > 0) {
+                        $hasStock = true;
+                        break;
+                    }
                 }
             } else {
-                // Không có biến thể
+                // Không có biến thể - kiểm tra variant đầu tiên
                 $defaultVariant = $product->variants->first();
-                if ($defaultVariant && $defaultVariant->stock > 0) {
-                    $inStockProducts->push($product);
-                } else {
-                    $outOfStockProducts->push($product);
+                if ($defaultVariant && $defaultVariant->active == 1 && $defaultVariant->stock > 0) {
+                    $hasStock = true;
                 }
             }
+
+            if ($hasStock) {
+                $inStockProducts->push($product);
+            } else {
+                $outOfStockProducts->push($product);
+            }
         }
+
         // Gộp lại: còn hàng trước, hết hàng sau
         $finalProducts = $inStockProducts->concat($outOfStockProducts);
 
@@ -231,7 +239,7 @@ class ProductController extends Controller
                 WHEN products.active = 1
                      AND EXISTS (
                          SELECT 1 FROM product_variants pv
-                         WHERE pv.product_id = products.id AND pv.active = 1
+                         WHERE pv.product_id = products.id AND pv.active = 1 AND pv.stock > 0
                      )
                 THEN 0
                 ELSE 1
@@ -289,10 +297,57 @@ class ProductController extends Controller
         $categories = Category::withCount('products')->get();
         $regions = Region::withCount('products')->get();
 
-        // AJAX partial
+                // AJAX partial
         if ($request->ajax()) {
+            // Thêm logic kiểm tra stock cho AJAX partial
+            $products->getCollection()->transform(function ($product) {
+                $hasStock = false;
+                $totalStock = 0;
+
+                if ($product->variants->count() > 0) {
+                    foreach ($product->variants as $variant) {
+                        if ($variant->active == 1) {
+                            $totalStock += $variant->stock;
+                            if ($variant->stock > 0) {
+                                $hasStock = true;
+                            }
+                        }
+                    }
+                }
+
+                $product->has_stock = $hasStock;
+                $product->total_stock = $totalStock;
+
+                return $product;
+            });
+
             return view('frontend.products.partials.product-list', compact('products'))->render();
         }
+
+        // Thêm logic kiểm tra stock cho từng sản phẩm
+        $products->getCollection()->transform(function ($product) {
+            $hasStock = false;
+            $totalStock = 0;
+
+            if ($product->variants->count() > 0) {
+                foreach ($product->variants as $variant) {
+                    if ($variant->active == 1) {
+                        $totalStock += $variant->stock;
+                        if ($variant->stock > 0) {
+                            $hasStock = true;
+                        }
+                    }
+                }
+            }
+
+            $product->has_stock = $hasStock;
+            $product->total_stock = $totalStock;
+
+            // Debug log
+            \Log::info("Product {$product->id} ({$product->name}): variants={$product->variants->count()}, total_stock={$totalStock}, has_stock=" . ($hasStock ? 'true' : 'false'));
+
+            return $product;
+        });
 
         // Full page
         return view('frontend.products.catalog', compact('products', 'categories', 'regions'));

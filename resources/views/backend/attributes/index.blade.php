@@ -23,34 +23,150 @@
                                 </div>
                             </div>
                             <style>
-                 
-                                    .table td,
+                                .table {
+                                    width: 100%;
+                                    margin-bottom: 1rem;
+                                    background-color: transparent;
+                                    border-collapse: collapse;
+                                    border: none;
+                                }
+
                     .table th {
-                        max-width: 150px;
-                        /* Giới hạn chiều rộng từng cột, tùy chỉnh theo cột */
+                                    background-color: #f8f9fa !important;
+                                    color: #333 !important;
+                                    font-weight: 600;
+                                    text-align: center !important;
+                                    vertical-align: middle;
+                                    padding: 12px 8px;
+                                    border: none;
+                                    border-bottom: 2px solid #dee2e6;
                         white-space: nowrap;
-                        /* Không xuống dòng */
-                        overflow: hidden;
-                        /* Ẩn phần tràn */
-                        text-overflow: ellipsis;
-                        /* Hiển thị dấu ... */
+                                }
+
+                                .table td {
+                                    padding: 12px 8px;
                         vertical-align: middle;
-                        /* Căn giữa dọc */
-                       
+                                    border: none;
+                                    border-bottom: 1px solid #f0f0f0;
+                                    text-align: center !important;
+                                }
+
+                                /* Cột checkbox */
+                                .table th:first-child,
+                                .table td:first-child {
+                                    width: 50px;
+                                    text-align: center;
+                                }
+
+                                /* Cột ID */
+                                .table th:nth-child(2),
+                                .table td:nth-child(2) {
+                                    width: 80px;
+                                    text-align: center;
+                                }
+
+                                                                /* Cột tên thuộc tính */
+                                .table th:nth-child(3),
+                                .table td:nth-child(3) {
+                                    text-align: center !important;
+                                    min-width: 200px;
+                                }
+
+                                /* Cột giá trị thuộc tính */
+                                .table th:nth-child(4),
+                                .table td:nth-child(4) {
+                                    text-align: center !important;
+                                    min-width: 250px;
+                                    max-width: 300px;
+                                    word-wrap: break-word;
+                                    white-space: normal;
+                                }
+
+                                /* Cột ngày cập nhật */
+                                .table th:nth-child(5),
+                                .table td:nth-child(5) {
+                                    width: 150px;
+                                    text-align: center;
+                                }
+
+                                /* Cột hành động */
+                                .table th:last-child,
+                                .table td:last-child {
+                                    width: 120px;
+                                    text-align: center;
+                                }
+
+                                /* Hover effect */
+                                .table tbody tr:hover {
+                                    background-color: #f8f9fa;
+                                }
+
+                                /* Ẩn đường viền bảng */
+                                .table,
+                                .table th,
+                                .table td {
+                                    border: none !important;
+                                }
+
+                                /* Đảm bảo tất cả các cột đều căn giữa */
+                                .table th,
+                                .table td {
+                                    text-align: center !important;
+                                }
+
+                                /* Chỉ giữ đường viền dưới cho header và các hàng */
+                                .table th {
+                                    border-bottom: 2px solid #dee2e6 !important;
+                                }
+
+                                .table td {
+                                    border-bottom: 1px solid #f0f0f0 !important;
+                                }
+
+                                /* Link trong bảng */
+                                .table a {
+                                    text-decoration: none;
+                                    color: #007bff;
+                                    display: inline-block;
+                                    text-align: center;
+                                    width: 100%;
+                                }
+
+                                .table a:hover {
+                                    color: #0056b3;
+                                    text-decoration: underline;
+                                }
+
+                                /* Nút hành động */
+                                .table .action-buttons {
+                                    display: flex;
+                                    justify-content: center;
+                                    align-items: center;
+                                    gap: 8px;
+                                }
+
+                                .table .action-buttons a {
+                                    padding: 6px 8px;
+                                    border-radius: 4px;
+                                    transition: all 0.2s;
+                                }
+
+                                .table .action-buttons a:hover {
+                                    background-color: #f8f9fa;
                     }
                             </style>
                            <div class="table-responsive" style="overflow-x:unset;"> {{-- bỏ thuộc tính max-width nếu có --}}
-                            <table class="table w-100" id="attributeTable" style="min-width: 100%;">
+                            <table class="table" id="attributeTable">
                                     <thead>
                                         <tr>
-                                            <th style="color: black; background-color: #f8f9fa; width: 30px;">
+                                            <th>
                                                 <input type="checkbox" id="select-all-checkbox">
                                             </th>
-                                            <th style="color: black; background-color: #f8f9fa;">ID</th>
-                                            <th style="color: black; background-color: #f8f9fa;">Tên Thuộc Tính</th>
-                                            <th style="color: black; background-color: #f8f9fa;">Giá Trị Thuộc Tính</th>
-                                            <th style="color: black; background-color: #f8f9fa;">Ngày Cập Nhật</th>
-                                            <th style="color: black; background-color: #f8f9fa; width: 20px;">Hành động</th>
+                                            <th>ID</th>
+                                            <th>Tên Thuộc Tính</th>
+                                            <th>Giá Trị Thuộc Tính</th>
+                                            <th>Ngày Cập Nhật</th>
+                                            <th>Hành động</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -71,27 +187,27 @@
                                                     @php
                                                         $values = $attribute->values->pluck('value')->toArray();
                                                     @endphp
+                                                    <span title="{{ implode(', ', $values) }}">
                                                     {{ implode(', ', $values) }}
-                                                </td>
-                                                <td>{{ $attribute->updated_at ? $attribute->updated_at->format('d/m/Y H:i') : '' }}
+                                                    </span>
                                                 </td>
                                                 <td>
-                                                    <ul style=" display: flex; align-items: center; justify-content: center;">
-                                                        <li>
-                                                            <a
-                                                                href="{{ route('admin.attributes.edit', $attribute->slug) }}">
+                                                    {{ $attribute->updated_at ? $attribute->updated_at->format('d/m/Y H:i') : '' }}
+                                                </td>
+                                                <td>
+                                                    <div class="action-buttons">
+                                                        <a href="{{ route('admin.attributes.edit', $attribute->slug) }}"
+                                                           title="Sửa thuộc tính">
                                                                 <i class="ri-pencil-line"></i>
                                                             </a>
-                                                        </li>
-                                                        <li>
                                                             <a href="javascript:void(0)" class="delete-btn"
                                                                 data-bs-toggle="modal" data-bs-target="#deleteModal"
                                                                 data-id="{{ $attribute->id }}"
-                                                                data-name="{{ $attribute->name }}">
+                                                           data-name="{{ $attribute->name }}"
+                                                           title="Xóa thuộc tính">
                                                                 <i class="ri-delete-bin-line"></i>
                                                             </a>
-                                                        </li>
-                                                    </ul>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         @empty
@@ -196,7 +312,7 @@
         </div>
 
         @includeIf('backend.footer')
-        
+
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 

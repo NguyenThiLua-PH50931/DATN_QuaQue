@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Models\admin;
+namespace App\Models\Admin;
 
 use App\Models\Client\CartItem;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Carbon\Carbon;
 
 class Coupons extends Model
 {
@@ -46,5 +47,33 @@ class Coupons extends Model
     //     return $this->belongsToMany(Product::class, 'coupon_product', 'coupon_id', 'product_id');
     // }
 
-      
+    // Tính số ngày còn lại trước khi tự động xóa
+    public function getDaysUntilAutoDeleteAttribute()
+    {
+        if (!$this->deleted_at) {
+            return null;
+        }
+
+        $autoDeleteDate = $this->deleted_at->addDays(30);
+        $daysLeft = now()->diffInDays($autoDeleteDate, false);
+
+        return max(0, $daysLeft);
+    }
+
+    // Kiểm tra xem có sắp được tự động xóa không (≤7 ngày)
+    public function getWillBeDeletedSoonAttribute()
+    {
+        $daysLeft = $this->days_until_auto_delete;
+        return $daysLeft !== null && $daysLeft <= 7;
+    }
+
+    // Lấy ngày sẽ tự động xóa
+    public function getAutoDeleteAtAttribute()
+    {
+        if (!$this->deleted_at) {
+            return null;
+        }
+
+        return $this->deleted_at->addDays(30)->format('d-m-Y H:i:s');
+    }
 }

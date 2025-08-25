@@ -12,15 +12,22 @@
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <div class="title-header option-title">
                                     <h5>Banner đã xóa mềm</h5>
+
                                 </div>
                                 <form class="d-inline-flex">
                                     <a href="{{ route('admin.banners.index') }}"
                                         class="align-items-center btn btn-theme d-flex">
                                         <i data-feather="list"></i> Quay lại danh sách
                                     </a>
+                                    <button type="button" id="check-auto-delete-btn" class="btn btn-info ms-2">
+                                        <i class="ri-time-line"></i> Kiểm tra tự động xóa
+                                    </button>
                                 </form>
                             </div>
-
+                            <small class="text-muted">
+                                <i class="ri-information-line"></i>
+                                <strong>Lưu ý:</strong> Banner trong thùng rác sẽ tự động bị xóa vĩnh viễn sau 30 ngày.
+                            </small>
                             @if (session('success'))
                                 <div class="alert alert-success">
                                     {{ session('success') }}
@@ -31,18 +38,19 @@
                                 <table class="table all-package theme-table" id="table_id">
                                     <thead>
                                         <tr>
-                                            <th style="color: black; background-color: #f8f9fa; width: 30px;">
+                                            <th style="color: black; width: 30px;">
                                                 <input type="checkbox" id="select-all-checkbox">
                                             </th>
-                                            <th style="color: black; background-color: #f8f9fa;">ID</th>
-                                            <th style="color: black; background-color: #f8f9fa;">Tiêu đề</th>
-                                            <th style="color: black; background-color: #f8f9fa;">Ảnh</th>
-                                            <th style="color: black; background-color: #f8f9fa;">Link</th>
-                                            <th style="color: black; background-color: #f8f9fa;">Hoạt động</th>
-                                            <th style="color: black; background-color: #f8f9fa;">Hiển thị lúc</th>
-                                            <th style="color: black; background-color: #f8f9fa;">Vị trí</th>
-                                            <th style="color: black; background-color: #f8f9fa;">Ngày xóa</th>
-                                            <th style="color: black; background-color: #f8f9fa;">Hành động</th>
+                                            <th style="color: black;">ID</th>
+                                            {{-- <th style="color: black;">Tiêu đề</th> --}}
+                                            <th style="color: black;">Ảnh</th>
+                                            {{-- <th style="color: black;">Link</th> --}}
+                                            {{-- <th style="color: black;">Hoạt động</th>
+                                            <th style="color: black;">Hiển thị lúc</th> --}}
+                                            <th style="color: black;">Vị trí</th>
+                                            <th style="color: black;">Ngày xóa</th>
+
+                                            <th style="color: black;">Hành động</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -55,7 +63,8 @@
                                                 'product_section_promo_left_top' => 'Banner Sản Phẩm Dọc - Trên',
                                                 'product_section_promo_left_bottom' => 'Banner Sản Phẩm Dọc - Dưới',
                                                 'category_section_promo_left' => 'Banner Sản Phẩm Theo Danh Mục - Trái',
-                                                'category_section_promo_right' => 'Banner Sản Phẩm Theo Danh Mục - Phải',
+                                                'category_section_promo_right' =>
+                                                    'Banner Sản Phẩm Theo Danh Mục - Phải',
                                                 'new_products_cashback_banner' => 'Banner Sản Phẩm Mới (Hoàn Tiền)',
                                                 'new_products_promo_left' => 'Banner Sản Phẩm Mới (Trái)',
                                                 'new_products_promo_right' => 'Banner Sản Phẩm Mới (Phải)',
@@ -69,17 +78,19 @@
                                                         value="{{ $banner->id }}">
                                                 </td>
                                                 <td>{{ $banner->id }}</td>
-                                                <td>{{ $banner->title }}</td>
+                                                {{-- <td>{{ $banner->title }}</td> --}}
                                                 <td>
                                                     <img src="{{ asset('storage/' . $banner->image) }}"
                                                         alt="{{ $banner->title }}" class="w-20 h-20 object-cover"
                                                         width="100px">
                                                 </td>
-                                                <td>{{ $banner->link }}</td>
+                                                {{-- <td>{{ $banner->link }}</td>
                                                 <td>{{ $banner->active ? 'Có' : 'Không' }}</td>
-                                                <td>{{ $banner->display_at }}</td>
-                                                <td>{{ $locationNames[$banner->location] ?? $banner->location ?? 'N/A' }}</td>
+                                                <td>{{ $banner->display_at }}</td> --}}
+                                                <td>{{ $locationNames[$banner->location] ?? ($banner->location ?? 'N/A') }}
+                                                </td>
                                                 <td>{{ $banner->deleted_at }}</td>
+
                                                 <td>
                                                     <ul>
                                                         <li>
@@ -105,7 +116,7 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="10" class="text-center">Không có banner nào đã bị xóa mềm.
+                                                <td colspan="6" class="text-center">Không có banner nào đã bị xóa mềm.
                                                 </td>
                                             </tr>
                                         @endforelse
@@ -219,13 +230,34 @@
         </div>
     </div>
 
+    {{-- Auto Delete Status Modal --}}
+    <div class="modal fade" id="autoDeleteStatusModal" tabindex="-1" aria-labelledby="autoDeleteStatusModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="autoDeleteStatusModalLabel">Trạng thái tự động xóa</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="autoDeleteStatusContent">
+                    <!-- Content will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {{-- Success Message Modal --}}
-    <div class="modal fade" id="successMessageModal" tabindex="-1" aria-labelledby="successMessageModalLabel" aria-hidden="true">
+    <div class="modal fade" id="successMessageModal" tabindex="-1" aria-labelledby="successMessageModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-success text-white">
                     <h5 class="modal-title" id="successMessageModalLabel">Thành công!</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="successMessageContent">
                     <!-- Message will be inserted here -->
@@ -238,12 +270,14 @@
     </div>
 
     {{-- Error Message Modal --}}
-    <div class="modal fade" id="errorMessageModal" tabindex="-1" aria-labelledby="errorMessageModalLabel" aria-hidden="true">
+    <div class="modal fade" id="errorMessageModal" tabindex="-1" aria-labelledby="errorMessageModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-danger text-white">
                     <h5 class="modal-title" id="errorMessageModalLabel">Lỗi!</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="errorMessageContent">
                     <!-- Message will be inserted here -->
@@ -264,20 +298,24 @@
 @push('scripts')
     <script>
         $(document).ready(function() {
-            $('#table_id').DataTable({
-                language: {
-                    search: "Tìm kiếm:",
-                    lengthMenu: "Hiển thị _MENU_ banner",
-                    info: "Hiển thị _START_ đến _END_ trong tổng _TOTAL_ banner",
-                    paginate: {
-                        first: "Đầu",
-                        last: "Cuối",
-                        next: "Sau",
-                        previous: "Trước"
-                    },
-                    zeroRecords: "Không tìm thấy banner nào đã bị xóa mềm.",
-                }
-            });
+            try {
+                $('#table_id').DataTable({
+                    language: {
+                        search: "Tìm kiếm:",
+                        lengthMenu: "Hiển thị _MENU_ banner",
+                        info: "Hiển thị _START_ đến _END_ trong tổng _TOTAL_ banner",
+                        paginate: {
+                            first: "Đầu",
+                            last: "Cuối",
+                            next: "Sau",
+                            previous: "Trước"
+                        },
+                        zeroRecords: "Không tìm thấy banner nào đã bị xóa mềm.",
+                    }
+                });
+            } catch (error) {
+                console.warn('DataTable initialization failed:', error);
+            }
 
             // Xử lý sự kiện click nút khôi phục
             $('.restore-btn').click(function() {
@@ -335,11 +373,13 @@
                             },
                             success: function(response) {
                                 $('#bulkRestoreModal').modal('hide');
-                                $('#successMessageContent').text(response.message || 'Khôi phục banner đã chọn thành công!');
+                                $('#successMessageContent').text(response.message ||
+                                    'Khôi phục banner đã chọn thành công!');
                                 $('#successMessageModal').modal('show');
-                                $('#successMessageModal').on('hidden.bs.modal', function () {
-                                    window.location.reload();
-                                });
+                                $('#successMessageModal').on('hidden.bs.modal',
+                                    function() {
+                                        window.location.reload();
+                                    });
                             },
                             error: function(xhr) {
                                 $('#bulkRestoreModal').modal('hide');
@@ -347,15 +387,17 @@
                                 if (xhr.responseJSON && xhr.responseJSON.message) {
                                     errorMessage = xhr.responseJSON.message;
                                 } else if (xhr.responseText) {
-                                    errorMessage = 'Lỗi server: ' + xhr.responseText.substring(0, 100) + '...';
+                                    errorMessage = 'Lỗi server: ' + xhr.responseText
+                                        .substring(0, 100) + '...';
                                 } else {
                                     errorMessage = 'Lỗi không xác định';
                                 }
                                 $('#errorMessageContent').text(errorMessage);
                                 $('#errorMessageModal').modal('show');
-                                $('#errorMessageModal').on('hidden.bs.modal', function () {
-                                    window.location.reload();
-                                });
+                                $('#errorMessageModal').on('hidden.bs.modal',
+                                    function() {
+                                        window.location.reload();
+                                    });
                             }
                         });
                     });
@@ -385,27 +427,32 @@
                             },
                             success: function(response) {
                                 $('#bulkForceDeleteModal').modal('hide');
-                                $('#successMessageContent').text(response.message || 'Xóa vĩnh viễn banner đã chọn thành công!');
+                                $('#successMessageContent').text(response.message ||
+                                    'Xóa vĩnh viễn banner đã chọn thành công!');
                                 $('#successMessageModal').modal('show');
-                                $('#successMessageModal').on('hidden.bs.modal', function () {
-                                    window.location.reload();
-                                });
+                                $('#successMessageModal').on('hidden.bs.modal',
+                                    function() {
+                                        window.location.reload();
+                                    });
                             },
                             error: function(xhr) {
                                 $('#bulkForceDeleteModal').modal('hide');
-                                let errorMessage = 'Lỗi khi xóa vĩnh viễn banner đã chọn';
+                                let errorMessage =
+                                    'Lỗi khi xóa vĩnh viễn banner đã chọn';
                                 if (xhr.responseJSON && xhr.responseJSON.message) {
                                     errorMessage = xhr.responseJSON.message;
                                 } else if (xhr.responseText) {
-                                    errorMessage = 'Lỗi server: ' + xhr.responseText.substring(0, 100) + '...';
+                                    errorMessage = 'Lỗi server: ' + xhr.responseText
+                                        .substring(0, 100) + '...';
                                 } else {
                                     errorMessage = 'Lỗi không xác định';
                                 }
                                 $('#errorMessageContent').text(errorMessage);
                                 $('#errorMessageModal').modal('show');
-                                $('#errorMessageModal').on('hidden.bs.modal', function () {
-                                    window.location.reload();
-                                });
+                                $('#errorMessageModal').on('hidden.bs.modal',
+                                    function() {
+                                        window.location.reload();
+                                    });
                             }
                         });
                     });
@@ -413,6 +460,60 @@
                     $('#errorMessageContent').text('Vui lòng chọn ít nhất một banner để xóa vĩnh viễn.');
                     $('#errorMessageModal').modal('show');
                 }
+            });
+
+            // Xử lý nút kiểm tra tự động xóa
+            $('#check-auto-delete-btn').click(function() {
+                console.log('Checking auto delete status...');
+                $.ajax({
+                    url: '{{ route('admin.banners.checkAutoDeleteStatus') }}',
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function(response) {
+                        console.log('Auto delete status response:', response);
+                        let content = '<div class="row">';
+                        content +=
+                            '<div class="col-md-6"><strong>Tổng số banner đã xóa:</strong> ' +
+                            response.total + '</div>';
+                        content +=
+                            '<div class="col-md-6"><strong>Sắp được xóa (≤7 ngày):</strong> ' +
+                            response.will_be_deleted_soon + '</div>';
+                        content += '</div><hr>';
+
+                        if (response.days_until_auto_delete.length > 0) {
+                            content +=
+                                '<h6>Chi tiết:</h6><div class="table-responsive"><table class="table table-sm">';
+                            content +=
+                                '<thead><tr><th>Banner</th><th>Còn lại</th><th>Ngày xóa</th></tr></thead><tbody>';
+
+                            response.days_until_auto_delete.forEach(function(item) {
+                                const badgeClass = item.days_left <= 7 ? 'bg-danger' :
+                                    'bg-warning';
+                                content += '<tr>';
+                                content += '<td>' + item.title + '</td>';
+                                content += '<td><span class="badge ' + badgeClass +
+                                    '">' + item.days_left + ' ngày</span></td>';
+                                content += '<td>' + item.auto_delete_at + '</td>';
+                                content += '</tr>';
+                            });
+
+                            content += '</tbody></table></div>';
+                        } else {
+                            content +=
+                                '<p class="text-muted">Không có banner nào trong thùng rác.</p>';
+                        }
+
+                        $('#autoDeleteStatusContent').html(content);
+                        $('#autoDeleteStatusModal').modal('show');
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error checking auto delete status:', error);
+                        $('#autoDeleteStatusContent').html(
+                            '<div class="alert alert-danger">Lỗi khi kiểm tra trạng thái tự động xóa.</div>'
+                            );
+                        $('#autoDeleteStatusModal').modal('show');
+                    }
+                });
             });
         });
     </script>
