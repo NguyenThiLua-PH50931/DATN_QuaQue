@@ -14,17 +14,17 @@
                                         class="align-items-center btn btn-theme d-flex">
                                         <i data-feather="list"></i> Quay lại danh sách
                                     </a>
-                                    <button type="button" id="check-auto-delete-btn" class="btn btn-info ms-2">
+                                    {{-- <button type="button" id="check-auto-delete-btn" class="btn btn-info ms-2">
                                         <i class="ri-time-line"></i> Kiểm tra tự động xóa
-                                    </button>
+                                    </button> --}}
                                 </form>
                             </div>
 
-                            <small class="text-muted">
+                            {{-- <small class="text-muted">
                                 <i class="ri-information-line"></i>
                                 <strong>Lưu ý:</strong> Các mã giảm giá đã xóa mềm sẽ được tự động xóa vĩnh viễn sau 30
                                 ngày.
-                            </small>
+                            </small> --}}
 
                             {{-- Filter cơ bản (tuỳ chọn) --}}
                             <form method="GET" action="{{ route('admin.coupon.trashed') }}" class="mb-4">
