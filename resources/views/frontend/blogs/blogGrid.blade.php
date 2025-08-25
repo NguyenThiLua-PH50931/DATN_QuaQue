@@ -82,17 +82,8 @@
                             </div>
                         @endforeach
                     </div>
-                    <a href="{{ route('client.blogs-detail', ['id' => $item->id]) }}">
-                        <h3>{{ $item->title }}</h3>
-                    </a>
-                    <button onclick="location.href='{{ route('client.blogs-detail', ['id' => $item->id]) }}'" class="blog-button">
-                        Đọc thêm <i class="fa-solid fa-right-long"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    @endforeach
-</div>
+
+
 
                     <nav class="custome-pagination">
                         <ul class="pagination justify-content-center">

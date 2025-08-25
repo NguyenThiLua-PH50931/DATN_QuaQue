@@ -11,7 +11,7 @@ use App\Models\admin\CommentReply;
 
 class Comment extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $fillable = ['user_id', 'product_id', 'content', 'status'];
 
