@@ -45,12 +45,12 @@
                                 </div>
 
                                 <div class="blog-contain">
-                                    <div class="blog-label">
+                                    {{-- <div class="blog-label">
                                         <span class="time">
                                             <i data-feather="clock"></i>
                                             <span>{{ $item->created_at ? $item->created_at->format('F d, Y') : 'Chưa có ngày tạo' }}</span>
                                         </span>
-                                    </div>
+                                    </div> --}}
 
                                     <a href="{{ route('client.blogs-detail', ['id' => $item->id]) }}">
                                         <h3>{{ $item->title }}</h3>
@@ -126,7 +126,7 @@
                                                         <h5 class="recent-name">{{ $item->title }}</h5>
                                                     </a>
                                                     <h6>
-                                                        <span>{{ $item->created_at ? $item->created_at->format('F d, Y') : 'Chưa có ngày tạo' }}</span>
+                                                        <span>{{ $item->created_at ? $item->created_at->format('d/m/Y') : 'Chưa có ngày tạo' }}</span>
                                                         <i data-feather="thumbs-up"></i>
                                                     </h6>
                                                 </div>
