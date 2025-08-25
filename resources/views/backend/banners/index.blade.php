@@ -83,23 +83,6 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @php
-                                            $locationNames = [
-                                                'main_hero_banner' => 'Banner Chính Đầu Trang',
-                                                'small_promo_banner_top' => 'Banner Đầu Trang Nhỏ Bên Phải (Trên)',
-                                                'small_promo_banner_bottom' => 'Banner Đầu Trang Nhỏ Bên Phải (Dưới)',
-                                                'slider_banner' => 'Banner Trượt (Slider)',
-                                                'product_section_promo_left_top' => 'Banner Sản Phẩm Dọc - Trên',
-                                                'product_section_promo_left_bottom' => 'Banner Sản Phẩm Dọc - Dưới',
-                                                'category_section_promo_left' => 'Banner Sản Phẩm Theo Danh Mục - Trái',
-                                                'category_section_promo_right' =>
-                                                    'Banner Sản Phẩm Theo Danh Mục - Phải',
-                                                'new_products_cashback_banner' => 'Banner Sản Phẩm Mới',
-                                                'new_products_promo_left' => 'Banner Sản Phẩm Mới (Trái)',
-                                                'new_products_promo_right' => 'Banner Sản Phẩm Mới (Phải)',
-                                                'last_page_promo_banner' => 'Banner Cuối Trang (Quảng Cáo)',
-                                            ];
-                                        @endphp
                                         @forelse ($banners as $banner)
                                             <tr>
                                                 <td>
@@ -113,7 +96,7 @@
                                                         style="max-width: 100px; height: auto;">
                                                 </td>
                                                 <td style="word-wrap: break-word;">
-                                                    {{ $locationNames[$banner->location] ?? ($banner->location ?? 'N/A') }}
+                                                    {{ $banner->location_label }}
                                                 </td>
                                                 <td>{{ $banner->active ? 'Có' : 'Không' }}</td>
                                                 {{-- <td>{{ $banner->link }}</td>
