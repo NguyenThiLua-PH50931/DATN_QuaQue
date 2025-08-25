@@ -101,21 +101,30 @@ public function store(Request $request)
         $rules['end_date']   = 'required|date|after_or_equal:start_date';
     }
 
-    if ($type === 'order_discount') {
-        $rules['discount_type'] = 'required|in:percent,fixed';
-        $rules['discount_value'] = 'required|numeric|min:0';
-        if ($discountType === 'percent') {
-            $rules['max_discount_amount'] = 'required|numeric|min:0.01';
-            $messages['max_discount_amount.required'] = 'Bạn phải nhập giá trị giảm tối đa khi chọn giảm theo phần trăm.';
-        } else {
-            $rules['max_discount_amount'] = 'nullable|numeric|min:0';
-        }
-    } else {
-        // free_shipping
-        $rules['discount_type'] = 'nullable';
-        $rules['discount_value'] = 'nullable';
-        $rules['max_discount_amount'] = 'nullable';
+if ($type === 'order_discount') {
+    $rules['discount_type'] = 'required|in:percent,fixed';
+
+    if ($discountType === 'percent') {
+        // % phải 1..100
+        $rules['discount_value'] = 'required|numeric|min:1|max:100';
+        $rules['max_discount_amount'] = 'required|numeric|min:0.01';
+
+        // message đẹp
+        $messages['discount_value.max'] = 'Phần trăm giảm giá không được vượt quá 100%.';
+        $messages['discount_value.min'] = 'Phần trăm giảm giá phải lớn hơn 0%.';
+        $messages['max_discount_amount.required'] = 'Bạn phải nhập giá trị giảm tối đa khi chọn giảm theo phần trăm.';
+    } else { // fixed
+        // tiền giảm phải > 0
+        $rules['discount_value'] = 'required|numeric|min:0.01';
+        $rules['max_discount_amount'] = 'nullable|numeric|min:0';
     }
+} else {
+    // free_shipping
+    $rules['discount_type'] = 'nullable';
+    $rules['discount_value'] = 'nullable';
+    $rules['max_discount_amount'] = 'nullable';
+}
+
 
     if ($scope === 'conditional') {
         $rules['condition_type'] = [
@@ -189,21 +198,30 @@ public function update(Request $request, $id)
         $rules['end_date']   = 'required|date|after_or_equal:start_date';
     }
 
-    if ($type === 'order_discount') {
-        $rules['discount_type'] = 'required|in:percent,fixed';
-        $rules['discount_value'] = 'required|numeric|min:0';
-        if ($discountType === 'percent') {
-            $rules['max_discount_amount'] = 'required|numeric|min:0.01';
-            $messages['max_discount_amount.required'] = 'Bạn phải nhập giá trị giảm tối đa khi chọn giảm theo phần trăm.';
-        } else {
-            $rules['max_discount_amount'] = 'nullable|numeric|min:0';
-        }
-    } else {
-        // free_shipping
-        $rules['discount_type'] = 'nullable';
-        $rules['discount_value'] = 'nullable';
-        $rules['max_discount_amount'] = 'nullable';
+if ($type === 'order_discount') {
+    $rules['discount_type'] = 'required|in:percent,fixed';
+
+    if ($discountType === 'percent') {
+        // % phải 1..100
+        $rules['discount_value'] = 'required|numeric|min:1|max:100';
+        $rules['max_discount_amount'] = 'required|numeric|min:0.01';
+
+        // message đẹp
+        $messages['discount_value.max'] = 'Phần trăm giảm giá không được vượt quá 100%.';
+        $messages['discount_value.min'] = 'Phần trăm giảm giá phải lớn hơn 0%.';
+        $messages['max_discount_amount.required'] = 'Bạn phải nhập giá trị giảm tối đa khi chọn giảm theo phần trăm.';
+    } else { // fixed
+        // tiền giảm phải > 0
+        $rules['discount_value'] = 'required|numeric|min:0.01';
+        $rules['max_discount_amount'] = 'nullable|numeric|min:0';
     }
+} else {
+    // free_shipping
+    $rules['discount_type'] = 'nullable';
+    $rules['discount_value'] = 'nullable';
+    $rules['max_discount_amount'] = 'nullable';
+}
+
 
     if ($scope === 'conditional') {
         $rules['condition_type'] = [
