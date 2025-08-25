@@ -184,31 +184,41 @@
         });
     </script>
     <style>
-        /* Ảnh đồng nhất: mặc định vuông, crop giữa */
-        .wishlist-section .product-image {
-            width: 100%;
-            aspect-ratio: 1 / 1;
-            /* Vuông, có thể đổi 4/3 nếu thích */
-            overflow: hidden;
-            position: relative;
-            border-radius: 8px;
-            background: #f7f7f7;
-            /* nền xám nhạt khi ảnh load */
-        }
+        /* ==== Ảnh: vuông, thu nhỏ bên trong ==== */
+    .product-box-3 .product-image {
+        position: relative;
+        overflow: hidden;
+        border-radius: 16px;
+        background: #fff;
+        /* viền trắng */
+    }
 
-        .wishlist-section .product-image>a {
-            display: block;
-            height: 100%;
-        }
+    /* Khung ảnh vuông */
+    .product-box-3 .product-image::before {
+        content: "";
+        display: block;
+        padding-top: 100%;
+        /* 1:1; đổi 75% cho 4:3 */
+    }
 
-        .wishlist-section .product-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            /* lấp đầy khung, cắt phần thừa */
-            object-position: center;
-            display: block;
-        }
+    /* Vị trí ảnh bên trong, có khoảng trống viền */
+    .product-box-3 .product-image>a {
+        position: absolute;
+        inset: 24px;
+        /* ảnh nhỏ hơn, tạo viền trắng */
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    /* Ảnh lấp đầy phần bên trong */
+    .product-box-3 .product-image>a>img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        display: block;
+        border-radius: inherit;
+    }
+
 
         /* Tùy chọn: trên màn hình lớn dùng tỷ lệ 4:3 (nếu thích) */
         @media (min-width: 1200px) {

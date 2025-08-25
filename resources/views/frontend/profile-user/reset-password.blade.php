@@ -41,7 +41,7 @@
                         <div class="col-12">
                             <div class="form-floating theme-form-floating log-in-form">
                                 <input
-                                    type="email"
+                                    type="text"
                                     name="email"
                                     id="email"
                                     placeholder="Email"

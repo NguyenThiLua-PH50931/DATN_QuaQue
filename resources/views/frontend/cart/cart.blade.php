@@ -578,6 +578,67 @@
                                 cart_item_id: cartId,
                                 variant_id: newVariantId
                             }),
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                const variantButton = document.querySelector(
+                                    `button.open-variant-modal[data-cart-id="${cartId}"]`);
+
+                                if (!variantButton) {
+                                    console.warn('Không tìm thấy button với cartId:', cartId);
+                                    return;
+                                }
+                                const row = variantButton.closest('tr');
+                                if (!row) {
+                                    console.warn('Không tìm thấy hàng tương ứng');
+                                    return;
+                                }
+
+                                // Cập nhật tên biến thể trên nút mở modal
+                                const variantBtn = row.querySelector('.open-variant-modal');
+                                if (variantBtn) {
+                                    variantBtn.textContent = data.newVariantName || 'Biến thể đã chọn';
+                                }
+
+                                // Cập nhật giá và tổng tiền
+                                const priceCell = row.querySelector('td:nth-child(4)');
+                                const totalCell = row.querySelector('td:nth-child(6)');
+                                const unit = Number(String(data.newPrice).replace(/[^\d.-]/g, '')) || 0;
+                                const qty = Number(data.quantity) || 0;
+
+                                if (priceCell) priceCell.textContent = formatVND(unit);
+                                if (totalCell) totalCell.textContent = formatVND(unit * qty);
+
+                                // Cập nhật thuộc tính data-price của checkbox
+                                const checkbox = row.querySelector('input[name="selected_items[]"]');
+                                if (checkbox) {
+                                    checkbox.setAttribute('data-price', String(unit * qty));
+                                }
+
+
+                                updateTotals();
+
+                                // Đóng modal - sửa lại đoạn này:
+                                const modalInstance = bootstrap.Modal.getInstance(modal) || new bootstrap.Modal(modal);
+                                if (modal) {
+                                    let modalInstance = bootstrap.Modal.getInstance(modal);
+                                    if (!modalInstance) {
+                                        modalInstance = new bootstrap.Modal(modal);
+                                    }
+                                    modalInstance.hide();
+                                } else {
+                                    console.warn('Modal không tồn tại để đóng');
+                                }
+
+
+                            } else {
+                                showNotificationModal(data.message || 'Cập nhật biến thể thất bại');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Lỗi khi cập nhật biến thể:', error);
+                            showNotificationModal('Đã có lỗi xảy ra khi cập nhật biến thể.');
                         });
 
                         const data = await res.json();
@@ -765,8 +826,8 @@
                 }
 
                 /* .modal-footer .btn-secondary:hover {
-                                                                                                                                                                                                                                                                                                                                                                                            color: #fdfefe;
-                                                                                                                                                                                                                                                                                                                                                                                        } */
+                                                                                                                                                                                                                                                                                                                                                                        color: #fdfefe;
+                                                                                                                                                                                                                                                                                                                                                                    } */
 
                 /* Nút Xác nhận */
                 .modal-footer .btn-primary {
