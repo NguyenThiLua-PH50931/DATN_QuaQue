@@ -54,14 +54,15 @@ class Banner extends Model
     ];
 
     /**
-     * Accessor to get the Vietnamese label for the banner location.
+     * Chuyển đổi dữ liệu từ database thành dạng hiển thị
      */
     public function getLocationLabelAttribute()
     {
+        // Kiểm tra location có tồn tại không
         if (!$this->location) {
             return 'N/A';
         }
-
+        //Tìm trong mapping table
         return self::LOCATION_LABELS[$this->location] ?? $this->location;
     }
 }
