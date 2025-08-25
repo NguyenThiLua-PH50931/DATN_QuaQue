@@ -168,5 +168,75 @@
         </div>
     </section>
     <!-- Map Section End -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Validate client-side: hiện toast ngay, không reload
+            const form = document.querySelector('form[action="{{ route('client.support-ticket.store') }}"]');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const title = form.querySelector('[name="title"]')?.value.trim() || '';
+                    const content = form.querySelector('[name="content"]')?.value.trim() || '';
+
+                    if (!title) {
+                        e.preventDefault();
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'error',
+                            title: 'Vui lòng nhập tiêu đề.',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true
+                        });
+                        return;
+                    }
+
+                    if (!content) {
+                        e.preventDefault();
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'error',
+                            title: 'Vui lòng nhập nội dung.',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true
+                        });
+                        return;
+                    }
+                });
+            }
+
+            // Toast thành công (server-side)
+            @if (session('success'))
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: @json(session('success')),
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+            @endif
+
+            // Toast lỗi validate (server-side)
+            @if ($errors->any())
+                @foreach ($errors->all() as $error)
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'error',
+                        title: @json($error),
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true
+                    });
+                @endforeach
+            @endif
+        });
+    </script>
 
 @endsection
