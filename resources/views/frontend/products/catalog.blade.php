@@ -708,58 +708,75 @@
     </script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.wishlist-btn').forEach(function(btn) {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                const productId = btn.getAttribute('data-product-id');
-                const url = "{{ route('client.wishlist.store') }}";
-                fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            product_id: productId
-                        })
-                    })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.success) {
-                            if (data.toggled === 'removed') {
-                                btn.setAttribute('data-liked', '0');
-                                btn.classList.remove('fill-heart');
-                            } else {
-                                btn.setAttribute('data-liked', '1');
-                                btn.classList.add('fill-heart');
-                            }
-                            if (window.feather) feather.replace();
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.wishlist-btn').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const productId = btn.getAttribute('data-product-id');
+            const url = "{{ route('client.wishlist.store') }}";
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    product_id: productId
+                })
+            })
+            .then(async res => {
+                // Nếu không phải 2xx thì có thể là chưa đăng nhập hoặc lỗi khác
+                if (res.status === 401) {
+                    // Chưa đăng nhập, chuyển trang login
+                    window.location.href = "{{ route('login') }}";
+                    return;
+                }
+                let data = await res.json();
+                if (data.success) {
+                    if (data.toggled === 'removed') {
+                        btn.setAttribute('data-liked', '0');
+                        btn.classList.remove('fill-heart');
+                    } else {
+                        btn.setAttribute('data-liked', '1');
+                        btn.classList.add('fill-heart');
+                    }
+                    if (window.feather) feather.replace();
 
-                            Swal.fire({
-                                toast: true,
-                                position: 'top-end',
-                                icon: 'success',
-                                title: data.message,
-                                showConfirmButton: false,
-                                timer: 1400
-                            });
-                        } else {
-                            Swal.fire({
-                                toast: true,
-                                position: 'top-end',
-                                icon: 'error',
-                                title: data.message || 'Lỗi thao tác',
-                                showConfirmButton: false,
-                                timer: 1400
-                            });
-                        }
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: data.message,
+                        showConfirmButton: false,
+                        timer: 1400
                     });
+                } else {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'error',
+                        title: data.message || 'Lỗi thao tác',
+                        showConfirmButton: false,
+                        timer: 1400
+                    });
+                }
+            })
+            .catch(() => {
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'error',
+                    title: 'Có lỗi xảy ra, vui lòng thử lại!',
+                    showConfirmButton: false,
+                    timer: 1400
+                });
             });
         });
     });
+});
 </script>
+
 
     <!-- Shop Section End -->
 @endsection

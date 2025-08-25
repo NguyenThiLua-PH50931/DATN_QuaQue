@@ -207,12 +207,13 @@
                 pending: ["confirmed", "cancelled"],
                 confirmed: ["processing", "cancelled"],
                 processing: ["shipped", "cancelled"],
-                shipped: ["in_transit"],
-                in_transit: ["delivered", "failed_delivery"],
+                shipped: ["in_transit", "cancelled"], // thêm cancelled
+                in_transit: ["delivered", "failed_delivery", "cancelled"], // thêm cancelled
                 delivered: [],
                 cancelled: [],
                 failed_delivery: [],
             };
+
 
             // Utils
             const $ = (sel, ctx = document) => ctx.querySelector(sel);
@@ -345,8 +346,7 @@
                     })();
 
                 // Chỉ hiển thị nút hủy khi trạng thái nằm trong pending|confirmed|processing
-                const canCancel = ["pending", "confirmed", "processing"].includes(newStatus);
-
+                const canCancel = ["pending", "confirmed", "processing", "shipped", "in_transit"].includes(newStatus);
                 let html = `
       <li><a href="${baseShowHref}"><i class="ri-eye-line"></i></a></li>
       <li><a href="${baseTrackingHref}"><i class="ri-map-pin-line"></i></a></li>

@@ -65,6 +65,11 @@
                             $mainImages = array_unique($mainImages); // Loại trùng nếu có
                             $thumbImages = $mainImages;
                         @endphp
+                        <script>
+                            window.GALLERY_IMAGES = @json(array_values($mainImages)); // đúng thứ tự slide
+                            window.DEFAULT_IMG = "{{ $product->image ? asset('storage/' . $product->image) : '' }}";
+                        </script>
+
                         <div class="col-xl-6 wow fadeInUp">
                             <div class="product-left-box">
                                 <div class="row g-2">
@@ -504,9 +509,9 @@
                                                 <li data-bs-toggle="tooltip" data-bs-placement="top" title="Yêu thích">
                                                     <a href="javascript:void(0)"
                                                         class="notifi-wishlist wishlist-btn
-                                                        @if(auth()->check() && auth()->user()->wishlist()->where('product_id', $product->id)->exists()) fill-heart @endif"
+                                                        @if (auth()->check() && auth()->user()->wishlist()->where('product_id', $product->id)->exists()) fill-heart @endif"
                                                         data-product-id="{{ $product->id }}"
-                                                        data-liked="@if(auth()->check() && auth()->user()->wishlist()->where('product_id', $product->id)->exists())1 @else 0 @endif"
+                                                        data-liked="@if (auth()->check() && auth()->user()->wishlist()->where('product_id', $product->id)->exists()) 1 @else 0 @endif"
                                                         title="Yêu thích"
                                                         style="width:18px; height:18px; display:inline-flex; align-items:center; justify-content:center; color:#4a5568; margin-top:10px;">
                                                         <i data-feather="heart"></i>
@@ -593,9 +598,7 @@
         }
     </style>
 
-    <script>
-        window.productVariants = @json($variantMap ?? []);
-    </script>
+
 
     <script>
         document.getElementById('filter_star').addEventListener('change', function() {
@@ -611,6 +614,54 @@
         });
     </script>
     {{-- update số lượng trang detail --}}
+    <script>
+        function normalizeUrl(u) {
+            if (!u) return '';
+            try {
+                return new URL(u, window.location.origin).href;
+            } catch {
+                return u;
+            }
+        }
+
+        function filename(u) {
+            try {
+                const p = new URL(u, window.location.origin).pathname;
+                return p.substring(p.lastIndexOf('/') + 1);
+            } catch {
+                return (u || '').split('/').pop();
+            }
+        }
+
+        window.switchGalleryByUrl = function(url) {
+            const list = (window.GALLERY_IMAGES || []).map(normalizeUrl);
+            const target = normalizeUrl(url || window.DEFAULT_IMG || '');
+            const targetName = filename(target);
+
+            let idx = list.findIndex(x => x === target || filename(x) === targetName);
+
+            if (idx !== -1 && window.jQuery &&
+                typeof jQuery('.product-main-2').slick === 'function' &&
+                jQuery('.product-main-2').hasClass('slick-initialized')) {
+                jQuery('.product-main-2').slick('slickGoTo', idx);
+                const img = document.querySelector('.product-main-2 .slick-slide[data-slick-index="' + idx + '"] img');
+                if (img) {
+                    img.src = target;
+                    img.setAttribute('data-zoom-image', target);
+                }
+                return;
+            }
+
+            const current = document.querySelector('.product-main-2 .slick-current img') ||
+                document.querySelector('.product-main-2 .slider-image img');
+            if (current) {
+                current.src = target;
+                current.setAttribute('data-zoom-image', target);
+            }
+        };
+    </script>
+
+
     <script>
         window.VARIANTS = @json($variantMap ?? []);
 
@@ -669,58 +720,6 @@
 
         // Khởi tạo disable lần đầu (nếu có selected mặc định)
         updateDisabledStates();
-
-        document.querySelectorAll('.attribute-select').forEach(function(btn) {
-            if (btn.classList.contains('disabled-variant')) return;
-
-            btn.addEventListener('click', function() {
-                let attr = parseInt(btn.getAttribute('data-attr'));
-                let val = parseInt(btn.getAttribute('data-value'));
-
-                btn.closest('ul').querySelectorAll('a').forEach(a => a.classList.remove('active2'));
-
-                btn.classList.add('active2');
-                selected[attr] = val;
-
-                updateDisabledStates();
-
-                // Tìm variant và cập nhật thông tin + mô tả biến thể mỗi lần chọn
-                if (Object.keys(selected).length === Object.keys(@json($attributes)).length) {
-                    let attrValueIds = Object.values(selected).map(Number).sort((a, b) => a - b);
-                    let found = variants.find(v =>
-                        v.value_ids.length === attrValueIds.length &&
-                        v.value_ids.slice().sort((a, b) => a - b).every((id, i) => id === attrValueIds[
-                            i])
-                    );
-
-                    if (found && Number(found.active) === 1) {
-                        document.getElementById('product-sku').textContent = found.sku || 'N/A';
-                        document.getElementById('product-stock').textContent = found.stock ?? 'N/A';
-                        document.getElementById('product-price').textContent = found.price ? (Number(found
-                            .price).toLocaleString() + ' đ') : 'Liên hệ';
-                    } else {
-                        document.getElementById('product-sku').textContent = '—';
-                        document.getElementById('product-stock').textContent = '—';
-                        document.getElementById('product-price').textContent = '—';
-                    }
-
-                    updateVariantDescription(found);
-
-                } else {
-                    document.getElementById('product-sku').textContent = '—';
-                    document.getElementById('product-stock').textContent = '—';
-                    document.getElementById('product-price').textContent = '—';
-
-                    // Chưa chọn đủ thì mô tả biến thể về mặc định mô tả sản phẩm chung
-                    document.getElementById('variant-description').innerHTML = `{!! addslashes($product->description) !!}`;
-                }
-
-                var img = btn.getAttribute('data-variant-image');
-                if (img) {
-                    document.getElementById('mainImage').src = img;
-                }
-            });
-        });
     </script>
     {{-- cộng trừ số lượng giỏ  --}}
     <script>
@@ -764,11 +763,12 @@
                 const selectedValueIds = Object.values(selected).sort((a, b) => a - b);
 
                 // Tìm biến thể tương ứng trong window.VARIANTS
-                let foundVariant = window.VARIANTS.find(v =>
-                    v.value_ids.length === selectedValueIds.length &&
-                    v.value_ids.every((id, i) => id === selectedValueIds[i]) &&
-                    Number(v.active) === 1
-                );
+                let foundVariant = window.VARIANTS.find(v => {
+                    const vv = (v.value_ids || []).slice().map(Number).sort((a, b) => a - b);
+                    return vv.length === selectedValueIds.length &&
+                        vv.every((id, i) => id === selectedValueIds[i]) &&
+                        Number(v.active) === 1;
+                });
 
                 // Lấy tồn kho của biến thể tìm được, hoặc mặc định lớn nếu không tìm thấy
                 const maxStock = foundVariant ? parseInt(foundVariant.stock, 10) || 999999 : 999999;
@@ -845,6 +845,14 @@
         document.addEventListener('DOMContentLoaded', () => {
             const defaultStock = Number("{{ $variantWithMaxStock->stock ?? 999999 }}");
             updateQuantityControls(defaultStock);
+            // Nếu có biến thể mặc định (ví dụ cái rẻ nhất/đầu tiên) và có ảnh:
+            // try {
+            //     const firstActive = (window.VARIANTS || []).find(v => Number(v.active) === 1 && v.image);
+            //     if (firstActive && firstActive.image) {
+            //         switchGalleryByUrl(firstActive.image);
+            //     }
+            // } catch (e) {}
+
         });
 
         function updateQuantityControls(stock) {
@@ -956,7 +964,7 @@
                     btn.classList.add('active2');
 
                     // Cập nhật lựa chọn
-                    selected[attr] = parseInt(val);
+                    selected[attr] = parseInt(val, 10);
 
                     // Cập nhật input ẩn
                     updateVariantInput();
@@ -966,41 +974,57 @@
                         let attrValueIds = Object.values(selected).map(Number).sort((a, b) => a -
                             b);
 
-                        // Tìm biến thể trùng
-                        let found = window.VARIANTS.find(v =>
-                            v.value_ids.length === attrValueIds.length &&
-                            v.value_ids.slice().sort((a, b) => a - b).every((id, i) => id ===
-                                attrValueIds[i])
-                        );
+                        let found = window.VARIANTS.find(v => {
+                            const vv = (v.value_ids || []).slice().map(Number).sort((a,
+                                b) => a - b);
+                            return vv.length === attrValueIds.length &&
+                                vv.every((id, i) => id === attrValueIds[i]) &&
+                                Number(v.active) === 1;
+                        });
 
                         if (found) {
                             document.getElementById('product-sku').textContent = found.sku || 'N/A';
-                            document.getElementById('product-stock').textContent = found.stock ??
-                                'N/A';
-                            document.getElementById('product-price').textContent = found.price ? (
-                                Number(found.price).toLocaleString() + ' đ') : 'Liên hệ';
-                            document.getElementById('variant-price').value = found.price || '';
+                            document.getElementById('product-stock').textContent = (found.stock ??
+                                'N/A');
+                            document.getElementById('product-price').textContent = found.price ?
+                                (Number(found.price).toLocaleString() + ' đ') :
+                                'Liên hệ';
 
-                            // Cập nhật tồn kho cho input số lượng
+                            // BỌC AN TOÀN: chỉ set nếu có #variant-price
+                            const vp = document.getElementById('variant-price');
+                            if (vp) vp.value = found.price || '';
+
                             updateStockOfInput(found);
+
+                            // GỌI 1 LẦN THÔI: có ảnh thì dùng ảnh biến thể, không thì về ảnh mặc định
+                            if (found.image) {
+                                switchGalleryByUrl(found.image);
+                            } else {
+                                switchGalleryByUrl(window.DEFAULT_IMG);
+                            }
                         } else {
                             document.getElementById('product-sku').textContent = 'Không tồn tại';
                             document.getElementById('product-stock').textContent = 'Không tồn tại';
                             document.getElementById('product-price').textContent = 'Không tồn tại';
-                            document.getElementById('variant-price').value = '';
 
-                            // Reset tồn kho lớn
+                            const vp = document.getElementById('variant-price');
+                            if (vp) vp.value = '';
+
+                            // Reset tồn kho lớn + khoá UI cộng/trừ + ảnh về mặc định
                             updateStockOfInput({
                                 stock: 999999
                             });
                             updateQuantityControls(0);
+                            switchGalleryByUrl(window.DEFAULT_IMG);
                         }
                     } else {
                         // Chưa chọn đủ biến thể => reset hiển thị và tồn kho
                         document.getElementById('product-sku').textContent = '—';
                         document.getElementById('product-stock').textContent = '—';
                         document.getElementById('product-price').textContent = '—';
-                        document.getElementById('variant-price').value = '';
+
+                        const vp = document.getElementById('variant-price');
+                        if (vp) vp.value = '';
 
                         updateStockOfInput({
                             stock: 999999
@@ -1008,6 +1032,7 @@
                     }
                 });
             });
+
 
             // Khi submit form, kiểm tra đủ biến thể chưa
             if (form) {
@@ -1053,57 +1078,73 @@
     </style>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.wishlist-btn').forEach(function(btn) {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                const productId = btn.getAttribute('data-product-id');
-                const url = "{{ route('client.wishlist.store') }}";
-                fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            product_id: productId
-                        })
-                    })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.success) {
-                            if (data.toggled === 'removed') {
-                                btn.setAttribute('data-liked', '0');
-                                btn.classList.remove('fill-heart');
-                            } else {
-                                btn.setAttribute('data-liked', '1');
-                                btn.classList.add('fill-heart');
-                            }
-                            if (window.feather) feather.replace();
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.wishlist-btn').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const productId = btn.getAttribute('data-product-id');
+            const url = "{{ route('client.wishlist.store') }}";
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    product_id: productId
+                })
+            })
+            .then(async res => {
+                // Nếu không phải 2xx thì có thể là chưa đăng nhập hoặc lỗi khác
+                if (res.status === 401) {
+                    // Chưa đăng nhập, chuyển trang login
+                    window.location.href = "{{ route('login') }}";
+                    return;
+                }
+                let data = await res.json();
+                if (data.success) {
+                    if (data.toggled === 'removed') {
+                        btn.setAttribute('data-liked', '0');
+                        btn.classList.remove('fill-heart');
+                    } else {
+                        btn.setAttribute('data-liked', '1');
+                        btn.classList.add('fill-heart');
+                    }
+                    if (window.feather) feather.replace();
 
-                            Swal.fire({
-                                toast: true,
-                                position: 'top-end',
-                                icon: 'success',
-                                title: data.message,
-                                showConfirmButton: false,
-                                timer: 1400
-                            });
-                        } else {
-                            Swal.fire({
-                                toast: true,
-                                position: 'top-end',
-                                icon: 'error',
-                                title: data.message || 'Lỗi thao tác',
-                                showConfirmButton: false,
-                                timer: 1400
-                            });
-                        }
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: data.message,
+                        showConfirmButton: false,
+                        timer: 1400
                     });
+                } else {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'error',
+                        title: data.message || 'Lỗi thao tác',
+                        showConfirmButton: false,
+                        timer: 1400
+                    });
+                }
+            })
+            .catch(() => {
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'error',
+                    title: 'Có lỗi xảy ra, vui lòng thử lại!',
+                    showConfirmButton: false,
+                    timer: 1400
+                });
             });
         });
     });
+});
 </script>
 
 
@@ -1122,10 +1163,11 @@
             font-size: 14px !important;
             white-space: normal;
         }
+
         .wishlist-btn.fill-heart svg {
             fill: #4a5568 !important;
             stroke: #4a5568 !important;
-    }
+        }
     </style>
 
 @endsection

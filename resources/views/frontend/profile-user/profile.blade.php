@@ -690,7 +690,6 @@
         </div>
     </div>
 </div>
-
 <!-- Modal đổi mật khẩu -->
 <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
@@ -703,8 +702,8 @@
         </div>
         <div class="modal-body">
           <div class="mb-3">
-            <label for="oldPassword" class="form-label">Mật khẩu cũ</label>
-            <input type="password" class="form-control form-control-lg" id="oldPassword" name="old_password"   minlength="6">
+            <label for="currentPassword" class="form-label">Mật khẩu cũ</label>
+            <input type="password" class="form-control form-control-lg" id="currentPassword" name="old_password" autocomplete="current-password">
             <div class="invalid-feedback" id="error-old_password"></div>
             <div class="mt-1">
               <a href="{{ route('forgot') }}" id="forgot-link" tabindex="-1" class="text-decoration-underline small">Quên mật khẩu?</a>
@@ -712,25 +711,29 @@
           </div>
           <div class="mb-3">
             <label for="newPassword" class="form-label">Mật khẩu mới</label>
-            <input type="password" class="form-control form-control-lg" id="newPassword" name="new_password"   minlength="6">
+            <input type="password" class="form-control form-control-lg" id="newPassword" name="new_password" autocomplete="new-password">
             <div class="invalid-feedback" id="error-new_password"></div>
           </div>
           <div class="mb-3">
             <label for="newPasswordConfirmation" class="form-label">Nhập lại mật khẩu mới</label>
-            <input type="password" class="form-control form-control-lg" id="newPasswordConfirmation" name="new_password_confirmation"   minlength="6">
+            <input type="password" class="form-control form-control-lg" id="newPasswordConfirmation" name="new_password_confirmation" autocomplete="new-password">
             <div class="invalid-feedback" id="error-new_password_confirmation"></div>
+          </div>
+          <!-- Hiện mật khẩu -->
+          <div class="form-check ps-0 m-0 remember-box">
+            <input class="checkbox_animated check-box" type="checkbox" id="showPass">
+            <label class="form-check-label" for="showPass">Hiện mật khẩu</label>
           </div>
         </div>
         <div class="modal-footer pt-0">
-          <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">Hủy</button>
-          <button type="submit" class="btn theme-bg-color text-white">Đổi mật khẩu</button>
+          <button type="button" class="btn btn-animation btn-md fw-bold mt-3" data-bs-dismiss="modal">Hủy</button>
+          <button type="submit" class="btn theme-bg-color btn-md fw-bold text-light mt-3">Đổi mật khẩu</button>
         </div>
       </div>
     </form>
   </div>
 </div>
 
-<!-- Modal sửa địa chỉ -->
 <!-- Modal sửa địa chỉ -->
 <div class="modal fade" id="editAddressModal" tabindex="-1" aria-labelledby="editAddressLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
@@ -1052,81 +1055,99 @@ $(function() {
 
 <!-- doi mk -->
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-  var form = document.getElementById('changePasswordForm');
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('changePasswordForm');
+    const modal = document.getElementById('changePasswordModal');
+    const showPassCheckbox = document.getElementById('showPass');
 
-    // Xóa lỗi cũ
-    form.querySelectorAll('.is-invalid').forEach(function (el) { el.classList.remove('is-invalid'); });
-    form.querySelectorAll('.invalid-feedback').forEach(function (el) { el.textContent = ''; });
-
-    var formData = new FormData(form);
-
-    fetch(form.action, {
-      method: 'POST',
-      headers: {
-        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-      },
-      body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        // Đóng modal
-        bootstrap.Modal.getInstance(document.getElementById('changePasswordModal')).hide();
-        form.reset();
-
-        // SweetAlert2 toast thành công
-        Swal.fire({
-          toast: true,
-          position: 'top-end',
-          icon: 'success',
-          title: 'Đổi mật khẩu thành công!',
-          showConfirmButton: false,
-          timer: 2000
-        });
-      } else if (data.errors) {
-        // Hiển thị lỗi validate bên dưới input, focus vào lỗi đầu tiên
-        let firstErrorInput = null;
-        for (const [field, msgs] of Object.entries(data.errors)) {
-          var input = form.querySelector('[name="' + field + '"]');
-          var errDiv = document.getElementById('error-' + field);
-          if (input) {
-            input.classList.add('is-invalid');
-            if (!firstErrorInput) firstErrorInput = input;
-          }
-          if (errDiv) errDiv.textContent = msgs.join(' ');
-        }
-        // Focus vào lỗi đầu tiên
-        if (firstErrorInput) firstErrorInput.focus();
-        // Không hiện toast, chỉ báo lỗi tại input
-      } else {
-        // Các lỗi server khác (vd: lỗi hệ thống)
-        Swal.fire({
-          toast: true,
-          position: 'top-end',
-          icon: 'error',
-          title: data.message || 'Đổi mật khẩu thất bại!',
-          showConfirmButton: false,
-          timer: 2000
-        });
-      }
-    })
-    .catch(() => {
-      Swal.fire({
-        toast: true,
-        position: 'top-end',
-        icon: 'error',
-        title: 'Có lỗi xảy ra, vui lòng thử lại!',
-        showConfirmButton: false,
-        timer: 2000
-      });
+    // Hiện/ẩn mật khẩu
+    showPassCheckbox.addEventListener('change', function () {
+        const type = this.checked ? 'text' : 'password';
+        document.getElementById('currentPassword').type = type;
+        document.getElementById('newPassword').type = type;
+        document.getElementById('newPasswordConfirmation').type = type;
     });
-  });
-});
 
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        // Xóa lỗi cũ
+        form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+        form.querySelectorAll('.invalid-feedback').forEach(el => el.textContent = '');
+
+        const formData = new FormData(form);
+
+        fetch(form.action, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                // Đóng modal, reset form, toast thành công
+                bootstrap.Modal.getInstance(modal).hide();
+                form.reset();
+                showPassCheckbox.checked = false;
+                document.getElementById('currentPassword').type = 'password';
+                document.getElementById('newPassword').type = 'password';
+                document.getElementById('newPasswordConfirmation').type = 'password';
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Đổi mật khẩu thành công!',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            } else if (data.errors) {
+                // Chuyển lỗi "confirmed" sang trường xác nhận
+                if (data.errors.new_password && data.errors.new_password.some(
+                        msg => msg.toLowerCase().includes('không khớp') || msg.toLowerCase().includes('does not match'))) {
+                    data.errors.new_password_confirmation = data.errors.new_password;
+                    delete data.errors.new_password;
+                }
+                // Hiển thị lỗi dưới từng input
+                let firstErrorInput = null;
+                for (const [field, msgs] of Object.entries(data.errors)) {
+                    const input = form.querySelector('[name="' + field + '"]');
+                    const errDiv = document.getElementById('error-' + field);
+                    if (input) {
+                        input.classList.add('is-invalid');
+                        if (!firstErrorInput) firstErrorInput = input;
+                    }
+                    if (errDiv) errDiv.textContent = msgs.join(' ');
+                }
+                if (firstErrorInput) firstErrorInput.focus();
+            } else {
+                // Lỗi server khác
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'error',
+                    title: data.message || 'Đổi mật khẩu thất bại!',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            }
+        })
+        .catch(() => {
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'error',
+                title: 'Có lỗi xảy ra, vui lòng thử lại!',
+                showConfirmButton: false,
+                timer: 2000
+            });
+        });
+    });
+});
 </script>
+
 <!-- thay thong tin -->
  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/css/datepicker.min.css">
 <script src="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/js/datepicker-full.min.js"></script></script>

@@ -173,23 +173,46 @@ class ProfileClientController extends Controller
     }
     public function changePassword(Request $request)
     {
-        $request->validate([
-            'old_password' => ['required', 'min:6'],
-            'new_password' => ['required', 'min:6', 'different:old_password', 'confirmed'],
+        // Dùng Validator thủ công thay vì $request->validate()
+        $validator = Validator::make($request->all(), [
+            'old_password' => ['required', 'string', 'min:6', 'max:50'],
+            'new_password' => [
+                'required',
+                'string',
+                'min:6',
+                'max:50',
+                'different:old_password',
+                'confirmed'
+            ],
         ], [
             'old_password.required' => 'Vui lòng nhập mật khẩu cũ.',
+            'old_password.string' => 'Mật khẩu cũ phải là chuỗi.',
             'old_password.min' => 'Mật khẩu cũ phải có ít nhất 6 ký tự.',
+            'old_password.max' => 'Mật khẩu cũ không được vượt quá 50 ký tự.',
             'new_password.required' => 'Vui lòng nhập mật khẩu mới.',
+            'new_password.string' => 'Mật khẩu mới phải là chuỗi.',
             'new_password.min' => 'Mật khẩu mới phải có ít nhất 6 ký tự.',
+            'new_password.max' => 'Mật khẩu mới không được vượt quá 50 ký tự.',
             'new_password.different' => 'Mật khẩu mới phải khác mật khẩu cũ.',
             'new_password.confirmed' => 'Nhập lại mật khẩu mới không khớp.',
         ]);
 
+        if ($validator->fails()) {
+            // Trả về lỗi JSON đúng định dạng cho JS
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
         $user = auth()->user();
-        if (Hash::check($request->old_password, $user->password)) {
-            return response()->json(['success' => false, 'errors' => [
-                'old_password' => ['Mật khẩu cũ không đúng.']
-            ]]);
+        if (!\Hash::check($request->old_password, $user->password)) {
+            return response()->json([
+                'success' => false,
+                'errors' => [
+                    'old_password' => ['Mật khẩu cũ không đúng.']
+                ]
+            ], 422);
         }
 
         $user->password = bcrypt($request->new_password);

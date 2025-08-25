@@ -538,7 +538,7 @@
                                                             </a>
                                                         </li>
 
-                                                        @if (in_array($order->status, ['pending', 'confirmed', 'processing'], true))
+                                                        @if (in_array($order->status, ['pending', 'confirmed', 'processing', 'shipped', 'in_transit'], true))
                                                             <li>
                                                                 <a href="javascript:void(0);" class="btn-admin-cancel"
                                                                     data-order-id="{{ $order->id }}"

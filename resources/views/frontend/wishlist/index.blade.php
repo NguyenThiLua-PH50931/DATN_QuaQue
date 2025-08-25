@@ -237,56 +237,52 @@
         });
     </script>
     <style>
-        /* Ảnh đồng nhất: mặc định vuông, crop giữa */
-        .wishlist-section .product-image {
-            width: 100%;
-            aspect-ratio: 1 / 1;
-            /* Vuông, có thể đổi 4/3 nếu thích */
-            overflow: hidden;
+        /* ==== Ảnh: vuông, thu nhỏ bên trong ==== */
+        .product-box-3 .product-image {
             position: relative;
-            border-radius: 8px;
-            background: #f7f7f7;
-            /* nền xám nhạt khi ảnh load */
+            overflow: hidden;
+            border-radius: 16px;
+            background: #fff;
+            /* viền trắng */
         }
 
-        .wishlist-section .product-image>a {
+        /* Khung ảnh vuông */
+        .product-box-3 .product-image::before {
+            content: "";
             display: block;
-            height: 100%;
+            padding-top: 100%;
+            /* 1:1; đổi 75% cho 4:3 */
         }
 
-        .wishlist-section .product-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            /* lấp đầy khung, cắt phần thừa */
-            object-position: center;
+        /* Vị trí ảnh bên trong, có khoảng trống viền */
+        .product-box-3 .product-image>a {
+            position: absolute;
+            inset: 24px;
+            /* ảnh nhỏ hơn, tạo viền trắng */
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        /* Ảnh lấp đầy phần bên trong */
+        .product-box-3 .product-image>a>img {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
             display: block;
+            border-radius: inherit;
         }
 
-        /* Tùy chọn: trên màn hình lớn dùng tỷ lệ 4:3 (nếu thích) */
-        @media (min-width: 1200px) {
-            .wishlist-section .product-image {
-                aspect-ratio: 4 / 3;
-            }
-        }
-
-        /* Fallback cho trình duyệt cũ không hỗ trợ aspect-ratio */
-        @supports not (aspect-ratio: 1 / 1) {
-            .wishlist-section .product-image {
-                position: relative;
-            }
-
-            .wishlist-section .product-image::before {
-                content: "";
-                display: block;
-                padding-top: 100%;
-                /* 1:1 */
-            }
-
-            .wishlist-section .product-image>a {
-                position: absolute;
-                inset: 0;
-            }
+        /* ==== Badge TOP (optional) ==== */
+        .product-box-3 .product-image::after {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: #12d6a7;
+            color: #fff;
+            font-weight: bold;
+            font-size: 0.8rem;
+            padding: 2px 8px;
+            border-radius: 6px;
         }
 
         /* Giữ chân card đều nhau khi tên dài/ngắn khác nhau (tuỳ chọn) */
@@ -318,11 +314,11 @@
             border-radius: 12px;
             overflow: hidden;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .wishlist-section .product-box-3:hover {
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
             transform: translateY(-2px);
         }
 
@@ -394,7 +390,7 @@
             width: 32px;
             height: 32px;
             border-radius: 50%;
-            background: rgba(255,255,255,0.9);
+            background: rgba(255, 255, 255, 0.9);
             border: none;
             display: flex;
             align-items: center;
