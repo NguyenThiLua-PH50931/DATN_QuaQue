@@ -59723,3 +59723,19 @@
 #60 C:\\laragon\\www\\DATN_QuaQue\\DATN_QuaQue\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php(23): require_once('C:\\\\laragon\\\\www\\\\...')
 #61 {main}
 "} 
+[2025-08-25 12:44:46] local.INFO: New ticket email sent to: bienlapfb@gmail.com  
+[2025-08-25 12:48:19] local.INFO: Product 25 (Cơm Cháy Ninh Bình): variants=1, total_stock=5, has_stock=true  
+[2025-08-25 12:48:19] local.INFO: Product 28 (com chya1): variants=1, total_stock=10000, has_stock=true  
+[2025-08-25 12:48:19] local.INFO: Product 35 (Cơm Cháy Ninh Bình 1): variants=4, total_stock=9, has_stock=true  
+[2025-08-25 12:48:19] local.INFO: Product 34 (ádsadsa): variants=1, total_stock=2, has_stock=true  
+[2025-08-25 12:48:19] local.INFO: Product 39 (a ajksdjas idhsasuid sdadasda áidaa aosijdpoasjdop áidhaiod): variants=2, total_stock=3, has_stock=true  
+[2025-08-25 12:48:19] local.INFO: Product 31 (ádas): variants=1, total_stock=150, has_stock=true  
+[2025-08-25 12:48:19] local.INFO: Product 42 (1): variants=1, total_stock=11111111, has_stock=true  
+[2025-08-25 12:48:19] local.INFO: Product 40 (test11): variants=2, total_stock=3, has_stock=true  
+[2025-08-25 12:48:19] local.INFO: Product 26 (ádasdasd): variants=2, total_stock=122222, has_stock=true  
+[2025-08-25 12:48:19] local.INFO: Product 27 (fasdasdasdasd): variants=2, total_stock=3323434, has_stock=true  
+[2025-08-25 12:48:19] local.INFO: Product 44 (3): variants=1, total_stock=3, has_stock=true  
+[2025-08-25 12:48:19] local.INFO: Product 43 (2): variants=1, total_stock=2, has_stock=true  
+[2025-08-25 12:48:38] local.INFO: Product 25 (Cơm Cháy Ninh Bình): variants=1, total_stock=5, has_stock=true  
+[2025-08-25 12:48:38] local.INFO: Product 28 (com chya1): variants=1, total_stock=10000, has_stock=true  
+[2025-08-25 12:48:38] local.INFO: Product 35 (Cơm Cháy Ninh Bình 1): variants=4, total_stock=9, has_stock=true  
