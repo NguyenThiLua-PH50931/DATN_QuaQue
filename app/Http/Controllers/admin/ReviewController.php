@@ -16,25 +16,55 @@ class ReviewController extends Controller
      * Display a listing of the resource.
      */
 
-    public function index(Request $request, ReviewFilter $filter)
-    {
-        $products = Product::all();
-        $users = \App\Models\User::where('role', 'member')->get();
+public function index(Request $request)
+{
+    $products = Product::whereHas('reviews')->get();
 
+    $users = \App\Models\User::where('role', 'member')
+        ->whereHas('reviews')
+        ->get();
 
-        $reviewsQuery = Review::with(['user', 'product']);
+    $reviewsQuery = Review::with(['user', 'product']);
 
-        if (!empty(array_filter($request->all()))) {
-            $reviewsQuery->whereHas('user', function ($query) {
-                $query->where('role', 'member');
-            })->filter($filter);
-        }
-
-        $reviews = $reviewsQuery->latest()
-            ->paginate($request->query('per_page', 10));
-        $variantNames = ProductVariant::pluck('name', 'id')->toArray();
-        return view('backend.product-review.index', compact('reviews', 'products', 'users', 'variantNames'));
+    // **Chỉ filter theo user khi có chọn user_id hoặc cần**
+    if ($request->filled('user_id')) {
+        $reviewsQuery->where('user_id', $request->user_id);
+        // Chỉ hiện user là member
+        $reviewsQuery->whereHas('user', function ($query) {
+            $query->where('role', 'member');
+        });
     }
+    // Nếu muốn luôn filter theo user role member thì giữ nguyên (nhưng nhớ kiểm tra DB!)
+
+    if ($request->filled('product_id')) {
+        $reviewsQuery->where('product_id', $request->product_id);
+    }
+    if ($request->filled('rating')) {
+        $reviewsQuery->where('rating', $request->rating);
+    }
+    if ($request->filled('after_date')) {
+        $reviewsQuery->whereDate('created_at', '>=', $request->after_date);
+    }
+    if ($request->filled('before_date')) {
+        $reviewsQuery->whereDate('created_at', '<=', $request->before_date);
+    }
+    if ($request->has('is_reply') && $request->is_reply !== '') {
+        if ($request->is_reply === '1') {
+            $reviewsQuery->whereNotNull('parent_id');
+        } elseif ($request->is_reply === '0') {
+            $reviewsQuery->whereNull('parent_id');
+        }
+    }
+    if ($request->filled('parent_id')) {
+        $reviewsQuery->where('parent_id', $request->parent_id);
+    }
+
+    $reviews = $reviewsQuery->latest()->paginate($request->query('per_page', 10))->withQueryString();
+    $variantNames = ProductVariant::pluck('name', 'id')->toArray();
+
+    return view('backend.product-review.index', compact('reviews', 'products', 'users', 'variantNames'));
+}
+
 
 
 

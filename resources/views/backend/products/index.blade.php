@@ -135,7 +135,7 @@
                                         <th style="color: black; background-color: #f8f9fa;">Tên sản phẩm</th>
                                         <th style="color: black; background-color: #f8f9fa;">Ảnh</th>
                                         <th style="color: black; background-color: #f8f9fa;">Danh mục</th>
-                                        {{-- <th style="color: black; background-color: #f8f9fa;">Vùng miền</th> --}}
+                                         <th style="color: black; background-color: #f8f9fa;">Vùng miền</th> 
                                         <th style="color: black; background-color: #f8f9fa;">Cập nhật lúc</th>
                                         <th style="color: black; background-color: #f8f9fa;">Trạng thái</th>
                                         <th style="color: black; background-color: #f8f9fa;">Hành động</th>
@@ -173,7 +173,7 @@
                                                 class="w-20 h-20 object-cover" width="100px">
                                         </td>
                                         <td>{{ $product->categories->pluck('name')->implode(', ') }}</td>
-                                        {{-- <td>{{ $product->region->name ?? '' }}</td> --}}
+                                        <td>{{ $product->region->name ?? '' }}</td>
                                         <td>{{ $product->updated_at->format('d-m-Y H:i:s') }}</td>
                                         <td class="{{ $product->active ? 'status-close' : 'status-danger' }}">
                                             <span class="badge status-badge"

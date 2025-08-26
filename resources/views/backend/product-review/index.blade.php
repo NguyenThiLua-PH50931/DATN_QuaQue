@@ -68,16 +68,20 @@
                                         @endforeach
                                     </select>
                                 </div> -->
-                                <div class="col-md-2">
+                                <!-- <div class="col-md-2">
                                     <label for="is_reply">Loại</label>
                                     <select name="is_reply" id="is_reply" class="form-control">
                                         <option value="">Tất cả</option>
                                         <option value="1" {{ request('is_reply') === '1' ? 'selected' : '' }}>Phản hồi</option>
                                         <option value="0" {{ request('is_reply') === '0' ? 'selected' : '' }}>Review gốc</option>
                                     </select>
+                                </div> -->
+                                <div class="col-md-12 mt-2" style="display: flex;">
+                                    <button type="submit" class="btn btn-primary">Lọc</button>
+                                    <a href="{{ route('admin.reviews.index') }}" class="btn btn-outline-secondary ms-2">Xóa lọc</a>
                                 </div>
                                 <div class="col-md-12 mt-2">
-                                    <button type="submit" class="btn btn-primary">Lọc</button>
+                                    
                                 </div>
                             </div>
                         </form>

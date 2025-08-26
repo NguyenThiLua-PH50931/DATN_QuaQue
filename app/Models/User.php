@@ -12,9 +12,9 @@ use App\Models\Client\Wishlist;
 
 class User extends Authenticatable
 {
-        use SoftDeletes;
+    use SoftDeletes;
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable,SoftDeletes;
+    use HasFactory, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -22,16 +22,16 @@ class User extends Authenticatable
      * @var list<string>
      */
 
-  protected $fillable = [
-    'name',
-    'gender',
-    'birthday',
-    'email',
-    'password',
-    'phone',
-    'role',
-    'avatar'
-];
+    protected $fillable = [
+        'name',
+        'gender',
+        'birthday',
+        'email',
+        'password',
+        'phone',
+        'role',
+        'avatar'
+    ];
 
 
     /**
@@ -60,16 +60,19 @@ class User extends Authenticatable
      * @return array<string, string>
      */
     protected $casts = [
-    'email_verified_at' => 'datetime',
-    // 'password'          => 'hashed',
-];
-public function addresses()
-{
-    return $this->hasMany(\App\Models\Client\Address::class, 'user_id');
-}
-public function orders()
+        'email_verified_at' => 'datetime',
+        // 'password'          => 'hashed',
+    ];
+    public function addresses()
+    {
+        return $this->hasMany(\App\Models\Client\Address::class, 'user_id');
+    }
+    public function orders()
     {
         return $this->hasMany(\App\Models\admin\Order::class, 'user_id');
     }
-
+    public function reviews()
+    {
+        return $this->hasMany(\App\Models\admin\Review::class, 'user_id');
+    }
 }
