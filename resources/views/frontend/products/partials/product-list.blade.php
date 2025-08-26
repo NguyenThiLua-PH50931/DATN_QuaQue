@@ -10,7 +10,12 @@
                 $isOutOfStock = !$variantInStock || $product->active != 1;
             @endphp
             <div>
+<<<<<<< HEAD
                 <div class="product-box-3 h-100 wow fadeInUp @if($isOutOfStock) out-of-stock @endif" data-wow-delay="0.05s">
+=======
+                <div class="product-box-3 h-100 wow fadeInUp @if (!$product->variants->firstWhere(fn($v) => $v->stock > 0) || $product->active != 1) out-of-stock @endif"
+                    data-wow-delay="0.05s">
+>>>>>>> 3176c89e664419d759b539cd5825e09050c9d89c
                     <div class="product-header">
                         <div class="product-image">
                             <a href="{{ route('client.product.detail', $product->slug) }}">
@@ -19,10 +24,11 @@
                             </a>
 
                             <style>
-                                    .wishlist-btn.fill-heart svg {
-                                            fill: #4a5568 !important;
-                                            stroke: #4a5568 !important;
-                                        }
+                                .wishlist-btn.fill-heart svg {
+                                    fill: #4a5568 !important;
+                                    stroke: #4a5568 !important;
+                                }
+
                                 .product-option li {
                                     width: 50% !important;
                                 }
@@ -122,8 +128,8 @@
                                     font-size: 0.75rem;
                                     padding: 4px 8px;
                                     border-radius: 6px;
-                                    z-index: 10;
-                                    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                                    z-index: 1;
+                                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
                                 }
 
                                 .out-of-stock-badge span {
@@ -140,11 +146,16 @@
                                     right: 0;
                                     bottom: 0;
                                     background: rgba(0, 0, 0, 0.3);
+<<<<<<< HEAD
                                     border-radius: 12px;
                                     z-index: 1;
+=======
+                                    border-radius: 16px;
+                                    z-index: 0;
+>>>>>>> 3176c89e664419d759b539cd5825e09050c9d89c
                                 }
 
-                                .product-box-3.out-of-stock .product-image > a > img {
+                                .product-box-3.out-of-stock .product-image>a>img {
                                     filter: grayscale(30%);
                                 }
 
@@ -174,17 +185,17 @@
                                         <i data-feather="eye"></i>
                                     </a>
                                 </li>
-                                                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Yêu thích">
-                                                <a href="javascript:void(0)"
-                                                    class="notifi-wishlist wishlist-btn
-                                                    @if(auth()->check() && auth()->user()->wishlist()->where('product_id', $product->id)->exists()) fill-heart @endif"
-                                                    data-product-id="{{ $product->id }}"
-                                                    data-liked="@if(auth()->check() && auth()->user()->wishlist()->where('product_id', $product->id)->exists())1 @else 0 @endif"
-                                                    title="Yêu thích"
-                                                    style="width:18px; height:18px; display:inline-flex; align-items:center; justify-content:center; color:#4a5568; margin-top:10px;">
-                                                    <i data-feather="heart"></i>
-                                                </a>
-                                            </li>
+                                <li data-bs-toggle="tooltip" data-bs-placement="top" title="Yêu thích">
+                                    <a href="javascript:void(0)"
+                                        class="notifi-wishlist wishlist-btn
+                                                    @if (auth()->check() && auth()->user()->wishlist()->where('product_id', $product->id)->exists()) fill-heart @endif"
+                                        data-product-id="{{ $product->id }}"
+                                        data-liked="@if (auth()->check() && auth()->user()->wishlist()->where('product_id', $product->id)->exists()) 1 @else 0 @endif"
+                                        title="Yêu thích"
+                                        style="width:18px; height:18px; display:inline-flex; align-items:center; justify-content:center; color:#4a5568; margin-top:10px;">
+                                        <i data-feather="heart"></i>
+                                    </a>
+                                </li>
                             </ul>
 
                             @php
@@ -265,6 +276,7 @@
         {{ $products->withQueryString()->links() }}
     </nav>
 </div>
+<<<<<<< HEAD
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -301,37 +313,76 @@ document.addEventListener('DOMContentLoaded', function() {
                         btn.classList.add('fill-heart');
                     }
                     if (window.feather) feather.replace();
+=======
+>>>>>>> 3176c89e664419d759b539cd5825e09050c9d89c
 
-                    Swal.fire({
-                        toast: true,
-                        position: 'top-end',
-                        icon: 'success',
-                        title: data.message,
-                        showConfirmButton: false,
-                        timer: 1400
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.wishlist-btn').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const productId = btn.getAttribute('data-product-id');
+                const url = "{{ route('client.wishlist.store') }}";
+                fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector(
+                                'meta[name="csrf-token"]').content,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            product_id: productId
+                        })
+                    })
+                    .then(async res => {
+                        // Nếu không phải 2xx thì có thể là chưa đăng nhập hoặc lỗi khác
+                        if (res.status === 401) {
+                            // Chưa đăng nhập, chuyển trang login
+                            window.location.href = "{{ route('login') }}";
+                            return;
+                        }
+                        let data = await res.json();
+                        if (data.success) {
+                            if (data.toggled === 'removed') {
+                                btn.setAttribute('data-liked', '0');
+                                btn.classList.remove('fill-heart');
+                            } else {
+                                btn.setAttribute('data-liked', '1');
+                                btn.classList.add('fill-heart');
+                            }
+                            if (window.feather) feather.replace();
+
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: data.message,
+                                showConfirmButton: false,
+                                timer: 1400
+                            });
+                        } else {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: data.message || 'Lỗi thao tác',
+                                showConfirmButton: false,
+                                timer: 1400
+                            });
+                        }
+                    })
+                    .catch(() => {
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'error',
+                            title: 'Có lỗi xảy ra, vui lòng thử lại!',
+                            showConfirmButton: false,
+                            timer: 1400
+                        });
                     });
-                } else {
-                    Swal.fire({
-                        toast: true,
-                        position: 'top-end',
-                        icon: 'error',
-                        title: data.message || 'Lỗi thao tác',
-                        showConfirmButton: false,
-                        timer: 1400
-                    });
-                }
-            })
-            .catch(() => {
-                Swal.fire({
-                    toast: true,
-                    position: 'top-end',
-                    icon: 'error',
-                    title: 'Có lỗi xảy ra, vui lòng thử lại!',
-                    showConfirmButton: false,
-                    timer: 1400
-                });
             });
         });
     });
-});
 </script>

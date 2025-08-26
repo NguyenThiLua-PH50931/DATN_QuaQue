@@ -288,15 +288,22 @@
                     if (!discountTypeSelect || !maxDiscountRow) return;
                     if (discountTypeSelect.value === 'percent') {
                         maxDiscountRow.classList.remove('d-none');
-                        if (maxDiscountInput) maxDiscountInput.required = true;
+                        if (maxDiscountInput) {
+                            maxDiscountInput.required = true; -
+                            const discountInput = document.querySelector('input[name="discount_value"]'); -
+                            if (discountInput) discountInput.setAttribute('max', '100'); // BỎ DÒNG NÀY
+                        }
                     } else {
                         maxDiscountRow.classList.add('d-none');
                         if (maxDiscountInput) {
                             maxDiscountInput.required = false;
                             maxDiscountInput.value = '';
-                        }
+                        } -
+                        const discountInput = document.querySelector('input[name="discount_value"]'); -
+                        if (discountInput) discountInput.removeAttribute('max'); // BỎ DÒNG NÀY
                     }
                 }
+
 
                 function updateFormFields() {
                     const scope = scopeSelect.value;

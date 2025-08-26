@@ -304,10 +304,10 @@
                                          <div class="delivery-icon">
                                              <i data-feather="phone-call"></i>
                                          </div>
-                                         <div class="delivery-detail">
+                                         {{-- <div class="delivery-detail">
                                              <h6>Vận chuyển 24/7</h6>
                                              <h5>+84 987612345</h5>
-                                         </div>
+                                         </div> --}}
                                      </a>
                                  </li>
                                  <li class="right-side">

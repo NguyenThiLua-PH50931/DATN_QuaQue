@@ -67,7 +67,7 @@
                                                                 href="{{ route('client.blogs-detail', ['id' => $item->id]) }}">
                                                                 <h5 class="recent-name">{{ $item->title }}</h5>
                                                             </a>
-                                                            <h6><span>{{ $blog->created_at ? $blog->created_at->format('F d, Y') : 'Chưa có ngày tạo' }}</span>
+                                                            <h6><span>{{ $blog->created_at ? $blog->created_at->format('d/m/Y') : 'Chưa có ngày tạo' }}</span>
                                                                 <i data-feather="thumbs-up"></i>
                                                             </h6>
                                                         </div>
@@ -101,7 +101,7 @@
                                 <li>
                                     <div class="user-list">
                                         <i data-feather="calendar"></i>
-                                        <span>{{ $blog->created_at ? $blog->created_at->format('F d, Y') : 'Chưa có ngày tạo' }}</span>
+                                        <span>{{ $blog->created_at ? $blog->created_at->format('d/m/Y') : 'Chưa có ngày tạo' }}</span>
                                     </div>
                                 </li>
 
@@ -143,7 +143,7 @@
                                                 @endif
 
                                                 <div class="user-name">
-                                                    <h6>{{ $comment->created_at->format('d M, Y') }}</h6>
+                                                    <h6>{{ $comment->created_at->format('d/m/Y') }}</h6>
                                                     <h5 class="text-content">{{ $comment->user->name ?? 'Ẩn danh' }}</h5>
                                                 </div>
                                             </div>
@@ -174,7 +174,6 @@
                                     Vui lòng <a href="{{ route('login') }}">đăng nhập</a> để bình luận.
                                 </div>
                             @endif
-
 
                             <form action="{{ route('client.blog.comments.store') }}" method="POST">
                                 @csrf

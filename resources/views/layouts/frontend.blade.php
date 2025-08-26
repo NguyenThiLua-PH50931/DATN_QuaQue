@@ -254,6 +254,8 @@
         </div>
     </div>
     <!-- Cookie Bar Box End --> --}}
+    </div> 
+    <!-- Cookie Bar Box End -->
 
     <!-- Deal Box Modal Start -->
     <div class="modal fade theme-modal deal-modal" id="deal-box" tabindex="-1">
@@ -347,11 +349,11 @@
             </div>
         </div>
 
-        <div class="back-to-top">
+        {{-- <div class="back-to-top">
             <a id="back-to-top" href="#">
                 <i class="fas fa-chevron-up"></i>
             </a>
-        </div>
+        </div> --}}
     </div>
     <!-- Tap to top and theme setting button end -->
 <!-- Modal xác nhận đăng xuất -->

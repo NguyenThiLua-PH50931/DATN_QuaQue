@@ -705,6 +705,67 @@ $variantMap = $variants->map(function ($v) {
             })
         ]);
     }
+    public function storeReview(Request $request)
+    {
+        $request->validate([
+            'product_variant_id' => 'required|exists:product_variants,id',
+            'comment' => 'required|string',
+            'rating'  => 'required|integer|min:1|max:5',
+        ]);
+
+        $user = Auth::user();
+
+        // Kiểm tra xem user đã mua biến thể này và đơn hàng đã được giao chưa
+        $hasDeliveredVariant = DB::table('order_items')
+            ->join('orders', 'order_items.order_id', '=', 'orders.id')
+            ->where('order_items.product_variant_id', $request->product_variant_id)
+            ->where('orders.user_id', $user->id)
+            ->where('orders.status', 'delivered') // status 'delivered' là đã giao
+            ->exists();
+
+        if (!$hasDeliveredVariant) {
+            return redirect()->back()->withErrors(['Bạn chỉ có thể đánh giá sản phẩm sau khi đã nhận hàng.']);
+        }
+
+        // Kiểm tra đã đánh giá chưa
+        $hasReviewed = Review::where('user_id', $user->id)
+            ->where('product_variant_id', $request->product_variant_id)
+            ->exists();
+
+        if ($hasReviewed) {
+            return redirect()->back()->withErrors(['Bạn chỉ được đánh giá sản phẩm này một lần.']);
+        }
+
+        // Lưu đánh giá
+        Review::create([
+            'product_id'          => DB::table('product_variants')->where('id', $request->product_variant_id)->value('product_id'),
+            'product_variant_id'  => $request->product_variant_id,
+            'user_id'             => $user->id,
+            'rating'              => $request->rating,
+            'comment'             => $request->comment,
+        ]);
+
+        return redirect()->back()->with('success', 'Cảm ơn bạn đã đánh giá sản phẩm. Lưu ý: Bạn chỉ được đánh giá 1 lần cho mỗi sản phẩm.');
+    }
+
+
+    public function filterReviews(Request $request, $slug)
+    {
+        $ratingFilter = $request->query('star');
+
+        $product = Product::where('slug', $slug)
+            ->where('active', 1)
+            ->whereNull('deleted_at')
+            ->firstOrFail();
+
+        $reviews = $product->reviews()
+            ->with('user')
+            ->when($ratingFilter, fn($q) => $q->where('rating', $ratingFilter))
+            ->latest()
+            ->get();
+
+        return view('frontend.products.review-items', compact('reviews'));
+    }
 
     // AJAX search cho header
     public function searchAjax(Request $request)

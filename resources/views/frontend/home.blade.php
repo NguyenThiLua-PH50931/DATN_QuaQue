@@ -408,7 +408,7 @@
                                         </a>
                                         <ul class="product-option">
                                             <li data-bs-toggle="tooltip" data-bs-placement="top"
-                                                title="View">
+                                                title="Xem nhanh">
                                                 <a href="javascript:void(0)" class="quickview-btn"
                                                     data-slug="{{ $product->slug }}"
                                                     title="Xem nhanh">
@@ -450,7 +450,7 @@
                                                 ); // trừ 0.5 rồi làm tròn lên
                                                 $filledStars = max(0, min($filledStars, 5)); // không vượt quá 5 sao
                                                 } else {
-                                                $filledStars = 4; // mặc định nếu chưa có đánh giá
+                                                $filledStars = 0; // mặc định nếu chưa có đánh giá
                                                 }
                                                 @endphp
 
@@ -558,7 +558,7 @@
                     <div class="banner-contain hover-effect">
                         <img src="../frontend/assets/images/vegetable/banner/9.jpg"
                             class="bg-img blur-up lazyload" alt="">
-                        <div class="banner-details p-center-left p-4">
+                        {{-- <div class="banner-details p-center-left p-4">
                             <div>
                                 <h3 class="text-exo">Ưu đãi 50%</h3>
                                 <h4 class="text-russo fw-normal theme-color mb-2">Thơm ngon – Tươi mới</h4>
@@ -566,14 +566,14 @@
                                     class="btn btn-animation btn-sm mend-auto">Mua ngay <i
                                         class="fa-solid fa-arrow-right icon"></i></button>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="banner-contain hover-effect">
                         <img src="../frontend/assets/images/vegetable/banner/10.jpg"
                             class="bg-img blur-up lazyload" alt="">
-                        <div class="banner-details p-center-left p-4">
+                        {{-- <div class="banner-details p-center-left p-4">
                             <div>
                                 <h3 class="text-exo">Ưu đãi 50%</h3>
                                 <h4 class="text-russo fw-normal theme-color mb-2">Chất lượng – Giá tốt</h4>
@@ -581,7 +581,7 @@
                                     class="btn btn-animation btn-sm mend-auto">Mua ngay <i
                                         class="fa-solid fa-arrow-right icon"></i></button>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             </div>
@@ -638,7 +638,7 @@
                                 </a>
                                 <ul class="product-option">
                                     <li data-bs-toggle="tooltip" data-bs-placement="top"
-                                        title="View">
+                                        title="Xem nhanh">
                                         <a href="javascript:void(0)" class="quickview-btn"
                                             data-slug="{{ $product->slug }}" title="Xem nhanh">
                                             <i data-feather="eye"></i>
@@ -682,7 +682,7 @@
                                         ); // trừ 0.5 rồi làm tròn lên
                                         $filledStars = max(0, min($filledStars, 5)); // không vượt quá 5 sao
                                         } else {
-                                        $filledStars = 4; // mặc định nếu chưa có đánh giá
+                                        $filledStars = 0; // mặc định nếu chưa có đánh giá
                                         }
                                         @endphp
 
@@ -838,7 +838,7 @@
                                     </a>
                                     <ul class="product-option">
                                         <li data-bs-toggle="tooltip" data-bs-placement="top"
-                                            title="View">
+                                            title="Xem nhanh">
                                             <a href="javascript:void(0)" class="quickview-btn"
                                                 data-slug="{{ $product->slug }}"
                                                 title="Xem nhanh">
@@ -886,7 +886,7 @@
                                             ); // trừ 0.5 rồi làm tròn lên
                                             $filledStars = max(0, min($filledStars, 5)); // không vượt quá 5 sao
                                             } else {
-                                            $filledStars = 4; // mặc định nếu chưa có đánh giá
+                                            $filledStars = 0; // mặc định nếu chưa có đánh giá
                                             }
                                             @endphp
 

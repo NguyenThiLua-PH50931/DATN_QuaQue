@@ -44,6 +44,10 @@ class BannerController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+    public function create()
+    {
+        return view('backend.banners.create');
+    }
     public function store(Request $request)
     {
         $request->validate([
@@ -81,6 +85,11 @@ class BannerController extends Controller
     /**
      * Update the specified resource in storage.
      */
+    public function edit(string $id)
+    {
+        $banner = Banner::findOrFail($id);
+        return view('backend.banners.edit', compact('banner'));
+    }
     public function update(Request $request, string $id)
     {
         $banner = Banner::findOrFail($id);
