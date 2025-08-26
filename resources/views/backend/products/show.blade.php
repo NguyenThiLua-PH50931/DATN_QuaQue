@@ -120,7 +120,13 @@
                         </div>
                     </div>
                     <div class="col-md-7">
-                        <p><b>Danh mục:</b> {{ $product->category->name ?? 'N/A' }}</p>
+                        <p><b>Danh mục:</b>
+                            @if($product->categories->count())
+                                {{ $product->categories->pluck('name')->join(', ') }}
+                            @else
+                                N/A
+                            @endif
+                        </p>
                         <p><b>Vùng miền:</b> {{ $product->region->name ?? 'N/A' }}</p>
                         <p><b>Trạng thái:</b>
                             <span

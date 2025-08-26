@@ -10,12 +10,7 @@
                 $isOutOfStock = !$variantInStock || $product->active != 1;
             @endphp
             <div>
-<<<<<<< HEAD
                 <div class="product-box-3 h-100 wow fadeInUp @if($isOutOfStock) out-of-stock @endif" data-wow-delay="0.05s">
-=======
-                <div class="product-box-3 h-100 wow fadeInUp @if (!$product->variants->firstWhere(fn($v) => $v->stock > 0) || $product->active != 1) out-of-stock @endif"
-                    data-wow-delay="0.05s">
->>>>>>> 3176c89e664419d759b539cd5825e09050c9d89c
                     <div class="product-header">
                         <div class="product-image">
                             <a href="{{ route('client.product.detail', $product->slug) }}">
@@ -146,13 +141,8 @@
                                     right: 0;
                                     bottom: 0;
                                     background: rgba(0, 0, 0, 0.3);
-<<<<<<< HEAD
                                     border-radius: 12px;
                                     z-index: 1;
-=======
-                                    border-radius: 16px;
-                                    z-index: 0;
->>>>>>> 3176c89e664419d759b539cd5825e09050c9d89c
                                 }
 
                                 .product-box-3.out-of-stock .product-image>a>img {
@@ -276,7 +266,6 @@
         {{ $products->withQueryString()->links() }}
     </nav>
 </div>
-<<<<<<< HEAD
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -313,8 +302,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         btn.classList.add('fill-heart');
                     }
                     if (window.feather) feather.replace();
-=======
->>>>>>> 3176c89e664419d759b539cd5825e09050c9d89c
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
