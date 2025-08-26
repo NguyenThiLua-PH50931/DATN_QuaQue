@@ -167,17 +167,18 @@
             </div>
         </div>
     </section>
-    <!-- Map Section End -->
+    <!-- Toasts + client-side validate -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Validate client-side: hiện toast ngay, không reload
-            const form = document.querySelector('form[action="{{ route('client.support-ticket.store') }}"]');
+            // Validate tức thì trước khi submit
+            var form = document.querySelector('form[action="{{ route('client.support-ticket.store') }}"]');
             if (form) {
                 form.addEventListener('submit', function(e) {
-                    const title = form.querySelector('[name="title"]')?.value.trim() || '';
-                    const content = form.querySelector('[name="content"]')?.value.trim() || '';
+                    var titleEl = form.querySelector('[name="title"]');
+                    var contentEl = form.querySelector('[name="content"]');
+                    var title = (titleEl && titleEl.value ? titleEl.value : '').trim();
+                    var content = (contentEl && contentEl.value ? contentEl.value : '').trim();
 
                     if (!title) {
                         e.preventDefault();
@@ -192,7 +193,6 @@
                         });
                         return;
                     }
-
                     if (!content) {
                         e.preventDefault();
                         Swal.fire({
@@ -209,7 +209,7 @@
                 });
             }
 
-            // Toast thành công (server-side)
+            // Toast thành công từ server
             @if (session('success'))
                 Swal.fire({
                     toast: true,
@@ -222,7 +222,7 @@
                 });
             @endif
 
-            // Toast lỗi validate (server-side)
+            // Toast lỗi validate từ server
             @if ($errors->any())
                 @foreach ($errors->all() as $error)
                     Swal.fire({
@@ -238,5 +238,6 @@
             @endif
         });
     </script>
+
 
 @endsection

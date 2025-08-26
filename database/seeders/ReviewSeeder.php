@@ -29,14 +29,14 @@ class ReviewSeeder extends Seeder
             'user_id' => $users[0], // user đầu tiên
             'product_id' => $products[0], // product đầu tiên
             'rating' => 4,
-            'comment' => 'Sản phẩm chất lượng, đáng tiền!',
+            'content' => 'Sản phẩm chất lượng, đáng tiền!',
         ]);
 
         Review::create([
             'user_id' => $users[1] ?? $users[0], // user thứ 2 hoặc user đầu tiên
             'product_id' => $products[1] ?? $products[0], // product thứ 2 hoặc product đầu tiên
             'rating' => 2,
-            'comment' => 'Did not meet my expectations.',
+            'content' => 'Did not meet my expectations.',
         ]);
     }
 }

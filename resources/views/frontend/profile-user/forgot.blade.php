@@ -53,7 +53,7 @@
                                     <div class="col-12">
                                         <div class="form-floating theme-form-floating log-in-form">
                                             <input type="email" class="form-control" id="email" name="email"
-                                                placeholder="Email Address" value="{{ old('email') }}" required />
+                                                placeholder="Email Address" value="{{ old('email') }}"  />
                                             <label for="email">Vui lòng nhập địa chỉ Email</label>
                                         </div>
                                         @error('email')

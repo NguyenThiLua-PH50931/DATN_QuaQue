@@ -529,9 +529,25 @@
                                         @foreach ($cartItems as $item)
                                             @if (isset($item->product))
                                                 <li>
-                                                    <img src="{{ asset('storage/' . $item->product->image) }}"
+                                                    @php
+                                                        $checkoutImageUrl = null;
+                                                        if (!empty($item->variant?->image)) {
+                                                            $checkoutImageUrl = asset(
+                                                                'storage/' . $item->variant->image,
+                                                            );
+                                                        } elseif (!empty($item->product?->image)) {
+                                                            $checkoutImageUrl = asset(
+                                                                'storage/' . $item->product->image,
+                                                            );
+                                                        } else {
+                                                            $checkoutImageUrl = asset('images/placeholder.png'); // nếu có ảnh mặc định
+                                                        }
+                                                    @endphp
+
+                                                    <img src="{{ $checkoutImageUrl }}"
                                                         class="img-fluid blur-up lazyloaded checkout-image"
-                                                        alt="{{ $item->product->name }}">
+                                                        alt="{{ $item->variant->name ?? $item->product->name }}">
+
                                                     <h4>
                                                         {{ $item->product->name }}
                                                         @if ($item->variant)

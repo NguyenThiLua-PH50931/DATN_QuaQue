@@ -358,8 +358,8 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Chọn lý do huỷ đơn hàng</h5>
-                        <button type="button" class="btn btn-outline-secondary fw-bold"
-                            data-bs-dismiss="modal">Đóng</button>
+                        {{-- <button type="button" class="btn btn-outline-secondary fw-bold"
+                            data-bs-dismiss="modal">Đóng</button> --}}
                     </div>
                     <div class="modal-body">
                         @php
