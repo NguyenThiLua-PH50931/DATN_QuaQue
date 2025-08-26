@@ -233,7 +233,7 @@ class ProductController extends Controller
                 });
             })
 
-            // ========== ƯU TIÊN CÒN HÀNG TRƯỚC ==========
+            // ========== LẤY SẢN PHẨM ƯU TIÊN CÒN HÀNG TRƯỚC ==========
             ->orderByRaw("
             CASE
                 WHEN products.active = 1
@@ -297,7 +297,7 @@ class ProductController extends Controller
         $categories = Category::withCount('products')->get();
         $regions = Region::withCount('products')->get();
 
-                // AJAX partial
+                // AJAX partial Check stock
         if ($request->ajax()) {
             // Thêm logic kiểm tra stock cho AJAX partial
             $products->getCollection()->transform(function ($product) {
@@ -342,9 +342,7 @@ class ProductController extends Controller
 
             $product->has_stock = $hasStock;
             $product->total_stock = $totalStock;
-
-            // Debug log
-            \Log::info("Product {$product->id} ({$product->name}): variants={$product->variants->count()}, total_stock={$totalStock}, has_stock=" . ($hasStock ? 'true' : 'false'));
+            $product->is_out_of_stock = !$hasStock || $product->active != 1;
 
             return $product;
         });
@@ -565,7 +563,7 @@ $variantMap = $variants->map(function ($v) {
             'reviews'
         ])
             ->where('slug', $slug)
-            ->where('active', 1)
+            // ->where('active', 1) // Cho phép xem nhanh cả sản phẩm hết hàng
             ->whereNull('deleted_at')
             ->firstOrFail();
 
