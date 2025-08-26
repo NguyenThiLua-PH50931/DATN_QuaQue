@@ -84,7 +84,7 @@
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
     -webkit-transition: opacity 0.4s ease-in-out;
     transition: opacity 0.4s ease-in-out;
-    background-image: image-url("dropzone-spritemap.html");
+    background-image: image-url("dropzone-spritemap.png");
     background-repeat: no-repeat;
     background-position: -268px -163px;
 }
@@ -107,7 +107,7 @@
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
     -webkit-transition: opacity 0.4s ease-in-out;
     transition: opacity 0.4s ease-in-out;
-    background-image: image-url("dropzone-spritemap.html");
+    background-image: image-url("dropzone-spritemap.png");
     background-repeat: no-repeat;
     background-position: -268px -123px;
 }
@@ -140,7 +140,7 @@
     left: 0;
     width: 0%;
     height: 100%;
-    background-image: image-url("dropzone-spritemap.html");
+    background-image: image-url("dropzone-spritemap.png");
     background-repeat: repeat-x;
     background-position: 0px -400px;
 }
@@ -207,7 +207,7 @@
     filter: none;
     -webkit-transition: opacity 0.3s ease-in-out;
     transition: opacity 0.3s ease-in-out;
-    background-image: image-url("dropzone-spritemap.html");
+    background-image: image-url("dropzone-spritemap.png");
     background-repeat: no-repeat;
     background-position: 0 0;
     position: absolute;
@@ -292,7 +292,7 @@
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
     -webkit-transition: opacity 0.4s ease-in-out;
     transition: opacity 0.4s ease-in-out;
-    background-image: image-url("dropzone-spritemap.html");
+    background-image: image-url("dropzone-spritemap.png");
     background-repeat: no-repeat;
     background-position: -268px -163px;
 }
@@ -315,7 +315,7 @@
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
     -webkit-transition: opacity 0.4s ease-in-out;
     transition: opacity 0.4s ease-in-out;
-    background-image: image-url("dropzone-spritemap.html");
+    background-image: image-url("dropzone-spritemap.png");
     background-repeat: no-repeat;
     background-position: -268px -123px;
 }
@@ -348,7 +348,7 @@
     left: 0;
     width: 0%;
     height: 100%;
-    background-image: image-url("dropzone-spritemap.html");
+    background-image: image-url("dropzone-spritemap.png");
     background-repeat: repeat-x;
     background-position: 0px -400px;
 }

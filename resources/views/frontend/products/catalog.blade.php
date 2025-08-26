@@ -3,155 +3,6 @@
 @section('title', 'Tất cả sản phẩm')
 
 @section('contents')
-<style>
-    .wishlist-btn.fill-heart svg {
-        fill: #4a5568 !important;
-        stroke: #4a5568 !important;
-    }
-
-    .product-option li {
-        width: 50% !important;
-    }
-
-    /* ==== CARD: bố cục cột, cao bằng nhau ==== */
-    .product-box-3 {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-    }
-
-    /* Footer co giãn để giữ card bằng nhau */
-    .product-box-3 .product-footer {
-        flex: 1;
-        display: flex;
-    }
-
-    .product-box-3 .product-detail {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: .4rem;
-    }
-
-    /* Tiêu đề: kẹp số dòng để chiều cao đồng đều */
-    .product-box-3 .product-detail .name {
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        /* 2 dòng, đổi 3 nếu muốn */
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        line-height: 1.35;
-        min-height: calc(1em * 2 * 1.35);
-    }
-
-    /* Giá đẩy xuống đáy */
-    .product-box-3 .product-detail .price {
-        margin-top: auto;
-    }
-
-    /* ==== ẢNH: vuông, thu nhỏ bên trong ==== */
-    .product-box-3 .product-image {
-        position: relative;
-        overflow: hidden;
-        border-radius: 16px;
-        background: #fff;
-        /* viền trắng */
-    }
-
-    /* Khung ảnh vuông */
-    .product-box-3 .product-image::before {
-        content: "";
-        display: block;
-        padding-top: 100%;
-        /* 1:1; đổi 75% cho 4:3 */
-    }
-
-    /* Vị trí ảnh bên trong, có khoảng trống viền */
-    .product-box-3 .product-image>a {
-        position: absolute;
-        inset: 8px;
-        /* ảnh nhỏ hơn, tạo viền trắng */
-        border-radius: 12px;
-        overflow: hidden;
-    }
-
-    /* Ảnh lấp đầy phần bên trong */
-    .product-box-3 .product-image>a>img {
-        width: 100% !important;
-        height: 100% !important;
-        object-fit: cover !important;
-        display: block;
-        border-radius: inherit;
-    }
-
-    /* ==== Badge TOP (tuỳ chọn) ==== */
-    .product-box-3 .product-image::after {
-        position: absolute;
-        top: 8px;
-        left: 8px;
-        background: #12d6a7;
-        color: #fff;
-        font-weight: bold;
-        font-size: 0.8rem;
-        padding: 2px 8px;
-        border-radius: 6px;
-    }
-
-    /* ==== Badge HẾT HÀNG ==== */
-    .out-of-stock-badge {
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        background: #dc3545;
-        color: #fff;
-        font-weight: bold;
-        font-size: 0.75rem;
-        padding: 4px 8px;
-        border-radius: 6px;
-        z-index: 1;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    }
-
-    .out-of-stock-badge span {
-        display: block;
-        text-align: center;
-    }
-
-    /* Overlay mờ cho sản phẩm hết hàng */
-    .product-box-3.out-of-stock .product-image::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.3);
-        border-radius: 16px;
-        z-index: 0;
-    }
-
-    .product-box-3.out-of-stock .product-image>a>img {
-        filter: grayscale(30%);
-    }
-
-    .description-limit {
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: normal;
-    }
-
-    .row {
-        justify-content: left !important;
-    }
-
-    .wishlist-btn.fill-heart svg {
-        fill: #4a5568 !important;
-        stroke: #4a5568 !important;
-    }
-</style>
 <div style="margin-bottom: 40px">
     <section class="breadscrumb-section pt-0">
         <div class="container-fluid-lg">
@@ -444,19 +295,205 @@ $currentSortText = $sortMap[$currentSort] ?? $sortMap['pop'];
             </div>
         </div>
 
+        <style>
+            .row {
+                justify-content: left !important;
+            }
+
+            .wishlist-btn.fill-heart svg {
+                fill: #4a5568 !important;
+                stroke: #4a5568 !important;
+            }
+        </style>
+
         {{-- WRAPPER để AJAX thay thế --}}
         <div id="product-list-wrapper">
             <div
                 class="row g-sm-4 g-3 row-cols-xxl-4 row-cols-xl-3 row-cols-lg-2 row-cols-md-3 row-cols-2 product-list-section">
                 @forelse ($products as $product)
+                @php
+                // Kiểm tra sản phẩm có còn hàng không
+                $variantInStock = $product->variants->firstWhere(
+                fn($v) => $v->active == 1 && $v->stock > 0,
+                );
+                $isOutOfStock = !$variantInStock || $product->active != 1;
+                @endphp
                 <div>
-                    <div class="product-box-3 h-100 wow fadeInUp" data-wow-delay="0.05s">
+                    <div class="product-box-3 h-100 wow fadeInUp @if($isOutOfStock) out-of-stock @endif" data-wow-delay="0.05s">
                         <div class="product-header">
                             <div class="product-image">
                                 <a href="{{ route('client.product.detail', $product->slug) }}">
                                     <img src="{{ asset('storage/' . $product->image) }}"
                                         class="img-fluid blur-up lazyload" alt="{{ $product->name }}" />
                                 </a>
+
+                                @if ($isOutOfStock)
+                                <div class="out-of-stock-badge">
+                                    <span class="badge bg-danger">Hết hàng</span>
+                                </div>
+                                @endif
+
+                                <style>
+                                    .product-option li {
+                                        width: 50% !important;
+                                    }
+
+                                    /* ==== CARD: bố cục cột, cao bằng nhau ==== */
+                                    .product-box-3 {
+                                        display: flex;
+                                        flex-direction: column;
+                                        height: 100%;
+                                    }
+
+                                    /* Footer co giãn để giữ card bằng nhau */
+                                    .product-box-3 .product-footer {
+                                        flex: 1;
+                                        display: flex;
+                                    }
+
+                                    .product-box-3 .product-detail {
+                                        flex: 1;
+                                        display: flex;
+                                        flex-direction: column;
+                                        gap: .4rem;
+                                    }
+
+                                    /* ==== Category: ép 1 dòng ==== */
+                                    .product-detail .span-name {
+                                        display: -webkit-box;
+                                        -webkit-line-clamp: 1;
+                                        -webkit-box-orient: vertical;
+                                        overflow: hidden;
+                                        line-height: 1.3;
+                                        min-height: calc(1em * 1.3);
+                                    }
+
+                                    /* ==== Tên sản phẩm: ép 2 dòng ==== */
+                                    .product-detail .name {
+                                        display: -webkit-box;
+                                        -webkit-line-clamp: 2;
+                                        -webkit-box-orient: vertical;
+                                        overflow: hidden;
+                                        line-height: 1.35;
+                                        min-height: calc(1em * 2 * 1.35);
+                                    }
+
+                                    /* ==== Mô tả: ép 3 dòng ==== */
+                                    .product-detail .description-limit {
+                                        display: -webkit-box;
+                                        -webkit-line-clamp: 3;
+                                        -webkit-box-orient: vertical;
+                                        overflow: hidden;
+                                        text-overflow: ellipsis;
+                                        white-space: normal;
+                                        line-height: 1.4;
+                                        min-height: calc(1em * 3 * 1.4);
+                                    }
+
+                                    /* ==== Giá: luôn dính đáy ==== */
+                                    .product-detail .price {
+                                        margin-top: auto;
+                                    }
+
+                                    /* ==== Ảnh: vuông, thu nhỏ bên trong ==== */
+                                    .product-box-3 .product-image {
+                                        position: relative;
+                                        overflow: hidden;
+                                        border-radius: 16px;
+                                        background: #fff;
+                                        /* viền trắng */
+                                    }
+
+                                    /* Khung ảnh vuông */
+                                    .product-box-3 .product-image::before {
+                                        content: "";
+                                        display: block;
+                                        padding-top: 100%;
+                                        /* 1:1; đổi 75% cho 4:3 */
+                                    }
+
+                                    /* Vị trí ảnh bên trong, có khoảng trống viền */
+                                    .product-box-3 .product-image>a {
+                                        position: absolute;
+                                        inset: 24px;
+                                        /* ảnh nhỏ hơn, tạo viền trắng */
+                                        border-radius: 12px;
+                                        overflow: hidden;
+                                    }
+
+                                    /* Ảnh lấp đầy phần bên trong */
+                                    .product-box-3 .product-image>a>img {
+                                        width: 100% !important;
+                                        height: 100% !important;
+                                        object-fit: cover !important;
+                                        display: block;
+                                        border-radius: inherit;
+                                    }
+
+                                    /* ==== Badge TOP (optional) ==== */
+                                    .product-box-3 .product-image::after {
+                                        position: absolute;
+                                        top: 8px;
+                                        left: 8px;
+                                        background: #12d6a7;
+                                        color: #fff;
+                                        font-weight: bold;
+                                        font-size: 0.8rem;
+                                        padding: 2px 8px;
+                                        border-radius: 6px;
+                                    }
+
+                                    /* ==== Badge Hết hàng ==== */
+                                    .out-of-stock-badge {
+                                        position: absolute;
+                                        top: 8px;
+                                        right: 8px;
+                                        z-index: 10;
+                                    }
+
+                                    .out-of-stock-badge .badge {
+                                        font-size: 0.75rem;
+                                        padding: 4px 8px;
+                                        border-radius: 6px;
+                                        font-weight: 600;
+                                    }
+
+                                    /* Overlay mờ cho sản phẩm hết hàng - chỉ che ảnh, không che button */
+                                    .product-box-3.out-of-stock .product-image>a::after {
+                                        content: "";
+                                        position: absolute;
+                                        top: 0;
+                                        left: 0;
+                                        right: 0;
+                                        bottom: 0;
+                                        background: rgba(0, 0, 0, 0.3);
+                                        border-radius: 12px;
+                                        z-index: 1;
+                                    }
+
+                                    .product-box-3.out-of-stock .product-image>a>img {
+                                        filter: grayscale(30%);
+                                    }
+
+                                    /* Đảm bảo các button vẫn có thể click được */
+                                    .product-box-3.out-of-stock .product-option {
+                                        z-index: 20;
+                                        position: relative;
+                                    }
+
+                                    .product-box-3.out-of-stock .product-option a {
+                                        background: rgba(255, 255, 255, 0.95);
+                                        border-radius: 50%;
+                                        transition: all 0.3s ease;
+                                        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+                                    }
+
+                                    .product-box-3.out-of-stock .product-option a:hover {
+                                        background: rgba(255, 255, 255, 1);
+                                        transform: scale(1.1);
+                                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                                    }
+                                </style>
 
                                 <ul class="product-option">
                                     <li data-bs-toggle="tooltip" data-bs-placement="top"
@@ -502,6 +539,16 @@ $currentSortText = $sortMap[$currentSort] ?? $sortMap['pop'];
                                 <p class="text-content mt-1 mb-2 product-content description-limit">
                                     {!! Str::limit(strip_tags($product->description), 200) !!}
                                 </p>
+                                <style>
+                                    .description-limit {
+                                        display: -webkit-box;
+                                        -webkit-line-clamp: 3;
+                                        -webkit-box-orient: vertical;
+                                        overflow: hidden;
+                                        text-overflow: ellipsis;
+                                        white-space: normal;
+                                    }
+                                </style>
 
                                 <div class="product-rating mt-2">
                                     @php $avgRating = round($product->reviews->avg('rating') ?? 0); @endphp
@@ -514,14 +561,7 @@ $currentSortText = $sortMap[$currentSort] ?? $sortMap['pop'];
                                     <span>({{ number_format($product->reviews->avg('rating'), 1) ?? 0 }})</span>
                                 </div>
 
-                                @php
-                                // chỉ cần active == 1 (trigger stock -> active đã đảm bảo)
-                                $variantInStock = $product->variants->firstWhere(
-                                fn($v) => $v->active == 1,
-                                );
-                                @endphp
-
-                                @if ($variantInStock && $product->active == 1)
+                                @if (!$isOutOfStock)
                                 <h6 class="unit">{{ $variantInStock->name }}</h6>
                                 <h5 class="price">
                                     <span
@@ -551,305 +591,410 @@ $currentSortText = $sortMap[$currentSort] ?? $sortMap['pop'];
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const baseUrl = '/client/san-pham/';
-        let filterTimer = null;
-        let currentFetchController = null;
-        let lastKeyword = '';
-        let loadingMsgTimer = null;
+    document.addEventListener('DOMContentLoaded', function () {
+  const baseUrl = '/client/san-pham/';
+  let filterTimer = null;
+  let currentFetchController = null;
+  let lastKeyword = '';
+  let loadingMsgTimer = null;
 
-        const $price = typeof $ !== 'undefined' ? $('#price-range') : null;
-        const filterTitle = document.querySelector('.filter-category h2');
+  const $price = typeof $ !== 'undefined' ? $('#price-range') : null;
+  const filterTitle = document.querySelector('.filter-category h2');
 
-        /* ---------- helpers ---------- */
-        const qs = (s, r = document) => r.querySelector(s);
-        const qsa = (s, r = document) => Array.from(r.querySelectorAll(s));
+  /* ---------- helpers ---------- */
+  const qs  = (s, r=document) => r.querySelector(s);
+  const qsa = (s, r=document) => Array.from(r.querySelectorAll(s));
 
-        function showLoading() {
-            if (!filterTitle) return;
-            filterTitle.dataset.orig = filterTitle.dataset.orig || filterTitle.textContent;
-            filterTitle.textContent = 'Đang tìm...';
-            // Tự động ẩn loading nếu lâu quá (phòng kẹt request)
-            clearTimeout(loadingMsgTimer);
-            loadingMsgTimer = setTimeout(hideLoading, 5000);
-        }
+  function showLoading() {
+    if (!filterTitle) return;
+    filterTitle.dataset.orig = filterTitle.dataset.orig || filterTitle.textContent;
+    filterTitle.textContent = 'Đang tìm...';
+    // Tự động ẩn loading nếu lâu quá (phòng kẹt request)
+    clearTimeout(loadingMsgTimer);
+    loadingMsgTimer = setTimeout(hideLoading, 5000);
+  }
 
-        function hideLoading() {
-            if (filterTitle && filterTitle.dataset.orig)
-                filterTitle.textContent = filterTitle.dataset.orig;
-            clearTimeout(loadingMsgTimer);
-        }
+  function hideLoading() {
+    if (filterTitle && filterTitle.dataset.orig)
+      filterTitle.textContent = filterTitle.dataset.orig;
+    clearTimeout(loadingMsgTimer);
+  }
 
-        function buildParams(extra = {}) {
-            const params = new URLSearchParams();
-            const keyword = qs('#search-keyword')?.value.trim();
-            if (keyword) params.set('q', keyword);
+  function buildParams(extra = {}) {
+    const params = new URLSearchParams();
+    const keyword = qs('#search-keyword')?.value.trim();
+    if (keyword) params.set('q', keyword);
 
-            const dm = qsa('.category-checkbox:checked').map(cb => cb.value);
-            if (dm.length) params.set('dm', dm.join(','));
+    const dm = qsa('.category-checkbox:checked').map(cb => cb.value);
+    if (dm.length) params.set('dm', dm.join(','));
 
-            const regions = qsa('.region-checkbox:checked').map(cb => cb.value);
-            if (regions.length) params.set('regions', regions.join(','));
+    const regions = qsa('.region-checkbox:checked').map(cb => cb.value);
+    if (regions.length) params.set('regions', regions.join(','));
 
-            const priceEl = qs('#price-range');
-            if (priceEl) {
-                const from = priceEl.dataset.from,
-                    to = priceEl.dataset.to;
-                if (from && parseInt(from) > 0) params.set('min_price', from);
-                if (to && parseInt(to) < 10000000) params.set('max_price', to);
-            }
-
-            const rating = qsa('.rating-checkbox:checked').map(cb => cb.value);
-            if (rating.length) params.set('rating', rating.join(','));
-
-            const sort = qs('#current-sort-text')?.dataset.sort;
-            if (sort && sort !== 'pop') params.set('sort', sort);
-
-            for (const [k, v] of Object.entries(extra)) params.set(k, v);
-            return params;
-        }
-
-        async function fetchProducts(params) {
-            const url = baseUrl + (params.toString() ? ('?' + params.toString()) : '');
-            history.pushState({}, '', url);
-
-            if (currentFetchController) currentFetchController.abort();
-            currentFetchController = new AbortController();
-
-            showLoading();
-
-            const wrapper = document.querySelector('#product-list-wrapper');
-            try {
-                const res = await fetch(url, {
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    signal: currentFetchController.signal
-                });
-                const html = await res.text();
-                const doc = new DOMParser().parseFromString(html, 'text/html');
-                const newWrapper = doc.querySelector('#product-list-wrapper');
-
-                if (newWrapper && wrapper) wrapper.innerHTML = newWrapper.innerHTML;
-                else if (wrapper) wrapper.innerHTML = html;
-
-                if (window.feather?.replace) feather.replace();
-                wrapper?.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-
-                hideLoading();
-            } catch (err) {
-                if (err.name !== 'AbortError') console.error(err);
-                hideLoading();
-            } finally {
-                currentFetchController = null;
-            }
-        }
-
-        function applyFilter(extra = {}) {
-            if (!('page' in extra)) extra.page = 1;
-            const params = buildParams(extra);
-            fetchProducts(params);
-        }
-
-        // Debounce chung: gọi filter sau `delay` ms (mặc định 2000ms)
-        function scheduleFilter(delay = 2000, extra = {}, force = false) {
-            clearTimeout(filterTimer);
-
-            // Kiểm tra keyword đủ ký tự hoặc force (ví dụ nhấn Enter)
-            const keyword = qs('#search-keyword')?.value.trim() ?? '';
-            if (!force && keyword.length > 0 && keyword.length < 2 && keyword !== lastKeyword) {
-                // Không lọc nếu search <2 ký tự, trừ khi xóa hết text hoặc vừa nhập (ẩn kết quả)
-                return;
-            }
-            lastKeyword = keyword;
-
-            showLoading();
-
-            filterTimer = setTimeout(() => applyFilter(extra), delay);
-        }
-
-        /* ---------- bindings ---------- */
-
-        // Search: Enter = lọc ngay cả khi <2 ký tự, gõ chữ thì chờ đủ 2s + min length 2
-        const searchInput = qs('#search-keyword');
-        searchInput?.addEventListener('keypress', e => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                scheduleFilter(0, {}, true); // force
-            }
-        });
-        searchInput?.addEventListener('input', () => {
-            scheduleFilter(500);
-        });
-
-        // Checkbox: debounce nhẹ 500ms
-        qsa('.category-checkbox, .region-checkbox, .rating-checkbox')
-            .forEach(cb => cb.addEventListener('change', () => scheduleFilter(500)));
-
-        // Sắp xếp: lọc ngay
-        qsa('#sort-options .dropdown-item').forEach(item => {
-            item.addEventListener('click', function() {
-                const curr = qs('#current-sort-text');
-                curr.dataset.sort = this.dataset.sort;
-                curr.textContent = this.textContent.trim();
-                showLoading();
-                applyFilter();
-            });
-        });
-
-        // Pagination (delegation): luôn thực hiện ngay
-        document.addEventListener('click', function(e) {
-            const a = e.target.closest('.custome-pagination a');
-            if (!a) return;
-            e.preventDefault();
-            showLoading();
-            const page = new URL(a.href).searchParams.get('page') || 1;
-            applyFilter({
-                page
-            });
-        });
-
-        // Back/Forward
-        window.addEventListener('popstate', function() {
-            const params = new URLSearchParams(window.location.search);
-            showLoading();
-            fetchProducts(params);
-        });
-
-        // ionRangeSlider: chỉ khi THẢ TAY mới schedule filter 2s
-        if ($price && $price.length) {
-            const el = $price[0];
-            const min = parseInt(el.dataset.min || el.getAttribute('data-min') || 0);
-            const max = parseInt(el.dataset.max || el.getAttribute('data-max') || 10000000);
-            const from = parseInt(el.dataset.from || el.getAttribute('data-from') || min);
-            const to = parseInt(el.dataset.to || el.getAttribute('data-to') || max);
-            const step = parseInt(el.dataset.step || el.getAttribute('data-step') || 10000);
-            const prefix = el.dataset.prefix || el.getAttribute('data-prefix') || '';
-
-            $price.ionRangeSlider({
-                skin: 'round',
-                type: 'double',
-                min,
-                max,
-                from,
-                to,
-                step,
-                prefix,
-                onStart: (data) => {
-                    el.dataset.from = data.from;
-                    el.dataset.to = data.to;
-                },
-                onChange: (data) => {
-                    el.dataset.from = data.from;
-                    el.dataset.to = data.to;
-                },
-                onFinish: (data) => {
-                    el.dataset.from = data.from;
-                    el.dataset.to = data.to;
-                    scheduleFilter(2000);
-                }
-            });
-        }
-    });
-</script>
-<script>
-    // Hàm chuyển tiếng Việt có dấu thành không dấu
-    function removeVietnameseTones(str) {
-        return str
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '') // loại dấu
-            .replace(/đ/g, 'd').replace(/Đ/g, 'D')
-            .toLowerCase();
+    const priceEl = qs('#price-range');
+    if (priceEl) {
+      const from = priceEl.dataset.from, to = priceEl.dataset.to;
+      if (from && parseInt(from) > 0) params.set('min_price', from);
+      if (to && parseInt(to) < 10000000) params.set('max_price', to);
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
-        const searchCat = document.getElementById('category-search');
-        const ul = document.getElementById('category-filter-list');
+    const rating = qsa('.rating-checkbox:checked').map(cb => cb.value);
+    if (rating.length) params.set('rating', rating.join(','));
 
-        if (!searchCat || !ul) return;
+    const sort = qs('#current-sort-text')?.dataset.sort;
+    if (sort && sort !== 'pop') params.set('sort', sort);
 
-        searchCat.addEventListener('input', function() {
-            const keyword = removeVietnameseTones(searchCat.value.trim());
-            ul.querySelectorAll('li').forEach(li => {
-                const name = removeVietnameseTones(li.querySelector('.name')?.textContent ?? '');
-                li.style.display = name.includes(keyword) ? '' : 'none';
-            });
-        });
+    for (const [k, v] of Object.entries(extra)) params.set(k, v);
+    return params;
+  }
+
+  async function fetchProducts(params) {
+    const url = baseUrl + (params.toString() ? ('?' + params.toString()) : '');
+    history.pushState({}, '', url);
+
+    if (currentFetchController) currentFetchController.abort();
+    currentFetchController = new AbortController();
+
+    showLoading();
+
+    const wrapper = document.querySelector('#product-list-wrapper');
+    try {
+      const res = await fetch(url, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        signal: currentFetchController.signal
+      });
+      const html = await res.text();
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const newWrapper = doc.querySelector('#product-list-wrapper');
+
+      if (newWrapper && wrapper) wrapper.innerHTML = newWrapper.innerHTML;
+      else if (wrapper) wrapper.innerHTML = html;
+
+      if (window.feather?.replace) feather.replace();
+      wrapper?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      hideLoading();
+    } catch (err) {
+      if (err.name !== 'AbortError') console.error(err);
+      hideLoading();
+    } finally {
+      currentFetchController = null;
+    }
+  }
+
+  function applyFilter(extra = {}) {
+    if (!('page' in extra)) extra.page = 1;
+    const params = buildParams(extra);
+    fetchProducts(params);
+  }
+
+  // Debounce chung: gọi filter sau `delay` ms (mặc định 2000ms)
+  function scheduleFilter(delay = 2000, extra = {}, force = false) {
+    clearTimeout(filterTimer);
+
+    // Kiểm tra keyword đủ ký tự hoặc force (ví dụ nhấn Enter)
+    const keyword = qs('#search-keyword')?.value.trim() ?? '';
+    if (!force && keyword.length > 0 && keyword.length < 2 && keyword !== lastKeyword) {
+      // Không lọc nếu search <2 ký tự, trừ khi xóa hết text hoặc vừa nhập (ẩn kết quả)
+      return;
+    }
+    lastKeyword = keyword;
+
+    showLoading();
+
+    filterTimer = setTimeout(() => applyFilter(extra), delay);
+  }
+
+  /* ---------- bindings ---------- */
+
+  // Search: Enter = lọc ngay cả khi <2 ký tự, gõ chữ thì chờ đủ 2s + min length 2
+  const searchInput = qs('#search-keyword');
+  searchInput?.addEventListener('keypress', e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      scheduleFilter(0, {}, true); // force
+    }
+  });
+  searchInput?.addEventListener('input', () => {
+    scheduleFilter(200);
+  });
+
+  // Checkbox: debounce nhẹ 500ms
+  qsa('.category-checkbox, .region-checkbox, .rating-checkbox')
+    .forEach(cb => cb.addEventListener('change', () => scheduleFilter(500)));
+
+  // Sắp xếp: lọc ngay
+  qsa('#sort-options .dropdown-item').forEach(item => {
+    item.addEventListener('click', function () {
+      const curr = qs('#current-sort-text');
+      curr.dataset.sort = this.dataset.sort;
+      curr.textContent = this.textContent.trim();
+      showLoading();
+      applyFilter();
     });
+  });
+
+  // Pagination (delegation): luôn thực hiện ngay
+  document.addEventListener('click', function (e) {
+    const a = e.target.closest('.custome-pagination a');
+    if (!a) return;
+    e.preventDefault();
+    showLoading();
+    const page = new URL(a.href).searchParams.get('page') || 1;
+    applyFilter({ page });
+  });
+
+  // Back/Forward
+  window.addEventListener('popstate', function () {
+    const params = new URLSearchParams(window.location.search);
+    showLoading();
+    fetchProducts(params);
+  });
+
+  // ionRangeSlider: chỉ khi THẢ TAY mới schedule filter 2s
+  if ($price && $price.length) {
+    const el    = $price[0];
+    const min   = parseInt(el.dataset.min || el.getAttribute('data-min') || 0);
+    const max   = parseInt(el.dataset.max || el.getAttribute('data-max') || 10000000);
+    const from  = parseInt(el.dataset.from || el.getAttribute('data-from') || min);
+    const to    = parseInt(el.dataset.to   || el.getAttribute('data-to')   || max);
+    const step  = parseInt(el.dataset.step || el.getAttribute('data-step') || 10000);
+    const prefix= el.dataset.prefix || el.getAttribute('data-prefix') || '';
+
+    $price.ionRangeSlider({
+      skin: 'round',
+      type: 'double',
+      min, max, from, to, step, prefix,
+      onStart: (data) => { el.dataset.from = data.from; el.dataset.to = data.to; },
+      onChange: (data) => { el.dataset.from = data.from; el.dataset.to = data.to; },
+      onFinish: (data) => {
+        el.dataset.from = data.from;
+        el.dataset.to   = data.to;
+        scheduleFilter(0);
+      }
+    });
+  }
+});
+
 </script>
+
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.wishlist-btn').forEach(function(btn) {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                const productId = btn.getAttribute('data-product-id');
-                const url = "{{ route('client.wishlist.store') }}";
-                fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            product_id: productId
-                        })
-                    })
-                    .then(async res => {
-                        // Nếu không phải 2xx thì có thể là chưa đăng nhập hoặc lỗi khác
-                        if (res.status === 401) {
-                            // Chưa đăng nhập, chuyển trang login
-                            window.location.href = "{{ route('login') }}";
-                            return;
-                        }
-                        let data = await res.json();
-                        if (data.success) {
-                            if (data.toggled === 'removed') {
-                                btn.setAttribute('data-liked', '0');
-                                btn.classList.remove('fill-heart');
-                            } else {
-                                btn.setAttribute('data-liked', '1');
-                                btn.classList.add('fill-heart');
-                            }
-                            if (window.feather) feather.replace();
+    // Hàm chuyển tiếng Việt có dấu thành không dấu
+function removeVietnameseTones(str) {
+    return str
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')      // loại dấu
+        .replace(/đ/g, 'd').replace(/Đ/g, 'D')
+        .toLowerCase();
+}
 
-                            Swal.fire({
-                                toast: true,
-                                position: 'top-end',
-                                icon: 'success',
-                                title: data.message,
-                                showConfirmButton: false,
-                                timer: 1400
-                            });
-                        } else {
-                            Swal.fire({
-                                toast: true,
-                                position: 'top-end',
-                                icon: 'error',
-                                title: data.message || 'Lỗi thao tác',
-                                showConfirmButton: false,
-                                timer: 1400
-                            });
-                        }
-                    })
-                    .catch(() => {
-                        Swal.fire({
-                            toast: true,
-                            position: 'top-end',
-                            icon: 'error',
-                            title: 'Có lỗi xảy ra, vui lòng thử lại!',
-                            showConfirmButton: false,
-                            timer: 1400
-                        });
-                    });
-            });
+document.addEventListener('DOMContentLoaded', function() {
+    const searchCat = document.getElementById('category-search');
+    const ul = document.getElementById('category-filter-list');
+
+    if (!searchCat || !ul) return;
+
+    searchCat.addEventListener('input', function() {
+        const keyword = removeVietnameseTones(searchCat.value.trim());
+        ul.querySelectorAll('li').forEach(li => {
+            const name = removeVietnameseTones(li.querySelector('.name')?.textContent ?? '');
+            li.style.display = name.includes(keyword) ? '' : 'none';
         });
     });
+});
+
 </script>
 
+<script>
+    // Function để bind quickview events sau khi AJAX
+    function bindQuickviewEventsAfterAjax() {
+        document.querySelectorAll('.quickview-btn').forEach(function(btn) {
+            // Remove existing event listeners to avoid duplicates
+            btn.removeEventListener('click', handleQuickviewClick);
+            btn.addEventListener('click', handleQuickviewClick);
+        });
+    }
+
+    // Function để bind wishlist events sau khi AJAX
+    function bindWishlistEventsAfterAjax() {
+        document.querySelectorAll('.wishlist-btn').forEach(function(btn) {
+            // Remove existing event listeners to avoid duplicates
+            btn.removeEventListener('click', handleWishlistClick);
+            btn.addEventListener('click', handleWishlistClick);
+        });
+    }
+
+    // Handler cho quickview click
+    function handleQuickviewClick(e) {
+        e.preventDefault();
+        const slug = this.dataset.slug;
+        if (!slug) return alert('Không có slug sản phẩm.');
+
+        const modal = document.getElementById('view');
+        if (!modal) return alert('Modal Quick View chưa tồn tại trên trang.');
+
+        // Reset modal trước khi load dữ liệu mới
+        modal.querySelector('.main-quickview-image').src = '';
+        modal.querySelector('.title-name').textContent = '';
+        modal.querySelector('.price').textContent = '';
+        modal.querySelector('.description-text').innerHTML = '';
+        modal.querySelector('.origin-text').innerHTML = '';
+        modal.querySelector('.product-rating').innerHTML = '';
+        modal.querySelector('.brand-list').innerHTML = '';
+        modal.querySelector('.description-thumbnails').innerHTML = '';
+        modal.querySelector('.show-more-btn').style.display = 'none';
+
+        // Mở modal Bootstrap
+        const bsModal = new bootstrap.Modal(modal);
+        bsModal.show();
+
+        fetch(`/client/san-pham/quickview/${slug}`)
+            .then(res => {
+                if (!res.ok) throw new Error(`Lỗi tải dữ liệu (${res.status})`);
+                return res.json();
+            })
+            .then(data => {
+                const product = data.product;
+
+                modal.querySelector('.main-quickview-image').src = product.image || '/assets/images/no-image.png';
+                modal.querySelector('.title-name').textContent = product.name;
+
+                // Biến thể đã là mảng chuẩn, lấy biến thể đầu tiên
+                const variantsArray = product.variants || [];
+                if (variantsArray.length > 0) {
+                    modal.querySelector('.price').textContent = Number(variantsArray[0].price).toLocaleString() + ' đ';
+                } else {
+                    modal.querySelector('.price').textContent = 'Liên hệ';
+                }
+
+                // Render rating sao + số lượng đánh giá
+                var ratingHtml = '<ul class="rating">';
+                var ratingNum = Number(product.avg_rating);
+                for (var i = 1; i <= 5; i++) {
+                    ratingHtml += '<li><i class="fa fa-star' + (i <= Math.round(ratingNum) ? '' : '-o') + '" style="color:#ffc107 !important; font-size:1.3rem !important;"></i></li>';
+                }
+                ratingHtml += '</ul>';
+                ratingHtml += '<span class="ms-2 small text-muted">(' + (product.review_count || 0) + ' đánh giá)</span>';
+                modal.querySelector('.product-rating').innerHTML = ratingHtml;
+                if (window.feather) feather.replace();
+
+                // Render ảnh mô tả
+                const thumbContainer = modal.querySelector('.description-thumbnails');
+                const descriptionImages = product.description_images || [];
+                if (descriptionImages.length > 0) {
+                    descriptionImages.forEach((imgUrl, idx) => {
+                        const thumb = document.createElement('img');
+                        thumb.src = imgUrl;
+                        thumb.alt = 'Ảnh mô tả ' + (idx + 1);
+                        thumb.className = 'desc-thumb';
+                        if (idx === 0) thumb.classList.add('active');
+                        thumb.addEventListener('click', function() {
+                            modal.querySelector('.main-quickview-image').src = imgUrl;
+                            thumbContainer.querySelectorAll('img').forEach(t => t.classList.remove('active'));
+                            thumb.classList.add('active');
+                        });
+                        thumbContainer.appendChild(thumb);
+                    });
+                } else {
+                    thumbContainer.innerHTML = '<span>Không có ảnh mô tả</span>';
+                }
+
+                // Xử lý mô tả sản phẩm với nút "xem thêm"
+                const descElem = modal.querySelector('.description-text');
+                const showMoreBtn = modal.querySelector('.show-more-btn');
+                const maxDescLength = 300; // ký tự
+
+                if (product.description && product.description.replace(/<[^>]+>/g, '').trim().length > maxDescLength) {
+                    // Rút gọn mô tả
+                    const shortDesc = product.description.substring(0, maxDescLength) + '...';
+                    descElem.innerHTML = shortDesc;
+                    descElem.classList.remove('expanded');
+                    showMoreBtn.style.display = 'inline-block';
+                    showMoreBtn.onclick = function() {
+                        // Dẫn đến trang chi tiết sản phẩm thay vì mở rộng mô tả
+                        window.location.href = `/client/san-pham/${slug}`;
+                    };
+                } else {
+                    descElem.innerHTML = product.description || '';
+                    descElem.classList.add('expanded');
+                    showMoreBtn.style.display = 'none';
+                }
+            })
+            .catch(error => {
+                console.error('Lỗi quickview:', error);
+                alert('Có lỗi xảy ra khi tải thông tin sản phẩm.');
+            });
+    }
+
+    // Handler cho wishlist click
+    function handleWishlistClick(e) {
+        e.preventDefault();
+        const productId = this.getAttribute('data-product-id');
+        const url = "{{ route('client.wishlist.store') }}";
+        fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    product_id: productId
+                })
+            })
+            .then(async res => {
+                if (res.status === 401) {
+                    window.location.href = "{{ route('login') }}";
+                    return;
+                }
+                let data = await res.json();
+                if (data.success) {
+                    if (data.toggled === 'removed') {
+                        this.setAttribute('data-liked', '0');
+                        this.classList.remove('fill-heart');
+                    } else {
+                        this.setAttribute('data-liked', '1');
+                        this.classList.add('fill-heart');
+                    }
+                    if (window.feather) feather.replace();
+
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: data.message,
+                        showConfirmButton: false,
+                        timer: 1400
+                    });
+                } else {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'error',
+                        title: data.message || 'Lỗi thao tác',
+                        showConfirmButton: false,
+                        timer: 1400
+                    });
+                }
+            })
+            .catch(() => {
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'error',
+                    title: 'Có lỗi xảy ra, vui lòng thử lại!',
+                    showConfirmButton: false,
+                    timer: 1400
+                });
+            });
+    }
+
+    // Bind events khi trang load lần đầu
+    document.addEventListener('DOMContentLoaded', function() {
+        bindQuickviewEventsAfterAjax();
+        bindWishlistEventsAfterAjax();
+    });
+</script>
 
 <!-- Shop Section End -->
 @endsection

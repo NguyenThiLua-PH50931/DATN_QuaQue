@@ -2,9 +2,15 @@
 <div id="product-list-wrapper">
     <div class="row g-sm-4 g-3 row-cols-xxl-4 row-cols-xl-3 row-cols-lg-2 row-cols-md-3 row-cols-2 product-list-section">
         @forelse ($products as $product)
+            @php
+                // Kiểm tra sản phẩm có còn hàng không
+                $variantInStock = $product->variants->firstWhere(
+                    fn($v) => $v->active == 1 && $v->stock > 0,
+                );
+                $isOutOfStock = !$variantInStock || $product->active != 1;
+            @endphp
             <div>
-                <div class="product-box-3 h-100 wow fadeInUp @if (!$product->variants->firstWhere(fn($v) => $v->stock > 0) || $product->active != 1) out-of-stock @endif"
-                    data-wow-delay="0.05s">
+                <div class="product-box-3 h-100 wow fadeInUp @if($isOutOfStock) out-of-stock @endif" data-wow-delay="0.05s">
                     <div class="product-header">
                         <div class="product-image">
                             <a href="{{ route('client.product.detail', $product->slug) }}">
@@ -126,8 +132,8 @@
                                     text-align: center;
                                 }
 
-                                /* Overlay mờ cho sản phẩm hết hàng */
-                                .product-box-3.out-of-stock .product-image::after {
+                                /* Overlay mờ cho sản phẩm hết hàng - chỉ che ảnh, không che button */
+                                .product-box-3.out-of-stock .product-image > a::after {
                                     content: "";
                                     position: absolute;
                                     top: 0;
@@ -135,12 +141,31 @@
                                     right: 0;
                                     bottom: 0;
                                     background: rgba(0, 0, 0, 0.3);
-                                    border-radius: 16px;
-                                    z-index: 0;
+                                    border-radius: 12px;
+                                    z-index: 1;
                                 }
 
                                 .product-box-3.out-of-stock .product-image>a>img {
                                     filter: grayscale(30%);
+                                }
+
+                                /* Đảm bảo các button vẫn có thể click được */
+                                .product-box-3.out-of-stock .product-option {
+                                    z-index: 20;
+                                    position: relative;
+                                }
+
+                                .product-box-3.out-of-stock .product-option a {
+                                    background: rgba(255, 255, 255, 0.95);
+                                    border-radius: 50%;
+                                    transition: all 0.3s ease;
+                                    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+                                }
+
+                                .product-box-3.out-of-stock .product-option a:hover {
+                                    background: rgba(255, 255, 255, 1);
+                                    transform: scale(1.1);
+                                    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
                                 }
                             </style>
 
@@ -219,12 +244,7 @@
                                 <span>({{ number_format($product->reviews->avg('rating'), 1) ?? 0 }})</span>
                             </div>
 
-                            @php
-                                // Kiểm tra stock > 0 thay vì active
-                                $variantInStock = $product->variants->firstWhere(fn($v) => $v->stock > 0);
-                            @endphp
-
-                            @if ($variantInStock && $product->active == 1)
+                            @if (!$isOutOfStock)
                                 <h6 class="unit">{{ $variantInStock->name }}</h6>
                                 <h5 class="price">
                                     <span
@@ -246,6 +266,42 @@
         {{ $products->withQueryString()->links() }}
     </nav>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.wishlist-btn').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const productId = btn.getAttribute('data-product-id');
+            const url = "{{ route('client.wishlist.store') }}";
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    product_id: productId
+                })
+            })
+            .then(async res => {
+                // Nếu không phải 2xx thì có thể là chưa đăng nhập hoặc lỗi khác
+                if (res.status === 401) {
+                    // Chưa đăng nhập, chuyển trang login
+                    window.location.href = "{{ route('login') }}";
+                    return;
+                }
+                let data = await res.json();
+                if (data.success) {
+                    if (data.toggled === 'removed') {
+                        btn.setAttribute('data-liked', '0');
+                        btn.classList.remove('fill-heart');
+                    } else {
+                        btn.setAttribute('data-liked', '1');
+                        btn.classList.add('fill-heart');
+                    }
+                    if (window.feather) feather.replace();
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
