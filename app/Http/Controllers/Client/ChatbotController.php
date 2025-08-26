@@ -43,14 +43,13 @@ class ChatbotController extends Controller
 
         $categoriesArr = \DB::table('categories')
             ->whereNull('deleted_at')
-            ->select('name', 'slug')
+            ->select('name', 'id')
             ->get();
 
         $categoriesList = '';
         foreach ($categoriesArr as $c) {
-            $categoriesList .= "- [{$c->name}](/client/danh-muc/{$c->slug})\n";
+            $categoriesList .= "- [{$c->name}](/client/san-pham/?dm={$c->id}&page=1)\n";
         }
-
         // System Prompt
         $systemPrompt = <<<EOT
 Bạn là trợ lý ảo của Quà Quê.
