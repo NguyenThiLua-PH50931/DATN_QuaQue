@@ -26,7 +26,7 @@
                                     @endif --}}
 
                                     <form class="theme-form theme-form-2 mega-form" method="POST"
-                                        action="{{ route('admin.coupon.store') }}">
+                                        action="{{ route('admin.coupon.store') }}" novalidate>
                                         @csrf
                                         <div class="row">
 
@@ -78,11 +78,19 @@
                                                 <div class="col-md-9 col-lg-10">
                                                     <select class="form-select" name="condition_type" id="condition_type">
                                                         <option value="">-- Chọn điều kiện --</option>
-                                                        <option value="new_user_30d">Tài khoản đăng ký dưới 30 ngày
-                                                            (Freeship)</option>
-                                                        <option value="first_order">Đơn hàng đầu tiên (Giảm giá đơn hàng)
+                                                        <option value="new_user_30d"
+                                                            {{ old('condition_type') === 'new_user_30d' ? 'selected' : '' }}>
+                                                            Tài khoản đăng ký dưới 30 ngày (Freeship)
+                                                        </option>
+                                                        <option value="first_order"
+                                                            {{ old('condition_type') === 'first_order' ? 'selected' : '' }}>
+                                                            Đơn hàng đầu tiên (Giảm giá đơn hàng)
                                                         </option>
                                                     </select>
+                                                    @error('condition_type')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
+
                                                     <div class="mb-3 d-none" id="condition-desc"></div>
                                                 </div>
                                             </div>
@@ -265,9 +273,11 @@
                 const scopeSelect = document.getElementById('scope');
                 const conditionTypeSelect = document.getElementById('condition_type');
                 const typeSelect = document.getElementById('discount-type-select');
+
                 const discountTypeRow = document.getElementById('discount-type-row') || document.querySelector(
                     'select[name="discount_type"]')?.closest('.row');
                 const discountTypeSelect = document.querySelector('select[name="discount_type"]');
+
                 const discountValueRow = document.getElementById('discount-value-row') || document.querySelector(
                     'input[name="discount_value"]')?.closest('.row');
                 const minOrderRow = document.getElementById('min-order-row') || document.querySelector(
@@ -275,35 +285,31 @@
                 const maxDiscountRow = document.getElementById('max-discount-row') || document.querySelector(
                     'input[name="max_discount_amount"]')?.closest('.row');
                 const maxDiscountInput = document.querySelector('input[name="max_discount_amount"]');
+
                 const startDateRow = document.getElementById('start-date-row') || document.querySelector(
                     'input[name="start_date"]')?.closest('.row');
                 const endDateRow = document.getElementById('end-date-row') || document.querySelector(
                     'input[name="end_date"]')?.closest('.row');
+
                 const usageInput = document.querySelector('input[name="usage_limit"]');
                 const usageRow = usageInput?.closest('.row');
                 const condRow = document.getElementById('condition-type-row');
 
-                // Toggle hiện/ẩn max_discount_amount field
                 function toggleMaxDiscountField() {
                     if (!discountTypeSelect || !maxDiscountRow) return;
                     if (discountTypeSelect.value === 'percent') {
                         maxDiscountRow.classList.remove('d-none');
                         if (maxDiscountInput) {
-                            maxDiscountInput.required = true; -
-                            const discountInput = document.querySelector('input[name="discount_value"]'); -
-                            if (discountInput) discountInput.setAttribute('max', '100'); // BỎ DÒNG NÀY
+                            maxDiscountInput.required = true;
                         }
                     } else {
                         maxDiscountRow.classList.add('d-none');
                         if (maxDiscountInput) {
                             maxDiscountInput.required = false;
                             maxDiscountInput.value = '';
-                        } -
-                        const discountInput = document.querySelector('input[name="discount_value"]'); -
-                        if (discountInput) discountInput.removeAttribute('max'); // BỎ DÒNG NÀY
+                        }
                     }
                 }
-
 
                 function updateFormFields() {
                     const scope = scopeSelect.value;
@@ -318,41 +324,45 @@
 
                     if (scope === 'conditional') {
                         condRow?.classList.remove('d-none');
+
                         if (conditionType && conditionConfig[conditionType]) {
                             // Ẩn ngày
                             startDateRow?.classList.add('d-none');
                             endDateRow?.classList.add('d-none');
-                            // Chọn & khóa loại mã
+
+                            // Chọn & khóa loại mã theo condition
                             if (typeSelect) {
                                 typeSelect.value = (conditionConfig[conditionType].type === 'freeship') ?
-                                    'free_shipping' :
-                                    'order_discount';
+                                    'free_shipping' : 'order_discount';
                                 typeSelect.readOnly = true;
                                 typeSelect.style.pointerEvents = 'none';
                                 typeSelect.style.background = '#f5f5f5';
                             }
-                            // Hiện/ẩn field discount/freeship
+
+                            // Hiện/ẩn field theo loại
                             if (conditionConfig[conditionType].type === 'discount') {
                                 discountTypeRow?.classList.remove('d-none');
                                 discountValueRow?.classList.remove('d-none');
                                 minOrderRow?.classList.remove('d-none');
-                                // toggle maxDiscount theo loại giảm giá
                                 toggleMaxDiscountField();
-                            } else if (conditionConfig[conditionType].type === 'freeship') {
+                            } else {
+                                // freeship
                                 discountTypeRow?.classList.add('d-none');
                                 discountValueRow?.classList.add('d-none');
-                                minOrderRow?.classList.remove('d-none'); // HIỆN
+                                minOrderRow?.classList.remove('d-none');
                                 maxDiscountRow?.classList.add('d-none');
                             }
-                            // usage_limit = 1, readonly, KHÔNG disabled!
+
+                            // usage_limit = 1, readonly
                             usageRow?.classList.remove('d-none');
                             if (usageInput) {
                                 usageInput.value = 1;
                                 usageInput.readOnly = true;
                                 usageInput.style.background = "#f5f5f5";
                             }
+
                         } else {
-                            // Chưa chọn điều kiện cụ thể
+                            // Chưa chọn condition cụ thể
                             if (typeSelect) {
                                 typeSelect.readOnly = true;
                                 typeSelect.style.pointerEvents = 'none';
@@ -372,30 +382,33 @@
                             startDateRow?.classList.add('d-none');
                             endDateRow?.classList.add('d-none');
                         }
+
                     } else {
-                        // GLOBAL (toàn hệ thống)
+                        // GLOBAL
                         condRow?.classList.add('d-none');
+
                         if (typeSelect) {
                             typeSelect.readOnly = false;
                             typeSelect.style.pointerEvents = 'auto';
                             typeSelect.style.background = '';
                         }
-                        // Nếu là miễn phí vận chuyển toàn hệ thống: hiện minOrderRow, ẩn field giảm giá
+
                         if (typeSelect?.value === 'free_shipping') {
                             discountTypeRow?.classList.add('d-none');
                             discountValueRow?.classList.add('d-none');
-                            minOrderRow?.classList.remove('d-none'); // luôn hiện!
+                            minOrderRow?.classList.remove('d-none');
                             maxDiscountRow?.classList.add('d-none');
                         } else {
                             discountTypeRow?.classList.remove('d-none');
                             discountValueRow?.classList.remove('d-none');
                             minOrderRow?.classList.remove('d-none');
-                            // toggle maxDiscount theo loại giảm giá
                             toggleMaxDiscountField();
                         }
+
                         startDateRow?.classList.remove('d-none');
                         endDateRow?.classList.remove('d-none');
                         usageRow?.classList.remove('d-none');
+
                         if (usageInput) {
                             usageInput.readOnly = false;
                             usageInput.style.background = '';
@@ -407,15 +420,14 @@
                 scopeSelect.addEventListener('change', updateFormFields);
                 conditionTypeSelect?.addEventListener('change', updateFormFields);
                 typeSelect?.addEventListener('change', updateFormFields);
-                if (discountTypeSelect) {
-                    discountTypeSelect.addEventListener('change', toggleMaxDiscountField);
-                }
+                discountTypeSelect?.addEventListener('change', toggleMaxDiscountField);
 
-                // Gọi 1 lần lúc đầu để set đúng trạng thái
+                // Khởi tạo
                 updateFormFields();
                 toggleMaxDiscountField();
             });
         </script>
     @endpush
+
     @includeIf('backend.footer')
 @endsection
