@@ -92,6 +92,9 @@
                             </div>
                         </form>
                     </div>
+                    <div class="other-log-in">
+                            <h6></h6>
+                        </div>
                     <div class="sign-up-box">
                         <h4>Bạn đã có tài khoản?</h4>
                         <a href="{{ route('login') }}">Đăng nhập</a>

@@ -324,7 +324,7 @@
                                                                     <label class="form-check-label"
                                                                         for="shipping_method_{{ $method->id }}">
                                                                         {{ $method->name }}
-                                                                        <span>({{ $method->description }})</span>
+                                                                        {{-- <span>({{ $method->description }})</span> --}}
                                                                     </label>
                                                                 </div>
                                                             </div>
