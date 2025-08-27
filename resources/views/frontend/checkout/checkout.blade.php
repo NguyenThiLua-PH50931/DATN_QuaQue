@@ -528,38 +528,139 @@
                                     <ul class="summery-contain">
                                         @foreach ($cartItems as $item)
                                             @if (isset($item->product))
-                                                <li>
+                                                <li class="mini-order v3">
                                                     @php
-                                                        $checkoutImageUrl = null;
-                                                        if (!empty($item->variant?->image)) {
-                                                            $checkoutImageUrl = asset(
-                                                                'storage/' . $item->variant->image,
-                                                            );
-                                                        } elseif (!empty($item->product?->image)) {
-                                                            $checkoutImageUrl = asset(
-                                                                'storage/' . $item->product->image,
-                                                            );
-                                                        } else {
-                                                            $checkoutImageUrl = asset('images/placeholder.png'); // nếu có ảnh mặc định
-                                                        }
+                                                        $checkoutImageUrl = $item->variant?->image
+                                                            ? asset('storage/' . $item->variant->image)
+                                                            : ($item->product?->image
+                                                                ? asset('storage/' . $item->product->image)
+                                                                : asset('images/placeholder.png'));
+
+                                                        $unitPrice = $item->price ?? ($item->product->price ?? 0);
+                                                        $lineTotal = $unitPrice * ($item->quantity ?? 1);
+
+                                                        // tên SP: tối đa 7 chữ
+                                                        $fullName = $item->product->name ?? '';
+                                                        $pWords = preg_split('/\s+/u', trim($fullName));
+                                                        $shortName7 =
+                                                            count($pWords) > 7
+                                                                ? implode(' ', array_slice($pWords, 0, 7)) . '…'
+                                                                : $fullName;
+
+                                                        // tên biến thể: tối đa 3 chữ
+                                                        $variantName = $item->variant->name ?? '';
+                                                        $vWords = preg_split('/\s+/u', trim($variantName));
+                                                        $shortVariant3 = $variantName
+                                                            ? (count($vWords) > 7
+                                                                ? implode(' ', array_slice($vWords, 0, 3)) . '…'
+                                                                : $variantName)
+                                                            : '';
                                                     @endphp
 
-                                                    <img src="{{ $checkoutImageUrl }}"
-                                                        class="img-fluid blur-up lazyloaded checkout-image"
+                                                    <img src="{{ $checkoutImageUrl }}" class="mo-thumb"
                                                         alt="{{ $item->variant->name ?? $item->product->name }}">
 
-                                                    <h4>
-                                                        {{ $item->product->name }}
-                                                        @if ($item->variant)
-                                                            ({{ $item->variant->name }})
-                                                        @endif
-                                                        <span>X {{ $item->quantity }}</span>
-                                                    </h4>
-                                                    <h4 class="price">
-                                                        {{ number_format(($item->price ?? $item->product->price) * $item->quantity, 0, ',', '.') }}
-                                                        ₫
-                                                    </h4>
+                                                    <div class="mo-body">
+                                                        <div class="mo-title" title="{{ $fullName }}">
+                                                            {{ $shortName7 }}</div>
+                                                        <div class="mo-sub">
+                                                            @if ($shortVariant3)
+                                                                <span class="mo-variant"
+                                                                    title="{{ $variantName }}">{{ $shortVariant3 }}</span>
+                                                            @endif
+                                                            <span class="mo-qty">x {{ $item->quantity }}</span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="mo-price">{{ number_format($lineTotal, 0, ',', '.') }} ₫
+                                                    </div>
                                                 </li>
+                                                <style>
+                                                    /* ===== Order summary – layout v3 ===== */
+                                                    .summery-contain .mini-order.v3 {
+                                                        display: grid;
+                                                        grid-template-columns: 56px 1fr auto;
+                                                        /* ảnh | nội dung | giá */
+                                                        gap: 12px 16px;
+                                                        align-items: center;
+                                                        padding: 10px 0;
+                                                        border-bottom: 1px solid #eee;
+                                                    }
+
+                                                    .summery-contain .mini-order.v3:last-child {
+                                                        border-bottom: none;
+                                                    }
+
+                                                    .mo-thumb {
+                                                        width: 56px;
+                                                        height: 56px;
+                                                        object-fit: cover;
+                                                        border-radius: 8px;
+                                                        flex: 0 0 56px;
+                                                    }
+
+                                                    .mo-body {
+                                                        min-width: 0;
+                                                        display: flex;
+                                                        flex-direction: column;
+                                                        gap: 6px;
+                                                    }
+
+                                                    .mo-title {
+                                                        font-weight: 600;
+                                                        line-height: 1.25;
+                                                        white-space: nowrap;
+                                                        overflow: hidden;
+                                                        text-overflow: ellipsis;
+                                                        color: #111;
+                                                        /* đen */
+                                                    }
+
+                                                    .mo-sub {
+                                                        display: flex;
+                                                        align-items: center;
+                                                        gap: 10px;
+                                                        min-width: 0;
+                                                        font-size: .92rem;
+                                                        color: #111;
+                                                        /* đen nhạt cũng ok, nếu muốn: #444 */
+                                                    }
+
+                                                    .mo-variant {
+                                                        max-width: 70%;
+                                                        white-space: nowrap;
+                                                        overflow: hidden;
+                                                        text-overflow: ellipsis;
+                                                    }
+
+                                                    .mo-qty {
+                                                        padding: 2px 8px;
+                                                        border: 1px solid #e5e5e5;
+                                                        border-radius: 999px;
+                                                        font-size: .85rem;
+                                                        line-height: 1;
+                                                    }
+
+                                                    .mo-price {
+                                                        font-weight: 700;
+                                                        white-space: nowrap;
+                                                        color: #111;
+                                                        /* giá đen */
+                                                        justify-self: end;
+                                                    }
+
+                                                    /* Responsive: màn nhỏ thì cho giá xuống dòng 2 vẫn căn phải */
+                                                    @media (max-width: 480px) {
+                                                        .summery-contain .mini-order.v3 {
+                                                            grid-template-columns: 56px 1fr;
+                                                        }
+
+                                                        .mo-price {
+                                                            grid-column: 2 / 3;
+                                                            justify-self: end;
+                                                        }
+                                                    }
+                                                </style>
                                             @endif
                                         @endforeach
                                     </ul>
