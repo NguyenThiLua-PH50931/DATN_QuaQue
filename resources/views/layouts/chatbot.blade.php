@@ -14,7 +14,7 @@
 <style>
   .chatbot-container {
     width: 320px;
-    max-height: 500px;
+    max-height: 450px;
     display: flex;
     flex-direction: column;
     border-radius: 15px;

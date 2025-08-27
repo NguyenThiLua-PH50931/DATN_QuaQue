@@ -297,7 +297,7 @@ class ProductController extends Controller
         $categories = Category::withCount('products')->get();
         $regions = Region::withCount('products')->get();
 
-                // AJAX partial Check stock
+        // AJAX partial Check stock
         if ($request->ajax()) {
             // Thêm logic kiểm tra stock cho AJAX partial
             $products->getCollection()->transform(function ($product) {
@@ -350,209 +350,219 @@ class ProductController extends Controller
         // Full page
         return view('frontend.products.catalog', compact('products', 'categories', 'regions'));
     }
-public function show($slug, Request $request)
-{
-    // 1) Lấy sản phẩm + quan hệ cần thiết (đã eager-load categories để dùng pluck từ collection)
-    $product = Product::with([
-        'images',
-        'categories',
-        'region',
-        'variants.attributeValues.attribute',
-        'reviews.user',
-        'reviews.productVariantId',
-        'comments.user',
-        'comments.replies.user',
-    ])
-        ->where('slug', $slug)
-        // ->where('active', 1) // nếu muốn chỉ hiển thị sp active thì bật lại
-        ->whereNull('deleted_at')
-        ->firstOrFail();
+    public function show($slug, Request $request)
+    {
+        // 1) Lấy sản phẩm + quan hệ cần thiết (đã eager-load categories để dùng pluck từ collection)
+        $product = Product::with([
+            'images',
+            'categories',
+            'region',
+            'variants.attributeValues.attribute',
+            'reviews.user',
+            'reviews.productVariantId',
+            'comments.user',
+            'comments.replies.user',
+        ])
+            ->where('slug', $slug)
+            // ->where('active', 1) // nếu muốn chỉ hiển thị sp active thì bật lại
+            ->whereNull('deleted_at')
+            ->firstOrFail();
 
-    // 2) Tăng view
-    $this->increaseView($product);
+        // 2) Tăng view
+        $this->increaseView($product);
 
-    // 3) Log tìm kiếm (nếu có)
-    ProductSearch::create([
-        'user_id'    => auth()->id(),
-        'product_id' => $product->id,
-        'keyword'    => $request->input('q'),
-    ]);
+        // 3) Log tìm kiếm (nếu có)
+        ProductSearch::create([
+            'user_id'    => auth()->id(),
+            'product_id' => $product->id,
+            'keyword'    => $request->input('q'),
+        ]);
 
-    // 4) Lấy biến thể đang active + build options cho UI
-    $variants = $product->variants()
-        ->where('active', 1)
-        ->with('attributeValues.attribute')
-        ->get();
+        // 4) Lấy biến thể đang active + build options cho UI
+        $variants = $product->variants()
+            ->where('active', 1)
+            ->with('attributeValues.attribute')
+            ->get();
 
-    // Group attribute -> values
-    $attributeOptions = [];
-    foreach ($variants as $variant) {
-        foreach ($variant->attributeValues as $value) {
-            $attrId   = $value->attribute->id;
-            $attrName = $value->attribute->name;
+        // Group attribute -> values
+        $attributeOptions = [];
+        foreach ($variants as $variant) {
+            foreach ($variant->attributeValues as $value) {
+                $attrId   = $value->attribute->id;
+                $attrName = $value->attribute->name;
 
-            if (!isset($attributeOptions[$attrId])) {
-                $attributeOptions[$attrId] = [
-                    'name'   => $attrName,
-                    'values' => [],
-                ];
+                if (!isset($attributeOptions[$attrId])) {
+                    $attributeOptions[$attrId] = [
+                        'name'   => $attrName,
+                        'values' => [],
+                    ];
+                }
+                $attributeOptions[$attrId]['values'][$value->id] = $value->value;
             }
-            $attributeOptions[$attrId]['values'][$value->id] = $value->value;
         }
-    }
 
-    // Map variant cho JS/AJAX
-// Map variant cho JS/AJAX (show)
-$variantMap = $variants->map(function ($v) {
-    return [
-        'id'          => (int) ($v->id),
-        'active'      => (int) ($v->active),
-        'sku'         => (string) ($v->sku ?? ''),
-        'stock'       => (int) ($v->stock ?? 0),
-        'price'       => isset($v->price) ? (float) $v->price : null,
-        'image'       => $v->image ? asset('storage/'.$v->image) : null, // URL tuyệt đối
-        'value_ids'   => $v->attributeValues
-                            ->pluck('id')
-                            ->map(fn ($id) => (int) $id)
-                            ->sort()
-                            ->values()
-                            ->all(),
-        'description' => $v->description,   // để tab "Mô tả biến thể" cập nhật được
-        'name'        => $v->name ?? null,  // nếu bạn có trường name cho biến thể
-    ];
-})->values()->all(); // luôn trả array 0-based cho @json
+        // Map variant cho JS/AJAX
+        // Map variant cho JS/AJAX (show)
+        $variantMap = $variants->map(function ($v) {
+            return [
+                'id'          => (int) ($v->id),
+                'active'      => (int) ($v->active),
+                'sku'         => (string) ($v->sku ?? ''),
+                'stock'       => (int) ($v->stock ?? 0),
+                'price'       => isset($v->price) ? (float) $v->price : null,
+                'image'       => $v->image ? asset('storage/' . $v->image) : null, // URL tuyệt đối
+                'value_ids'   => $v->attributeValues
+                    ->pluck('id')
+                    ->map(fn($id) => (int) $id)
+                    ->sort()
+                    ->values()
+                    ->all(),
+                'description' => $v->description,   // để tab "Mô tả biến thể" cập nhật được
+                'name'        => $v->name ?? null,  // nếu bạn có trường name cho biến thể
+            ];
+        })->values()->all(); // luôn trả array 0-based cho @json
 
 
-    // 5) Lấy ID các danh mục của sản phẩm hiện tại (n-n qua product_category)
-    $productCategoryIds = $product->categories->pluck('id')->map(fn ($id) => (int) $id)->toArray();
+        // 5) Lấy ID các danh mục của sản phẩm hiện tại (n-n qua product_category)
+        $productCategoryIds = $product->categories->pluck('id')->map(fn($id) => (int) $id)->toArray();
 
-    // 6) Lấy sản phẩm liên quan:
-    // - Cùng ÍT NHẤT 1 danh mục với sản phẩm hiện tại
-    // - Ưu tiên sản phẩm trùng NHIỀU danh mục hơn (same_categories_count desc)
-    if (!empty($productCategoryIds)) {
-        $relatedProducts = Product::query()
-            ->with([
-                'images',
-                'variants' => fn ($q) => $q->where('active', 1),
-                'categories:id,name',
-            ])
+        // 6) Lấy sản phẩm liên quan:
+        // - Cùng ÍT NHẤT 1 danh mục với sản phẩm hiện tại
+        // - Ưu tiên sản phẩm trùng NHIỀU danh mục hơn (same_categories_count desc)
+        if (!empty($productCategoryIds)) {
+            $relatedProducts = Product::query()
+                ->with([
+                    'images',
+                    'variants' => fn($q) => $q->where('active', 1),
+                    'categories:id,name',
+                ])
+                ->where('active', 1)
+                ->whereNull('deleted_at')
+                ->whereKeyNot($product->id)
+                ->whereHas('categories', fn($q) => $q->whereIn('categories.id', $productCategoryIds))
+                // Chỉ lấy sản phẩm có ít nhất 1 variant active, còn hàng!
+                ->whereHas('variants', function ($q) {
+                    $q->where('active', 1)->where('stock', '>', 0);
+                })
+                ->withCount([
+                    'categories as same_categories_count' => fn($q) => $q->whereIn('categories.id', $productCategoryIds),
+                ])
+                ->orderByDesc('same_categories_count')
+                ->latest('products.id')
+                ->limit(15)
+                ->get();
+        } else {
+            $relatedProducts = collect();
+        }
+
+        if ($relatedProducts->isEmpty()) {
+            $relatedProducts = Product::query()
+                ->with([
+                    'images',
+                    'variants' => fn($q) => $q->where('active', 1),
+                    'categories:id,name',
+                ])
+                ->where('active', 1)
+                ->whereNull('deleted_at')
+                ->whereKeyNot($product->id)
+                // Chỉ lấy sản phẩm có ít nhất 1 variant active, còn hàng!
+                ->whereHas('variants', function ($q) {
+                    $q->where('active', 1)->where('stock', '>', 0);
+                })
+                ->inRandomOrder()
+                ->limit(15)
+                ->get();
+        }
+
+        $relatedTitle = $relatedProducts->isEmpty()
+            ? 'Các sản phẩm nổi bật khác'
+            : 'Sản phẩm cùng danh mục';
+
+        // 8) Sản phẩm thịnh hành (giữ nguyên logic của bạn)
+        $topViewedProducts = AdminProduct::with('categories')
             ->where('active', 1)
-            ->whereNull('deleted_at')
-            ->whereKeyNot($product->id)
-            ->whereHas('categories', fn ($q) => $q->whereIn('categories.id', $productCategoryIds))
-            ->withCount([
-                'categories as same_categories_count' => fn ($q) => $q->whereIn('categories.id', $productCategoryIds),
-            ])
-            ->orderByDesc('same_categories_count')
-            ->latest('products.id') // hoặc ->latest() nếu muốn theo created_at
-            ->limit(15)
+            ->orderBy('view_total', 'desc')
+            ->limit(8)
             ->get();
-    } else {
-        // Nếu sp hiện tại không có danh mục → bỏ qua bước "liên quan", chuyển sang random
-        $relatedProducts = collect();
-    }
 
-    // 7) Fallback: nếu không có sản phẩm cùng danh mục thì lấy ngẫu nhiên
-    if ($relatedProducts->isEmpty()) {
-        $relatedProducts = Product::query()
-            ->with([
-                'images',
-                'variants' => fn ($q) => $q->where('active', 1),
-                'categories:id,name',
-            ])
-            ->where('active', 1)
-            ->whereNull('deleted_at')
+        // 9) Banner trái (giữ nguyên)
+        $now = now();
+        $productSectionPromoLeftTop = Banner::where('location', 'product_section_promo_left_top')
+            ->where('active', true)
+            ->where(function ($query) use ($now) {
+                $query->where(function ($q) use ($now) {
+                    $q->where('display_at', '<=', $now)
+                        ->where(function ($q2) use ($now) {
+                            $q2->where('display_end_at', '>=', $now)
+                                ->orWhereNull('display_end_at');
+                        });
+                });
+            })
+            ->first();
+
+        // 10) Top sp tháng (giữ nguyên)
+        $topMonthlyProducts = Product::where('active', 1)
             ->whereKeyNot($product->id)
-            ->inRandomOrder()
-            ->limit(15)
+            ->whereHas('variants', function ($q) {
+                $q->where('stock', '>', 0)->where('active', 1);
+            })
+            ->orderByDesc('view_month')
+            ->limit(4)
             ->get();
+
+
+        // 11) Reviews + thống kê sao (giữ nguyên ý tưởng, gọn code)
+        $reviews = $product->reviews()
+            ->with(['user', 'productVariantId'])
+            ->orderByDesc('created_at')
+            ->get();
+
+        $totalReviews   = $reviews->count();
+        $averageRating  = $totalReviews > 0 ? round($reviews->avg('rating'), 2) : 0;
+
+        $ratingsCount = [];
+        for ($i = 1; $i <= 5; $i++) {
+            $ratingsCount[$i] = $reviews->where('rating', $i)->count();
+        }
+
+        // 12) User, bình luận
+        $currentUser = Auth::user();
+
+        $comments = $product->comments()
+            ->with(['user', 'replies.user'])
+            ->where('status', 'visible')
+            ->latest()
+            ->get();
+
+        // 13) Các option filter trong UI review
+        $starOptions    = $reviews->pluck('rating')->unique()->sortDesc()->values();
+        $variantOptions = $reviews->pluck('product_variant_value_id')->unique()->values();
+
+        // 14) Trạng thái active để view dùng
+        $isActive = ((int) $product->active) === 1;
+
+        // 15) Trả về view
+        return view('frontend.products.detail', [
+            'product'                    => $product,
+            'variants'                   => $variants,
+            'attributes'                 => $attributeOptions,
+            'variantMap'                 => $variantMap,
+            'relatedProducts'            => $relatedProducts,
+            'relatedTitle'               => $relatedTitle,
+            'topMonthlyProducts'         => $topMonthlyProducts,
+            'productSectionPromoLeftTop' => $productSectionPromoLeftTop,
+            'reviews'                    => $reviews,
+            'topViewedProducts'          => $topViewedProducts,
+            'comments'                   => $comments,
+            'currentUser'                => $currentUser,
+            'averageRating'              => $averageRating,
+            'totalReviews'               => $totalReviews,
+            'ratingsCount'               => $ratingsCount,
+            'starOptions'                => $starOptions,
+            'variantOptions'             => $variantOptions,
+            'isActive'                   => $isActive,
+        ]);
     }
-
-    $relatedTitle = $relatedProducts->isEmpty()
-        ? 'Các sản phẩm nổi bật khác'
-        : 'Sản phẩm cùng danh mục';
-
-    // 8) Sản phẩm thịnh hành (giữ nguyên logic của bạn)
-    $topViewedProducts = AdminProduct::with('categories')
-        ->where('active', 1)
-        ->orderBy('view_total', 'desc')
-        ->limit(8)
-        ->get();
-
-    // 9) Banner trái (giữ nguyên)
-    $now = now();
-    $productSectionPromoLeftTop = Banner::where('location', 'product_section_promo_left_top')
-        ->where('active', true)
-        ->where(function ($query) use ($now) {
-            $query->where(function ($q) use ($now) {
-                $q->where('display_at', '<=', $now)
-                    ->where(function ($q2) use ($now) {
-                        $q2->where('display_end_at', '>=', $now)
-                           ->orWhereNull('display_end_at');
-                    });
-            });
-        })
-        ->first();
-
-    // 10) Top sp tháng (giữ nguyên)
-    $topMonthlyProducts = Product::where('active', 1)
-        ->whereKeyNot($product->id)
-        ->orderByDesc('view_month')
-        ->limit(4)
-        ->get();
-
-    // 11) Reviews + thống kê sao (giữ nguyên ý tưởng, gọn code)
-    $reviews = $product->reviews()
-        ->with(['user', 'productVariantId'])
-        ->orderByDesc('created_at')
-        ->get();
-
-    $totalReviews   = $reviews->count();
-    $averageRating  = $totalReviews > 0 ? round($reviews->avg('rating'), 2) : 0;
-
-    $ratingsCount = [];
-    for ($i = 1; $i <= 5; $i++) {
-        $ratingsCount[$i] = $reviews->where('rating', $i)->count();
-    }
-
-    // 12) User, bình luận
-    $currentUser = Auth::user();
-
-    $comments = $product->comments()
-        ->with(['user', 'replies.user'])
-        ->where('status', 'visible')
-        ->latest()
-        ->get();
-
-    // 13) Các option filter trong UI review
-    $starOptions    = $reviews->pluck('rating')->unique()->sortDesc()->values();
-    $variantOptions = $reviews->pluck('product_variant_value_id')->unique()->values();
-
-    // 14) Trạng thái active để view dùng
-    $isActive = ((int) $product->active) === 1;
-
-    // 15) Trả về view
-    return view('frontend.products.detail', [
-        'product'                    => $product,
-        'variants'                   => $variants,
-        'attributes'                 => $attributeOptions,
-        'variantMap'                 => $variantMap,
-        'relatedProducts'            => $relatedProducts,
-        'relatedTitle'               => $relatedTitle,
-        'topMonthlyProducts'         => $topMonthlyProducts,
-        'productSectionPromoLeftTop' => $productSectionPromoLeftTop,
-        'reviews'                    => $reviews,
-        'topViewedProducts'          => $topViewedProducts,
-        'comments'                   => $comments,
-        'currentUser'                => $currentUser,
-        'averageRating'              => $averageRating,
-        'totalReviews'               => $totalReviews,
-        'ratingsCount'               => $ratingsCount,
-        'starOptions'                => $starOptions,
-        'variantOptions'             => $variantOptions,
-        'isActive'                   => $isActive,
-    ]);
-}
 
     public function quickView($slug)
     {
@@ -586,25 +596,25 @@ $variantMap = $variants->map(function ($v) {
         }
 
         // Mapping variant (dùng cho JS, AJAX tìm variant theo tổ hợp value id)
-// Map variant cho JS/AJAX (quickView)
-$variantMap = $variants->map(function ($v) {
-    return [
-        'id'          => (int) ($v->id),
-        'active'      => (int) ($v->active),
-        'sku'         => (string) ($v->sku ?? ''),
-        'stock'       => (int) ($v->stock ?? 0),
-        'price'       => isset($v->price) ? (float) $v->price : null,
-        'image'       => $v->image ? asset('storage/'.$v->image) : null,
-        'value_ids'   => $v->attributeValues
-                            ->pluck('id')
-                            ->map(fn ($id) => (int) $id)
-                            ->sort()
-                            ->values()
-                            ->all(),
-        'description' => $v->description,
-        'name'        => $v->name ?? null,
-    ];
-})->values()->all();
+        // Map variant cho JS/AJAX (quickView)
+        $variantMap = $variants->map(function ($v) {
+            return [
+                'id'          => (int) ($v->id),
+                'active'      => (int) ($v->active),
+                'sku'         => (string) ($v->sku ?? ''),
+                'stock'       => (int) ($v->stock ?? 0),
+                'price'       => isset($v->price) ? (float) $v->price : null,
+                'image'       => $v->image ? asset('storage/' . $v->image) : null,
+                'value_ids'   => $v->attributeValues
+                    ->pluck('id')
+                    ->map(fn($id) => (int) $id)
+                    ->sort()
+                    ->values()
+                    ->all(),
+                'description' => $v->description,
+                'name'        => $v->name ?? null,
+            ];
+        })->values()->all();
 
 
         $avgRating = round($product->reviews->avg('rating') ?? 0);
