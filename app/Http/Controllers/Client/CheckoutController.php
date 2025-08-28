@@ -153,19 +153,21 @@ public function checkout(Request $request)
                     'payment_status'     => 'paid',
                 ]);
 
-                foreach ($cartItems as $item) {
-                    $order->items()->create([
-                        'product_id'                 => $item->product_id,
-                        'product_name'               => $item->product->name ?? '',
-                        'product_variant_value_id'   => $item->variant_id,
-                        'product_variant_value_name' => $item->variant->name ?? null,
-                        'product_sku'                => $item->product->sku ?? null,
-                        'product_image'              => $item->product->image ?? null,
-                        'quantity'                   => $item->quantity,
-                        'price'                      => $item->price ?? 0,
-                        'total'                      => ($item->price ?? 0) * ($item->quantity ?? 1),
-                    ]);
-                }
+foreach ($cartItems as $item) {
+    $imagePath = $item->variant?->image ?? $item->product?->image; // Ưu tiên ảnh biến thể
+    $order->items()->create([
+        'product_id'                 => $item->product_id,
+        'product_name'               => $item->product->name ?? '',
+        'product_variant_value_id'   => $item->variant_id,
+        'product_variant_value_name' => $item->variant->name ?? null,
+        'product_sku'                => $item->product->sku ?? null,
+        'product_image'              => $imagePath, // <-- dùng ảnh đã chọn
+        'quantity'                   => $item->quantity,
+        'price'                      => $item->price ?? 0,
+        'total'                      => ($item->price ?? 0) * ($item->quantity ?? 1),
+    ]);
+}
+
 
                 // Cập nhật usage của coupon
                 if ($orderDiscountCode && $orderDiscountCode->scope === 'global') $orderDiscountCode->increment('used_count');
@@ -341,20 +343,21 @@ public function checkout(Request $request)
                     'zp_trans_id'        => $zlpTxnId,
                     'payment_txn_id'     => $zlpTxnId,
                 ]);
+foreach ($cartItems as $item) {
+    $imagePath = $item->variant?->image ?? $item->product?->image; // Ưu tiên ảnh biến thể
+    $order->items()->create([
+        'product_id'                 => $item->product_id,
+        'product_name'               => $item->product->name ?? '',
+        'product_variant_value_id'   => $item->variant_id,
+        'product_variant_value_name' => $item->variant->name ?? null,
+        'product_sku'                => $item->product->sku ?? null,
+        'product_image'              => $imagePath, // <-- dùng ảnh đã chọn
+        'quantity'                   => $item->quantity,
+        'price'                      => $item->price ?? 0,
+        'total'                      => ($item->price ?? 0) * ($item->quantity ?? 1),
+    ]);
+}
 
-                foreach ($cartItems as $item) {
-                    $order->items()->create([
-                        'product_id'                 => $item->product_id,
-                        'product_name'               => $item->product->name ?? '',
-                        'product_variant_value_id'   => $item->variant_id,
-                        'product_variant_value_name' => $item->variant->name ?? null,
-                        'product_sku'                => $item->product->sku ?? null,
-                        'product_image'              => $item->product->image ?? null,
-                        'quantity'                   => $item->quantity,
-                        'price'                      => $item->price ?? 0,
-                        'total'                      => ($item->price ?? 0) * ($item->quantity ?? 1),
-                    ]);
-                }
 
                 // Cập nhật usage coupon
                 if ($orderDiscountCode && $orderDiscountCode->scope === 'global') $orderDiscountCode->increment('used_count');
@@ -755,18 +758,19 @@ public function processOrder(Request $request)
                 }
             }
 
-            foreach ($cartItems as $item) {
-                $order->items()->create([
-                    'product_id'                 => $item->product_id,
-                    'product_name'               => $item->product->name ?? '',
-                    'product_variant_value_id'   => $item->variant_id,
-                    'product_variant_value_name' => $item->variant->name ?? null,
-                    'product_sku'                => $item->product->sku ?? null,
-                    'product_image'              => $item->product->image ?? null,
-                    'quantity'                   => $item->quantity,
-                    'price'                      => $item->price ?? 0,
-                    'total'                      => ($item->price ?? 0) * ($item->quantity ?? 1),
-                ]);
+foreach ($cartItems as $item) {
+    $imagePath = $item->variant?->image ?? $item->product?->image;
+    $order->items()->create([
+        'product_id'                 => $item->product_id,
+        'product_name'               => $item->product->name ?? '',
+        'product_variant_value_id'   => $item->variant_id,
+        'product_variant_value_name' => $item->variant->name ?? null,
+        'product_sku'                => $item->product->sku ?? null,
+        'product_image'              => $imagePath, // <-- ở đây
+        'quantity'                   => $item->quantity,
+        'price'                      => $item->price ?? 0,
+        'total'                      => ($item->price ?? 0) * ($item->quantity ?? 1),
+    ]);
                 if ($item->variant_id) {
                     $variant = \App\Models\admin\ProductVariant::find($item->variant_id);
                     if ($variant) { $variant->stock = max(0, $variant->stock - $item->quantity); $variant->save(); }

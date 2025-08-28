@@ -17,21 +17,14 @@ class CommentController extends Controller
      */
     public function index(Request $request)
     {
-        // Eager load user, product and replies' authors to avoid N+1
         $query = Comment::with(['user', 'product', 'replies.user', 'replies.admin']);
 
-        if ($request->filled('search')) {
-            $search = $request->input('search');
-            $query->where(function ($q) use ($search) {
-                $q->where('content', 'like', "%{$search}%")
-                  ->orWhereHas('user', function ($q2) use ($search) {
-                      $q2->where('name', 'like', "%{$search}%");
-                  })
-                  ->orWhereHas('product', function ($q3) use ($search) {
-                      $q3->where('name', 'like', "%{$search}%");
-                  });
-            });
-        }
+    if ($request->filled('from_date')) {
+        $query->whereDate('created_at', '>=', $request->input('from_date'));
+    }
+    if ($request->filled('to_date')) {
+        $query->whereDate('created_at', '<=', $request->input('to_date'));
+    }
 
         if ($request->filled('status')) {
             $query->where('status', $request->input('status'));

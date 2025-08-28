@@ -1,4 +1,3 @@
-code 1
 @extends('layouts.backend')
 @section('title', 'Chi tiết sản phẩm')
 @section('content')
@@ -121,7 +120,13 @@ code 1
                         </div>
                     </div>
                     <div class="col-md-7">
-                        <p><b>Danh mục:</b> {{ $product->category->name ?? 'N/A' }}</p>
+                        <p><b>Danh mục:</b>
+                            @if($product->categories->count())
+                                {{ $product->categories->pluck('name')->join(', ') }}
+                            @else
+                                N/A
+                            @endif
+                        </p>
                         <p><b>Vùng miền:</b> {{ $product->region->name ?? 'N/A' }}</p>
                         <p><b>Trạng thái:</b>
                             <span
@@ -351,10 +356,6 @@ code 1
                             <td><img id="modalVariantImage" src="" alt="" style="max-width:100px;"></td>
                         </tr>
                         <tr>
-                            <th>Mô tả:</th>
-                            <td id="modalVariantDescription"></td>
-                        </tr>
-                        <tr>
                             <th>Giá:</th>
                             <td id="modalVariantPrice"></td>
                         </tr>
@@ -529,6 +530,15 @@ code 1
     .bulk-delete-btn:not([disabled]):hover {
         background: #aac4e7 !important;
     }
+        table tbody tr:nth-child(odd) {
+        background-color: #ffffff;
+        /* màu trắng */
+    }
+
+    table tbody tr:nth-child(even) {
+        background-color: #f8f9fa;
+        /* xám nhạt, bạn có thể đổi màu theo ý thích */
+    }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
@@ -591,7 +601,6 @@ document.addEventListener('DOMContentLoaded', function () {
         link.addEventListener('click', function () {
             document.getElementById('modalVariantName').innerText = this.dataset.name;
             document.getElementById('modalVariantImage').src = this.dataset.image;
-            document.getElementById('modalVariantDescription').innerText = this.dataset.description || '(Chưa có mô tả)';
             document.getElementById('modalVariantPrice').innerText = this.dataset.price;
             document.getElementById('modalVariantStock').innerText = this.dataset.stock;
             document.getElementById('modalVariantStatus').innerText = this.dataset.status;

@@ -68,6 +68,10 @@
                     <div class="other-log-in">
                         <h6></h6>
                     </div>
+                    <div class="sign-up-box">
+                            <h4>Bạn chưa có tài khoản?</h4>
+                            <a href="{{ route('register') }}">Đăng ký</a>
+                        </div>
                 </div>
             </div>
         </div>

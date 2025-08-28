@@ -254,7 +254,17 @@ class ProfileClientController extends Controller
         $user->birthday = $request->birthday ? \Carbon\Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d') : null;
         $user->save();
 
-        return response()->json(['success' => true]);
+        return response()->json([
+            'success' => true,
+            'user' => [
+                'name'     => $user->name,
+                'email'    => $user->email,
+                'phone'    => $user->phone,
+                'gender'   => $user->gender,
+                'birthday' => $user->birthday ? \Carbon\Carbon::parse($user->birthday)->format('d/m/Y') : null,
+                // Có thể thêm các trường khác nếu muốn cập nhật ngoài giao diện
+            ]
+        ]);
     }
     // app/Http/Controllers/UserController.php
 

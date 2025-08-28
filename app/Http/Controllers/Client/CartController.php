@@ -273,50 +273,99 @@ class CartController extends Controller
     /**
      * Đổi biến thể cho cart item
      */
-    public function updateVariant(Request $request)
-    {
-        $cartItemId = $request->cart_item_id;
-        $variantId = $request->variant_id;
+public function updateVariant(Request $request)
+{
+    $cartItemId = (int) $request->input('cart_item_id');
+    $variantId  = (int) $request->input('variant_id');
 
-        $cartItem = CartItem::with('product', 'variant')->find($cartItemId);
-        if (!$cartItem) {
-            return response()->json(['success' => false, 'message' => 'Sản phẩm trong giỏ không tồn tại'], 404);
+    $cartItem = CartItem::with(['product', 'variant'])->find($cartItemId);
+    if (!$cartItem || $cartItem->user_id !== Auth::id()) {
+        return response()->json(['success' => false, 'message' => 'Sản phẩm trong giỏ không tồn tại'], 404);
+    }
+
+    $newVariant = ProductVariant::with('attributeValues.attribute')->find($variantId);
+    if (!$newVariant || $newVariant->product_id != $cartItem->product_id) {
+        return response()->json(['success' => false, 'message' => 'Biến thể không hợp lệ'], 400);
+    }
+    if (isset($newVariant->active) && !$newVariant->active) {
+        return response()->json(['success' => false, 'message' => 'Biến thể này hiện không hoạt động'], 400);
+    }
+
+    // Chuẩn hoá variant_attributes của biến thể mới
+    $attrs = [];
+    foreach ($newVariant->attributeValues as $av) {
+        $attrId = $av->attribute_id ?? ($av->attribute->id ?? null);
+        if ($attrId) $attrs[(int)$attrId] = (int)$av->id;
+    }
+    ksort($attrs);
+    $variantAttributesJson = count($attrs) ? json_encode($attrs, JSON_UNESCAPED_UNICODE) : null;
+
+    $stock = (int) ($newVariant->stock ?? 0);
+
+    // Tìm 1 dòng KHÁC trùng (user, product, variant, attributes)
+    $dup = CartItem::where('user_id', $cartItem->user_id)
+        ->where('product_id', $cartItem->product_id)
+        ->where('variant_id', $newVariant->id)
+        ->where('variant_attributes', $variantAttributesJson)
+        ->where('id', '!=', $cartItem->id)
+        ->first();
+
+    if ($dup) {
+        // GỘP VÀ GIỮ DÒNG HIỆN TẠI
+        $newQty = (int)$dup->quantity + (int)$cartItem->quantity;
+        if ($newQty > $stock) {
+            return response()->json([
+                'success' => false,
+                'message' => "Tổng số lượng sau khi gộp ({$newQty}) vượt tồn kho ({$stock})."
+            ], 400);
         }
 
-        $newVariant = ProductVariant::find($variantId);
-        if (!$newVariant || $newVariant->product_id != $cartItem->product_id) {
-            return response()->json(['success' => false, 'message' => 'Biến thể không hợp lệ'], 400);
-        }
-
-        // Kiểm tra tồn kho của biến thể mới
-        if ($cartItem->quantity > $newVariant->stock) {
-            return response()->json(['success' => false, 'message' => 'Số lượng vượt quá tồn kho loại mới'], 400);
-        }
-
-        // Cập nhật lại variant cho cart item
-        $cartItem->variant_id = $newVariant->id;
-        $cartItem->price = $newVariant->price;
-        // Nếu muốn: $cartItem->variant_attributes = ...
+        // Cập nhật dòng hiện tại thành biến thể mới + số lượng gộp
+        $cartItem->variant_id         = $newVariant->id;
+        $cartItem->variant_attributes = $variantAttributesJson;
+        $cartItem->quantity           = $newQty;
+        $cartItem->price              = $newVariant->price;
         $cartItem->save();
 
-return response()->json([
-    'success'          => true,
-    'variant_id'       => (int) $newVariant->id, // để JS nhớ biến thể hiện tại
-    'newVariantName'   => (string) ($newVariant->name ?? ''),
-    'newPrice'         => isset($newVariant->price) ? (float) $newVariant->price : 0,
-    'quantity'         => (int) $cartItem->quantity,
-    'stock'            => (int) ($newVariant->stock ?? 0),
+        // Xoá dòng trùng
+        $deletedId = $dup->id;
+        $dup->delete();
 
-    // ✅ 2 field mới để đổi ảnh ở giỏ
-    'newVariantImage'  => $newVariant->image
-                          ? asset('storage/'.$newVariant->image)
-                          : null,
-    'productImage'     => ($cartItem->product && $cartItem->product->image)
-                          ? asset('storage/'.$cartItem->product->image)
-                          : null,
-]);
-
+        return response()->json([
+            'success'          => true,
+            'variant_id'       => (int)$newVariant->id,
+            'newVariantName'   => (string)($newVariant->name ?? ''),
+            'newPrice'         => (float)($newVariant->price ?? 0),
+            'quantity'         => (int)$cartItem->quantity, // số lượng đã gộp
+            'stock'            => $stock,
+            'newVariantImage'  => $newVariant->image ? asset('storage/'.$newVariant->image) : null,
+            'productImage'     => ($cartItem->product && $cartItem->product->image) ? asset('storage/'.$cartItem->product->image) : null,
+            'deleted_item_id'  => (int)$deletedId, // để frontend xoá dòng kia khỏi bảng
+        ]);
     }
+
+    // Không có dòng trùng -> đổi bình thường
+    if ((int)$cartItem->quantity > $stock) {
+        return response()->json(['success' => false, 'message' => 'Số lượng vượt quá tồn kho loại mới'], 400);
+    }
+
+    $cartItem->variant_id         = $newVariant->id;
+    $cartItem->variant_attributes = $variantAttributesJson;
+    $cartItem->price              = $newVariant->price;
+    $cartItem->save();
+
+    return response()->json([
+        'success'          => true,
+        'variant_id'       => (int)$newVariant->id,
+        'newVariantName'   => (string)($newVariant->name ?? ''),
+        'newPrice'         => (float)($newVariant->price ?? 0),
+        'quantity'         => (int)$cartItem->quantity,
+        'stock'            => $stock,
+        'newVariantImage'  => $newVariant->image ? asset('storage/'.$newVariant->image) : null,
+        'productImage'     => ($cartItem->product && $cartItem->product->image) ? asset('storage/'.$cartItem->product->image) : null,
+    ]);
+}
+
 
     /**
      * Đưa các sản phẩm đã chọn sang trang checkout
@@ -347,32 +396,47 @@ return response()->json([
      * Kiểm tra tồn kho khi user nhấn Đặt hàng ở trang cart
      */
     public function checkStock(Request $request)
-    {
-        $cartItemIds = $request->input('selected_cart_item_ids', []);
-        $messages = [];
+{
+    $cartItemIds = $request->input('selected_cart_item_ids', []);
+    $messages = [];
 
-        foreach ($cartItemIds as $id) {
-            $item = \App\Models\Client\CartItem::with(['product', 'variant'])->find($id);
-            if (!$item) continue;
+    // Cộng dồn theo khóa (variant hoặc product nếu không có variant)
+    $totals = []; // ['v_123' => ['name' => '...', 'qty' => 0, 'stock' => 0], 'p_45' => ...]
+    foreach ($cartItemIds as $id) {
+        $item = \App\Models\Client\CartItem::with(['product', 'variant'])->find($id);
+        if (!$item) continue;
 
-            if ($item->variant_id) {
-                $variant = $item->variant;
-                if (!$variant || $variant->stock < $item->quantity) {
-                    $messages[] = "Sản phẩm '{$item->product->name}' Loại '{$variant->name}' chỉ còn {$variant->stock} sản phẩm.";
-                }
-            } else {
-                $product = $item->product;
-                if (!$product || $product->stock < $item->quantity) {
-                    $messages[] = "Sản phẩm '{$product->name}' chỉ còn {$product->stock} sản phẩm.";
-                }
-            }
+        if ($item->variant_id) {
+            $key = 'v_' . $item->variant_id;
+            $name = $item->product?->name . " | Loại '" . ($item->variant?->name ?? '') . "'";
+            $stock = (int) ($item->variant?->stock ?? 0);
+        } else {
+            $key = 'p_' . $item->product_id;
+            $name = $item->product?->name ?? 'Sản phẩm';
+            $stock = (int) ($item->product?->stock ?? 0);
         }
 
-        return response()->json([
-            'success' => count($messages) === 0,
-            'messages' => $messages
-        ]);
+        if (!isset($totals[$key])) {
+            $totals[$key] = ['name' => $name, 'qty' => 0, 'stock' => $stock];
+        }
+        $totals[$key]['qty'] += (int) $item->quantity;
+        // Nếu tồn kho thay đổi giữa các dòng thì lấy min để an toàn
+        $totals[$key]['stock'] = min($totals[$key]['stock'], $stock);
     }
+
+    // So sánh tổng số lượng với tồn kho
+    foreach ($totals as $t) {
+        if ($t['qty'] > $t['stock']) {
+            $messages[] = "Sản phẩm '{$t['name']}' tổng số lượng {$t['qty']} vượt tồn kho ({$t['stock']}).";
+        }
+    }
+
+    return response()->json([
+        'success'  => count($messages) === 0,
+        'messages' => $messages,
+    ]);
+}
+
     public function storeQuick(Request $request)
     {
         if (!$request->ajax()) {

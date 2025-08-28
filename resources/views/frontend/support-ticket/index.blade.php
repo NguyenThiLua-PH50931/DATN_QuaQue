@@ -167,82 +167,77 @@
             </div>
         </div>
     </section>
+    <!-- Toasts + client-side validate -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const form = document.querySelector('form[action="{{ route('client.support-ticket.store') }}"]');
-            form.addEventListener('submit', function(e) {
-                let title = form.querySelector('[name="title"]').value.trim();
-                let content = form.querySelector('[name="content"]').value.trim();
+            // Validate tức thì trước khi submit
+            var form = document.querySelector('form[action="{{ route('client.support-ticket.store') }}"]');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    var titleEl = form.querySelector('[name="title"]');
+                    var contentEl = form.querySelector('[name="content"]');
+                    var title = (titleEl && titleEl.value ? titleEl.value : '').trim();
+                    var content = (contentEl && contentEl.value ? contentEl.value : '').trim();
 
-                // Nếu lỗi thì ngăn submit + hiện popup
-                if (!title) {
-                    e.preventDefault();
-                    Swal.fire({
-                        toast: true,
-                        position: 'top-end',
-                        icon: 'error',
-                        title: 'Vui lòng nhập tiêu đề.',
-                        showConfirmButton: false,
-                        timer: 3000,
-                        timerProgressBar: true
-                    });
-                    return;
-                }
+                    if (!title) {
+                        e.preventDefault();
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'error',
+                            title: 'Vui lòng nhập tiêu đề.',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true
+                        });
+                        return;
+                    }
+                    if (!content) {
+                        e.preventDefault();
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'error',
+                            title: 'Vui lòng nhập nội dung.',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true
+                        });
+                        return;
+                    }
+                });
+            }
 
-                if (!content) {
-                    e.preventDefault();
-                    Swal.fire({
-                        toast: true,
-                        position: 'top-end',
-                        icon: 'error',
-                        title: 'Vui lòng nhập nội dung.',
-                        showConfirmButton: false,
-                        timer: 3000,
-                        timerProgressBar: true
-                    });
-                    return;
-                }
-            });
-        });
-    </script>
-
-    <!-- Map Section End -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    {{-- Hiện thông báo thành công --}}
-    @if (session('success'))
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
+            // Toast thành công từ server
+            @if (session('success'))
                 Swal.fire({
                     toast: true,
                     position: 'top-end',
                     icon: 'success',
-                    title: '{{ session('success') }}',
+                    title: @json(session('success')),
                     showConfirmButton: false,
                     timer: 3000,
                     timerProgressBar: true
                 });
-            });
-        </script>
-    @endif
+            @endif
 
-    {{-- Hiện thông báo lỗi validate --}}
-    @if ($errors->any())
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
+            // Toast lỗi validate từ server
+            @if ($errors->any())
                 @foreach ($errors->all() as $error)
                     Swal.fire({
                         toast: true,
                         position: 'top-end',
                         icon: 'error',
-                        title: '{{ $error }}',
+                        title: @json($error),
                         showConfirmButton: false,
                         timer: 3000,
                         timerProgressBar: true
                     });
                 @endforeach
-            });
-        </script>
-    @endif
+            @endif
+        });
+    </script>
+
 
 @endsection

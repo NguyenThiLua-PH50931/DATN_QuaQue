@@ -371,7 +371,7 @@
                                     </div>
                                     <div class="profile-name-detail">
                                         <div class="d-sm-flex align-items-center d-block">
-                                            <h3>{{ $user->name ?? 'Chưa cập nhật' }}</h3>
+                                            <h3 id="user-name">{{ $user->name ?? 'Chưa cập nhật' }}</h3>
                                         </div>
                                         <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#editProfile">Sửa</a>
                                     </div>
@@ -381,11 +381,11 @@
                                             <li>
                                                 <div class="location-box">
                                                     <i data-feather="map-pin"></i>
-                                                    <h6>
+                                                    <h6 id="user-location">
                                                         @if($defaultAddress)
-                                                        {{ $defaultAddress->district ?? '' }}, {{ $defaultAddress->province ?? '' }}
+                                                            {{ $defaultAddress->district ?? '' }}, {{ $defaultAddress->province ?? '' }}
                                                         @else
-                                                        Chưa cập nhật
+                                                            Chưa cập nhật
                                                         @endif
                                                     </h6>
                                                 </div>
@@ -393,13 +393,13 @@
                                             <li>
                                                 <div class="location-box">
                                                     <i data-feather="mail"></i>
-                                                    <h6>{{ $user->email ?? 'Chưa cập nhật' }}</h6>
+                                                    <h6 id="user-email">{{ $user->email ?? 'Chưa cập nhật' }}</h6>
                                                 </div>
                                             </li>
                                             <li>
                                                 <div class="location-box">
                                                     <i data-feather="check-square"></i>
-                                                    <h6>
+                                                    <h6 id="user-created">
                                                         Thành viên {{ $user->created_at ? $user->created_at->diffForHumans() : '' }}
                                                         ({{ $user->created_at ? $user->created_at->format('d/m/Y') : '' }})
                                                     </h6>
@@ -409,10 +409,7 @@
                                     </div>
 
                                     <div class="profile-description">
-                                        <p>
-                                            {{-- Nếu có trường tiểu sử (bio) --}}
-                                            {{ $user->bio ?? '' }}
-                                        </p>
+                                        <p id="user-bio">{{ $user->bio ?? '' }}</p>
                                     </div>
                                 </div>
 
@@ -428,30 +425,28 @@
                                                     <tbody>
                                                         <tr>
                                                             <td>Giới tính :</td>
-                                                            <td>{{ $user->gender == 'female' ? 'Nữ' : ($user->gender == 'male' ? 'Nam' : 'Chưa cập nhật') }}</td>
+                                                            <td id="user-gender">{{ $user->gender == 'female' ? 'Nữ' : ($user->gender == 'male' ? 'Nam' : 'Chưa cập nhật') }}</td>
                                                         </tr>
                                                         <tr>
                                                             <td>Ngày sinh :</td>
-                                                            <td>{{ $user->birthday ? \Carbon\Carbon::parse($user->birthday)->format('d/m/Y') : 'Chưa cập nhật' }}</td>
+                                                            <td id="user-birthday">{{ $user->birthday ? \Carbon\Carbon::parse($user->birthday)->format('d/m/Y') : 'Chưa cập nhật' }}</td>
                                                         </tr>
                                                         <tr>
                                                             <td>Số điện thoại :</td>
                                                             <td>
-                                                                <a href="javascript:void(0)">
-                                                                    {{ $user->phone ?? 'Chưa cập nhật' }}
-                                                                </a>
+                                                                <a href="javascript:void(0)" id="user-phone">{{ $user->phone ?? 'Chưa cập nhật' }}</a>
                                                             </td>
                                                         </tr>
                                                         <tr>
                                                             <td>Địa chỉ :</td>
-                                                            <td style="max-width:390px; white-space:normal; word-break:break-word;">
+                                                            <td id="user-address" style="max-width:390px; white-space:normal; word-break:break-word;">
                                                                 @if($defaultAddress)
-                                                                {{ $defaultAddress->address }},
-                                                                {{ $defaultAddress->ward }},
-                                                                {{ $defaultAddress->district }},
-                                                                {{ $defaultAddress->province }}
+                                                                    {{ $defaultAddress->address }},
+                                                                    {{ $defaultAddress->ward }},
+                                                                    {{ $defaultAddress->district }},
+                                                                    {{ $defaultAddress->province }}
                                                                 @else
-                                                                Chưa cập nhật
+                                                                    Chưa cập nhật
                                                                 @endif
                                                             </td>
                                                         </tr>
@@ -468,7 +463,7 @@
                                                         <tr>
                                                             <td>Email :</td>
                                                             <td>
-                                                                <a href="javascript:void(0)">
+                                                                <a href="javascript:void(0)" id="user-email-table">
                                                                     {{ $user->email }}
                                                                     <span data-bs-toggle="modal" data-bs-target="#editProfile">Sửa</span>
                                                                 </a>
@@ -489,7 +484,7 @@
                                         </div>
                                         <div class="col-xxl-5">
                                             <div class="profile-image">
-                                                <img
+                                                <img id="user-avatar"
                                                     src="{{ $user->avatar ? asset('storage/' . $user->avatar) : asset('frontend/assets/images/inner-page/dashboard-profile.png') }}"
                                                     class="img-fluid blur-up lazyload"
                                                     alt="" />
@@ -1155,6 +1150,8 @@ document.addEventListener('DOMContentLoaded', function () {
 document.addEventListener('DOMContentLoaded', function () {
   // 1. Xử lý AJAX submit form
   var form = document.getElementById('editProfileForm');
+  if (!form) return;
+
   form.addEventListener('submit', function (e) {
     e.preventDefault();
 
@@ -1173,7 +1170,7 @@ document.addEventListener('DOMContentLoaded', function () {
     })
     .then(res => res.json())
     .then(data => {
-      if (data.success) {
+      if (data.success && data.user) {
         bootstrap.Modal.getInstance(document.getElementById('editProfile')).hide();
         Swal.fire({
           toast: true,
@@ -1183,6 +1180,44 @@ document.addEventListener('DOMContentLoaded', function () {
           showConfirmButton: false,
           timer: 2000
         });
+
+        // CẬP NHẬT UI DASHBOARD
+        if (data.user.name !== undefined)
+          document.getElementById('user-name').textContent = data.user.name || 'Chưa cập nhật';
+
+        if (data.user.email !== undefined) {
+          document.getElementById('user-email').textContent = data.user.email || 'Chưa cập nhật';
+          let emailTable = document.getElementById('user-email-table');
+          if (emailTable && emailTable.childNodes.length > 0) {
+            emailTable.childNodes[0].nodeValue = (data.user.email || 'Chưa cập nhật') + ' ';
+          }
+        }
+
+        if (data.user.phone !== undefined)
+          document.getElementById('user-phone').textContent = data.user.phone || 'Chưa cập nhật';
+
+        if (data.user.bio !== undefined)
+          document.getElementById('user-bio').textContent = data.user.bio || '';
+
+        if (data.user.gender !== undefined) {
+          let genderText = 'Chưa cập nhật';
+          if (data.user.gender === 'male') genderText = 'Nam';
+          else if (data.user.gender === 'female') genderText = 'Nữ';
+          document.getElementById('user-gender').textContent = genderText;
+        }
+
+        if (data.user.birthday !== undefined)
+          document.getElementById('user-birthday').textContent = data.user.birthday || 'Chưa cập nhật';
+
+        if (data.user.avatar) {
+          document.getElementById('user-avatar').src = data.user.avatar;
+        }
+
+        // Nếu có update địa chỉ (tuỳ backend trả về)
+        if (data.user.address !== undefined) {
+          document.getElementById('user-address').textContent = data.user.address || 'Chưa cập nhật';
+        }
+
       } else if (data.errors) {
         let firstErrorInput = null;
         for (const [field, msgs] of Object.entries(data.errors)) {
@@ -1230,7 +1265,7 @@ document.addEventListener('DOMContentLoaded', function () {
     btn.innerHTML = '<i class="fa-solid fa-calendar-days"></i>';
     birthdayInput.parentNode.appendChild(btn);
 
-    // Khởi tạo datepicker
+    // Khởi tạo datepicker (Bootstrap-Datepicker)
     const datepicker = new Datepicker(birthdayInput, {
       format: 'dd/mm/yyyy',
       autohide: true,
@@ -1239,7 +1274,6 @@ document.addEventListener('DOMContentLoaded', function () {
       language: 'vi'
     });
 
-    // Khi bấm nút sẽ show lịch
     btn.addEventListener('click', function (e) {
       e.preventDefault();
       birthdayInput.focus();
@@ -1247,6 +1281,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 });
+
 </script>
 <!-- sua dia chi -->
  <script>

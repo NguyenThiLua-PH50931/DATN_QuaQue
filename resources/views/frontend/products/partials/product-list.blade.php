@@ -3,7 +3,11 @@
     <div class="row g-sm-4 g-3 row-cols-xxl-4 row-cols-xl-3 row-cols-lg-2 row-cols-md-3 row-cols-2 product-list-section">
         @forelse ($products as $product)
             <div>
+<<<<<<< HEAD
                 <div class="product-box-3 h-100 wow fadeInUp @if(!$product->variants->firstWhere(fn($v) => $v->stock > 0) || $product->active != 1) out-of-stock @endif" data-wow-delay="0.05s">
+=======
+                <div class="product-box-3 h-100 wow fadeInUp @if($isOutOfStock) out-of-stock @endif" data-wow-delay="0.05s">
+>>>>>>> cb5981a40bfbc078456f5634f5b8336366fba97d
                     <div class="product-header">
                         <div class="product-image">
                             <a href="{{ route('client.product.detail', $product->slug) }}">
@@ -133,8 +137,13 @@
                                     right: 0;
                                     bottom: 0;
                                     background: rgba(0, 0, 0, 0.3);
+<<<<<<< HEAD
                                     border-radius: 16px;
                                     z-index: 5;
+=======
+                                    border-radius: 12px;
+                                    z-index: 1;
+>>>>>>> cb5981a40bfbc078456f5634f5b8336366fba97d
                                 }
 
                                 .product-box-3.out-of-stock .product-image > a > img {
@@ -148,6 +157,7 @@
                                         <i data-feather="eye"></i>
                                     </a>
                                 </li>
+<<<<<<< HEAD
                                                                             <li data-bs-toggle="tooltip" data-bs-placement="top" title="Yêu thích">
                                                 <a href="javascript:void(0)"
                                                     class="notifi-wishlist wishlist-btn
@@ -159,6 +169,19 @@
                                                     <i data-feather="heart"></i>
                                                 </a>
                                             </li>
+=======
+                                <li data-bs-toggle="tooltip" data-bs-placement="top" title="Yêu thích">
+                                    <a href="javascript:void(0)"
+                                        class="notifi-wishlist wishlist-btn
+                                                        @if(auth()->check() && auth()->user()->wishlist()->where('product_id', $product->id)->exists()) fill-heart @endif"
+                                        data-product-id="{{ $product->id }}"
+                                        data-liked="@if(auth()->check() && auth()->user()->wishlist()->where('product_id', $product->id)->exists())1 @else 0 @endif"
+                                        title="Yêu thích"
+                                        style="width:18px; height:18px; display:inline-flex; align-items:center; justify-content:center; color:#4a5568; margin-top:10px;">
+                                        <i data-feather="heart"></i>
+                                    </a>
+                                </li>
+>>>>>>> cb5981a40bfbc078456f5634f5b8336366fba97d
                             </ul>
 
                             @php
@@ -245,6 +268,7 @@
     </nav>
 </div>
 
+<<<<<<< HEAD
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.wishlist-btn').forEach(function(btn) {
@@ -314,3 +338,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+=======
+
+>>>>>>> cb5981a40bfbc078456f5634f5b8336366fba97d
