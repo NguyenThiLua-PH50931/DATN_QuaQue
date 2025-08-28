@@ -310,27 +310,14 @@
                         <div
                             class="row g-sm-4 g-3 row-cols-xxl-4 row-cols-xl-3 row-cols-lg-2 row-cols-md-3 row-cols-2 product-list-section">
                             @forelse ($products as $product)
-                                @php
-                                    // Kiểm tra sản phẩm có còn hàng không
-                                    $variantInStock = $product->variants->firstWhere(
-                                        fn($v) => $v->active == 1 && $v->stock > 0,
-                                    );
-                                    $isOutOfStock = !$variantInStock || $product->active != 1;
-                                @endphp
                                 <div>
-                                    <div class="product-box-3 h-100 wow fadeInUp @if($isOutOfStock) out-of-stock @endif" data-wow-delay="0.05s">
+                                    <div class="product-box-3 h-100 wow fadeInUp" data-wow-delay="0.05s">
                                         <div class="product-header">
                                             <div class="product-image">
                                                 <a href="{{ route('client.product.detail', $product->slug) }}">
                                                     <img src="{{ asset('storage/' . $product->image) }}"
                                                         class="img-fluid blur-up lazyload" alt="{{ $product->name }}" />
                                                 </a>
-
-                                                @if ($isOutOfStock)
-                                                    <div class="out-of-stock-badge">
-                                                        <span class="badge bg-danger">Hết hàng</span>
-                                                    </div>
-                                                @endif
 
                                                 <style>
                                                     .product-option li {
@@ -441,57 +428,6 @@
                                                         padding: 2px 8px;
                                                         border-radius: 6px;
                                                     }
-
-                                                    /* ==== Badge Hết hàng ==== */
-                                                    .out-of-stock-badge {
-                                                        position: absolute;
-                                                        top: 8px;
-                                                        right: 8px;
-                                                        z-index: 10;
-                                                    }
-
-                                                    .out-of-stock-badge .badge {
-                                                        font-size: 0.75rem;
-                                                        padding: 4px 8px;
-                                                        border-radius: 6px;
-                                                        font-weight: 600;
-                                                    }
-
-                                                    /* Overlay mờ cho sản phẩm hết hàng - chỉ che ảnh, không che button */
-                                                    .product-box-3.out-of-stock .product-image > a::after {
-                                                        content: "";
-                                                        position: absolute;
-                                                        top: 0;
-                                                        left: 0;
-                                                        right: 0;
-                                                        bottom: 0;
-                                                        background: rgba(0, 0, 0, 0.3);
-                                                        border-radius: 12px;
-                                                        z-index: 1;
-                                                    }
-
-                                                    .product-box-3.out-of-stock .product-image > a > img {
-                                                        filter: grayscale(30%);
-                                                    }
-
-                                                    /* Đảm bảo các button vẫn có thể click được */
-                                                    .product-box-3.out-of-stock .product-option {
-                                                        z-index: 20;
-                                                        position: relative;
-                                                    }
-
-                                                    .product-box-3.out-of-stock .product-option a {
-                                                        background: rgba(255, 255, 255, 0.95);
-                                                        border-radius: 50%;
-                                                        transition: all 0.3s ease;
-                                                        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-                                                    }
-
-                                                    .product-box-3.out-of-stock .product-option a:hover {
-                                                        background: rgba(255, 255, 255, 1);
-                                                        transform: scale(1.1);
-                                                        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-                                                    }
                                                 </style>
 
                                                 <ul class="product-option">
@@ -560,7 +496,14 @@
                                                     <span>({{ number_format($product->reviews->avg('rating'), 1) ?? 0 }})</span>
                                                 </div>
 
-                                                @if (!$isOutOfStock)
+                                                @php
+                                                    // chỉ cần active == 1 (trigger stock -> active đã đảm bảo)
+                                                    $variantInStock = $product->variants->firstWhere(
+                                                        fn($v) => $v->active == 1,
+                                                    );
+                                                @endphp
+
+                                                @if ($variantInStock && $product->active == 1)
                                                     <h6 class="unit">{{ $variantInStock->name }}</h6>
                                                     <h5 class="price">
                                                         <span
@@ -647,9 +590,6 @@
                 const url = baseUrl + (params.toString() ? ('?' + params.toString()) : '');
                 history.pushState({}, '', url); // cập nhật URL không reload
 
-                // Lưu trạng thái hiện tại
-                saveCurrentState();
-
                 const res = await fetch(url, {
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest'
@@ -672,12 +612,6 @@
 
                 // Re-init icons / tooltips nếu cần
                 if (window.feather && typeof feather.replace === 'function') feather.replace();
-
-                // Re-bind quickview events sau khi AJAX
-                bindQuickviewEventsAfterAjax();
-
-                // Re-bind wishlist events sau khi AJAX
-                bindWishlistEventsAfterAjax();
 
                 // bind lại pagination (nếu bạn không dùng event delegation)
                 // (ở dưới mình đã dùng delegation nên không cần rebind thêm)
@@ -770,301 +704,79 @@
                 const params = new URLSearchParams(window.location.search);
                 fetchProducts(params);
             });
-
-            // Lưu trạng thái hiện tại vào sessionStorage
-            function saveCurrentState() {
-                const currentParams = new URLSearchParams(window.location.search);
-                const state = {
-                    page: currentParams.get('page') || '1',
-                    q: currentParams.get('q') || '',
-                    dm: currentParams.get('dm') || '',
-                    regions: currentParams.get('regions') || '',
-                    rating: currentParams.get('rating') || '',
-                    min_price: currentParams.get('min_price') || '',
-                    max_price: currentParams.get('max_price') || '',
-                    sort: currentParams.get('sort') || ''
-                };
-                sessionStorage.setItem('catalog_state', JSON.stringify(state));
-            }
-
-            // Khôi phục trạng thái khi quay lại
-            function restoreCurrentState() {
-                const savedState = sessionStorage.getItem('catalog_state');
-                if (!savedState) return; // Không có dữ liệu thì bỏ qua
-
-                try {
-                    const state = JSON.parse(savedState);
-                    const currentParams = new URLSearchParams(window.location.search);
-                    let hasChanges = false;
-
-                    // Chỉ khôi phục nếu đang ở trang catalog
-                    if (window.location.pathname.includes('/client/san-pham')) {
-                        // So sánh trạng thái hiện tại với trạng thái đã lưu
-                        let needRestore = false;
-
-                        // Kiểm tra xem có cần khôi phục không
-                        Object.keys(state).forEach(key => {
-                            const savedValue = state[key] || '';
-                            const currentValue = currentParams.get(key) || '';
-
-                            // Nếu giá trị khác nhau và giá trị đã lưu không rỗng
-                            if (savedValue !== currentValue && savedValue !== '') {
-                                needRestore = true;
-                            }
-                        });
-
-                        // Nếu cần khôi phục
-                        if (needRestore) {
-                            // Khôi phục các tham số đã lưu
-                            Object.keys(state).forEach(key => {
-                                if (state[key] && state[key] !== '') {
-                                    currentParams.set(key, state[key]);
-                                    hasChanges = true;
-                                }
-                            });
-
-                            if (hasChanges) {
-                                const newUrl = window.location.pathname + '?' + currentParams.toString();
-                                history.replaceState({}, '', newUrl);
-                                // Delay một chút để đảm bảo trang đã load xong
-                                setTimeout(() => {
-                                    fetchProducts(currentParams);
-                                }, 100);
-                            }
-                        }
-                    }
-                } catch (error) {
-                    console.error('Lỗi khôi phục trạng thái:', error);
-                    // Xóa dữ liệu lỗi
-                    sessionStorage.removeItem('catalog_state');
-                }
-            }
-
-            // Lưu trạng thái hiện tại khi chuyển trang hoặc click vào sản phẩm
-            document.addEventListener('click', function(e) {
-                const a = e.target.closest('.custome-pagination a');
-                const productLink = e.target.closest('.product-image a');
-
-                if (a) {
-                    setTimeout(saveCurrentState, 100); // Lưu sau khi URL đã thay đổi
-                }
-
-                if (productLink) {
-                    // Lưu trạng thái ngay khi click vào sản phẩm
-                    saveCurrentState();
-                }
-            });
-
-            // Khôi phục trạng thái khi load trang (chỉ khi quay lại từ trang khác)
-            let isFirstLoad = true;
-            document.addEventListener('DOMContentLoaded', function() {
-                if (isFirstLoad) {
-                    isFirstLoad = false;
-
-                    // Luôn lưu trạng thái hiện tại (dù có tham số hay không)
-                    saveCurrentState();
-
-                    // Chỉ khôi phục nếu có referrer (quay lại từ trang khác)
-                    if (document.referrer && document.referrer.includes('/client/san-pham/')) {
-                        setTimeout(restoreCurrentState, 200);
-                    }
-                }
-            });
         });
     </script>
 
-
-
 <script>
-// Function để bind quickview events sau khi AJAX
-function bindQuickviewEventsAfterAjax() {
-    document.querySelectorAll('.quickview-btn').forEach(function(btn) {
-        // Remove existing event listeners to avoid duplicates
-        btn.removeEventListener('click', handleQuickviewClick);
-        btn.addEventListener('click', handleQuickviewClick);
-    });
-}
-
-// Function để bind wishlist events sau khi AJAX
-function bindWishlistEventsAfterAjax() {
-    document.querySelectorAll('.wishlist-btn').forEach(function(btn) {
-        // Remove existing event listeners to avoid duplicates
-        btn.removeEventListener('click', handleWishlistClick);
-        btn.addEventListener('click', handleWishlistClick);
-    });
-}
-
-// Handler cho quickview click
-function handleQuickviewClick(e) {
-    e.preventDefault();
-    const slug = this.dataset.slug;
-    if (!slug) return alert('Không có slug sản phẩm.');
-
-    const modal = document.getElementById('view');
-    if (!modal) return alert('Modal Quick View chưa tồn tại trên trang.');
-
-    // Reset modal trước khi load dữ liệu mới
-    modal.querySelector('.main-quickview-image').src = '';
-    modal.querySelector('.title-name').textContent = '';
-    modal.querySelector('.price').textContent = '';
-    modal.querySelector('.description-text').innerHTML = '';
-    modal.querySelector('.origin-text').innerHTML = '';
-    modal.querySelector('.product-rating').innerHTML = '';
-    modal.querySelector('.brand-list').innerHTML = '';
-    modal.querySelector('.description-thumbnails').innerHTML = '';
-    modal.querySelector('.show-more-btn').style.display = 'none';
-
-    // Mở modal Bootstrap
-    const bsModal = new bootstrap.Modal(modal);
-    bsModal.show();
-
-    fetch(`/client/san-pham/quickview/${slug}`)
-        .then(res => {
-            if (!res.ok) throw new Error(`Lỗi tải dữ liệu (${res.status})`);
-            return res.json();
-        })
-        .then(data => {
-            const product = data.product;
-
-            modal.querySelector('.main-quickview-image').src = product.image || '/assets/images/no-image.png';
-            modal.querySelector('.title-name').textContent = product.name;
-
-            // Biến thể đã là mảng chuẩn, lấy biến thể đầu tiên
-            const variantsArray = product.variants || [];
-            if (variantsArray.length > 0) {
-                modal.querySelector('.price').textContent = Number(variantsArray[0].price).toLocaleString() + ' đ';
-            } else {
-                modal.querySelector('.price').textContent = 'Liên hệ';
-            }
-
-            // Render rating sao + số lượng đánh giá
-            var ratingHtml = '<ul class="rating">';
-            var ratingNum = Number(product.avg_rating);
-            for (var i = 1; i <= 5; i++) {
-                ratingHtml += '<li><i class="fa fa-star' + (i <= Math.round(ratingNum) ? '' : '-o') + '" style="color:#ffc107 !important; font-size:1.3rem !important;"></i></li>';
-            }
-            ratingHtml += '</ul>';
-            ratingHtml += '<span class="ms-2 small text-muted">(' + (product.review_count || 0) + ' đánh giá)</span>';
-            modal.querySelector('.product-rating').innerHTML = ratingHtml;
-            if (window.feather) feather.replace();
-
-            // Render ảnh mô tả
-            const thumbContainer = modal.querySelector('.description-thumbnails');
-            const descriptionImages = product.description_images || [];
-            if (descriptionImages.length > 0) {
-                descriptionImages.forEach((imgUrl, idx) => {
-                    const thumb = document.createElement('img');
-                    thumb.src = imgUrl;
-                    thumb.alt = 'Ảnh mô tả ' + (idx + 1);
-                    thumb.className = 'desc-thumb';
-                    if (idx === 0) thumb.classList.add('active');
-                    thumb.addEventListener('click', function() {
-                        modal.querySelector('.main-quickview-image').src = imgUrl;
-                        thumbContainer.querySelectorAll('img').forEach(t => t.classList.remove('active'));
-                        thumb.classList.add('active');
-                    });
-                    thumbContainer.appendChild(thumb);
-                });
-            } else {
-                thumbContainer.innerHTML = '<span>Không có ảnh mô tả</span>';
-            }
-
-            // Xử lý mô tả sản phẩm với nút "xem thêm"
-            const descElem = modal.querySelector('.description-text');
-            const showMoreBtn = modal.querySelector('.show-more-btn');
-            const maxDescLength = 300; // ký tự
-
-            if (product.description && product.description.replace(/<[^>]+>/g, '').trim().length > maxDescLength) {
-                // Rút gọn mô tả
-                const shortDesc = product.description.substring(0, maxDescLength) + '...';
-                descElem.innerHTML = shortDesc;
-                descElem.classList.remove('expanded');
-                showMoreBtn.style.display = 'inline-block';
-                showMoreBtn.onclick = function() {
-                    // Dẫn đến trang chi tiết sản phẩm thay vì mở rộng mô tả
-                    window.location.href = `/client/san-pham/${slug}`;
-                };
-            } else {
-                descElem.innerHTML = product.description || '';
-                descElem.classList.add('expanded');
-                showMoreBtn.style.display = 'none';
-            }
-        })
-        .catch(error => {
-            console.error('Lỗi quickview:', error);
-            alert('Có lỗi xảy ra khi tải thông tin sản phẩm.');
-        });
-}
-
-// Handler cho wishlist click
-function handleWishlistClick(e) {
-    e.preventDefault();
-    const productId = this.getAttribute('data-product-id');
-    const url = "{{ route('client.wishlist.store') }}";
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-            product_id: productId
-        })
-    })
-    .then(async res => {
-        if (res.status === 401) {
-            window.location.href = "{{ route('login') }}";
-            return;
-        }
-        let data = await res.json();
-        if (data.success) {
-            if (data.toggled === 'removed') {
-                this.setAttribute('data-liked', '0');
-                this.classList.remove('fill-heart');
-            } else {
-                this.setAttribute('data-liked', '1');
-                this.classList.add('fill-heart');
-            }
-            if (window.feather) feather.replace();
-
-            Swal.fire({
-                toast: true,
-                position: 'top-end',
-                icon: 'success',
-                title: data.message,
-                showConfirmButton: false,
-                timer: 1400
-            });
-        } else {
-            Swal.fire({
-                toast: true,
-                position: 'top-end',
-                icon: 'error',
-                title: data.message || 'Lỗi thao tác',
-                showConfirmButton: false,
-                timer: 1400
-            });
-        }
-    })
-    .catch(() => {
-        Swal.fire({
-            toast: true,
-            position: 'top-end',
-            icon: 'error',
-            title: 'Có lỗi xảy ra, vui lòng thử lại!',
-            showConfirmButton: false,
-            timer: 1400
-        });
-    });
-}
-
-// Bind events khi trang load lần đầu
 document.addEventListener('DOMContentLoaded', function() {
-    bindQuickviewEventsAfterAjax();
-    bindWishlistEventsAfterAjax();
+    document.querySelectorAll('.wishlist-btn').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const productId = btn.getAttribute('data-product-id');
+            const url = "{{ route('client.wishlist.store') }}";
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    product_id: productId
+                })
+            })
+            .then(async res => {
+                // Nếu không phải 2xx thì có thể là chưa đăng nhập hoặc lỗi khác
+                if (res.status === 401) {
+                    // Chưa đăng nhập, chuyển trang login
+                    window.location.href = "{{ route('login') }}";
+                    return;
+                }
+                let data = await res.json();
+                if (data.success) {
+                    if (data.toggled === 'removed') {
+                        btn.setAttribute('data-liked', '0');
+                        btn.classList.remove('fill-heart');
+                    } else {
+                        btn.setAttribute('data-liked', '1');
+                        btn.classList.add('fill-heart');
+                    }
+                    if (window.feather) feather.replace();
+
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: data.message,
+                        showConfirmButton: false,
+                        timer: 1400
+                    });
+                } else {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'error',
+                        title: data.message || 'Lỗi thao tác',
+                        showConfirmButton: false,
+                        timer: 1400
+                    });
+                }
+            })
+            .catch(() => {
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'error',
+                    title: 'Có lỗi xảy ra, vui lòng thử lại!',
+                    showConfirmButton: false,
+                    timer: 1400
+                });
+            });
+        });
+    });
 });
 </script>
+
 
     <!-- Shop Section End -->
 @endsection
