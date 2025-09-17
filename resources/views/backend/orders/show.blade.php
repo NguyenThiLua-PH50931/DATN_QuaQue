@@ -282,9 +282,9 @@
                                                         </td>
                                                         <td class="align-middle">
                                                             <div class="fw-semibold">{{ $item->product_name }}</div>
-                                                            @if ($item->productVariant)
+                                                            @if ($item->product_variant_value_name)
                                                                 <div class="text-muted small">Loại:
-                                                                    {{ $item->productVariant->name }}</div>
+                                                                    {{ $item->product_variant_value_name }}</div>
                                                             @endif
                                                         </td>
                                                         <td class="text-center align-middle">{{ $item->quantity }}</td>

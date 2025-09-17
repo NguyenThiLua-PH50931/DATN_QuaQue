@@ -159,7 +159,7 @@
                             // Xác định biến thể còn hàng đầu tiên (nếu có)
                             $variantInStock = $product->has_variants
                                 ? $product->variants->where('stock', '>', 0)->where('active', 1)->first()
-                                : $product->variants->where('stock', '>', 0)->where('active', 1)->first();
+                                : $product->variants->first();
                             $isOutOfStock = false;
                             if ($product->has_variants) {
                                 $isOutOfStock =
@@ -279,25 +279,6 @@
                                                 padding: 2px 8px;
                                                 border-radius: 6px;
                                             }
-
-                                            /* Đảm bảo các button vẫn có thể click được */
-                                            .product-box-3 .product-option {
-                                                z-index: 20;
-                                                position: relative;
-                                            }
-
-                                            .product-box-3 .product-option a {
-                                                background: rgba(255, 255, 255, 0.95);
-                                                border-radius: 50%;
-                                                transition: all 0.3s ease;
-                                                box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-                                            }
-
-                                            .product-box-3 .product-option a:hover {
-                                                background: rgba(255, 255, 255, 1);
-                                                transform: scale(1.1);
-                                                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-                                            }
                                         </style>
                                         <ul class="product-option">
                                             <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
@@ -337,14 +318,10 @@
                                             </ul>
                                             <span>({{ number_format($product->reviews->avg('rating'), 1) }})</span>
                                         </div>
-                                        @if (!$isOutOfStock)
-                                            <h6 class="unit">{{ $variantInStock->weight ?? '' }}</h6>
-                                            <h5 class="price"><span
-                                                    class="theme-color">{{ number_format($variantInStock ? $variantInStock->price : $minPrice) }}₫</span>
-                                            </h5>
-                                        @else
-                                            <h3 class="text-danger text-center">Hết hàng</h3>
-                                        @endif
+                                        <h6 class="unit">{{ $variantInStock->weight ?? '' }}</h6>
+                                        <h5 class="price"><span
+                                                class="theme-color">{{ number_format($variantInStock ? $variantInStock->price : $minPrice) }}₫</span>
+                                        </h5>
                                     </div>
                                 </div>
                             </div>

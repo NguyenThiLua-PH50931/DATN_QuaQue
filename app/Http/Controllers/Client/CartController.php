@@ -21,7 +21,33 @@ class CartController extends Controller
         $userId = Auth::id();
 
         // Lấy danh sách item trong giỏ hàng của user
-        $cartItems = CartItem::with('product')->where('user_id', $userId)->get();
+        $cartItems = CartItem::with(['product', 'variant'])->where('user_id', $userId)->get();
+
+        // Đánh dấu trạng thái của từng sản phẩm (không xóa)
+        foreach ($cartItems as $item) {
+            $item->is_available = true;
+            $item->unavailable_reason = '';
+
+            // Kiểm tra sản phẩm có còn active không
+            if (!$item->product || !$item->product->active) {
+                $item->is_available = false;
+                $item->unavailable_reason = 'Sản phẩm đã ngưng bán';
+            }
+            // Kiểm tra biến thể có còn active không (nếu có)
+            elseif ($item->variant && !$item->variant->active) {
+                $item->is_available = false;
+                $item->unavailable_reason = 'Biến thể sản phẩm đã ngưng bán';
+            }
+            // Kiểm tra hết hàng
+            elseif ($item->variant && $item->variant->stock <= 0) {
+                $item->is_available = false;
+                $item->unavailable_reason = 'Sản phẩm đã hết hàng';
+            }
+            elseif (!$item->variant && $item->product && $item->product->stock <= 0) {
+                $item->is_available = false;
+                $item->unavailable_reason = 'Sản phẩm đã hết hàng';
+            }
+        }
 
         // Lấy toàn bộ thuộc tính và value của sản phẩm (phục vụ cho hiển thị)
         $attributes = Attribute::with('values')->get();
@@ -211,6 +237,16 @@ class CartController extends Controller
 
         if (!$cartItem) {
             return response()->json(['success' => false, 'message' => 'Sản phẩm không tồn tại'], 404);
+        }
+
+        // Kiểm tra sản phẩm có còn active không
+        if (!$cartItem->product || !$cartItem->product->active) {
+            return response()->json(['success' => false, 'message' => 'Sản phẩm đã ngưng bán'], 400);
+        }
+
+        // Kiểm tra biến thể có còn active không (nếu có)
+        if ($cartItem->variant && !$cartItem->variant->active) {
+            return response()->json(['success' => false, 'message' => 'Biến thể sản phẩm đã ngưng bán'], 400);
         }
 
         $quantity = $cartItem->quantity;
@@ -405,6 +441,18 @@ public function updateVariant(Request $request)
     foreach ($cartItemIds as $id) {
         $item = \App\Models\Client\CartItem::with(['product', 'variant'])->find($id);
         if (!$item) continue;
+
+        // Kiểm tra sản phẩm có còn active không
+        if (!$item->product || !$item->product->active) {
+            $messages[] = "Sản phẩm '{$item->product?->name}' đã ngưng bán.";
+            continue;
+        }
+
+        // Kiểm tra biến thể có còn active không (nếu có)
+        if ($item->variant && !$item->variant->active) {
+            $messages[] = "Sản phẩm '{$item->product?->name}' - biến thể '{$item->variant?->name}' đã ngưng bán.";
+            continue;
+        }
 
         if ($item->variant_id) {
             $key = 'v_' . $item->variant_id;

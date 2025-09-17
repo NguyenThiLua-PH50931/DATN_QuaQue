@@ -53,11 +53,16 @@
                                                         $tongTien = $pricePerItem * $item->quantity;
                                                         $tongTienTamTinh += $tongTien;
                                                     @endphp
-                                                    <tr class="align-middle">
+                                                    <tr class="align-middle {{ !$item->is_available ? 'opacity-50' : '' }}">
                                                         <td>
-                                                            <input type="checkbox" name="selected_items[]"
-                                                                value="{{ $item->id }}" data-price="{{ $tongTien }}"
-                                                                style="accent-color: #07a37f;">
+                                                            @if($item->is_available)
+                                                                <input type="checkbox" name="selected_items[]"
+                                                                    value="{{ $item->id }}" data-price="{{ $tongTien }}"
+                                                                    style="accent-color: #07a37f;">
+                                                            @else
+                                                                <input type="checkbox" disabled
+                                                                    style="accent-color: #ccc;">
+                                                            @endif
                                                         </td>
                                                         <td class="d-flex align-items-center gap-3">
                                                             @php
@@ -99,37 +104,53 @@
                                                                         {{ $shortName }}
                                                                     </h6>
                                                                 </a>
+                                                                @if(!$item->is_available)
+                                                                    <div class="text-danger small fw-semibold">
+                                                                        <i class="fas fa-exclamation-triangle"></i>
+                                                                        {{ $item->unavailable_reason }}
+                                                                    </div>
+                                                                @endif
                                                             </div>
                                                         </td>
                                                         <td>
-                                                            <button type="button"
-                                                                class="btn btn-outline-danger btn-sm open-variant-modal"
-                                                                data-bs-toggle="modal"
-                                                                data-bs-target="#variantModal{{ $item->id }}"
-                                                                data-cart-id="{{ $item->id }}">
-                                                                {{ $item->variant->name ?? 'Chọn biến thể' }}
-                                                            </button>
+                                                            @if($item->is_available)
+                                                                <button type="button"
+                                                                    class="btn btn-outline-danger btn-sm open-variant-modal"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#variantModal{{ $item->id }}"
+                                                                    data-cart-id="{{ $item->id }}">
+                                                                    {{ $item->variant->name ?? 'Chọn biến thể' }}
+                                                                </button>
+                                                            @else
+                                                                <span class="text-muted small">
+                                                                    {{ $item->variant->name ?? 'Chọn biến thể' }}
+                                                                </span>
+                                                            @endif
                                                         </td>
                                                         <td class="text-end fw-semibold">
                                                             {{ number_format($pricePerItem, 0, ',', '.') }} ₫
                                                         </td>
                                                         <td class="text-center">
-                                                            <div
-                                                                class="d-flex justify-content-center align-items-center gap-2">
-                                                                <button
-                                                                    class="btn btn-outline-secondary btn-sm btn-decrease px-2 py-0"
-                                                                    style="font-size: 0.85rem;"
-                                                                    data-id="{{ $item->id }}">−</button>
-                                                                <input type="text" value="{{ $item->quantity }}"
-                                                                    readonly
-                                                                    class="form-control form-control-sm text-center quantity-input"
-                                                                    data-id="{{ $item->id }}"
-                                                                    style="width: 45px; height: 30px; font-size: 0.9rem; padding: 0;">
-                                                                <button
-                                                                    class="btn btn-outline-secondary btn-sm btn-increase px-2 py-0"
-                                                                    style="font-size: 0.85rem;"
-                                                                    data-id="{{ $item->id }}">+</button>
-                                                            </div>
+                                                            @if($item->is_available)
+                                                                <div
+                                                                    class="d-flex justify-content-center align-items-center gap-2">
+                                                                    <button
+                                                                        class="btn btn-outline-secondary btn-sm btn-decrease px-2 py-0"
+                                                                        style="font-size: 0.85rem;"
+                                                                        data-id="{{ $item->id }}">−</button>
+                                                                    <input type="text" value="{{ $item->quantity }}"
+                                                                        readonly
+                                                                        class="form-control form-control-sm text-center quantity-input"
+                                                                        data-id="{{ $item->id }}"
+                                                                        style="width: 45px; height: 30px; font-size: 0.9rem; padding: 0;">
+                                                                    <button
+                                                                        class="btn btn-outline-secondary btn-sm btn-increase px-2 py-0"
+                                                                        style="font-size: 0.85rem;"
+                                                                        data-id="{{ $item->id }}">+</button>
+                                                                </div>
+                                                            @else
+                                                                <span class="text-muted">{{ $item->quantity }}</span>
+                                                            @endif
                                                         </td>
                                                         <td class="text-end fw-semibold">
                                                             {{ number_format($tongTien, 0, ',', '.') }} ₫
@@ -138,7 +159,11 @@
                                                             <button type="button"
                                                                 class="btn btn-link p-0 text-danger btn-delete-item"
                                                                 data-id="{{ $item->id }}">
-                                                                Xóa
+                                                                @if($item->is_available)
+                                                                    Xóa
+                                                                @else
+                                                                    <i class="fas fa-times"></i>
+                                                                @endif
                                                             </button>
                                                         </td>
                                                     </tr>
@@ -175,19 +200,19 @@
                                 </form>
                                 {{-- chọn tất cả --}}
                                 <script>
-                                    // Chọn tất cả / bỏ chọn tất cả
+                                    // Chọn tất cả / bỏ chọn tất cả (chỉ sản phẩm khả dụng)
                                     document.getElementById('select-all-checkbox').addEventListener('change', function() {
                                         let checked = this.checked;
-                                        document.querySelectorAll('input[type=checkbox][name="selected_items[]"]').forEach(function(cb) {
+                                        document.querySelectorAll('input[type=checkbox][name="selected_items[]"]:not(:disabled)').forEach(function(cb) {
                                             cb.checked = checked;
                                             cb.dispatchEvent(new Event('change'));
                                         });
                                     });
 
-                                    // Nếu tick hết từng cái thì chọn tất cả cũng tự tick
-                                    document.querySelectorAll('input[type=checkbox][name="selected_items[]"]').forEach(function(cb) {
+                                    // Nếu tick hết từng cái thì chọn tất cả cũng tự tick (chỉ sản phẩm khả dụng)
+                                    document.querySelectorAll('input[type=checkbox][name="selected_items[]"]:not(:disabled)').forEach(function(cb) {
                                         cb.addEventListener('change', function() {
-                                            let all = document.querySelectorAll('input[type=checkbox][name="selected_items[]"]');
+                                            let all = document.querySelectorAll('input[type=checkbox][name="selected_items[]"]:not(:disabled)');
                                             let allChecked = Array.from(all).every(cb => cb.checked);
                                             document.getElementById('select-all-checkbox').checked = allChecked;
                                         });
@@ -272,7 +297,7 @@
                     hiddenDiv.innerHTML = '';
 
                     const checked = document.querySelectorAll(
-                        '#bulk-action-form input[type=checkbox][name="selected_items[]"]:checked'
+                        '#bulk-action-form input[type=checkbox][name="selected_items[]"]:checked:not(:disabled)'
                     );
 
                     if (checked.length === 0) {
@@ -445,7 +470,7 @@
 
                 // Định nghĩa hàm updateTotals ở phạm vi toàn cục để gọi ở mọi nơi
                 function updateTotals() {
-                    const checkboxes = document.querySelectorAll('input[name="selected_items[]"]');
+                    const checkboxes = document.querySelectorAll('input[name="selected_items[]"]:not(:disabled)');
                     const totalDisplay = document.getElementById('selected-total');
                     const totalAmountDisplay = document.getElementById('total-amount');
                     const shippingFee = 20000; // 6.900 ₫
@@ -470,14 +495,14 @@
                     // Thiết lập sự kiện cho checkbox chọn tất cả
                     if (selectAll) {
                         selectAll.addEventListener('change', function() {
-                            const checkboxes = document.querySelectorAll('input[name="selected_items[]"]');
+                            const checkboxes = document.querySelectorAll('input[name="selected_items[]"]:not(:disabled)');
                             checkboxes.forEach(cb => cb.checked = this.checked);
                             updateTotals();
                         });
                     }
 
                     // Thiết lập sự kiện cho từng checkbox
-                    const checkboxes = document.querySelectorAll('input[name="selected_items[]"]');
+                    const checkboxes = document.querySelectorAll('input[name="selected_items[]"]:not(:disabled)');
                     checkboxes.forEach(cb => {
                         cb.addEventListener('change', updateTotals);
                     });
@@ -872,6 +897,25 @@
                     border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
                 }
 
+                /* Style cho sản phẩm không khả dụng */
+                .opacity-50 {
+                    opacity: 0.5;
+                }
+
+                .opacity-50 .btn:not(.btn-delete-item) {
+                    pointer-events: none;
+                }
+
+                .opacity-50 input[type="checkbox"]:disabled {
+                    cursor: not-allowed;
+                }
+
+                /* Đảm bảo nút xóa vẫn có thể click */
+                .opacity-50 .btn-delete-item {
+                    pointer-events: auto;
+                    cursor: pointer;
+                }
+
                 table.table tbody tr {
                     border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
                 }
@@ -1001,7 +1045,7 @@
                     deleteBtn.addEventListener('click', function(e) {
                         e.preventDefault();
 
-                        const checked = bulkForm.querySelectorAll('input[name="selected_items[]"]:checked');
+                        const checked = bulkForm.querySelectorAll('input[name="selected_items[]"]:checked:not(:disabled)');
 
                         if (checked.length === 0) {
                             showNotificationModal('Vui lòng chọn ít nhất một sản phẩm để xoá.');

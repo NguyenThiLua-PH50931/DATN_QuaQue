@@ -132,9 +132,27 @@ class ProductVariantController extends Controller
     {
         $variant = ProductVariant::findOrFail($id);
         $productId = $variant->product_id;
-        $variant->delete();
 
-        return redirect()->route('admin.products.variant.index', $productId)->with('success', 'Xóa biến thể thành công!');
+        // Kiểm tra xem biến thể có trong đơn hàng nào không
+        $hasOrders = \App\Models\admin\OrderItem::where('product_variant_value_id', $variant->id)->exists();
+
+        if (!$hasOrders) {
+            // Nếu không có trong đơn hàng, xóa hoàn toàn
+            if ($variant->image && \Illuminate\Support\Facades\Storage::disk('public')->exists($variant->image)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($variant->image);
+            }
+            $variant->attributeValues()->detach();
+            $variant->forceDelete();
+            $message = 'Xóa biến thể thành công!';
+        } else {
+            // Nếu có trong đơn hàng, xóa mềm NHƯNG KHÔNG XÓA ẢNH
+            // Chỉ xóa mềm biến thể, giữ lại ảnh để đơn hàng vẫn hiển thị được
+            $variant->attributeValues()->detach();
+            $variant->delete();
+            $message = 'Biến thể đã được xóa (dữ liệu đơn hàng được bảo toàn)!';
+        }
+
+        return redirect()->route('admin.products.variant.index', $productId)->with('success', $message);
     }
 
     // Xóa nhiều biến thể
@@ -145,11 +163,37 @@ class ProductVariantController extends Controller
         if ($ids && is_array($ids)) {
             $variants = ProductVariant::whereIn('id', $ids)->get();
             $productId = null;
+            $deletedCount = 0;
+            $softDeletedCount = 0;
+
             foreach ($variants as $variant) {
                 $productId = $variant->product_id;
-                $variant->delete();
+
+                // Kiểm tra xem biến thể có trong đơn hàng nào không
+                $hasOrders = \App\Models\admin\OrderItem::where('product_variant_value_id', $variant->id)->exists();
+
+                if (!$hasOrders) {
+                    // Nếu không có trong đơn hàng, xóa hoàn toàn
+                    if ($variant->image && \Illuminate\Support\Facades\Storage::disk('public')->exists($variant->image)) {
+                        \Illuminate\Support\Facades\Storage::disk('public')->delete($variant->image);
+                    }
+                    $variant->attributeValues()->detach();
+                    $variant->forceDelete();
+                    $deletedCount++;
+                } else {
+                    // Nếu có trong đơn hàng, xóa mềm NHƯNG KHÔNG XÓA ẢNH
+                    $variant->attributeValues()->detach();
+                    $variant->delete();
+                    $softDeletedCount++;
+                }
             }
-            return redirect()->route('admin.products.variant.index', $productId)->with('success', 'Xóa nhiều biến thể thành công!');
+
+            $message = "Xóa {$deletedCount} biến thể thành công!";
+            if ($softDeletedCount > 0) {
+                $message .= " {$softDeletedCount} biến thể đã được xóa mềm (dữ liệu đơn hàng được bảo toàn).";
+            }
+
+            return redirect()->route('admin.products.variant.index', $productId)->with('success', $message);
         }
 
         return redirect()->back()->with('error', 'Không có biến thể nào được chọn để xóa.');

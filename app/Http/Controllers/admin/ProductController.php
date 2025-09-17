@@ -133,7 +133,7 @@ class ProductController extends Controller
             'region',
             'product_images',
             'variants' => function ($q) {
-                $q->where('active', 1)->orderBy('id');
+                $q->where('active', 1)->withoutTrashed()->orderBy('id');
             }
         ]);
 
@@ -183,7 +183,9 @@ class ProductController extends Controller
     public function show($slug)
     {
         $product = AdminProduct::where('slug', $slug)
-            ->with(['categories', 'region', 'product_images', 'variants.attributeValues', 'reviews.user', 'comments'])
+            ->with(['categories', 'region', 'product_images', 'variants' => function($q) {
+                $q->withoutTrashed();
+            }, 'variants.attributeValues', 'reviews.user', 'comments'])
             ->firstOrFail();
 
         return view('backend.products.show', compact('product'));
@@ -699,7 +701,9 @@ public function destroy($id)
     public function edit($slug)
     {
         $product = AdminProduct::where('slug', $slug)
-            ->with(['product_images', 'variants.attributeValues'])
+            ->with(['product_images', 'variants' => function($q) {
+                $q->withoutTrashed();
+            }, 'variants.attributeValues'])
             ->firstOrFail();
 
         // Debug: Log thông tin variants để kiểm tra
@@ -821,8 +825,8 @@ public function destroy($id)
 
             // 5. Xử lý biến thể
             if ($request->has_variants) {
-                // Lấy danh sách biến thể hiện tại để so sánh
-                $existingVariants = $product->variants->keyBy('id');
+                // Lấy danh sách biến thể hiện tại (bao gồm cả inactive) để so sánh
+                $existingVariants = $product->variants()->withTrashed()->get()->keyBy('id');
                 $updatedVariantIds = [];
 
                 // Cập nhật hoặc tạo mới biến thể
@@ -845,8 +849,14 @@ public function destroy($id)
 
                     // Kiểm tra xem biến thể đã tồn tại chưa
                     if (!empty($variantData['id']) && $existingVariants->has($variantData['id'])) {
-                        // Cập nhật biến thể hiện có
+                        // Cập nhật biến thể hiện có (có thể là inactive hoặc đã xóa mềm)
                         $variant = $existingVariants->get($variantData['id']);
+
+                        // Khôi phục nếu đã bị xóa mềm
+                        if ($variant->trashed()) {
+                            $variant->restore();
+                        }
+
                         $variant->update([
                             'sku' => $variantData['sku'] ?? $variant->sku,
                             'price' => $variantData['price'],
@@ -883,21 +893,30 @@ public function destroy($id)
                 // Xóa các biến thể không còn được sử dụng
                 $variantsToDelete = $existingVariants->whereNotIn('id', $updatedVariantIds);
                 foreach ($variantsToDelete as $variant) {
-                    if ($variant->image && Storage::disk('public')->exists($variant->image)) {
-                        Storage::disk('public')->delete($variant->image);
+                    // Kiểm tra xem biến thể có trong đơn hàng nào không
+                    $hasOrders = \App\Models\admin\OrderItem::where('product_variant_value_id', $variant->id)->exists();
+
+                    if (!$hasOrders) {
+                        // Nếu không có trong đơn hàng, xóa hoàn toàn
+                        if ($variant->image && Storage::disk('public')->exists($variant->image)) {
+                            Storage::disk('public')->delete($variant->image);
+                        }
+                        $variant->attributeValues()->detach();
+                        $variant->forceDelete();
+                    } else {
+                        // Nếu có trong đơn hàng, chỉ xóa mềm (soft delete) NHƯNG KHÔNG XÓA ẢNH
+                        $variant->attributeValues()->detach();
+                        $variant->delete(); // Soft delete thay vì forceDelete
                     }
-                    $variant->attributeValues()->detach();
-                    $variant->forceDelete();
                 }
             } else {
-                // XÓA tất cả biến thể cũ trước khi tạo mới
+                // Chuyển từ có biến thể sang không có biến thể
+                // Chỉ đánh dấu inactive các biến thể cũ, không xóa
                 foreach ($product->variants as $variant) {
-                    if ($variant->image && Storage::disk('public')->exists($variant->image)) {
-                        Storage::disk('public')->delete($variant->image);
-                    }
-                    $variant->attributeValues()->detach();
-                    $variant->forceDelete();
+                    $variant->active = 0;
+                    $variant->save();
                 }
+
                 // Tạo một biến thể mặc định cho sản phẩm không có biến thể
                 AdminProductVariant::create([
                     'product_id' => $product->id,
