@@ -185,8 +185,8 @@
                         <div>
                             <div class="team-box">
                                 <div class="team-iamge">
-                                    <img src="../assets/images/inner-page/user/1.jpg" class="img-fluid blur-up lazyload"
-                                        alt="" />
+                                    <img src="{{ asset('report/assets/img/user/7.jpg') }}"
+                                        class="img-fluid blur-up lazyload" alt="" />
                                 </div>
                                 <div class="team-name">
                                     <h3>Nguyễn Thị Lụa</h3>
@@ -209,8 +209,8 @@
                         <div>
                             <div class="team-box">
                                 <div class="team-iamge">
-                                    <img src="../assets/images/inner-page/user/2.jpg" class="img-fluid blur-up lazyload"
-                                        alt="" />
+                                   <img src="{{ asset('report/assets/img/user/8.jpg') }}"
+                                        class="img-fluid blur-up lazyload" alt="" />
                                 </div>
                                 <div class="team-name">
                                     <h3>Đặng Bảo Biên</h3>
@@ -234,8 +234,8 @@
                         <div>
                             <div class="team-box">
                                 <div class="team-iamge">
-                                    <img src="../assets/images/inner-page/user/3.jpg" class="img-fluid blur-up lazyload"
-                                        alt="" />
+                                  <img src="{{ asset('report/assets/img/user/9.jpg') }}"
+                                        class="img-fluid blur-up lazyload" alt="" />
                                 </div>
                                 <div class="team-name">
                                     <h3>Vũ Văn Quân</h3>
@@ -258,8 +258,8 @@
                         <div>
                             <div class="team-box">
                                 <div class="team-iamge">
-                                    <img src="../assets/images/inner-page/user/4.jpg" class="img-fluid blur-up lazyload"
-                                        alt="" />
+                                    <img src="{{ asset('report/assets/img/user/6.jpg') }}"
+                                        class="img-fluid blur-up lazyload" alt="" />
                                 </div>
                                 <div class="team-name">
                                     <h3>Vũ Ngọc Ánh</h3>
@@ -282,8 +282,8 @@
                         <div>
                             <div class="team-box">
                                 <div class="team-iamge">
-                                    <img src="../assets/images/inner-page/user/1.jpg" class="img-fluid blur-up lazyload"
-                                        alt="" />
+                                   <img src="{{ asset('report/assets/img/user/7.jpg') }}"
+                                        class="img-fluid blur-up lazyload" alt="" />
                                 </div>
                                 <div class="team-name">
                                     <h3>Trịnh Thị Duyên</h3>
@@ -306,8 +306,8 @@
                         <div>
                             <div class="team-box">
                                 <div class="team-iamge">
-                                    <img src="../assets/images/inner-page/user/3.jpg" class="img-fluid blur-up lazyload"
-                                        alt="" />
+                                    <img src="{{ asset('report/assets/img/user/1.jpg') }}"
+                                        class="img-fluid blur-up lazyload" alt="" />
                                 </div>
                                 <div class="team-name">
                                     <h3>Nguyễn Tuấn Anh</h3>
@@ -330,8 +330,8 @@
                         <div>
                             <div class="team-box">
                                 <div class="team-iamge">
-                                    <img src="../assets/images/inner-page/user/3.jpg" class="img-fluid blur-up lazyload"
-                                        alt="" />
+                                    <img src="{{ asset('report/assets/img/user/9.jpg') }}"
+                                        class="img-fluid blur-up lazyload" alt="" />
                                 </div>
                                 <div class="team-name">
                                     <h3>Hoàng Ngọc Hà</h3>

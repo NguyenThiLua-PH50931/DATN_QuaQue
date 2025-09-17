@@ -573,12 +573,18 @@ private function consumeStockOrFail($cartItems): void
             DB::table('products')->whereIn('id', $productIds)->lockForUpdate()->get();
         }
 
-        // Kiểm tra đủ kho
+        // Kiểm tra đủ kho và trạng thái active
         foreach ($cartItems as $item) {
             $qty = (int) $item->quantity;
             if ($item->variant_id) {
                 $row = DB::table('product_variants')->where('id', $item->variant_id)->first();
                 $available = max(0, (int)$row->stock);
+                $active = (int)$row->active;
+                if (!$active) {
+                    $pname = $item->product->name ?? ('SP#'.$item->product_id);
+                    $vname = $item->variant->name ?? ('Var#'.$item->variant_id);
+                    throw new \Exception("Sản phẩm \"{$pname} - {$vname}\" đã ngưng bán.");
+                }
                 if ($available < $qty) {
                     $pname = $item->product->name ?? ('SP#'.$item->product_id);
                     $vname = $item->variant->name ?? ('Var#'.$item->variant_id);
@@ -587,6 +593,11 @@ private function consumeStockOrFail($cartItems): void
             } else {
                 $row = DB::table('products')->where('id', $item->product_id)->first();
                 $available = max(0, (int)$row->stock);
+                $active = (int)$row->active;
+                if (!$active) {
+                    $pname = $item->product->name ?? ('SP#'.$item->product_id);
+                    throw new \Exception("Sản phẩm \"{$pname}\" đã ngưng bán.");
+                }
                 if ($available < $qty) {
                     $pname = $item->product->name ?? ('SP#'.$item->product_id);
                     throw new \Exception("Sản phẩm \"{$pname}\" chỉ còn {$available}.");
@@ -667,17 +678,25 @@ public function processOrder(Request $request)
                 ->get();
             if ($cartItems->isEmpty()) throw new \Exception('Giỏ hàng trống!');
 
-            // stock check
+            // stock check và kiểm tra trạng thái active
             foreach ($cartItems as $item) {
                 if ($item->variant_id) {
                     $variant = \App\Models\admin\ProductVariant::find($item->variant_id);
                     $stock   = $variant?->stock ?? 0;
+                    $active  = $variant?->active ?? 0;
+                    if (!$active) {
+                        throw new \Exception('Sản phẩm "' . ($item->product->name ?? '') . ' - ' . ($variant->name ?? '') . '" đã ngưng bán.');
+                    }
                     if ($stock < $item->quantity) {
                         throw new \Exception('Sản phẩm "' . ($item->product->name ?? '') . ' - ' . ($variant->name ?? '') . '" hiện chỉ còn ' . $stock . ' sản phẩm.');
                     }
                 } else {
                     $product = \App\Models\admin\Product::find($item->product_id);
                     $stock   = $product?->stock ?? 0;
+                    $active  = $product?->active ?? 0;
+                    if (!$active) {
+                        throw new \Exception('Sản phẩm "' . ($item->product->name ?? '') . '" đã ngưng bán.');
+                    }
                     if ($stock < $item->quantity) {
                         throw new \Exception('Sản phẩm "' . ($item->product->name ?? '') . '" hiện chỉ còn ' . $stock . ' sản phẩm.');
                     }
